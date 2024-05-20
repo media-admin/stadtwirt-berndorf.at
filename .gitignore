@@ -1,0 +1,98 @@
+# GENERAL SETTINGS
+# -----------------------------
+# Numerous always-ignore extensions
+# -----------------------------
+*.diff
+*.err
+*.orig
+*.log
+*.rej
+*.swo
+*.swp
+*.vi
+*~
+*.sass-cache
+.tmp/
+
+
+
+# OS or Editor folders
+# -----------------------------
+Thumbs.db
+.cache
+.project
+.settings
+.tmproj
+.nova
+
+
+# Ignore every DS_Store File on any location
+# -----------------------------
+.DS_Store
+*.DS_Store
+*/*.DS_Store
+
+
+
+
+
+# STATIC ENVIRONMENT
+# -----------------------------
+
+# Ignore .htaccess files
+# -----------------------------
+*.htaccess
+*/.htaccess
+
+
+# Ignore node dependency directories
+# -----------------------------
+/node_modules
+package-lock.json
+*package-lock.json
+*/package-lock.json
+
+
+
+
+# Exclude static environment's dist folder
+# -----------------------------
+dist
+
+
+# Exclude WordPress Installation temporarily <<<<<< INCLUDE WHEN STATIC DEVELOPMENT HAS BEEN FINISHED >>>>>>>
+# -----------------------------
+index.php
+backups/*
+
+!cms
+
+cms/wp-admin
+cms/wp-includes
+cms/*.php
+cms/*.html
+cms/*.txt
+
+
+# DYNAMIC ENVIRONMENT
+# -----------------------------
+
+# ignore everything in the "wp-content" directory, except:
+# "mu-plugins", "plugins", "themes" directory
+# -----------------------------
+cms/wp-content/*
+
+!cms/wp-content/mu-plugins/
+!cms/wp-content/mu-plugins/*
+
+!cms/wp-content/plugins/
+!cms/wp-content/plugins/*
+
+!cms/wp-content/themes/
+!cms/wp-content/themes/*
+
+cms/wp-content/themes/index.php
+cms/wp-content/themes/twentytwenty/*
+cms/wp-content/themes/twentytwentyone/*
+cms/wp-content/themes/twentytwentytwo/*
+cms/wp-content/themes/twentytwentythree/*
