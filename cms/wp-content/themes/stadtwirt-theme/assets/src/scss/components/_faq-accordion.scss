@@ -1,0 +1,126 @@
+// ============================================
+// FAQ ACCORDION
+// ============================================
+
+.faq-accordion {
+  max-width: 800px;
+  margin: 2rem auto;
+  
+  .faq-item {
+    margin-bottom: 1rem;
+    border: 1px solid $color-border;
+    border-radius: $radius-lg;
+    overflow: hidden;
+    background: $color-white;
+    transition: $transition-base;
+    
+    &:hover {
+      box-shadow: $shadow-md;
+    }
+    
+    &.is-active {
+      .faq-question {
+        color: $color-primary;
+        background: $color-gray-500;
+        
+        .faq-question__icon {
+          transform: rotate(180deg);
+        }
+      }
+      
+      .faq-answer {
+        display: block;
+      }
+    }
+  }
+  
+  .faq-question {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem;
+    background: transparent;
+    border: none;
+    text-align: left;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $color-text;
+    cursor: pointer;
+    transition: $transition-base;
+    
+    &:hover {
+      color: $color-primary;
+      background: $color-gray-500;
+    }
+    
+    &__text {
+      flex: 1;
+      padding-right: 1rem;
+    }
+    
+    &__icon {
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s ease;
+      color: $color-primary;
+      
+      svg {
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+  
+  .faq-answer {
+    display: none;
+    padding: 0 1.5rem 1.5rem;
+    animation: fadeIn 0.3s ease;
+    
+    &__content {
+      line-height: 1.8;
+      color: $color-text-muted;
+      
+      p {
+        margin-bottom: 1rem;
+        
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+      
+      ul, ol {
+        margin: 1rem 0;
+        padding-left: 1.5rem;
+      }
+      
+      li {
+        margin-bottom: 0.5rem;
+      }
+      
+      a {
+        color: $color-primary;
+        text-decoration: underline;
+        
+        &:hover {
+          color: darken($color-primary, 10%);
+        }
+      }
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

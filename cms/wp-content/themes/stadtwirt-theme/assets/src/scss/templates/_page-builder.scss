@@ -1,0 +1,101 @@
+// ============================================
+// PAGE BUILDER TEMPLATES
+// ============================================
+
+.page-builder,
+.page-builder-acf {
+  // Full width, no default padding
+  
+  // If you need sections with container
+  .container {
+    max-width: $container-max-width;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+}
+
+.agency-homepage {
+  // Agency homepage specific styles
+  
+  .container {
+    max-width: $container-max-width;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+}
+
+// Hero Section
+.hero-section {
+  min-height: 600px;
+  display: flex;
+  align-items: center;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+  }
+  
+  .container {
+    position: relative;
+    z-index: 1;
+  }
+  
+  &__content {
+    max-width: 800px;
+    color: white;
+    text-align: center;
+    margin: 0 auto;
+  }
+  
+  &__title {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+}
+
+// Two Columns
+.two-columns {
+  padding: 4rem 0;
+  
+  &__wrapper {
+    display: grid;
+    gap: 3rem;
+    align-items: start;
+  }
+  
+  &--50-50 .two-columns__wrapper {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  &--60-40 .two-columns__wrapper {
+    grid-template-columns: 60fr 40fr;
+  }
+  
+  &--40-60 .two-columns__wrapper {
+    grid-template-columns: 40fr 60fr;
+  }
+}
+
+// CTA Section
+.cta-section {
+  padding: 6rem 0;
+  text-align: center;
+  
+  &--primary {
+    background: $color-primary;
+    color: white;
+  }
+  
+  &__title {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+  }
+}

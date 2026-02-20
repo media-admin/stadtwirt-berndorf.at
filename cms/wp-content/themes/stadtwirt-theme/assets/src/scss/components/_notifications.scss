@@ -1,0 +1,314 @@
+// Notifications Component
+.notification {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-3;
+  padding: $spacing-4;
+  border-radius: $radius-md;
+  margin: $spacing-4 0;
+  border-left: 4px solid;
+  background: var(--color-card-bg);
+  box-shadow: $shadow-sm;
+  position: relative;
+  animation: slideIn 0.3s ease-out;
+  
+  // Icon
+  &__icon {
+    flex-shrink: 0;
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+    margin-top: 2px;
+  }
+  
+  // Content
+  &__content {
+    flex: 1;
+    
+    p {
+      margin: 0;
+      color: var(--color-text);
+      
+      &:not(:last-child) {
+        margin-bottom: $spacing-2;
+      }
+    }
+    
+    strong {
+      font-weight: 600;
+    }
+    
+    a {
+      text-decoration: underline;
+      
+      &:hover {
+        text-decoration: none;
+      }
+    }
+  }
+  
+  // Close Button
+  &__close {
+    flex-shrink: 0;
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    line-height: 1;
+    color: inherit;
+    opacity: 0.5;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    transition: opacity $transition-base;
+    
+    &:hover {
+      opacity: 1;
+    }
+  }
+  
+  // ============================================
+  // TYPE VARIANTS
+  // ============================================
+  
+  // Success
+  &--success {
+    border-left-color: $color-success;
+    background: lighten($color-success, 45%);
+    
+    .notification__icon {
+      color: $color-success;
+    }
+  }
+  
+  // Error
+  &--error {
+    border-left-color: $color-error;
+    background: lighten($color-error, 40%);
+    
+    .notification__icon {
+      color: $color-error;
+    }
+  }
+  
+  // Warning
+  &--warning {
+    border-left-color: $color-warning;
+    background: lighten($color-warning, 40%);
+    
+    .notification__icon {
+      color: darken($color-warning, 10%);
+    }
+  }
+  
+  // Info
+  &--info {
+    border-left-color: $color-info;
+    background: lighten($color-info, 40%);
+    
+    .notification__icon {
+      color: $color-info;
+    }
+  }
+}
+
+// ============================================
+// TOAST NOTIFICATIONS (FIXED POSITION)
+// ============================================
+
+.notification-container {
+  position: fixed;
+  top: $spacing-4;
+  right: $spacing-4;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+  max-width: 400px;
+  width: calc(100% - #{$spacing-8});
+  pointer-events: none;
+  
+  .notification {
+    pointer-events: all;
+    box-shadow: $shadow-xl;
+    animation: toastSlideIn 0.3s ease-out;
+    margin: 0;
+  }
+}
+
+// ============================================
+// ANIMATIONS
+// ============================================
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+// ============================================
+// RESPONSIVE
+// ============================================
+
+@include respond-to('sm') {
+  .notification-container {
+    top: $spacing-3;
+    right: $spacing-3;
+  }
+}
+
+// Dark Mode
+@media (prefers-color-scheme: dark) {
+  .notification {
+    &--success {
+      background: rgba($color-success, 0.2);
+    }
+    
+    &--error {
+      background: rgba($color-error, 0.2);
+    }
+    
+    &--warning {
+      background: rgba($color-warning, 0.2);
+    }
+    
+    &--info {
+      background: rgba($color-info, 0.2);
+    }
+  }
+}
+// ─── TOAST CONTAINER ──────────────────────────────────────────
+
+.notification-toast-container {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-width: 380px;
+  pointer-events: none;
+}
+
+.notification--toast {
+  pointer-events: all;
+  opacity: 0;
+  transform: translateX(2rem);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+
+  &.notification--visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  &.notification--dismissed {
+    opacity: 0;
+    transform: translateX(2rem);
+  }
+}
+
+// ─── POPUP OVERLAY ────────────────────────────────────────────
+
+.notification-popup__overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+
+  &--visible {
+    opacity: 1;
+  }
+}
+
+.notification-popup {
+  position: relative;
+  background: $color-white;
+  border-radius: $radius-xl;
+  padding: 2.5rem 2rem 2rem;
+  max-width: 480px;
+  width: 100%;
+  box-shadow: $shadow-xl;
+  transform: translateY(1rem);
+  transition: transform 0.3s ease;
+  text-align: center;
+
+  .notification-popup__overlay--visible & {
+    transform: translateY(0);
+  }
+
+  &__close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: $color-text-muted;
+    line-height: 1;
+    padding: 0.25rem;
+    transition: color 0.2s ease;
+
+    &:hover { color: $color-text; }
+  }
+
+  &__icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+
+    .dashicons { font-size: 2.5rem; width: 2.5rem; height: 2.5rem; }
+  }
+
+  &__title {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    margin-bottom: 0.75rem;
+    color: $color-text;
+  }
+
+  &__message {
+    color: $color-text-muted;
+    line-height: $line-height-base;
+  }
+
+  // Typen
+  &.notification--info    .notification-popup__icon { color: #3b82f6; }
+  &.notification--success .notification-popup__icon { color: #22c55e; }
+  &.notification--warning .notification-popup__icon { color: #f59e0b; }
+  &.notification--error   .notification-popup__icon { color: #ef4444; }
+}
+
+body.popup-open { overflow: hidden; }

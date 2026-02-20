@@ -1,0 +1,124 @@
+// ============================================
+// GOOGLE MAPS (DSGVO)
+// ============================================
+
+.google-map-wrapper {
+  position: relative;
+  width: 100%;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  background: $color-gray-100;
+}
+
+.google-map-canvas {
+  width: 100%;
+  height: 100%;
+}
+
+// DSGVO Overlay
+.google-map-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba($color-white, 0.98);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: opacity 0.3s ease;
+  
+  &__content {
+    text-align: center;
+    max-width: 500px;
+    padding: 2rem;
+  }
+  
+  &__icon {
+    color: $color-primary;
+    margin-bottom: 1.5rem;
+    
+    svg {
+      width: 64px;
+      height: 64px;
+    }
+  }
+  
+  &__title {
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-bold;
+    margin-bottom: 1rem;
+    color: $color-text;
+  }
+  
+  &__text {
+    font-size: $font-size-base;
+    line-height: 1.6;
+    color: $color-text-muted;
+    margin-bottom: 1.5rem;
+    
+    a {
+      color: $color-primary;
+      text-decoration: underline;
+      
+      &:hover {
+        color: darken($color-primary, 10%);
+      }
+    }
+  }
+  
+  &__address {
+    padding: 1rem;
+    background: $color-gray-500;
+    border-radius: $radius-base;
+    margin-bottom: 1.5rem;
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+    
+    strong {
+      color: $color-text;
+    }
+  }
+  
+  &__button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 2rem;
+    background: $color-primary;
+    color: $color-white;
+    border: none;
+    border-radius: $radius-full;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: $transition-base;
+    
+    &:hover {
+      background: darken($color-primary, 10%);
+      transform: translateY(-2px);
+      box-shadow: $shadow-lg;
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+  }
+  
+  &__privacy {
+    margin-top: 1rem;
+    font-size: $font-size-xs;
+    color: $color-text-muted;
+    
+    a {
+      color: $color-text-muted;
+      text-decoration: underline;
+      
+      &:hover {
+        color: $color-text;
+      }
+    }
+  }
+}

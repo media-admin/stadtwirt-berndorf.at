@@ -1,0 +1,325 @@
+# Translation of Plugins - WordPress Importer - Stable (latest release) in German
+# This file is distributed under the same license as the Plugins - WordPress Importer - Stable (latest release) package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2026-02-06 23:08:48+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: GlotPress/4.0.3\n"
+"Language: de\n"
+"Project-Id-Version: Plugins - WordPress Importer - Stable (latest release)\n"
+
+#: class-wp-import.php:338
+msgid "Change all imported URLs that currently link to the previous site so that they now link to this site"
+msgstr "Alle importierten URLs, die derzeit auf die vorherige Website verweisen, so ändern, dass sie nun auf diese Website verweisen"
+
+#: class-wp-import.php:335
+msgid "Content Options"
+msgstr "Inhaltsoptionen"
+
+#: class-wp-import.php:122
+msgid "URL rewriting requires WordPress 6.7 or newer. The import will continue without rewriting URLs."
+msgstr "Die URL-Umschreibung erfordert WordPress 6.7 oder neuer. Der Import wird ohne Umschreibung der URLs fortgesetzt."
+
+#. translators: %1$s is the unexpected token type.
+#: php-toolkit/XML/class-xmlprocessor.php:3862
+msgid "Unexpected token type \"%1$s\" in element stage."
+msgstr "Unerwarteter Tokentyp „%1$s“ im Element „stage“."
+
+#. Translators: 1: The closing tag name. 2: The opening tag name.
+#. translators: %1$s is the name of the closing HTML tag, %2$s is the name of
+#. the opening HTML tag.
+#: php-toolkit/XML/class-xmlprocessor.php:3830
+#: php-toolkit/XML/class-xmlprocessor.php:3842
+msgid "The closing tag \"%1$s\" did not match the opening tag \"%2$s\"."
+msgstr "Der schließende Tag „%1$s“ stimmte nicht mit dem öffnenden Tag „%2$s“ überein."
+
+#. Translators: 1: The XML namespace.
+#: php-toolkit/XML/class-xmlprocessor.php:3467
+msgid "The namespace \"%1$s\" is not in the current element's scope."
+msgstr "Der Namensraum „%1$s“ befindet sich nicht im Bereich des aktuellen Elements."
+
+#: php-toolkit/XML/class-xmlprocessor.php:3448
+msgid "Setting attributes in the xmlns namespace is not yet supported by set_attribute()."
+msgstr "Das Festlegen von Attributen im xmlns-Namensraum wird von set_attribute() noch nicht unterstützt."
+
+#: php-toolkit/XML/class-xmlprocessor.php:3440
+msgid "Non-string attribute values cannot be passed to set_attribute()."
+msgstr "Nicht-Zeichenfolgen-Attributwerte können nicht an set_attribute() übergeben werden."
+
+#: php-toolkit/XML/class-xmlprocessor.php:3412
+msgid "Cannot set text content on a non-text node."
+msgstr "Der Textinhalt kann nicht auf einem Nicht-Textknoten festgelegt werden."
+
+#: php-toolkit/XML/class-xmlprocessor.php:3363
+msgid "Invalid text content encountered."
+msgstr "Ungültiger Textinhalt gefunden."
+
+#: php-toolkit/XML/class-xmlprocessor.php:2857
+#: php-toolkit/XML/class-xmlprocessor.php:2896
+msgid "Invalid attribute value encountered."
+msgstr "Ungültiger Attributwert gefunden."
+
+#: php-toolkit/XML/class-xmlprocessor.php:2680
+msgid "Too many calls to seek() - this can lead to performance issues."
+msgstr "Zu viele Aufrufe von seek() – dies kann zu Leistungsproblemen führen."
+
+#: php-toolkit/XML/class-xmlprocessor.php:2670
+msgid "Unknown bookmark name."
+msgstr "Unbekannter Name des Lesezeichens."
+
+#: php-toolkit/XML/class-xmlprocessor.php:1614
+msgid "Breadcrumbs must be an array of strings or two-tuples of (namespace, local name)."
+msgstr "Breadcrumbs müssen ein Array aus Zeichenfolgen oder aus 2-Tupeln der Form (Namensraum, lokaler Name) sein."
+
+#: php-toolkit/XML/class-xmlprocessor.php:1598
+msgid "Cannot visit tag closers in XML Processor."
+msgstr "Die schließenden Tags können im XML-Processor nicht angezeigt werden."
+
+#: php-toolkit/XML/class-xmlprocessor.php:1570
+msgid "Please pass a query array to this function."
+msgstr "Bitte übergib dieser Funktion ein Abfrage-Array."
+
+#: php-toolkit/XML/class-xmlprocessor.php:1463
+msgid "Too many bookmarks: cannot create any more."
+msgstr "Zu viele Lesezeichen: Es können keine weiteren erstellt werden."
+
+#: php-toolkit/XML/class-xmlprocessor.php:911
+msgid "Cannot append bytes after the last input chunk was provided and input_finished() was called."
+msgstr "Bytes können nicht angehängt werden, nachdem das letzte Eingabefragment bereitgestellt und input_finished() aufgerufen wurde."
+
+#. translators: %s: XMLProcessor::create_fragment().
+#: php-toolkit/XML/class-xmlprocessor.php:883
+msgid "Call %s to create an XML Processor instead of calling the constructor directly."
+msgstr "%s aufrufen, um einen XML-Processor zu erstellen, statt den Constructor direkt aufzurufen."
+
+#: parsers/class-wxr-parser.php:27 parsers/class-wxr-parser.php:28
+msgid "Invalid parser specified: %s"
+msgstr "Ungültiger Parser angegeben: %s"
+
+#: class-wp-import.php:1475
+msgid "The uploaded file could not be moved"
+msgstr "Die hochgeladene Datei konnte nicht verschoben werden"
+
+#: class-wp-import.php:1460
+msgid "Sorry, this file type is not permitted for security reasons."
+msgstr "Dieser Dateityp ist aus Sicherheitsgründen leider nicht erlaubt."
+
+#: class-wp-import.php:1422
+msgid "Downloaded file has incorrect size"
+msgstr "Die heruntergeladene Datei hat die falsche Größe"
+
+#. translators: 1: The HTTP error message. 2: The HTTP error code.
+#: class-wp-import.php:1398
+msgid "Remote server returned the following unexpected result: %1$s (%2$s)"
+msgstr "Der Remote-Server lieferte das folgende unerwartete Ergebnis: %1$s (%2$s)"
+
+#. translators: 1: The WordPress error message. 2: The WordPress error code.
+#: class-wp-import.php:1382
+msgid "Request failed due to an error: %1$s (%2$s)"
+msgstr "Die Anfrage ist aufgrund eines Fehlers fehlgeschlagen: %1$s (%2$s)"
+
+#: class-wp-import.php:1360
+msgid "Could not create temporary file."
+msgstr "Es konnte keine temporäre Datei erstellt werden."
+
+#: class-wp-import.php:316
+msgid "To make it simpler for you to edit and save the imported content, you may want to reassign the author of the imported item to an existing user of this site, such as your primary administrator account."
+msgstr "Um dir das Bearbeiten und Speichern des importierten Inhalts zu erleichtern, kannst du als Autor des importierten Elements einen bestehenden Benutzer dieser Website, z. B. dein primäres Administratorkonto, neu zuweisen."
+
+#. Author URI of the plugin
+#: wordpress-importer.php
+msgid "https://wordpress.org/"
+msgstr "https://de.wordpress.org/"
+
+#. Author of the plugin
+#: wordpress-importer.php
+msgid "wordpressdotorg"
+msgstr "wordpressdotorg"
+
+#. Description of the plugin
+#: wordpress-importer.php
+msgid "Import posts, pages, comments, custom fields, categories, tags and more from a WordPress export file."
+msgstr "Importiere Beiträge, Seiten, Kommentare, benutzerdefinierte Felder, Kategorien, Schlagwörter und mehr aus einer WordPress-Exportdatei."
+
+#. Plugin URI of the plugin
+#: wordpress-importer.php
+msgid "https://wordpress.org/plugins/wordpress-importer/"
+msgstr "https://de.wordpress.org/plugins/wordpress-importer/"
+
+#. Plugin Name of the plugin
+#: wordpress-importer.php
+msgid "WordPress Importer"
+msgstr "WordPress Importer"
+
+#: wordpress-importer.php:76
+msgid "Import <strong>posts, pages, comments, custom fields, categories, and tags</strong> from a WordPress export file."
+msgstr "Importiere <strong>Beiträge, Seiten, Kommentare, individuelle Felder, Kategorien und Schlagwörter</strong> aus einer WordPress-Exportdatei."
+
+#: class-wp-import.php:1678
+msgid "Choose a WXR (.xml) file to upload, then click Upload file and import."
+msgstr "Wähle eine WXR (.xml) Datei zum Hochladen, klicke dann auf Hochladen und importieren."
+
+#: class-wp-import.php:1677
+msgid "Howdy! Upload your WordPress eXtended RSS (WXR) file and we&#8217;ll import the posts, pages, comments, custom fields, categories, and tags into this site."
+msgstr "Willkommen! Lade deine WordPress-eXtended-RSS-(WXR)-Datei hoch und wir importieren die Beiträge, Seiten, Kommentare, benutzerdefinierten Felder, Kategorien und Schlagwörter in diese Website."
+
+#: class-wp-import.php:1662
+msgid "A new version of this importer is available. Please update to version %s to ensure compatibility with newer export files."
+msgstr "Eine neue Version dieses Importers ist verfügbar. Bitte aktualisiere auf Version %s, um die Kompatibilität mit neueren Dateien zu gewährleisten."
+
+#: class-wp-import.php:1655
+msgid "Import WordPress"
+msgstr "WordPress importieren"
+
+#: class-wp-import.php:1428
+msgid "Remote file is too large, limit is %s"
+msgstr "Die Remote-Datei ist zu groß, das Limit beträgt %s"
+
+#: class-wp-import.php:1417
+msgid "Zero size file downloaded"
+msgstr "Leere Datei heruntergeladen"
+
+#: class-wp-import.php:1410
+msgid "Remote server did not respond"
+msgstr "Der Remote-Server hat nicht geantwortet"
+
+#: class-wp-import.php:1316
+msgid "Invalid file type"
+msgstr "Ungültiges Datei-Format"
+
+#: class-wp-import.php:1298
+msgid "Fetching attachments is not enabled"
+msgstr "Herunterladen der Anhänge ist nicht aktiviert"
+
+#: class-wp-import.php:1231
+msgid "Menu item skipped due to invalid menu slug: %s"
+msgstr "Menüeintrag übersprungen aufgrund einer ungültigen Menü-Titelform: %s"
+
+#: class-wp-import.php:1224
+msgid "Menu item skipped due to missing menu slug"
+msgstr "Menüeintrag übersprungen aufgrund einer fehlenden Menü-Titelform"
+
+#: class-wp-import.php:901
+msgid "Failed to import %1$s &#8220;%2$s&#8221;"
+msgstr "Import von %1$s &#8222;%2$s&#8220; fehlgeschlagen"
+
+#: class-wp-import.php:806
+msgid "%1$s &#8220;%2$s&#8221; already exists."
+msgstr "%1$s &#8222;%2$s&#8220; existiert bereits."
+
+#: class-wp-import.php:765
+msgid "Failed to import &#8220;%1$s&#8221;: Invalid post type %2$s"
+msgstr "Import von &#8222;%1$s&#8220; fehlgeschlagen: Ungültiger Beitragstyp %2$s"
+
+#: class-wp-import.php:674 class-wp-import.php:1176
+msgid "Failed to import %1$s %2$s"
+msgstr "Fehler beim Importieren von %1$s %2$s"
+
+#: class-wp-import.php:595
+msgid "Failed to import post tag %s"
+msgstr "Import des Beitrags-Schlagwort %s fehlgeschlagen"
+
+#: class-wp-import.php:522
+msgid "Failed to import category %s"
+msgstr "Import der Kategorie %s fehlgeschlagen"
+
+#: class-wp-import.php:453
+msgid "Failed to create new user for %s. Their posts will be attributed to the current user."
+msgstr "Fehler beim Erstellen eines neuen Benutzers für %s. Die Einträge werden dem derzeitigen Benutzer zugeordnet."
+
+#: class-wp-import.php:394
+msgid "- Select -"
+msgstr "- Auswählen -"
+
+#: class-wp-import.php:385
+msgid "or assign posts to an existing user:"
+msgstr "oder weise die Beiträge einem existierenden Benutzer zu:"
+
+#: class-wp-import.php:383
+msgid "assign posts to an existing user:"
+msgstr "Beiträge einem existierenden Benutzer zuweisen:"
+
+#: class-wp-import.php:373
+msgid "as a new user:"
+msgstr "als neuer Benutzer:"
+
+#: class-wp-import.php:370
+msgid "or create new user with login name:"
+msgstr "oder erstelle einen neuen Benutzer mit dem Anmeldenamen:"
+
+#: class-wp-import.php:355
+msgid "Import author:"
+msgstr "Importiere Autor:"
+
+#: class-wp-import.php:341
+msgid "Submit"
+msgstr "Senden"
+
+#: class-wp-import.php:331
+msgid "Download and import file attachments"
+msgstr "Dateianhänge herunterladen und importieren"
+
+#: class-wp-import.php:328
+msgid "Import Attachments"
+msgstr "Anhänge importieren"
+
+#: class-wp-import.php:318
+msgid "If a new user is created by WordPress, a new password will be randomly generated and the new user&#8217;s role will be set as %s. Manually changing the new user&#8217;s details will be necessary."
+msgstr "Wenn ein neuer Benutzer durch WordPress erstellt wird, wird ein zufälliges Passwort generiert und die Benutzerrolle wird zu %s geändert. Es wird nötig sein, die weiteren Benutzerinformationen manuell zu bearbeiten."
+
+#: class-wp-import.php:315
+msgid "Assign Authors"
+msgstr "Autoren zuweisen"
+
+#: class-wp-import.php:287
+msgid "Failed to import author %s. Their posts will be attributed to the current user."
+msgstr "Import des Benutzers %s fehlgeschlagen. Seine Beiträge werden dem aktuellen Benutzer zugewiesen."
+
+#: class-wp-import.php:262
+msgid "This WXR file (version %s) may not be supported by this version of the importer. Please consider updating."
+msgstr "Diese WXR Datei (Version %s) wird möglicherweise von dieser Version des Importers nicht unterstützt. Bitte aktualisiere wenn möglich."
+
+#: class-wp-import.php:244
+msgid "The export file could not be found at <code>%s</code>. It is likely that this was caused by a permissions problem."
+msgstr "Die Exportdatei konnte nicht unter <code>%s</code> gefunden werden. Vermutlich wurde dies durch ein Berechtigungsproblem verursacht."
+
+#: class-wp-import.php:224
+msgid "Remember to update the passwords and roles of imported users."
+msgstr "Vergiss nicht, die Passwörter und Rollen der importierten Benutzer zu aktualisieren."
+
+#: class-wp-import.php:223
+msgid "Have fun!"
+msgstr "Viel Spaß!"
+
+#: class-wp-import.php:223
+msgid "All done."
+msgstr "Alles erledigt."
+
+#: class-wp-import.php:155
+msgid "The file does not exist, please try again."
+msgstr "Die Datei existiert nicht, bitte versuche es erneut."
+
+#: class-wp-import.php:154 class-wp-import.php:165 class-wp-import.php:239
+#: class-wp-import.php:243 class-wp-import.php:254
+msgid "Sorry, there has been an error."
+msgstr "Entschuldigung, es ist ein Fehler aufgetreten."
+
+#: parsers/class-wxr-parser-regex.php:104
+#: parsers/class-wxr-parser-simplexml.php:46
+#: parsers/class-wxr-parser-simplexml.php:52
+#: parsers/class-wxr-parser-xml-processor.php:190
+#: parsers/class-wxr-parser-xml.php:106
+msgid "This does not appear to be a WXR file, missing/invalid WXR version number"
+msgstr "Dies scheint keine WXR Datei zu sein, die WXR Versionsnummer fehlt oder ist ungültig."
+
+#: parsers/class-wxr-parser.php:69
+msgid "Details are shown above. The importer will now try again with a different parser..."
+msgstr "Details werden oben angezeigt. Der Importer versucht es nun nochmals mit einem anderen Parser..."
+
+#: parsers/class-wxr-parser-simplexml.php:33
+#: parsers/class-wxr-parser-simplexml.php:41 parsers/class-wxr-parser.php:68
+msgid "There was an error when reading this WXR file"
+msgstr "Es ist ein Fehler beim Lesen der WXR-Datei aufgetreten."

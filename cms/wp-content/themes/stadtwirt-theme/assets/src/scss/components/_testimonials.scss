@@ -1,0 +1,272 @@
+// Testimonials Component
+.testimonials {
+  display: grid;
+  gap: $spacing-6;
+  margin: $spacing-8 0;
+  
+  // Grid Layout basierend auf Columns
+  &[data-columns="1"] {
+    grid-template-columns: 1fr;
+  }
+  
+  &[data-columns="2"] {
+    grid-template-columns: 1fr;
+    
+    @include respond-to('md') {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  &[data-columns="3"] {
+    grid-template-columns: 1fr;
+    
+    @include respond-to('md') {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    @include respond-to('lg') {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  
+  &[data-columns="4"] {
+    grid-template-columns: 1fr;
+    
+    @include respond-to('sm') {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    @include respond-to('lg') {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+}
+
+// Single Testimonial
+.testimonial {
+  background: var(--color-card-bg);
+  border-radius: $radius-lg;
+  padding: $spacing-6;
+  box-shadow: $shadow-sm;
+  transition: all $transition-base;
+  position: relative;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $shadow-lg;
+  }
+  
+  // Rating Stars
+  &__rating {
+    display: flex;
+    gap: 4px;
+    margin-bottom: $spacing-3;
+    
+    .star {
+      font-size: 20px;
+      
+      &--filled {
+        color: #fbbf24; // Gold
+      }
+      
+      &--empty {
+        color: var(--color-border);
+      }
+    }
+  }
+  
+  // Quote Text
+  &__quote {
+    color: var(--color-text);
+    font-size: $font-size-base;
+    line-height: 1.7;
+    margin-bottom: $spacing-4;
+    font-style: italic;
+    position: relative;
+    
+    &::before {
+      content: '"';
+      font-size: 48px;
+      color: $color-primary;
+      opacity: 0.2;
+      position: absolute;
+      top: -10px;
+      left: -10px;
+      font-family: Georgia, serif;
+    }
+    
+    p {
+      margin: 0;
+    }
+  }
+  
+  // Footer (Image + Meta)
+  &__footer {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+    margin-top: auto;
+  }
+  
+  // Avatar Image
+  &__image {
+    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+    border-radius: $radius-full;
+    overflow: hidden;
+    border: 2px solid var(--color-border);
+    
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+  
+  // Meta Info
+  &__meta {
+    flex: 1;
+  }
+  
+  &__name {
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: $spacing-1;
+  }
+  
+  &__role {
+    font-size: $font-size-sm;
+    color: var(--color-text-secondary);
+  }
+}
+
+// ============================================
+// STYLE VARIANTS
+// ============================================
+
+// Quote Style (Centered, Larger)
+.testimonials--quote {
+  .testimonial {
+    text-align: center;
+    padding: $spacing-8;
+    
+    &__quote {
+      font-size: $font-size-lg;
+      
+      &::before {
+        position: static;
+        display: block;
+        margin-bottom: $spacing-2;
+      }
+    }
+    
+    &__footer {
+      flex-direction: column;
+      justify-content: center;
+    }
+    
+    &__image {
+      width: 80px;
+      height: 80px;
+    }
+  }
+}
+
+// Minimal Style (No card background)
+.testimonials--minimal {
+  .testimonial {
+    background: transparent;
+    box-shadow: none;
+    border-left: 4px solid $color-primary;
+    padding-left: $spacing-4;
+    
+    &:hover {
+      transform: translateX(4px);
+      box-shadow: none;
+    }
+    
+    &__quote::before {
+      display: none;
+    }
+  }
+}
+
+// ============================================
+// SLIDER MODE
+// ============================================
+
+.testimonials--slider {
+  padding-bottom: $spacing-8;
+  
+  .swiper-slide {
+    height: auto;
+  }
+  
+  .testimonial {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.testimonials__navigation {
+  display: flex;
+  gap: $spacing-2;
+  justify-content: center;
+  margin-top: $spacing-4;
+}
+
+.testimonials__button {
+  width: 44px;
+  height: 44px;
+  border-radius: $radius-full;
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all $transition-base;
+  color: var(--color-text);
+  
+  &:hover {
+    background: $color-primary;
+    border-color: $color-primary;
+    color: $color-white;
+    transform: scale(1.05);
+  }
+  
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    
+    &:hover {
+      background: var(--color-card-bg);
+      border-color: var(--color-border);
+      color: var(--color-text);
+      transform: none;
+    }
+  }
+}
+
+.testimonials__pagination {
+  display: flex;
+  justify-content: center;
+  gap: $spacing-2;
+  margin-top: $spacing-4;
+  
+  .swiper-pagination-bullet {
+    width: 10px;
+    height: 10px;
+    background: var(--color-border);
+    opacity: 1;
+    transition: all $transition-base;
+    
+    &-active {
+      background: $color-primary;
+      width: 24px;
+      border-radius: 5px;
+    }
+  }
+}

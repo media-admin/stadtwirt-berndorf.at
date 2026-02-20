@@ -1,0 +1,455 @@
+// Contact Form 7 Custom Styles
+.wpcf7 {
+  margin: $spacing-6 0;
+  
+  // Form wrapper
+  .wpcf7-form {
+    // Form fields container
+    p {
+      margin-bottom: $spacing-4;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+    
+    // Labels
+    label {
+      display: block;
+      margin-bottom: $spacing-2;
+      font-weight: 600;
+      color: var(--color-text);
+      font-size: $font-size-base;
+      
+      // Required asterisk
+      .wpcf7-form-control-wrap {
+        position: relative;
+      }
+    }
+    
+    // Text inputs, email, tel, url, number, date
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="url"],
+    input[type="number"],
+    input[type="date"],
+    input[type="time"],
+    select,
+    textarea {
+      width: 100%;
+      padding: $spacing-3 $spacing-4;
+      border: 2px solid var(--color-border);
+      border-radius: $radius-md;
+      background: var(--color-input-bg);
+      color: var(--color-text);
+      font-family: inherit;
+      font-size: $font-size-base;
+      line-height: 1.5;
+      transition: all $transition-base;
+      
+      &::placeholder {
+        color: var(--color-text-secondary);
+        opacity: 0.7;
+      }
+      
+      &:focus {
+        outline: none;
+        border-color: $color-primary;
+        background: var(--color-bg);
+        box-shadow: 0 0 0 4px rgba($color-primary, 0.1);
+      }
+      
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        background: var(--color-border);
+      }
+    }
+    
+    // Textarea
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+    
+    // Select dropdown
+    select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23667eea' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right $spacing-3 center;
+      background-size: 12px;
+      padding-right: $spacing-6;
+    }
+    
+    // Checkboxes and Radio buttons
+    input[type="checkbox"],
+    input[type="radio"] {
+      width: auto;
+      margin-right: $spacing-2;
+      cursor: pointer;
+      
+      &:focus {
+        outline: 2px solid $color-primary;
+        outline-offset: 2px;
+      }
+    }
+    
+    // Checkbox/Radio label
+    .wpcf7-list-item {
+      margin: 0 0 $spacing-2 0;
+      display: flex;
+      align-items: center;
+      
+      label {
+        margin: 0;
+        font-weight: 400;
+        cursor: pointer;
+      }
+    }
+    
+    // File upload
+    input[type="file"] {
+      width: 100%;
+      padding: $spacing-3;
+      border: 2px dashed var(--color-border);
+      border-radius: $radius-md;
+      cursor: pointer;
+      background: var(--color-card-bg);
+      transition: all $transition-base;
+      
+      &:hover {
+        border-color: $color-primary;
+        background: rgba($color-primary, 0.05);
+      }
+      
+      &:focus {
+        outline: none;
+        border-color: $color-primary;
+        box-shadow: 0 0 0 4px rgba($color-primary, 0.1);
+      }
+    }
+    
+    // Submit button
+    input[type="submit"],
+    button[type="submit"] {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: $spacing-3 $spacing-6;
+      background: $color-primary;
+      color: $color-white;
+      border: none;
+      border-radius: $radius-md;
+      font-size: $font-size-base;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all $transition-base;
+      box-shadow: $shadow-sm;
+      
+      &:hover {
+        background: darken($color-primary, 10%);
+        transform: translateY(-2px);
+        box-shadow: $shadow-lg;
+      }
+      
+      &:active {
+        transform: translateY(0);
+        box-shadow: $shadow-sm;
+      }
+      
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+    }
+    
+    // Acceptance checkbox (GDPR, etc.)
+    .wpcf7-acceptance {
+      .wpcf7-list-item {
+        margin-top: $spacing-3;
+        padding: $spacing-3;
+        background: var(--color-card-bg);
+        border-radius: $radius-md;
+        border: 1px solid var(--color-border);
+        
+        label {
+          font-size: $font-size-sm;
+          line-height: 1.6;
+          
+          a {
+            color: $color-primary;
+            text-decoration: underline;
+            
+            &:hover {
+              text-decoration: none;
+            }
+          }
+        }
+      }
+    }
+    
+    // Quiz
+    .wpcf7-quiz-label {
+      font-weight: 600;
+      margin-right: $spacing-2;
+    }
+  }
+  
+  // ============================================
+  // VALIDATION & MESSAGES
+  // ============================================
+  
+  // Validation error (individual field)
+  .wpcf7-not-valid-tip {
+    display: block;
+    margin-top: $spacing-1;
+    color: $color-error;
+    font-size: $font-size-sm;
+    font-weight: 500;
+  }
+  
+  // Invalid field highlight
+  .wpcf7-not-valid {
+    border-color: $color-error !important;
+    background: lighten($color-error, 45%) !important;
+  }
+  
+  // Response messages
+  .wpcf7-response-output {
+    margin: $spacing-4 0 0;
+    padding: $spacing-4;
+    border-radius: $radius-md;
+    font-weight: 500;
+    border: 2px solid;
+    
+    // Validation errors
+    &.wpcf7-validation-errors {
+      background: lighten($color-error, 45%);
+      border-color: $color-error;
+      color: $color-error;
+      
+      &::before {
+        content: "⚠️ ";
+      }
+    }
+    
+    // Mail sent successfully
+    &.wpcf7-mail-sent-ok {
+      background: lighten($color-success, 45%);
+      border-color: $color-success;
+      color: darken($color-success, 20%);
+      
+      &::before {
+        content: "✓ ";
+      }
+    }
+    
+    // Mail failed to send
+    &.wpcf7-mail-sent-ng {
+      background: lighten($color-error, 45%);
+      border-color: $color-error;
+      color: $color-error;
+      
+      &::before {
+        content: "✗ ";
+      }
+    }
+    
+    // Spam detected
+    &.wpcf7-spam-blocked {
+      background: lighten($color-warning, 40%);
+      border-color: $color-warning;
+      color: darken($color-warning, 20%);
+      
+      &::before {
+        content: "🛡️ ";
+      }
+    }
+  }
+  
+  // AJAX loader (spinner)
+  .wpcf7-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba($color-primary, 0.2);
+    border-top-color: $color-primary;
+    border-radius: $radius-full;
+    animation: spin 0.6s linear infinite;
+    margin-left: $spacing-2;
+    vertical-align: middle;
+  }
+  
+// ============================================
+// FORM LAYOUTS
+// ============================================
+
+// Two-column layout
+.cf7-two-columns {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-4;
+  
+  @include respond-to('md') {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  // Full-width fields
+  .cf7-full-width {
+    grid-column: 1 / -1;
+  }
+  
+  // Each direct child (label)
+  > label,
+  > p {
+    margin-bottom: 0;
+  }
+}
+
+// Three-column layout
+.cf7-three-columns {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-4;
+  
+  @include respond-to('sm') {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  @include respond-to('lg') {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .cf7-full-width {
+    grid-column: 1 / -1;
+  }
+  
+  > label,
+  > p {
+    margin-bottom: 0;
+  }
+}
+
+// Inline form (e.g., newsletter)
+.cf7-inline {
+  display: flex;
+  gap: $spacing-2;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  
+  label {
+    flex: 1;
+    min-width: 250px;
+    margin-bottom: 0;
+  }
+  
+  input[type="submit"] {
+    flex-shrink: 0;
+  }
+
+  }
+}
+
+// ============================================
+// DARK MODE
+// ============================================
+
+@media (prefers-color-scheme: dark) {
+  .wpcf7 {
+    .wpcf7-form {
+      input[type="text"],
+      input[type="email"],
+      input[type="tel"],
+      input[type="url"],
+      input[type="number"],
+      input[type="date"],
+      input[type="time"],
+      select,
+      textarea {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 255, 255, 0.2);
+        
+        &:focus {
+          background: rgba(255, 255, 255, 0.1);
+        }
+      }
+      
+      input[type="file"] {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 255, 255, 0.2);
+      }
+    }
+    
+    .wpcf7-response-output {
+      &.wpcf7-validation-errors {
+        background: rgba($color-error, 0.2);
+      }
+      
+      &.wpcf7-mail-sent-ok {
+        background: rgba($color-success, 0.2);
+      }
+      
+      &.wpcf7-spam-blocked {
+        background: rgba($color-warning, 0.2);
+      }
+    }
+  }
+}
+
+// ============================================
+// ANIMATIONS
+// ============================================
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// ============================================
+// CUSTOM VARIANTS
+// ============================================
+
+// Card style form
+.wpcf7-card {
+  background: var(--color-card-bg);
+  padding: $spacing-6;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-lg;
+  
+  @include respond-to('md') {
+    padding: $spacing-8;
+  }
+}
+
+// Minimal style form
+.wpcf7-minimal {
+  .wpcf7-form {
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="url"],
+    input[type="number"],
+    input[type="date"],
+    input[type="time"],
+    select,
+    textarea {
+      border: none;
+      border-bottom: 2px solid var(--color-border);
+      border-radius: 0;
+      padding-left: 0;
+      padding-right: 0;
+      background: transparent;
+      
+      &:focus {
+        border-bottom-color: $color-primary;
+        box-shadow: none;
+      }
+    }
+  }
+}

@@ -1,0 +1,370 @@
+// ============================================
+// PRICING TABLES GRID - FIXED
+// ============================================
+
+.pricing-tables {
+  display: grid !important;
+  gap: 2rem !important;
+  margin: 4rem 0 !important;
+  align-items: stretch !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+// Mobile: 1 Spalte (default für alle)
+.pricing-tables {
+  grid-template-columns: 1fr !important;
+}
+
+// 2 Columns Layout
+@media (min-width: 768px) {
+  .pricing-tables[data-columns="2"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+// 3 Columns Layout
+@media (min-width: 640px) {
+  .pricing-tables[data-columns="3"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .pricing-tables[data-columns="3"] {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+// 4 Columns Layout
+@media (min-width: 640px) {
+  .pricing-tables[data-columns="4"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .pricing-tables[data-columns="4"] {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+}
+
+// ============================================
+// SINGLE PRICING TABLE
+// ============================================
+
+// Single Pricing Table
+.pricing-table {
+  background: var(--color-card-bg);
+  border: 2px solid var(--color-border);
+  border-radius: $radius-lg;
+  padding: $spacing-6;
+  display: flex;
+  flex-direction: column;
+  transition: all $transition-base;
+  position: relative;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+    
+  // Badge
+  &__badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: $color-primary;
+    color: $color-white;
+    padding: $spacing-1 $spacing-3;
+    border-radius: $radius-full;
+    font-size: $font-size-xs;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    box-shadow: $shadow-md;
+  }
+  
+  // Header
+  &__header {
+    text-align: center;
+    margin-bottom: $spacing-5;
+  }
+  
+  &__title {
+    margin: 0 0 $spacing-2 0;
+    font-size: $font-size-xl;
+    font-weight: 700;
+    color: var(--color-text);
+  }
+  
+  &__description {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: $font-size-sm;
+  }
+  
+  // Price
+  &__price {
+    text-align: center;
+    margin-bottom: $spacing-6;
+    padding-bottom: $spacing-6;
+    border-bottom: 2px solid var(--color-border);
+  }
+  
+  &__currency {
+    font-size: $font-size-xl;
+    font-weight: 600;
+    color: var(--color-text);
+    vertical-align: top;
+    margin-right: $spacing-1;
+  }
+  
+  &__amount {
+    font-size: 56px;
+    font-weight: 700;
+    color: var(--color-text);
+    line-height: 1;
+    
+    @include respond-to('lg') {
+      font-size: 64px;
+    }
+  }
+  
+  &__period {
+    display: block;
+    margin-top: $spacing-2;
+    color: var(--color-text-secondary);
+    font-size: $font-size-sm;
+  }
+  
+  // Features
+  &__features {
+    flex: 1;
+    margin-bottom: $spacing-6;
+    
+    p {
+      margin: 0;
+    }
+  }
+  
+  // Footer
+  &__footer {
+    margin-top: auto;
+  }
+  
+  &__button {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-4 $spacing-6;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all $transition-base;
+  }
+  
+  // Featured State
+  &--featured {
+    border-color: $color-primary;
+    border-width: 3px;
+    box-shadow: $shadow-lg;
+    transform: scale(1.05);
+    z-index: 1;
+    
+    @include respond-to('lg') {
+      transform: scale(1.08);
+    }
+    
+    &:hover {
+      transform: scale(1.05) translateY(-8px);
+      
+      @include respond-to('lg') {
+        transform: scale(1.08) translateY(-8px);
+      }
+    }
+    
+    .pricing-table__title {
+      color: $color-primary;
+    }
+    
+    .pricing-table__button {
+      background: $color-primary;
+      color: $color-white;
+      box-shadow: $shadow-md;
+      
+      &:hover {
+        background: darken($color-primary, 10%);
+        transform: translateY(-2px);
+        box-shadow: $shadow-lg;
+      }
+    }
+  }
+}
+
+// Pricing Features
+.pricing-feature {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-3;
+  padding: $spacing-3 0;
+  border-bottom: 1px solid var(--color-border);
+  
+  &:last-child {
+    border-bottom: none;
+  }
+  
+  &__icon {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $radius-full;
+    font-weight: bold;
+    font-size: $font-size-sm;
+    
+    &--check {
+      background: rgba($color-success, 0.1);
+      color: $color-success;
+    }
+    
+    &--cross {
+      background: rgba($color-error, 0.1);
+      color: $color-error;
+      opacity: 0.5;
+    }
+    
+    &--info {
+      background: rgba($color-info, 0.1);
+      color: $color-info;
+    }
+  }
+  
+  span {
+    flex: 1;
+    color: var(--color-text);
+    line-height: 1.6;
+  }
+  
+  // Highlight feature
+  &--highlight {
+    background: rgba($color-primary, 0.05);
+    padding: $spacing-3;
+    border-radius: $radius-md;
+    margin: $spacing-2 0;
+    border: 1px solid rgba($color-primary, 0.2);
+    
+    span {
+      font-weight: 600;
+      color: $color-primary;
+    }
+  }
+}
+
+// ============================================
+// STYLE VARIANTS
+// ============================================
+
+// Minimal Style
+.pricing-tables--minimal {
+  .pricing-table {
+    border: none;
+    box-shadow: none;
+    padding: $spacing-5;
+    
+    &:hover {
+      box-shadow: $shadow-md;
+    }
+    
+    &__price {
+      border-bottom: none;
+      padding-bottom: $spacing-4;
+    }
+    
+    &__amount {
+      font-size: 48px;
+    }
+    
+    &--featured {
+      border: 2px solid $color-primary;
+      box-shadow: $shadow-md;
+    }
+  }
+  
+  .pricing-feature {
+    border-bottom: none;
+    padding: $spacing-2 0;
+  }
+}
+
+// Featured Style (All cards look prominent)
+.pricing-tables--featured {
+  .pricing-table {
+    background: linear-gradient(135deg, var(--color-card-bg) 0%, rgba($color-primary, 0.05) 100%);
+    border-color: rgba($color-primary, 0.3);
+    box-shadow: $shadow-lg;
+  }
+}
+
+// ============================================
+// RESPONSIVE
+// ============================================
+
+@include respond-to('sm') {
+  .pricing-table {
+    padding: $spacing-6;
+    
+    &__amount {
+      font-size: 64px;
+    }
+  }
+}
+
+// Dark Mode
+@media (prefers-color-scheme: dark) {
+  .pricing-table {
+    &--featured {
+      background: linear-gradient(135deg, var(--color-card-bg) 0%, rgba($color-primary, 0.1) 100%);
+    }
+  }
+  
+  .pricing-feature {
+    &--highlight {
+      background: rgba($color-primary, 0.1);
+    }
+  }
+}
+
+// Button Styles (if not already defined)
+.button {
+  display: inline-block;
+  padding: $spacing-3 $spacing-6;
+  border-radius: $radius-md;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all $transition-base;
+  cursor: pointer;
+  border: 2px solid transparent;
+  
+  &--primary {
+    background: $color-primary;
+    color: $color-white;
+    
+    &:hover {
+      background: darken($color-primary, 10%);
+    }
+  }
+  
+  &--secondary {
+    background: transparent;
+    border-color: var(--color-border);
+    color: var(--color-text);
+    
+    &:hover {
+      border-color: $color-primary;
+      color: $color-primary;
+    }
+  }
+}

@@ -1,0 +1,285 @@
+// Timeline Component
+.timeline {
+  position: relative;
+  margin: $spacing-8 0;
+  padding: $spacing-4 0;
+  
+  // Central line
+  &::before {
+    content: '';
+    position: absolute;
+    left: 30px;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--color-border);
+    
+    @include respond-to('md') {
+      left: 50%;
+      transform: translateX(-50%);
+    }
+  }
+}
+
+// Timeline Item
+.timeline-item {
+  position: relative;
+  padding-left: 80px;
+  padding-bottom: $spacing-8;
+  
+  &:last-child {
+    padding-bottom: 0;
+  }
+  
+  @include respond-to('md') {
+    padding-left: 0;
+    width: 50%;
+    
+    &:nth-child(odd) {
+      width: auto;
+      padding-right: calc(50% + 40px);
+      text-align: right;
+      
+      .timeline-item__content {
+        align-items: flex-end;
+      }
+      
+      .timeline-item__marker {
+        left: auto;
+        right: -25px;
+      }
+    }
+    
+    &:nth-child(even) {
+      margin-left: 50%;
+      padding-left: 40px;
+      text-align: left;
+      
+      .timeline-item__content {
+        align-items: flex-start;
+      }
+      
+      .timeline-item__marker {
+        left: -25px;
+      }
+    }
+  }
+  
+  // Marker (Icon Circle)
+  &__marker {
+    position: absolute;
+    left: 6px;
+    top: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: $radius-full;
+    background: $color-primary;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    box-shadow: 0 0 0 4px var(--color-bg);
+    
+    .dashicons {
+      color: $color-white;
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+    }
+    
+    @include respond-to('md') {
+      left: 50%;
+      transform: translateX(-50%);
+    }
+  }
+  
+  // Content
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-2;
+  }
+  
+  // Date
+  &__date {
+    font-size: $font-size-sm;
+    font-weight: 600;
+    color: $color-primary;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  
+  // Title
+  &__title {
+    margin: 0;
+    font-size: $font-size-xl;
+    font-weight: 700;
+    color: var(--color-text);
+  }
+  
+  // Image
+  &__image {
+    margin: $spacing-3 0;
+    border-radius: $radius-md;
+    overflow: hidden;
+    
+    img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+  }
+  
+  // Description
+  &__description {
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+    
+    p:first-child {
+      margin-top: 0;
+    }
+    
+    p:last-child {
+      margin-bottom: 0;
+    }
+    
+    ul, ol {
+      margin: $spacing-3 0;
+    }
+  }
+  
+  // ============================================
+  // COLOR VARIANTS
+  // ============================================
+  
+  &--primary {
+    .timeline-item__marker {
+      background: $color-primary;
+    }
+    
+    .timeline-item__date {
+      color: $color-primary;
+    }
+  }
+  
+  &--success {
+    .timeline-item__marker {
+      background: $color-success;
+    }
+    
+    .timeline-item__date {
+      color: $color-success;
+    }
+  }
+  
+  &--error {
+    .timeline-item__marker {
+      background: $color-error;
+    }
+    
+    .timeline-item__date {
+      color: $color-error;
+    }
+  }
+  
+  &--warning {
+    .timeline-item__marker {
+      background: darken($color-warning, 10%);
+    }
+    
+    .timeline-item__date {
+      color: darken($color-warning, 10%);
+    }
+  }
+  
+  &--info {
+    .timeline-item__marker {
+      background: $color-info;
+    }
+    
+    .timeline-item__date {
+      color: $color-info;
+    }
+  }
+}
+
+// ============================================
+// STYLE VARIANTS
+// ============================================
+
+// Alternate Style (Same as default on desktop)
+.timeline--alternate {
+  // Mobile: Same as default
+  // Desktop: Handled by nth-child logic above
+}
+
+// Centered Style (Always centered, never alternating)
+.timeline--centered {
+  @include respond-to('md') {
+    .timeline-item {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      padding-left: 80px;
+      padding-right: 0;
+      text-align: left;
+      
+      .timeline-item__content {
+        align-items: flex-start;
+      }
+      
+      .timeline-item__marker {
+        left: 6px;
+        right: auto;
+        transform: none;
+      }
+    }
+    
+    &::before {
+      left: 30px;
+      transform: none;
+    }
+  }
+}
+
+// ============================================
+// ANIMATIONS
+// ============================================
+
+.timeline-item {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.6s ease-out;
+  
+  &.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ============================================
+// RESPONSIVE
+// ============================================
+
+@include respond-to('sm') {
+  .timeline-item {
+    &__title {
+      font-size: $font-size-xl;
+    }
+  }
+}
+
+// Dark Mode
+@media (prefers-color-scheme: dark) {
+  .timeline {
+    &::before {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+  
+  .timeline-item {
+    &__marker {
+      box-shadow: 0 0 0 4px var(--color-bg);
+    }
+  }
+}

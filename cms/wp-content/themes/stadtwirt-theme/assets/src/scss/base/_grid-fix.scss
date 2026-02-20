@@ -1,0 +1,72 @@
+// ============================================
+// UNIVERSAL GRID FIX
+// Zentraler Fix für alle Grid-Layouts
+// ============================================
+
+// Alle Grid-Container mit data-columns
+[data-columns] {
+  display: grid !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+// Mobile: Immer 1 Spalte
+[data-columns] {
+  grid-template-columns: 1fr !important;
+}
+
+// Tablet (640px+): 2 Spalten für 3-4 column layouts
+@media (min-width: 640px) {
+  [data-columns="2"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  [data-columns="3"],
+  [data-columns="4"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+// Desktop (1024px+): Volle Spaltenanzahl
+@media (min-width: 1024px) {
+  [data-columns="2"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  [data-columns="3"] {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+  
+  [data-columns="4"] {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+  
+  [data-columns="5"] {
+    grid-template-columns: repeat(5, 1fr) !important;
+  }
+  
+  [data-columns="6"] {
+    grid-template-columns: repeat(6, 1fr) !important;
+  }
+}
+
+// Alle Grid Items
+[data-columns] > * {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+
+// Spezifische Container
+.pricing-tables,
+.team-cards,
+.team-grid,
+.stats,
+.stats-grid,
+.testimonials-grid {
+  display: grid !important;
+  gap: 2rem !important;
+  margin: 2rem 0 !important;
+}

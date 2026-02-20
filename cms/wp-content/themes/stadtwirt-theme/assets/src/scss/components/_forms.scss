@@ -1,0 +1,12 @@
+// Forms
+input,
+textarea,
+select {
+  background: var(--color-surface);
+  color: var(--color-text);
+  border-color: var(--color-border);
+  
+  &:focus {
+    border-color: $color-primary;
+  }
+}

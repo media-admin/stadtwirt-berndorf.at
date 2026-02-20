@@ -1,0 +1,75 @@
+// Lightbox
+.lightbox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.95);
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  
+  &.is-active {
+    display: flex;
+  }
+  
+  &__content {
+    max-width: 90vw;
+    max-height: 90vh;
+    position: relative;
+  }
+  
+  &__image {
+    max-width: 100%;
+    max-height: 85vh;
+    display: block;
+    margin: 0 auto;
+  }
+  
+  &__caption {
+    text-align: center;
+    color: $color-white;
+    padding: $spacing-2;
+    font-size: $font-size-sm;
+  }
+  
+  &__close,
+  &__prev,
+  &__next {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: $color-white;
+    font-size: 40px;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    transition: all $transition-fast;
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+  
+  &__close {
+    top: $spacing-4;
+    right: $spacing-4;
+    border-radius: $radius-full;
+  }
+  
+  &__prev,
+  &__next {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  
+  &__prev {
+    left: $spacing-4;
+  }
+  
+  &__next {
+    right: $spacing-4;
+  }
+}

@@ -1,0 +1,573 @@
+/* 
+CSS for the stats dashboard page.
+This is the core stats dashboard page, not the sidebar "History Insights" widget.
+Also the CSS is only for the free version of the plugin, the premium add-on has its own CSS,
+that removes this CSS and replaces it with its own.
+So: this CSS is only used when the premium add-on is *not* active!
+*/
+
+.sh-StatsDashboard {
+	--sh-avatar-size: var(--sh-font-size-xxxlarge);
+}
+
+.sh-StatsDashboard {
+	display: grid;
+	grid-template-columns: repeat(8, 1fr);
+	gap: var(--sh-spacing-large);
+}
+
+/* Default span is 2, so 4 cols fits. */
+.sh-StatsDashboard > * {
+	grid-column: span 2;
+}
+
+.sh-StatsDashboard-section {
+	background: #fff;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	padding: 20px;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.sh-StatsDashboard-section--wide {
+	grid-column: span 4;
+}
+
+.sh-StatsDashboard-section--extraWide {
+	grid-column: span 2;
+	grid-row: span 2;
+}
+
+.sh-StatsDashboard-content--sideBySide {
+	flex-direction: row;
+	justify-content: flex-start;
+	align-items: flex-start;
+	gap: 40px;
+	width: 100%;
+}
+
+/* Smaller sparkline-ish chart container. */
+.sh-StatsDashboard-chartContainer {
+	height: 200px;
+}
+
+/* Loading state */
+.sh-StatsDashboard-loading {
+	color: #666;
+	font-style: italic;
+}
+
+/* Top Users Table */
+.sh-StatsDashboard-content table {
+	margin-top: 0;
+	width: 100%;
+}
+
+.sh-StatsDashboard-content table th {
+	text-align: left;
+	padding: 8px;
+	font-weight: 600;
+}
+
+.sh-StatsDashboard-content table td {
+	padding: 8px;
+}
+
+.sh-StatsDashboard-content table th:last-child,
+.sh-StatsDashboard-content table td:last-child {
+	text-align: right;
+}
+
+/* Chart containers */
+.sh-StatsDashboard-chart {
+	height: 125px;
+}
+
+.sh-StatsDashboard-chart.is-blurred {
+	filter: blur(4px);
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 1200px) {
+	.sh-StatsDashboard {
+		grid-template-columns: repeat(2, 1fr);
+	}
+
+	/* Remove unused extraWide section */
+}
+
+@media screen and (max-width: 782px) {
+	.sh-StatsDashboard {
+		grid-template-columns: 1fr;
+	}
+
+	.sh-StatsDashboard-section--wide {
+		grid-column: span 1;
+		grid-row: span 1;
+	}
+
+	/* Consolidate media queries and remove duplicate rules */
+	.sh-StatsDashboard-content--sideBySide {
+		flex-direction: column;
+		gap: 20px;
+	}
+
+	.sh-StatsDashboard-chartContainer,
+	.sh-StatsDashboard-tableContainer {
+		max-width: 100%;
+	}
+}
+
+.sh-StatsDashboard-userList {
+	display: flex;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.sh-StatsDashboard-userItem {
+	position: relative;
+	margin-left: -12px;
+	margin-bottom: 0;
+}
+
+.sh-StatsDashboard-userName {
+	font-size: var(--sh-font-size-medium);
+	font-weight: 600;
+}
+
+.sh-StatsDashboard-userItem:first-child {
+	margin-left: 0;
+}
+
+.sh-StatsDashboard-userLink {
+	display: block;
+	text-decoration: none;
+	color: inherit;
+	cursor: pointer;
+}
+
+.sh-StatsDashboard-userLink:hover,
+.sh-StatsDashboard-userLink:focus {
+	outline: none;
+}
+
+/* List of user names below the avatar list. */
+.sh-StatsDashboard-userNamesList {
+	margin-top: var(--sh-spacing-xsmall);
+	margin-bottom: 0;
+
+	a {
+		text-decoration: none;
+	}
+
+	a:hover,
+	a:focus {
+		text-decoration: underline;
+	}
+}
+
+/* Event count displayed after each username in the list. */
+.sh-StatsDashboard-userEventCount {
+	font-size: 0.9em;
+	color: #666;
+	font-weight: normal;
+	text-decoration: none;
+}
+
+/* User data hidden until hover. */
+.sh-StatsDashboard-userData {
+	position: absolute;
+	top: var(--sh-avatar-size);
+	/* left: 0; */
+	opacity: 0;
+	transform: translateX(-50%);
+	left: 50%;
+	white-space: nowrap;
+	z-index: 5;
+	transition: opacity 0.3s ease-in-out;
+	background: var(--sh-color-yellow);
+	border-radius: var(--sh-border-radius);
+	box-shadow: var(--sh-shadow-elevation-high);
+	padding: var(--sh-spacing-medium);
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	font-size: var(--sh-font-size-medium);
+	pointer-events: none;
+}
+
+.sh-StatsDashboard-userLink:hover .sh-StatsDashboard-userAvatar {
+	transform: scale(1.15);
+}
+
+.sh-StatsDashboard-userLink:hover .sh-StatsDashboard-userData {
+	pointer-events: auto;
+	opacity: 1;
+}
+
+.sh-StatsDashboard-userInfo {
+	display: flex;
+	flex-direction: row;
+	gap: 4px;
+}
+
+.sh-StatsDashboard-userAvatar {
+	border-radius: 50%;
+	border: 2px solid var(--sh-color-white);
+	width: var(--sh-avatar-size);
+	height: var(--sh-avatar-size);
+	transition: transform 0.1s ease-in-out;
+	vertical-align: middle;
+}
+
+.sh-StatsDashboard-userRole {
+	color: #646970;
+	font-size: 12px;
+}
+
+.sh-StatsDashboard-userSessions {
+	color: #2271b1;
+	font-size: 12px;
+}
+
+.sh-InsightsDateRange {
+	margin-bottom: 2rem;
+	padding: 1rem;
+	background: #fff;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+}
+
+.sh-InsightsDateRange-text {
+	margin: 0;
+	font-size: 1.1em;
+}
+
+/* Calendar styles */
+.sh-StatsDashboard-calendar {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+.sh-StatsDashboard-calendarMonth {
+	width: 100%;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+}
+
+.sh-StatsDashboard-calendarTitle {
+	margin: 0 0 20px;
+	font-size: 1.2em;
+	color: #23282d;
+	text-align: center;
+}
+
+.sh-StatsDashboard-calendarGrid {
+	display: grid;
+	grid-template-columns: repeat(7, 1fr);
+	gap: 8px;
+	flex: 1;
+	align-items: start;
+}
+
+.sh-StatsDashboard-calendarHeader {
+	padding: 10px;
+	text-align: center;
+	font-weight: 600;
+	color: #1d2327;
+}
+
+.sh-StatsDashboard-calendarDay {
+	aspect-ratio: 1;
+	padding: 12px;
+	background-color: #f0f0f1;
+	border-radius: 4px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+	font-size: 16px;
+}
+
+.sh-StatsDashboard-calendarDay--empty {
+	background-color: transparent;
+}
+
+.sh-StatsDashboard-calendarDay--outOfRange {
+	background-color: #f0f0f1;
+	opacity: 0.5;
+}
+
+.sh-StatsDashboard-calendarDay--outOfRange
+	.sh-StatsDashboard-calendarDayNumber {
+	color: #646970;
+}
+
+.sh-StatsDashboard-calendarDay--low {
+	background-color: #e6f3ff;
+}
+
+.sh-StatsDashboard-calendarDay--medium {
+	background-color: #b3d9ff;
+}
+
+.sh-StatsDashboard-calendarDay--high {
+	background-color: #80bfff;
+}
+
+.sh-StatsDashboard-calendarDayNumber {
+	font-size: 14px;
+	font-weight: 600;
+	color: #1d2327;
+}
+
+.sh-StatsDashboard-calendarDayCount {
+	font-size: 12px;
+	color: #50575e;
+	margin-top: 4px;
+}
+
+/* Responsive calendar adjustments */
+@media screen and (max-width: 782px) {
+	.sh-StatsDashboard-calendarGrid {
+		gap: 2px;
+	}
+
+	.sh-StatsDashboard-calendarDay {
+		padding: 4px;
+	}
+
+	.sh-StatsDashboard-calendarDayNumber {
+		font-size: 12px;
+	}
+
+	.sh-StatsDashboard-calendarDayCount {
+		font-size: 10px;
+	}
+}
+
+/* The white box/card that will contains charts and stats. */
+.sh-StatsDashboard-card {
+	padding: var(--sh-spacing-large);
+	background: var(--sh-color-white);
+	border-radius: var(--sh-border-radius);
+	box-shadow: var(--sh-shadow-elevation-medium);
+	line-height: 1;
+}
+
+.sh-StatsDashboard-card--wide {
+	grid-column: span 4;
+}
+
+.sh-StatsDashboard-card--tall {
+	grid-row: span 2;
+}
+
+.sh-StatsDashboard-card--full {
+	grid-column: 1 / -1;
+}
+
+.sh-StatsDashboard-cardTitle {
+	--sh-badge-text-color: var(--sh-color-black);
+	--sh-badge-background-color: var(--sh-color-green-mint);
+	color: var(--sh-badge-text-color);
+	background-color: var(--sh-badge-background-color);
+	display: inline-flex;
+	align-items: center;
+	font-size: var(--sh-font-size-medium);
+	font-weight: 600;
+	font-style: normal;
+	border-radius: 4px;
+	padding: 0.25em 0.5em;
+	opacity: 0.75;
+	line-height: 1;
+	margin: 0;
+	margin-bottom: var(--sh-spacing-large);
+}
+
+.sh-StatsDashboard-card--tall .sh-StatsDashboard-cardTitle {
+	font-size: var(--sh-font-size-large);
+}
+
+.sh-StatsDashboard-cardTitle .sh-Icon {
+	margin-right: 0.5em;
+}
+
+/* Container for multiple stats numbers and charts. */
+.sh-StatsDashboard-stats {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: var(--sh-spacing-large);
+	margin-bottom: var(--sh-spacing-large);
+}
+
+.sh-StatsDashboard-stats:last-child {
+	margin-bottom: 0;
+}
+
+.sh-StatsDashboard-stats.is-blurred {
+	filter: blur(6px);
+}
+
+/* Container around a label and a value. */
+.sh-StatsDashboard-stat {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sh-spacing-small);
+	flex: 1;
+}
+
+.sh-StatsDashboard-statValue {
+	color: var(--sh-color-black);
+	font-size: var(--sh-font-size-xxxlarge);
+	font-weight: normal;
+	line-height: 1;
+}
+
+.sh-StatsDashboard-stat--small {
+	gap: var(--sh-spacing-xsmall);
+
+	.sh-StatsDashboard-statLabel,
+	.sh-StatsDashboard-statSubValue {
+		font-size: var(--sh-font-size-normal);
+	}
+
+	.sh-StatsDashboard-statValue {
+		font-size: var(--sh-font-size-xxlarge);
+	}
+}
+
+.sh-StatsDashboard-statLabel,
+.sh-StatsDashboard-statSubValue {
+	font-size: var(--sh-font-size-medium);
+	color: var(--sh-color-black-2);
+}
+
+.sh-StatsDashboard-statValue--large {
+	font-size: calc(var(--sh-font-size-xxxlarge) * 1.5);
+}
+
+.sh-StatsDashboard-filters {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-top: var(--sh-spacing-xxlarge);
+	margin-bottom: var(--sh-spacing-large);
+}
+
+.sh-StatsDashboard-dateFilters {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.sh-StatsDashboard-dateFilters-label {
+	color: #1d2327;
+	font-size: 13px;
+	font-weight: 500;
+}
+
+.sh-StatsDashboard-dateFilter {
+	display: inline-block;
+	text-decoration: none;
+	font-size: 13px;
+	line-height: 2.15384615;
+	min-height: 30px;
+	margin: 0;
+	padding: 0 10px;
+	cursor: pointer;
+	border-width: 1px;
+	border-style: solid;
+	border-radius: 3px;
+	white-space: nowrap;
+	box-sizing: border-box;
+	background: #f6f7f7;
+	border-color: #dcdcde;
+	color: #2c3338;
+	vertical-align: top;
+}
+
+.sh-StatsDashboard-dateFilter:hover {
+	background: #f0f0f1;
+	border-color: #c5c5c5;
+	color: #135e96;
+}
+
+.sh-StatsDashboard-dateFilter.is-active {
+	background: #2271b1;
+	border-color: #2271b1;
+	color: #fff;
+	text-decoration: none;
+}
+
+.sh-StatsDashboard-dateFilter.is-active:hover {
+	background: #135e96;
+	border-color: #135e96;
+	color: #fff;
+}
+
+/* Plugin tables */
+.sh-StatsDashboard-pluginTable {
+	margin-top: 2rem;
+}
+
+.sh-StatsDashboard-pluginTable h3 {
+	margin-bottom: 1rem;
+	font-size: 1.1em;
+}
+
+.sh-StatsDashboard-pluginTable table {
+	margin-bottom: 2rem;
+}
+
+.sh-StatsDashboard-pluginTable th,
+.sh-StatsDashboard-pluginTable td {
+	padding: 0.75rem;
+}
+
+.sh-StatsDashboard-pluginTable th {
+	font-weight: 600;
+	text-align: left;
+}
+
+.sh-StatsDashboard-pluginTable td {
+	vertical-align: middle;
+}
+
+/* Empty state */
+.sh-StatsDashboard-pluginTable--empty {
+	color: #666;
+	font-style: italic;
+	padding: 1rem 0;
+}
+
+.sh-StatsDashboard-details summary {
+	padding: var(--sh-spacing-small);
+	padding-left: 0;
+	cursor: pointer;
+}
+
+.sh-StatsDashboard-dateRangeContainer {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sh-spacing-medium);
+	margin-top: var(--sh-spacing-xxlarge);
+	margin-bottom: var(--sh-spacing-medium);
+}
+
+.sh-StatsDashboard-dateRangeControls {
+	transition: opacity 0.1s ease-in-out;
+}
+
+.sh-StatsDashboard-dateRangeHeading {
+	margin: 0;
+}
+
+.sh-StatsDashboard-dateRangeControls-description {
+	margin-top: var(--sh-spacing-small);
+}

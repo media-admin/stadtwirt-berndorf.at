@@ -1,0 +1,206 @@
+// Prevent horizontal overflow
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+// Hero Slider
+.hero-slider {
+  position: relative;
+  width: 100%;
+  max-width: 100vw; // Verhindere Overflow
+  height: 600px;
+  overflow: hidden;
+  
+  @media (min-width: 768px) {
+    height: 700px;
+  }
+}
+
+.hero-slide {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Background Container
+.hero-slide__background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 0;
+  
+  picture {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+// Background Image
+.hero-slide__image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+// Overlay
+.hero-slide__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1;
+}
+
+// Content
+.hero-slide__content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  color: white;
+  max-width: 800px;
+  padding: 2rem;
+}
+
+.hero-slide__subtitle {
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+}
+
+.hero-slide__title {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+  
+  @media (min-width: 768px) {
+    font-size: 56px;
+  }
+}
+
+.hero-slide__text {
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+  
+  @media (min-width: 768px) {
+    font-size: 1.125rem;
+  }
+  
+  p {
+    margin: 0;
+  }
+}
+
+.hero-slide__button {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background: #667eea;
+  color: white;
+  text-decoration: none;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: darken(#667eea, 10%);
+    transform: translateY(-2px);
+  }
+}
+
+// Navigation - Swiper Standard Klassen
+.swiper-button-prev,
+.swiper-button-next {
+  width: 50px !important;
+  height: 50px !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-radius: 50% !important;
+  color: white !important;
+  
+  &::after {
+    font-size: 20px !important;
+  }
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.3) !important;
+  }
+}
+
+// Pagination - Swiper Standard Klasse
+.swiper-pagination {
+  bottom: 20px !important;
+}
+
+.swiper-pagination-bullet {
+  width: 12px !important;
+  height: 12px !important;
+  background: rgba(255, 255, 255, 0.5) !important;
+  opacity: 1 !important;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.7) !important;
+  }
+}
+
+.swiper-pagination-bullet-active {
+  background: #667eea !important;
+  width: 32px !important;
+  border-radius: 6px !important;
+}
+
+// Mobile
+@media (max-width: 767px) {
+  .hero-slider {
+    height: 500px;
+  }
+  
+  .hero-slide__title {
+    font-size: 28px;
+  }
+  
+  .hero-slider__button--prev,
+  .hero-slider__button--next {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+.hero-slide__content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  color: white !important;
+  max-width: 800px;
+  padding: 2rem;
+  
+  * {
+    color: white !important;
+  }
+}
+
+.hero-slide__title {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+  color: white !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  
+  @media (min-width: 768px) {
+    font-size: 56px;
+  }
+}

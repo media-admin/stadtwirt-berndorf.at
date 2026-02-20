@@ -1,0 +1,409 @@
+// Navigation Menu (up to 3 levels)
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: var(--color-white);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: $shadow-sm;
+}
+
+.site-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-4 $spacing-6;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+// Logo
+.site-logo {
+  font-size: $font-size-xl;
+  font-weight: 700;
+  color: var(--color-text);
+  text-decoration: none;
+  
+  &:hover {
+    color: $color-primary;
+  }
+}
+
+// Primary Menu
+.primary-menu {
+  display: none;
+  
+  @include respond-to('lg') {
+    display: flex;
+  }
+  
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+  }
+  
+  // Level 1 (Top Level)
+  > ul {
+    > li {
+      position: relative;
+      
+      // Top level link
+      > a {
+        display: flex;
+        align-items: center;
+        gap: $spacing-1;
+        padding: $spacing-3 $spacing-4;
+        color: var(--color-text);
+        text-decoration: none;
+        font-weight: 500;
+        transition: all $transition-base;
+        
+        &:hover {
+          color: $color-primary;
+        }
+      }
+      
+      // Active/Current page
+      &.current-menu-item > a,
+      &.current-menu-parent > a,
+      &.current-menu-ancestor > a {
+        color: $color-primary;
+        font-weight: 600;
+      }
+      
+      // Has submenu indicator
+      &.menu-item-has-children > a::after {
+        content: '';
+        display: inline-block;
+        width: 0;
+        height: 0;
+        margin-left: $spacing-1;
+        border-left: 4px solid transparent;
+        border-right: 4px solid transparent;
+        border-top: 4px solid currentColor;
+        transition: transform $transition-base;
+      }
+      
+      // Hover state
+      &:hover {
+        > a::after {
+          transform: rotate(180deg);
+        }
+        
+        // Show dropdown on hover
+        > .sub-menu {
+          opacity: 1;
+          visibility: visible;
+          transform: translateY(0);
+        }
+      }
+    }
+  }
+  
+  // Level 2 (Dropdown)
+  .sub-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 250px;
+    background: var(--color-card-bg);
+    border: 1px solid var(--color-border);
+    border-radius: $radius-md;
+    box-shadow: $shadow-xl;
+    padding: $spacing-2 0;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all $transition-base;
+    z-index: 100;
+    
+    li {
+      position: relative;
+      
+      a {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: $spacing-3 $spacing-4;
+        color: var(--color-text);
+        text-decoration: none;
+        transition: all $transition-base;
+        
+        &:hover {
+          background: var(--color-hover-bg);
+          color: $color-primary;
+          padding-left: $spacing-5;
+        }
+      }
+      
+      // Current item in dropdown
+      &.current-menu-item > a {
+        color: $color-primary;
+        font-weight: 600;
+      }
+      
+      // Has third level
+      &.menu-item-has-children > a::after {
+        content: '›';
+        font-size: 20px;
+        font-weight: bold;
+      }
+      
+      // Show third level on hover
+      &:hover > .sub-menu {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(0);
+      }
+    }
+    
+    // Level 3 (Nested Dropdown)
+    .sub-menu {
+      top: 0;
+      left: 100%;
+      margin-left: $spacing-1;
+      transform: translateX(-10px);
+    }
+  }
+}
+
+// Mobile Menu Toggle
+.mobile-menu-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: transparent;
+  border: 2px solid var(--color-border);
+  border-radius: $radius-md;
+  cursor: pointer;
+  transition: all $transition-base;
+  
+  @include respond-to('lg') {
+    display: none;
+  }
+  
+  &:hover {
+    border-color: $color-primary;
+    background: rgba($color-primary, 0.1);
+  }
+  
+  // Hamburger Icon
+  span {
+    display: block;
+    position: relative;
+    width: 24px;
+    height: 2px;
+    background: var(--color-text);
+    transition: all $transition-base;
+    
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      background: var(--color-text);
+      transition: all $transition-base;
+    }
+    
+    &::before {
+      top: -8px;
+    }
+    
+    &::after {
+      bottom: -8px;
+    }
+  }
+  
+  // Active state (X)
+  &.is-active {
+    span {
+      background: transparent;
+      
+      &::before {
+        top: 0;
+        transform: rotate(45deg);
+      }
+      
+      &::after {
+        bottom: 0;
+        transform: rotate(-45deg);
+      }
+    }
+  }
+}
+
+// Mobile Menu
+.mobile-menu {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: var(--color-bg);
+  transform: translateX(-100%);
+  transition: transform $transition-base;
+  overflow-y: auto;
+  z-index: 999;
+  padding: $spacing-6;
+  padding-top: 80px;
+  
+  @include respond-to('lg') {
+    display: none;
+  }
+  
+  &.is-active {
+    transform: translateX(0);
+  }
+  
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    
+    li {
+      border-bottom: 1px solid var(--color-border);
+      
+      a {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: $spacing-4;
+        color: var(--color-text);
+        text-decoration: none;
+        font-weight: 500;
+        font-size: $font-size-lg;
+        
+        &:hover {
+          color: $color-primary;
+          background: var(--color-hover-bg);
+        }
+      }
+      
+      &.current-menu-item > a {
+        color: $color-primary;
+        font-weight: 600;
+      }
+      
+      // Has submenu
+      &.menu-item-has-children {
+        > a {
+          &::after {
+            content: '+';
+            font-size: 24px;
+            font-weight: bold;
+            transition: transform $transition-base;
+          }
+        }
+        
+        &.is-open {
+          > a::after {
+            content: '−';
+          }
+          
+          > .sub-menu {
+            display: block;
+          }
+        }
+      }
+    }
+  }
+  
+  // Submenu levels (mobile)
+  .sub-menu {
+    display: none;
+    background: var(--color-card-bg);
+    padding-left: $spacing-4;
+    
+    li {
+      border-bottom: 1px solid rgba(var(--color-border-rgb), 0.5);
+      
+      &:last-child {
+        border-bottom: none;
+      }
+      
+      a {
+        font-size: $font-size-base;
+        padding: $spacing-3 $spacing-4;
+      }
+    }
+    
+    // Third level
+    .sub-menu {
+      padding-left: $spacing-4;
+      
+      a {
+        font-size: $font-size-sm;
+      }
+    }
+  }
+}
+
+// Overlay for mobile menu
+.mobile-menu-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 998;
+  opacity: 0;
+  transition: opacity $transition-base;
+  
+  &.is-active {
+    display: block;
+    opacity: 1;
+  }
+}
+
+// Mega Menu Support (optional, for large dropdowns)
+.mega-menu {
+  position: static !important;
+  
+  > .sub-menu {
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: $spacing-4;
+    padding: $spacing-6;
+    
+    > li {
+      > a {
+        font-weight: 600;
+        font-size: $font-size-lg;
+        margin-bottom: $spacing-2;
+        pointer-events: none; // Category header
+      }
+      
+      .sub-menu {
+        position: static;
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        box-shadow: none;
+        border: none;
+        padding: 0;
+      }
+    }
+  }
+}
+
+// Dark Mode
+@media (prefers-color-scheme: dark) {
+  .site-header {
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(10px);
+  }
+}

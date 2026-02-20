@@ -1,0 +1,45 @@
+// Footer (aus Figma Footer Component)
+
+.site-footer {
+  background: var(--color-surface);
+  color: var(--color-text);
+  padding: $spacing-6 0 $spacing-4;
+  margin-top: auto;
+  text-align: center;
+  border-top: 1px solid var(--color-border);
+  transition: all 0.3s ease;
+  
+  a {
+    color: $color-white;
+    opacity: 0.8;
+    
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  p {
+    margin: 0;
+    opacity: 0.8;
+    color: var(--color-text-secondary);
+  }
+  
+  .site-info {
+    margin-top: $spacing-6;
+    padding-top: $spacing-4;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+    font-size: $font-size-sm;
+    opacity: 0.7;
+  }
+}
+
+.footer-widgets {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-6;
+  
+  @include respond-to('md') {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

@@ -1,0 +1,68 @@
+// ==========================================================================
+// Main Stylesheet - Agency Starter Kit
+// ==========================================================================
+
+// Configuration
+@import 'abstracts/variables';
+@import 'abstracts/mixins';
+
+// Base
+@import 'base/reset';
+@import 'base/fonts';
+@import 'base/typography';
+@import 'base/global';
+@import 'base/grid-fix';
+
+// Layout
+@import 'layout/header';
+@import 'layout/navigation';
+@import 'layout/footer';
+@import 'layout/grid';
+
+// Components
+@import 'components/theme-toggle';
+@import 'components/buttons';
+@import 'components/cards';
+@import 'components/events';
+@import 'components/hero-image';
+@import 'components/forms';
+@import 'components/hero-slider';
+@import 'components/accordion';
+@import 'components/lightbox';
+@import 'components/modal';
+@import 'components/back-to-top';
+@import 'components/cookie-notice';
+@import 'components/team';
+@import 'components/testimonials';
+@import 'components/services';
+@import 'components/tabs';
+@import 'components/notification';
+@import 'components/notifications';
+@import 'components/stats';
+@import 'components/timeline';
+@import 'components/image-comparison';
+@import 'components/logo-carousel';
+@import 'components/team-cards';
+@import 'components/video-player';
+@import 'components/faq-accordion';
+@import 'components/contact-form-7';
+@import 'components/cpt-grids';
+@import 'components/spoiler';
+@import 'components/pricing-tables';
+@import 'components/ajax-search';
+@import 'components/load-more';
+@import 'components/google-maps';
+@import 'components/job-card';
+@import 'components/ajax-filters';
+
+
+// Templates
+@import 'templates/page-builder';
+@import 'templates/search-results';
+
+// Utilities
+@import 'utilities/helpers';
+@import 'utilities/animations';
+
+// Pages
+@import 'pages/home';

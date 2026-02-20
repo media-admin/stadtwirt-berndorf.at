@@ -1,0 +1,170 @@
+// Video Player Component
+.video-player {
+  margin: $spacing-8 0;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  box-shadow: $shadow-lg;
+  background: var(--color-card-bg);
+  
+  // Header
+  &__header {
+    padding: $spacing-4 $spacing-6;
+    background: var(--color-card-bg);
+    border-bottom: 1px solid var(--color-border);
+  }
+  
+  &__title {
+    margin: 0;
+    font-size: $font-size-xl;
+    font-weight: 700;
+    color: var(--color-text);
+  }
+  
+  // Video Wrapper
+  &__wrapper {
+    position: relative;
+    width: 100%;
+    background: #000;
+    overflow: hidden;
+  }
+  
+  // Aspect Ratios
+  &--16-9 &__wrapper {
+    padding-bottom: 56.25%; // 16:9
+  }
+  
+  &--4-3 &__wrapper {
+    padding-bottom: 75%; // 4:3
+  }
+  
+  &--1-1 &__wrapper {
+    padding-bottom: 100%; // 1:1
+  }
+  
+  &--21-9 &__wrapper {
+    padding-bottom: 42.857%; // 21:9
+  }
+  
+  // Video/Iframe
+  &__video,
+  &__iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+  
+  // Custom Thumbnail
+  &__thumbnail {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    background: #000;
+    
+    &:hover {
+      .video-player__play-button {
+        transform: scale(1.1);
+      }
+    }
+  }
+  
+  &__poster {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  // Play Button
+  &__play-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: transform $transition-base;
+    padding: 0;
+    width: 80px;
+    height: 80px;
+    
+    svg {
+      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+    }
+    
+    &:hover {
+      transform: translate(-50%, -50%) scale(1.1);
+    }
+    
+    &:active {
+      transform: translate(-50%, -50%) scale(0.95);
+    }
+  }
+  
+  // Description
+  &__description {
+    padding: $spacing-4 $spacing-6;
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+    
+    p:first-child {
+      margin-top: 0;
+    }
+    
+    p:last-child {
+      margin-bottom: 0;
+    }
+  }
+  
+  // ============================================
+  // LOADING STATE
+  // ============================================
+  
+  &.is-loading {
+    .video-player__wrapper::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 40px;
+      height: 40px;
+      margin: -20px 0 0 -20px;
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-top-color: $color-primary;
+      border-radius: $radius-full;
+      animation: spin 1s linear infinite;
+    }
+  }
+  
+  // ============================================
+  // RESPONSIVE
+  // ============================================
+  
+  @include respond-to('sm') {
+    &__play-button {
+      width: 100px;
+      height: 100px;
+    }
+  }
+}
+
+// Animations
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Dark Mode
+@media (prefers-color-scheme: dark) {
+  .video-player {
+    &__header {
+      background: var(--color-card-bg);
+    }
+  }
+}

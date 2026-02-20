@@ -1,0 +1,178 @@
+// ============================================
+// DESIGN TOKENS – Berndorfer Stadtwirt
+// ============================================
+
+// ─── Farben ──────────────────────────────────
+$color-primary:        #7B1A1A;   // Dunkelrot (Nav, Topbar, Akzente)
+$color-primary-dark:   #5c1313;   // Hover
+$color-primary-light:  #9e2222;   // Lighter variant
+
+$color-bg-dark:        #1a1a1a;   // Dunkle Sections
+$color-bg-dark-2:      #2a2626;   // Leicht heller dunkel
+$color-bg-light:       #e8e4df;   // Cremeweiß (helle Sections)
+$color-bg-light-2:     #f2efea;   // Noch heller
+
+$color-white:          #ffffff;
+$color-black:          #0d0d0d;
+
+$color-text:           #1a1a1a;
+$color-text-muted:     #6b6b6b;
+$color-text-light:     #e8e4df;   // Text auf dunklem BG
+$color-text-light-muted: #a89e9e;
+
+$color-gray-100:       #f2efea;
+$color-gray-200:       #e8e4df;
+$color-gray-300:       #d4cfc9;
+$color-gray-400:       #a89e9e;
+$color-gray-500:       #6b6b6b;
+$color-gray-600:       #4a4a4a;
+$color-gray-700:       #2a2a2a;
+$color-gray-800:       #1a1a1a;
+
+
+// Semantic Colors
+$color-success: #10b981;
+$color-warning: #f59e0b;
+$color-error: #ef4444;
+$color-info: #3b82f6;
+
+
+
+// Usage Colors
+$color-text: $color-primary-dark;
+$color-text-muted: $color-gray-600;
+$color-border: $color-gray-300;
+
+
+
+// Use CSS Variables
+$color-background: var(--color-background);
+$color-text: var(--color-text);
+$color-text-muted: var(--color-text-muted);
+$color-text-light: var(--color-text-light);
+$color-border: var(--color-border);
+
+
+
+// ─── Typografie ──────────────────────────────
+// Google Fonts, Local Installation
+$font-primary:    'Work Sans', sans-serif;           // Body
+$font-heading:    'Lobster', serif;                 // Headlines, Script-Titles
+$font-display:    'Work Sans', sans-serif;          // Navigation, Labels, Buttons
+
+$font-size-xs:    0.75rem;    // 12px
+$font-size-sm:    0.875rem;   // 14px
+$font-size-base:  1rem;       // 16px
+$font-size-md:    1.125rem;   // 18px
+$font-size-lg:    1.25rem;    // 20px
+$font-size-xl:    1.5rem;     // 24px
+$font-size-2xl:   2rem;       // 32px
+$font-size-3xl:   2.5rem;     // 40px
+$font-size-4xl:   3.5rem;     // 56px
+
+
+// Headings (aus Figma Text Styles)
+$font-size-h1: 48px;       // Figma: "Heading 1"
+$font-size-h2: 36px;       // Figma: "Heading 2"
+$font-size-h3: 28px;       // Figma: "Heading 3"
+$font-size-h4: 24px;       // Figma: "Heading 4"
+$font-size-h5: 20px;       // Figma: "Heading 5"
+$font-size-h6: 18px;       // Figma: "Heading 6"
+
+
+$font-weight-regular:  400;
+$font-weight-medium:   500;
+$font-weight-semibold: 600;
+$font-weight-bold:     700;
+
+$line-height-tight:  1.2;
+$line-height-snug:   1.35;
+$line-height-base:   1.65;
+$line-height-loose:  1.8;
+$line-height-relaxed: 1.8;
+
+$letter-spacing-wide:  0.08em;
+$letter-spacing-wider: 0.15em;
+
+// ─── Abstände ────────────────────────────────
+$spacing-1:  0.25rem;
+$spacing-2:  0.5rem;
+$spacing-3:  0.75rem;
+$spacing-4:  1rem;
+$spacing-5:  1.25rem;
+$spacing-6:  1.5rem;
+$spacing-8:  2rem;
+$spacing-10: 2.5rem;
+$spacing-12: 3rem;
+$spacing-16: 4rem;
+$spacing-20: 5rem;
+$spacing-24: 6rem;
+$spacing-32: 8rem;
+
+$section-padding:        5rem;
+$section-padding-mobile: 3rem;
+
+// ─── Border Radius ───────────────────────────
+$radius-sm:   2px;
+$radius-base: 4px;
+$radius-lg:   6px;
+$radius-xl:   12px;
+$radius-full: 9999px;
+
+
+$radius-base: 2px;
+$radius-none: 0;
+$radius-sm: 4px;
+$radius-md: 8px;
+$radius-lg: 16px;
+$radius-xl: 24px;
+$radius-full: 9999px;
+
+
+
+// ─── Shadows ─────────────────────────────────
+$shadow-sm:  0 1px 3px rgba(0,0,0,0.25);
+$shadow-md:  0 4px 12px rgba(0,0,0,0.3);
+$shadow-lg:  0 8px 24px rgba(0,0,0,0.35);
+$shadow-xl:  0 16px 48px rgba(0,0,0,0.4);
+
+// ─── Transitions ─────────────────────────────
+$transition-fast:   all 0.15s ease;
+$transition-base:   all 0.25s ease;
+$transition-slow:   all 0.4s ease;
+
+// ─── Container ───────────────────────────────
+$container-width: 1200px;
+$container-max-width:    1280px;
+$container-wide:   1440px;
+$container-narrow: 900px;
+$container-padding: 2rem;
+
+// ─── Breakpoints ─────────────────────────────
+$bp-sm:   640px;
+$bp-md:   768px;
+$bp-lg:   1024px;
+$bp-xl:   1280px;
+$bp-2xl:  1536px;
+
+$breakpoint-xs: 375px;        // Mobile
+$breakpoint-sm: 576px;        // Mobile Landscape
+$breakpoint-md: 768px;        // Tablet
+$breakpoint-lg: 992px;        // Tablet Landscape
+$breakpoint-xl: 1200px;       // Desktop
+$breakpoint-2xl: 1440px;      // Large Desktop
+
+
+// ─── Z-Index ─────────────────────────────────
+$z-base:    1;
+$z-dropdown: 100;
+$z-sticky:  200;
+$z-fixed:   300;
+$z-overlay: 400;
+$z-modal:   500;
+$z-toast:   600;
+
+$z-header: 100;
+$z-dropdown: 1000;
+$z-modal: 2000;
+$z-tooltip: 3000;

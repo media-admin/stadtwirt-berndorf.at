@@ -1,0 +1,3440 @@
+/**
+ * Use SuitCSS based classnames.
+ */
+
+@import "./variables.css";
+
+/* clearfix */
+.SimpleHistory__cf:before,
+.SimpleHistory__cf:after {
+	content: "";
+	display: table;
+}
+.SimpleHistory__cf:after {
+	clear: both;
+}
+.SimpleHistory__cf {
+	zoom: 1;
+} /* For IE 6/7 (trigger hasLayout) */
+
+.SimpleHistoryGuiExample {
+	position: relative;
+	/* must have a height so "loading..." will be visible in dashboard */
+	min-height: 6em;
+}
+
+.SimpleHistory__waitingForFirstLoad {
+	position: absolute;
+	top: 20px;
+	left: 20px;
+}
+
+.SimpleHistory__waitingForFirstLoad img {
+	vertical-align: text-bottom;
+}
+
+.SimpleHistory__waitingForFirstLoad--isLoaded {
+	display: none;
+}
+
+/* wrap around the log items and the pagination */
+.SimpleHistoryLogitemsWrap {
+	transition: opacity 0.1s ease-out;
+}
+
+/* on its own page */
+.SimpleHistoryGuiWrap {
+	position: relative;
+	min-height: 200px;
+}
+
+.SimpleHistory--isLoaded .SimpleHistoryGuiWrap {
+	background-color: transparent;
+}
+
+.SimpleHistoryGuiWrap .SimpleHistoryGui {
+	width: 100%;
+}
+
+@media only screen and (min-width: 960px) {
+	.SimpleHistoryGuiWrap {
+		display: -webkit-box;
+		display: -ms-flexbox;
+		display: flex;
+		flex-wrap: nowrap;
+		align-items: flex-start;
+		justify-content: space-between;
+	}
+}
+
+/* Page sidebar styles */
+@media only screen and (min-width: 960px) {
+	.SimpleHistory__pageSidebar {
+		flex: 0 0 25%;
+		max-width: 25%;
+		width: 100%;
+		padding-left: 1rem;
+	}
+}
+
+.SimpleHistory__pageSidebar .inside {
+	margin-bottom: 0;
+}
+
+.SimpleHistory__pageSidebar .metabox-holder {
+	padding-top: 0 !important;
+}
+
+.SimpleHistory__pageSidebar .postbox .hndle {
+	cursor: auto;
+}
+
+/*
+.SimpleHistoryGui:after {
+	content: "\f206";
+	font-family: dashicons;
+	font-size: 510px;
+	position: relative;
+	line-height: 1;
+	color: #ddd;
+	z-index: 0;
+}
+
+.SimpleHistory--isLoaded .SimpleHistoryGui:after {
+	display: none;
+}
+*/
+
+/** UL with log items */
+.SimpleHistoryLogitems {
+	margin: 0;
+	background: #fff;
+	/* border-top: 1px solid var(--sh-color-separator); */
+	border-bottom: 1px solid var(--sh-color-separator);
+	opacity: 1;
+	transition: all 0.25s ease-out;
+}
+
+.SimpleHistoryLogitems.is-loading {
+	opacity: 0.5;
+}
+
+/* .SimpleHistory--isLoaded .SimpleHistoryLogitems,
+.SimpleHistoryGuiExample .SimpleHistoryLogitems {
+	opacity: 1;
+} */
+
+/**
+ * Log items
+ * There is always a 4px left border, just with different colors.
+ */
+.SimpleHistoryLogitem {
+	position: relative;
+	list-style-type: none;
+	margin: 0;
+	/* padding: 20px 20px 20px 16px; */
+	padding: var(--sh-spacing-medium);
+	/* Margin top gets same height as separator */
+	/* margin-top: var(--sh-spacing-medium); */
+}
+
+.SimpleHistoryLogitem:hover {
+	background-color: var(--sh-color-item-hover);
+}
+
+/* add border below items */
+/* .SimpleHistoryLogitem::before {
+	content: "";
+	position: absolute;
+	bottom: 0;
+	left: 66px;
+	height: 1px;
+	right: 0;
+	background: rgb(229, 229, 229);
+} */
+
+.postbox .SimpleHistoryLogitem::before {
+	left: 0;
+}
+
+.SimpleHistoryLogitem:last-of-type:before {
+	background: none;
+}
+
+/* Targets the element before a divider with a label. */
+.SimpleHistoryLogitem:has(
+		+ .SimpleHistoryLogitem .SimpleHistoryEventSeparator--hasLabel
+	) {
+	/* outline: 2px solid red; */
+	padding-bottom: calc(var(--sh-spacing-medium) * 3);
+}
+
+.SimpleHistoryEventSeparator {
+	width: calc(100% + var(--sh-spacing-medium) * 2);
+	margin-left: calc(var(--sh-spacing-medium) * -1);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-top: 1px solid var(--sh-color-separator);
+	margin-top: calc(var(--sh-spacing-medium) * -1);
+	min-height: 30px;
+	font-weight: 600;
+	/* outline: 1px dotted pink; */
+}
+
+/* Divider line, at middle of divider. */
+
+.SimpleHistoryEventSeparator__label {
+	display: flex;
+	align-items: center;
+	max-height: 1em;
+	padding: var(--sh-spacing-small) var(--sh-spacing-medium);
+	border-radius: 1rem;
+	line-height: 1;
+	background-color: var(--sh-color-white);
+	border: 1px solid var(--sh-color-separator);
+	font-size: var(--sh-font-size-small);
+	transform: translateY(-50%);
+	box-shadow: 0px 3px 3px 0px #f7f7f7;
+}
+
+/* Sticky events style */
+.SimpleHistoryLogitem--is-sticky {
+	/* background-color: var(--sh-color-cream); */
+}
+
+/* Text inside event, contains tooltip and SVG icon component */
+.SimpleHistoryLogitem--sticky {
+	display: inline-block;
+	line-height: 1;
+	vertical-align: middle;
+
+	> svg {
+		display: block;
+	}
+}
+
+/*
+Style different log levels.
+Tag = the pill with the log level.
+*/
+.SimpleHistoryLogitem--logleveltag {
+	display: inline-block;
+	background-color: rgba(238, 238, 238, 1);
+	font-size: 10px;
+	padding: 3px 4px;
+	border-radius: var(--sh-border-radius);
+	vertical-align: 1px;
+	line-height: 1;
+}
+
+.SimpleHistoryLogitem--logleveltag-debug {
+	background-color: #cef6d8;
+	color: #111;
+}
+
+.SimpleHistoryLogitem--logleveltag-info {
+	display: none;
+}
+
+.SimpleHistoryLogitem--logleveltag-notice {
+	background-color: rgb(219, 219, 183);
+	color: #111;
+}
+
+.SimpleHistoryLogitem--logleveltag-warning {
+	background-color: #f7d358;
+	color: #111;
+}
+
+.SimpleHistoryLogitem--logleveltag-error {
+	background-color: #f79f81;
+	color: #000;
+}
+
+.SimpleHistoryLogitem--logleveltag-critical {
+	background-color: #fa5858;
+	color: #fff;
+}
+
+.SimpleHistoryLogitem--logleveltag-alert {
+	background-color: rgb(199, 69, 69);
+	color: #eee;
+}
+
+.SimpleHistoryLogitem--logleveltag-emergency {
+	background-color: #df0101;
+	color: #eee;
+}
+
+.SimpleHistoryLogitem a {
+	text-decoration: none;
+}
+
+.SimpleHistoryLogitem a:hover {
+	text-decoration: underline;
+}
+
+.SimpleHistoryLogitem__firstcol {
+	float: left;
+}
+
+.SimpleHistoryLogitem__senderImage {
+	position: relative;
+	border-radius: 50%;
+	overflow: hidden;
+	margin-top: 5px;
+	width: 32px;
+	height: 32px;
+}
+
+.SimpleHistoryLogitem__senderImage img {
+	display: block;
+	max-width: 100%;
+	max-height: 100%;
+}
+
+.SimpleHistoryLogitem__secondcol {
+	margin-left: 50px;
+}
+
+.SimpleHistoryLogitem__header {
+	line-height: 1.2;
+	margin-top: 2px;
+}
+
+.SimpleHistoryLogitem__header,
+/*.SimpleHistoryLogitem__header time,*/
+.SimpleHistoryLogitem__headerEmail {
+	color: var(--sh-color-gray-3);
+}
+
+/* Event ID shown in surrounding events mode */
+.SimpleHistoryLogitem__eventId {
+	font-family: monospace;
+	font-size: 12px;
+	color: var(--sh-color-gray-3);
+	margin-right: 0.5em;
+}
+
+/* Emphasize event ID on center event */
+.SimpleHistoryLogitem--is-center-event .SimpleHistoryLogitem__eventId {
+	color: var(--sh-color-blue);
+	font-weight: 600;
+}
+
+.SimpleHistoryLogitem__text,
+.SimpleHistoryLogitem__details,
+.SimpleHistoryLogitem__details p {
+	line-height: 1.4;
+}
+
+.SimpleHistoryLogitem__text {
+	margin-top: 0.4em;
+	font-size: 15px;
+	color: #333;
+	/* break long lines so content always fit, even if very long (like very long url from http_api-logger */
+	word-break: break-word;
+}
+
+.SimpleHistoryLogitem__details p {
+	margin-top: 0.4em;
+	margin-bottom: 0.4em;
+}
+
+.SimpleHistoryLogitem__occasions {
+	color: var(--sh-color-gray-3);
+	margin-top: 0.4em;
+	display: flex;
+	gap: 1rem;
+}
+
+.SimpleHistoryLogitem__occasionsAddOns {
+	position: relative;
+}
+
+/* Add vertical line | before addons promo text */
+.SimpleHistoryLogitem__occasionsAddOns::after {
+	content: "";
+	position: absolute;
+	top: 4px;
+	bottom: 3px;
+	width: 1px;
+	left: -0.5rem;
+	background-color: var(--sh-color-gray-2);
+}
+
+.SimpleHistoryLogitem__occasionsAddOnsText {
+	margin: 0;
+	line-height: inherit;
+}
+
+.SimpleHistoryLogitem__details {
+	margin-top: 0.4em;
+}
+
+/* make video embeds responsive */
+.SimpleHistoryLogitem__details .wp-video {
+	max-width: 100%;
+}
+
+/* Actions button, dropdown with three dots ⋮ */
+.SimpleHistoryLogitem__actions {
+	position: absolute;
+	top: 12px;
+	right: 12px;
+}
+
+.SimpleHistoryLogitem__keyValueTable th,
+.SimpleHistoryLogitem__keyValueTable td {
+	vertical-align: top;
+	word-break: break-word;
+}
+
+.SimpleHistoryLogitem__keyValueTable tr > td:first-child {
+	text-align: right;
+	padding-right: 1em;
+	color: #757575;
+	min-width: 8em;
+	/* white-space: nowrap; */
+}
+
+.SimpleHistoryLogitem__keyValueTable p {
+	margin: 0;
+}
+
+.SimpleHistoryLogitem__keyValueTable__addedThing {
+	text-decoration: none;
+	margin-right: 0.5em;
+}
+
+.SimpleHistoryLogitem__keyValueTable__removedThing {
+	text-decoration: line-through;
+	color: #999;
+}
+
+/* wrap span.SimpleHistoryLogitem__inlineDivided around things that should have a bullet between them */
+.SimpleHistoryLogitem__inlineDivided {
+	white-space: nowrap;
+}
+
+.SimpleHistoryLogitem__inlineDivided em {
+	color: rgb(119, 119, 119);
+	font-style: normal;
+}
+
+.SimpleHistoryLogitem__inlineDivided:before {
+	/* \b7 = middot, \a0 = space */
+	content: "\b7\a0";
+	color: var(--sh-color-gray-3);
+}
+
+.SimpleHistoryLogitem__inlineDivided:first-child:before {
+	content: "";
+}
+
+/*
+Images/thumbs can be styles nicely
+*/
+.SimpleHistoryLogitemThumbnail {
+	display: inline-block;
+	margin: 0.5em 0 0 0;
+	padding: 5px;
+	border: 1px solid #ddd;
+	border-radius: 2px;
+}
+
+.SimpleHistoryLogitemThumbnailLink {
+	display: inline-block;
+}
+
+.SimpleHistoryLogitemThumbnail img {
+	/*
+	photoshop-like background that represents transparency
+	so user can see that an image have transparency
+	*/
+	display: block;
+	background-image: url("data:image/gif;base64,R0lGODlhEAAQAIAAAOXl5f///yH5BAAAAAAALAAAAAAQABAAAAIfhG+hq4jM3IFLJhoswNly/XkcBpIiVaInlLJr9FZWAQA7");
+	max-width: 200px;
+	max-height: 125px;
+	height: auto;
+}
+
+/* remove border below */
+.SimpleHistoryLogitem--occasionsOpened::before {
+	opacity: 0;
+}
+
+/* when occasions is loaded and have loaded hide the "show occasions"-link*/
+.SimpleHistoryLogitem--occasionsOpening .SimpleHistoryLogitem__occasionsLink,
+.SimpleHistoryLogitem--occasionsOpened .SimpleHistoryLogitem__occasionsLink {
+	display: none;
+}
+
+/* hide the "loading" and "loaded occasions" text */
+.SimpleHistoryLogitem__occasionsLoading,
+.SimpleHistoryLogitem__occasionsLoaded {
+	display: none;
+}
+
+/* show texts during load and when load is done */
+.SimpleHistoryLogitem--occasionsOpening .SimpleHistoryLogitem__occasionsLoading,
+.SimpleHistoryLogitem--occasionsOpened .SimpleHistoryLogitem__occasionsLoaded {
+	display: block;
+}
+
+/* occasions are added to a wrapper element */
+.SimpleHistoryLogitem__occasionsItemsWrap {
+	margin: 0;
+	padding: 0;
+}
+
+.SimpleHistoryLogitem__occasionsItems {
+	opacity: 0;
+	max-height: 0;
+	transition:
+		opacity 0.25s ease-out 0.5s,
+		max-height 2s ease-out 0s,
+		margin 0.25s 0s ease-out;
+	background-color: white;
+	box-shadow: 0 2px 15px rgba(0, 0, 0, 0.25);
+}
+
+.SimpleHistoryLogitem__occasionsItems.haveOccasionsAdded {
+	opacity: 1;
+	max-height: 3000px;
+	margin-left: -5px;
+	margin-right: -5px;
+}
+
+/*
+
+.SimpleHistoryLogitem--occasion {
+	opacity: 0;
+	padding-top: 0;
+	padding-bottom: 0;
+	max-height: 0;
+	border-top-width : 0;
+	border-bottom-width : 0;
+}
+*/
+
+/*
+.SimpleHistoryLogitem--occasionsOpened:after,
+.SimpleHistoryLogitem--occasion:after {
+	content: "";
+	position: absolute;
+	top: 3px;
+	bottom: 3px;
+	left: 20px;
+	width: 2px;
+	background: rgba(0,0,0,0.3);
+	border-radius: 3px / 7px;
+}
+*/
+
+/* when the occasions log rows have been added show them in some kinda fancy way */
+.SimpleHistoryLogitem--occasionAdded {
+	max-height: 1000px;
+	opacity: 1;
+	border-top-width: 1px;
+	border-bottom-width: 1px;
+	padding-top: 15px;
+	padding-bottom: 15px;
+}
+
+/*
+Customizations for the dashboard,
+i.e. the log is inside a .postbox element.
+*/
+#simple_history_dashboard_widget .postbox-header {
+	background-image: url(./simple-history-logo-icon.svg);
+	background-repeat: no-repeat;
+	background-size: 20px;
+	background-position: 12px center;
+}
+
+.postbox.closed .sh-Dashboard-settingsLink {
+	display: none;
+}
+
+.sh-Dashboard-settingsLink {
+	background-color: #787c82;
+	mask-image: url(./icons/settings_FILL0_wght400_GRAD0_opsz48.svg);
+	-webkit-mask-image: url(./icons/settings_FILL0_wght400_GRAD0_opsz48.svg);
+	mask-size: 100%;
+	-webkit-mask-size: 100%;
+}
+
+.sh-Dashboard-settingsLink:focus {
+	box-shadow:
+		0 0 0 1px #4f94d4,
+		0 0 2px 1px rgba(79, 148, 212, 0.8);
+	mask-image: none;
+	background-color: transparent;
+	background-image: url(./icons/settings_FILL0_wght400_GRAD0_opsz48.svg);
+}
+
+#simple_history_dashboard_widget .postbox-header h2 {
+	margin-left: 25px;
+}
+
+#simple_history_dashboard_widget .inside {
+	padding: 0;
+	margin-top: 0;
+}
+
+.postbox .SimpleHistoryLogitem__senderImage {
+	width: 24px;
+	height: 24px;
+}
+
+.postbox
+	.SimpleHistoryLogitem--initiator-wp
+	.SimpleHistoryLogitem__senderImage:before,
+.postbox
+	.SimpleHistoryLogitem--initiator-wp_cli
+	.SimpleHistoryLogitem__senderImage:before,
+.postbox
+	.SimpleHistoryLogitem--initiator-web_user
+	.SimpleHistoryLogitem__senderImage:before {
+	font-size: 24px;
+}
+
+.postbox .SimpleHistoryLogitem__secondcol {
+	margin-left: 40px;
+}
+
+.postbox .SimpleHistoryLogitem__text {
+	font-size: 1em;
+}
+
+.postbox .SimpleHistoryLogitem__details p {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+.postbox .SimpleHistoryLogitem__text,
+.postbox .SimpleHistoryLogitem__details,
+.postbox .SimpleHistoryLogitem__details p {
+	line-height: 1.5;
+}
+
+.postbox .SimpleHistoryPaginationCurrentPage {
+	vertical-align: top;
+}
+
+/*
+	.postbox .SimpleHistoryLogitem__details {
+		display: none;
+	}
+	*/
+
+/* // end dashboard */
+
+/*
+Styles for filter
+*/
+/*.simple-history-filters {
+	float: left;
+	width: 400px;
+	margin-left: 50px;
+}
+*/
+
+.SimpleHistoryLogitems__debug {
+	font-family: monospace;
+	white-space: pre;
+}
+
+/*
+Pagination, below logRows
+*/
+.SimpleHistoryPaginationPages {
+	text-align: center;
+	padding-top: 20px;
+	padding-bottom: 20px;
+	background: white;
+}
+
+.postbox .SimpleHistoryPaginationPages {
+	padding-top: 8px;
+	padding-bottom: 8px;
+}
+
+.SimpleHistoryPaginationLinks .SimpleHistoryPaginationLink {
+	vertical-align: baseline;
+	min-width: 30px;
+	min-height: 30px;
+	margin: 0;
+	padding: 0 4px;
+	font-size: 16px;
+	line-height: 1.625;
+	text-align: center;
+}
+
+.SimpleHistoryPaginationLink.SimpleHistoryPaginationLink.disabled {
+	color: rgb(170, 170, 170);
+	background: rgb(238, 238, 238);
+	background: rgba(0, 0, 0, 0.05);
+	cursor: default;
+}
+
+.SimpleHistoryPaginationCurrentPage {
+	margin: 0 2px 0 0;
+	font-size: 13px;
+	text-align: center;
+}
+
+.SimpleHistoryPaginationInput .total-pages {
+	margin-right: 2px;
+}
+
+/*
+animations/effects
+*/
+.SimpleHistory-isLoadingPage .SimpleHistoryLogitemsWrap {
+	opacity: 0.5;
+}
+
+/*
+Modal window with detailss
+*/
+.SimpleHistory-modal__background {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.2);
+	z-index: 10;
+}
+
+.SimpleHistory-modal__content {
+	background: white;
+	border-radius: var(--sh-border-radius);
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	bottom: 60px;
+	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+	left: 280px; /* admin menu width is 160 px*/
+	position: fixed;
+	overflow: auto;
+	right: 120px;
+	top: 60px;
+	z-index: 15;
+	-webkit-overflow-scrolling: touch;
+}
+
+@media only screen and (max-width: 960px) {
+	.SimpleHistory-modal__background {
+		z-index: 9991; /* #adminmenuwrap has z-index 9990 */
+	}
+
+	.SimpleHistory-modal__content {
+		top: 10px;
+		left: 10px;
+		right: 10px;
+		bottom: 10px;
+		z-index: 9991; /* #adminmenuwrap has z-index 9990 */
+	}
+}
+
+.SimpleHistory-modal__contentInner {
+	padding: 15px;
+}
+
+.SimpleHistory-modal__contentSpinner {
+	margin-left: 20px;
+	margin-top: 20px;
+}
+
+.SimpleHistory-modal__contentClose {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+}
+
+.SimpleHistory-modal__contentClose button {
+	cursor: pointer;
+}
+
+/* if wp left menu is collapsed .folded is added and menu width is 36 px */
+.folded .SimpleHistory-modal__content {
+	left: 156px; /* admin menu width is 160 px */
+}
+
+@media only screen and (max-width: 850px) {
+	.SimpleHistory-modal__content {
+		left: 10px; /* admin menu width is 160 px */
+	}
+}
+
+.SimpleHistory-modal__content--enter {
+	transition: all 0.15s ease-out;
+	-webkit-transform: scale(0.95);
+	transform: scale(0.95);
+	opacity: 0;
+}
+
+.SimpleHistory-modal__content--enter-active {
+	opacity: 1;
+	-webkit-transform: scale(1);
+	transform: scale(1);
+}
+
+.SimpleHistory-modal__content--leave-active {
+	opacity: 0;
+	-webkit-transform: scale(0.95);
+	transform: scale(0.95);
+}
+
+.SimpleHistory-modal__leave-active {
+	transition:
+		all 0.15s 0.15s ease-out,
+		visibility 0s 0.3s;
+
+	opacity: 0;
+	visibility: hidden;
+}
+
+.admin-bar .SimpleHistory-modal__content {
+	top: 92px; /* admin bar height is 32 px*/
+}
+
+@media only screen and (max-width: 960px) {
+	.admin-bar .SimpleHistory-modal__content {
+		top: 10px;
+		z-index: 100000;
+	}
+}
+
+/* style the logRow a bit more when shown in modal */
+.SimpleHistory-modal .SimpleHistoryLogitem__header {
+	font-size: 16px;
+}
+
+.SimpleHistory-modal .SimpleHistoryLogitem__text,
+.SimpleHistory-modal .SimpleHistoryLogitem__details,
+.SimpleHistory-modal .SimpleHistoryLogitem__details p,
+.SimpleHistory-modal .SimpleHistoryLogitem__moreDetails,
+.SimpleHistory-modal .SimpleHistoryLogitem__moreDetails p {
+	font-size: 18px;
+}
+
+.SimpleHistory-modal .SimpleHistoryLogitem:hover {
+	background: inherit;
+}
+
+.SimpleHistoryLogitem__moreDetails {
+	border-top: 1px solid rgb(229, 229, 229);
+	margin-top: 20px;
+}
+
+.SimpleHistoryLogitem__moreDetailsHeadline {
+	font-size: 14px;
+	font-weight: bold;
+	padding: 0;
+	margin-top: 20px;
+	margin-bottom: 0;
+}
+
+.SimpleHistory-modal .SimpleHistoryLogitem__moreDetails p {
+	font-size: 14px;
+}
+/**
+ * Table with more details.
+ * Shown in modal when event details are shown.
+ */
+.SimpleHistoryLogitem__moreDetailsContext {
+	width: 100%;
+	font-family: monospace;
+	white-space: pre-wrap;
+	font-size: 12px;
+	border-collapse: collapse;
+}
+
+.SimpleHistoryLogitem__moreDetailsContext th,
+.SimpleHistoryLogitem__moreDetailsContext td {
+	padding: 4px;
+	padding-right: 20px;
+	text-align: left;
+	vertical-align: top;
+}
+
+.SimpleHistoryLogitem__moreDetailsContext th:first-child,
+.SimpleHistoryLogitem__moreDetailsContext td:first-child {
+	width: 300px;
+}
+
+.SimpleHistoryLogitem__moreDetailsContext tr:nth-child(odd) {
+	background-color: #eee;
+}
+
+@media only screen and (max-width: 850px) {
+	.SimpleHistoryLogitem__moreDetails {
+		margin-left: -60px;
+	}
+
+	/* make table less table-like on small screens by putting tds below/after each other
+	   instead of next to each other */
+	.SimpleHistoryLogitem__moreDetailsContext th:first-child,
+	.SimpleHistoryLogitem__moreDetailsContext td:first-child {
+		display: block;
+		font-weight: bold;
+	}
+
+	.SimpleHistoryLogitem__moreDetailsContext th:nth-child(2),
+	.SimpleHistoryLogitem__moreDetailsContext td:nth-child(2) {
+		display: block;
+		margin-bottom: 1em;
+	}
+}
+
+.SimpleHistory-modal
+	.SimpleHistoryLogitem--initiator-web_user
+	.SimpleHistoryLogitem__secondcol,
+.SimpleHistory-modal
+	.SimpleHistoryLogitem--initiator-other
+	.SimpleHistoryLogitem__secondcol {
+	margin-left: 0;
+}
+
+/* wordpress as initiator = add wordpress icon */
+/* anonymous user as initiator = plain user image */
+.SimpleHistoryLogitem--initiator-wp .SimpleHistoryLogitem__senderImage:before,
+.SimpleHistoryLogitem--initiator-wp_cli
+	.SimpleHistoryLogitem__senderImage:before,
+.SimpleHistoryLogitem--initiator-web_user
+	.SimpleHistoryLogitem__senderImage:before {
+	display: inline-block;
+	-webkit-font-smoothing: antialiased;
+	font: normal 32px/1 "dashicons";
+	vertical-align: top;
+	color: #999;
+}
+
+.SimpleHistoryLogitem--initiator-wp .SimpleHistoryLogitem__senderImage:before,
+.SimpleHistoryLogitem--initiator-wp_cli
+	.SimpleHistoryLogitem__senderImage:before {
+	content: "\f120";
+}
+
+.SimpleHistoryLogitem--initiator-wp_cli
+	.SimpleHistoryLogitem__senderImage:after {
+	content: "CLI";
+	position: absolute;
+	background: rgba(255, 255, 255, 0.7);
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	line-height: 36px;
+	text-align: center;
+	font-family: monospace;
+	font-size: 12px;
+}
+
+.SimpleHistoryLogitem--initiator-web_user
+	.SimpleHistoryLogitem__senderImage:before {
+	content: "\f110";
+}
+
+.SimpleHistoryQuickStats {
+	font-size: var(--sh-font-size-medium);
+}
+
+.SimpleHistoryQuickStats a {
+	text-decoration: none;
+}
+
+/**
+ * span is used as tooltip. The tooltip is text with dotted underline and the tooltip is shown on hover, using
+ * built in browser tooltip.
+ */
+.sh-Tooltip {
+	text-decoration: dotted underline;
+	text-underline-offset: 2px;
+	cursor: help;
+}
+
+/**
+ * An icon that is used as tooltip.
+ */
+.sh-TooltipIcon {
+	--sh-icon-size: 1.2em;
+	cursor: help;
+	top: -0.1em;
+	margin-left: 0.25em;
+	opacity: 0.6;
+}
+
+/* if not hits when using filter function + if ajax error */
+
+.SimpleHistory--hasNoHits .SimpleHistoryLogitems__pagination {
+	display: none;
+}
+
+.SimpleHistory--hasNoHits .SimpleHistoryLogitems {
+	display: none;
+}
+
+.SimpleHistoryLogitems__noHits {
+	display: none;
+}
+
+.SimpleHistory--hasNoHits .SimpleHistoryLogitems__noHits,
+.SimpleHistory--ajaxHasErrors .SimpleHistoryLogitems__ajaxError {
+	display: block;
+	padding: 20px;
+}
+
+.SimpleHistory--ajaxHasErrors .SimpleHistoryLogitems__ajaxError {
+	max-height: 20em;
+	overflow: auto;
+}
+
+.postbox .SimpleHistory--hasNoHits .SimpleHistoryLogitems__noHits {
+	margin-left: 13px;
+	margin-right: 13px;
+}
+
+.SimpleHistoryLogitems__ajaxError__infoMessage {
+	background: rgb(255, 255, 183);
+	padding: 10px;
+	font-weight: bold;
+}
+
+/* diff contents can be very high sometimes, so we limit the height and add scrollbars in those cases */
+.SimpleHistory__diff__contents {
+	max-height: 11em;
+	overflow: hidden;
+	position: relative;
+	/* https://github.com/bonny/WordPress-Simple-History/issues/530 */
+	scrollbar-gutter: stable both-edges;
+}
+
+.SimpleHistory__diff__contents--noContentsCrop {
+	max-height: none;
+}
+
+.SimpleHistory__diff__contents:hover,
+.SimpleHistory__diff__contents:focus {
+	overflow-y: auto;
+}
+
+.SimpleHistory__diff__contents:focus {
+	outline: 1px solid rgb(0, 115, 170);
+	box-shadow:
+		0 0 0 1px #5b9dd9,
+		0 0 2px 1px rgba(30, 140, 190, 0.8);
+}
+
+.SimpleHistory__diff.SimpleHistory__diff {
+	border-spacing: 1px;
+}
+
+.SimpleHistory__diff.SimpleHistory__diff td,
+.SimpleHistory__diff.SimpleHistory__diff td:first-child {
+	text-align: left;
+	white-space: normal;
+	font-size: 13px;
+	line-height: 1.3;
+	padding: 0.25em 0.5em;
+	padding: 0.5em 0.5em 0.5em 2em;
+	color: rgb(75, 75, 75);
+	font-family: "Open Sans", sans-serif;
+}
+
+.SimpleHistory__diff.SimpleHistory__diff tbody tr td:nth-child(2) {
+	width: auto;
+}
+
+.sh-ExternalLink::after {
+	/* External icon on link */
+	content: "\f504";
+	font-family: dashicons;
+	line-height: 0;
+}
+
+/**
+ * White page header. Used for plugin title, tab navigation, settings/tools to the right.
+ * Based on style uses by core for Site Health and Privacy Policy, to keep things consistent.
+ */
+.sh-PageHeader {
+	margin: 0 0 0 -20px;
+	padding: var(--sh-spacing-large);
+	background: #fff;
+	border-bottom: 1px solid var(--sh-color-gray);
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	column-gap: 1rem;
+}
+
+/* 
+When an admin notice with additional class "inline" is added it is shown above the header,
+so add some extra place then to make it look a bit less ugly.
+*/
+.notice + .sh-PageHeader {
+	margin-top: 25px;
+}
+
+.sh-PageHeader-titleGroup {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex: 1;
+}
+
+.sh-PageHeader-title {
+	font-size: 23px;
+	font-weight: 400;
+	margin: 0;
+	line-height: 1;
+}
+
+.sh-PageHeader-logo {
+	width: 200px;
+	height: auto;
+}
+
+.sh-PageHeader-titleLink {
+	display: block;
+	color: inherit;
+	text-decoration: none;
+}
+
+.sh-PageHeader-rightLink {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 0.25rem;
+}
+
+.sh-PageHeader-settingsLinkIcon {
+	--sh-icon-size: 25px;
+}
+
+/* Base badge styles shared by all header badges */
+.sh-PageHeader-badge {
+	color: var(--sh-color-white);
+	font-size: 9px;
+	font-weight: 600;
+	padding: var(--sh-spacing-xsmall) var(--sh-spacing-small);
+	border-radius: var(--sh-border-radius);
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	line-height: 1;
+	margin-left: var(--sh-spacing-small);
+}
+
+/* Dev badge variant */
+.sh-PageHeader-badge--dev {
+	background-color: #2271b1;
+}
+
+/* Shared toggle badge styles */
+.sh-PageHeader-badge--toggle {
+	border: none;
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	gap: var(--sh-spacing-xsmall);
+	vertical-align: middle;
+}
+
+.sh-PageHeader-badge--toggle .dashicons {
+	font-size: 10px;
+	width: 10px;
+	height: 10px;
+	line-height: 1;
+}
+
+.sh-PageHeader-badge--toggle:disabled {
+	opacity: 0.6;
+	cursor: wait;
+}
+
+/* Premium toggle colors */
+.sh-PageHeader-badge--premium.is-active {
+	background-color: #00a32a;
+}
+
+.sh-PageHeader-badge--premium.is-inactive {
+	background-color: #d63638;
+}
+
+/* Experimental toggle colors */
+.sh-PageHeader-badge--experimental.is-active {
+	background-color: #9b59b6;
+}
+
+.sh-PageHeader-badge--experimental.is-inactive {
+	background-color: #888;
+}
+
+.sh-NotificationBar {
+	position: relative;
+	text-align: center;
+	background-color: var(--sh-color-cream);
+	padding: var(--sh-spacing-small) var(--sh-spacing-large);
+	margin: 0 0 0 calc(var(--sh-spacing-large) * -1);
+	font-weight: 600;
+	border-bottom: 1px solid var(--sh-color-gray);
+	transition: background-color 0.125s ease-out;
+}
+
+.sh-NotificationBar-link::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+}
+
+/* Base badge styles - shared by all badge types */
+.sh-Badge {
+	display: inline-flex;
+	align-items: center;
+	text-transform: uppercase;
+	font-size: 0.7em;
+	font-weight: 600;
+	font-style: normal;
+	border-radius: var(--sh-border-radius);
+	padding: 0.2em 0.5em;
+	line-height: 1;
+	margin: 0;
+	vertical-align: middle;
+}
+
+/* Badge variants */
+.sh-Badge--new {
+	color: var(--sh-color-white);
+	background-color: var(--sh-color-blue);
+}
+
+.sh-Badge--premium {
+	font-size: 0.8em;
+	padding: 0.25em 0.5em;
+	color: var(--sh-color-black);
+	background-color: var(--sh-color-green-mint);
+	opacity: 0.75;
+}
+
+/* Prevent nav-tabs with badges from wrapping */
+.nav-tab .sh-Badge {
+	margin-left: 0.3em;
+}
+
+.nav-tab:has(.sh-Badge) {
+	white-space: nowrap;
+}
+
+/* Sub-navigation tabs - horizontally scrollable on small screens */
+.sh-Page-content .nav-tab-wrapper {
+	display: flex;
+	flex-wrap: nowrap;
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+	scrollbar-width: thin;
+	padding-bottom: 1px; /* Prevent border clipping during scroll */
+}
+
+.sh-Page-content .nav-tab-wrapper .nav-tab {
+	flex-shrink: 0;
+}
+
+/* Beta feature notice - subtle helper text style */
+.sh-BetaNotice {
+	margin: var(--sh-spacing-large) 0;
+	font-size: var(--sh-font-size-small);
+	color: var(--sh-color-text-muted, #646970);
+}
+
+.sh-BetaNotice a {
+	color: inherit;
+}
+
+.sh-PremiumFeaturesPostbox {
+	--box-bg-color: var(--sh-color-white);
+	text-wrap-style: pretty;
+	padding: 1rem;
+	background-color: var(--box-bg-color);
+	border-radius: 10px;
+}
+
+.sh-PremiumFeaturesPostbox-preTitleFeaturesBadge {
+	margin: 0 0 0.5rem 0;
+}
+
+.sh-PremiumFeaturesPostbox-title {
+	color: #1d2327;
+	font-size: 1.5em;
+	margin: 0 0 1em 0;
+}
+
+.sh-PremiumFeaturesPostbox-button {
+	display: inline-block;
+	background-color: var(--sh-color-blue);
+	color: white;
+	text-decoration: none;
+	padding: 0.75em 1.25em;
+	border-radius: var(--sh-border-radius);
+	display: block;
+	text-align: center;
+	transition: background-color 0.25s ease-out;
+}
+
+.sh-PremiumFeaturesPostbox-button:active,
+.sh-PremiumFeaturesPostbox-button:focus,
+.sh-PremiumFeaturesPostbox-button:hover {
+	color: white;
+	/* background-color: var(--sh-color-black); */
+}
+
+.sh-PremiumFeaturesPostbox-featuresList {
+	list-style: none;
+	margin: 1.5rem 0 1.5rem 0;
+}
+.sh-PremiumFeaturesPostbox-featuresList-item {
+	font-size: var(--sh-font-size-medium);
+	margin-top: 0.5rem;
+	padding-left: 30px;
+	line-height: 1.2rem;
+	background-image: url(./icons/check_circle_24dp_3F9349_FILL0_wght400_GRAD0_opsz24.svg);
+	background-size: 1.1rem;
+	background-repeat: no-repeat;
+	background-position: 0px 1px;
+}
+
+.sh-PremiumFeaturesPostbox-featuresList-item-discrete {
+	display: block;
+	margin-top: 0.2rem;
+	font-size: var(--sh-font-size-small);
+	line-height: 1.4;
+	font-style: normal;
+}
+
+.sh-PremiumFeatureTeaser {
+	background: var(--sh-color-cream);
+	padding: var(--sh-spacing-medium);
+	border-radius: var(--sh-border-radius);
+	margin-top: var(--sh-spacing-medium);
+	font-size: var(--sh-font-size-medium);
+}
+
+/*
+Can be overruled by .form-table td p
+*/
+.sh-PremiumFeatureTeaser-title,
+.form-table td .sh-PremiumFeatureTeaser-title {
+	display: flex;
+	gap: var(--sh-spacing-small);
+	font-size: var(--sh-font-size-medium);
+	margin-block-start: 0;
+	margin-block-end: var(--sh-spacing-medium);
+}
+
+.sh-PremiumFeatureTeaser
+	p:not(
+		.sh-PremiumFeatureTeaser-title,
+		.sh-PremiumFeatureTeaser-ctaLinkContainer
+	) {
+	margin: 0 0 var(--sh-spacing-small);
+}
+
+.sh-PremiumFeatureTeaser .sh-Badge--premium {
+	font-size: var(--sh-font-size-small);
+	vertical-align: middle;
+	order: 1;
+}
+
+.sh-PremiumFeatureTeaser .button {
+	font-size: 0.85em;
+}
+
+.sh-PremiumFeatureTeaser-features {
+	list-style: none;
+	padding: 0;
+	margin: 0 0 var(--sh-spacing-small) 0;
+}
+
+.sh-PremiumFeatureTeaser-features li {
+	display: flex;
+	align-items: center;
+	margin-bottom: 0.25em;
+}
+
+.sh-PremiumFeatureTeaser-features .dashicons {
+	color: #00a32a;
+	margin-inline-end: 0.25em;
+}
+
+.sh-PremiumFeatureTeaser-ctaLinkContainer,
+.form-table td .sh-PremiumFeatureTeaser-ctaLinkContainer {
+	font-size: var(--sh-font-size-medium);
+	margin-block-start: var(--sh-spacing-medium);
+	margin-block-end: 0;
+}
+
+/**
+ * Premium Teaser - Disabled Form Pattern
+ * Used to show a disabled/grayed out form that teases premium features.
+ * Users can see the form fields but cannot interact with them.
+ * The `inert` HTML attribute handles non-interactivity and accessibility.
+ * pointer-events: none is a fallback for older browsers.
+ */
+.sh-PremiumTeaser-disabledForm {
+	pointer-events: none;
+	opacity: 0.75;
+}
+
+.sh-PremiumTeaser-disabledForm input,
+.sh-PremiumTeaser-disabledForm select {
+	background-color: #f0f0f1 !important;
+	cursor: not-allowed;
+}
+
+/**
+ * Radio Options - Generic reusable styles
+ * Used by File Channel formatters, Syslog Channel mode, etc.
+ */
+.sh-RadioOptions {
+	display: flex;
+	flex-direction: column;
+}
+
+.sh-RadioOption {
+	display: block;
+	margin-bottom: 0.75em;
+}
+
+.sh-RadioOption--disabled {
+	opacity: 0.75;
+	cursor: not-allowed;
+}
+
+.sh-RadioOption--disabled input {
+	cursor: not-allowed;
+}
+
+.sh-RadioOptionDescription {
+	display: block;
+	margin-left: 24px;
+}
+
+.sh-RadioOptions--disabled {
+	opacity: 0.6;
+}
+
+/**
+ * Inline Fields - Generic reusable pattern
+ *
+ * Use for settings rows with multiple labeled fields side-by-side.
+ * Examples: Server (Address/Port/Timeout), Auth (Username/Password),
+ * Database (Name/Table), Advanced (Facility/Identity).
+ *
+ * Structure:
+ *   <div class="sh-InlineFields">
+ *     <label class="sh-InlineField">
+ *       <span class="sh-InlineFieldLabel">Address</span>
+ *       <input type="text" />
+ *     </label>
+ *     <label class="sh-InlineField">
+ *       <span class="sh-InlineFieldLabel">Timeout</span>
+ *       <span class="sh-InlineFieldInputWithSuffix">
+ *         <input type="number" />
+ *         <span class="sh-InlineFieldSuffix">sec</span>
+ *       </span>
+ *     </label>
+ *   </div>
+ *
+ * @since 5.x.0
+ */
+.sh-InlineFields {
+	display: flex;
+	align-items: flex-start;
+	flex-wrap: wrap;
+	gap: 1.5em;
+}
+
+.sh-InlineField {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25em;
+}
+
+.sh-InlineFieldLabel {
+	font-weight: 400;
+}
+
+.sh-InlineFieldInputWithSuffix {
+	display: flex;
+	align-items: center;
+	gap: 0.25em;
+}
+
+.sh-InlineFieldSuffix {
+	color: #666;
+}
+
+.sh-FileChannel-fileManagement {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
+.sh-FileChannel-fileManagement select {
+	margin: 0;
+}
+
+.sh-FileChannel-fileManagement input[type="number"] {
+	width: 70px;
+	margin: 0;
+}
+
+.sh-FileChannel-folderInfo {
+	max-width: 600px;
+}
+
+.sh-FileChannel-folderPath {
+	display: block;
+	padding: 8px 12px;
+	background: #f6f7f7;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	word-break: break-all;
+}
+
+.sh-FileChannel-folderStatus {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 4px;
+	margin: 8px 0;
+}
+
+.sh-FileChannel-folderStatus--error,
+.sh-FileChannel-folderStatus--success {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.sh-FileChannel-folderStatus--error {
+	color: #b32d2e;
+}
+
+.sh-FileChannel-folderStatus--success {
+	color: #2e7d32;
+}
+
+.sh-FileChannel-folderStatus--error .dashicons,
+.sh-FileChannel-folderStatus--success .dashicons {
+	font-size: 18px;
+	width: 18px;
+	height: 18px;
+}
+
+.sh-FileChannel-folderStats {
+	color: #50575e;
+}
+
+.sh-FileChannel-securityNote {
+	margin: 4px 0 0 0;
+	color: #646970;
+	font-size: 13px;
+}
+
+/* Status Box - info/stats cards (distinct from WP admin notices) */
+.sh-StatusBox {
+	background: #fff;
+	padding: 1rem;
+	margin: 1rem 0;
+	border: 1px solid #c3c4c7;
+	border-radius: var(--sh-border-radius);
+}
+
+.sh-StatusBox--success {
+	background: #f0fdf4;
+	border-color: #86efac;
+}
+
+.sh-StatusBox--warning {
+	background: #fffbeb;
+	border-color: #fcd34d;
+}
+
+.sh-StatusBox--error {
+	background: #fef2f2;
+	border-color: #fca5a5;
+}
+
+.sh-StatusBox--info {
+	background: #eff6ff;
+	border-color: #93c5fd;
+}
+
+.sh-StatusBox p:first-child {
+	margin-top: 0;
+}
+
+.sh-StatusBox p:last-child {
+	margin-bottom: 0;
+}
+
+.sh-StatusBox ul {
+	margin: 0;
+}
+
+.sh-StatusBox-deletedInfo {
+	margin: 10px 0 0 0;
+	color: #b32d2e;
+}
+
+/* Developer Tools Box */
+.sh-DevToolsBox {
+	margin-top: 30px;
+	padding: 20px;
+	border: 1px solid #c3c4c7;
+	border-left: 4px solid #d63638;
+	background: #fff;
+}
+
+.sh-DevToolsBox-heading {
+	margin-top: 0;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.sh-DevToolsBox-heading .dashicons {
+	color: #d63638;
+}
+
+.sh-DevToolsBox-description {
+	margin-bottom: 20px;
+}
+
+.sh-DevToolsBox-section {
+	margin-top: 20px;
+	margin-bottom: 10px;
+}
+
+.sh-DevToolsBox-section--bordered {
+	margin-top: 25px;
+	padding-top: 15px;
+	border-top: 1px solid #dcdcde;
+}
+
+.sh-DevToolsBox-warning {
+	color: #d63638;
+}
+
+/* Preview Details Box */
+.sh-PreviewDetails {
+	background: #f0f0f1;
+	padding: 15px;
+	margin: 15px 0;
+}
+
+.sh-PreviewDetails summary {
+	cursor: pointer;
+	font-weight: 600;
+}
+
+.sh-PreviewDetails-description {
+	margin: 10px 0;
+}
+
+.sh-PreviewDetails table {
+	margin-top: 10px;
+}
+
+/* Utility class for right-aligned table cells */
+.sh-textRight {
+	text-align: right;
+}
+
+/* Utility class for auto-width tables */
+.sh-tableAuto {
+	width: auto;
+}
+
+/* Checkbox label utilities */
+.sh-CheckboxLabel {
+	display: block;
+	margin-bottom: 5px;
+}
+
+.sh-CheckboxLabel--spaced {
+	display: block;
+	margin-bottom: 10px;
+}
+
+/* Inline checkbox with input field */
+.sh-CheckboxLabel--inline,
+.sh-DateRangeInput {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5em;
+}
+
+/* Grid layout for checkboxes - 2 columns sized to content */
+.sh-CheckboxGrid {
+	display: grid;
+	grid-template-columns: max-content max-content;
+	gap: 0.5rem 3rem;
+	margin-bottom: 0.5em;
+}
+
+.sh-CheckboxGrid .sh-CheckboxLabel {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	gap: 0.4em;
+	margin-bottom: 0;
+	line-height: 1.4;
+	justify-self: start;
+}
+
+.sh-CheckboxGrid .sh-CheckboxLabel input[type="checkbox"] {
+	margin: 0.2em 0 0 0;
+	flex-shrink: 0;
+}
+
+.sh-CheckboxLabel-count {
+	font-size: 0.9em;
+	color: var(--sh-color-gray-3);
+}
+
+/* Select all/none toggle links */
+.sh-SelectToggle {
+	margin-bottom: 0.5em;
+	font-size: 13px;
+}
+
+.sh-SelectToggle a {
+	cursor: pointer;
+	text-decoration: underline;
+}
+
+.sh-SelectToggle-separator {
+	margin: 0 0.25em;
+	color: #999;
+}
+
+/* Backfill Form */
+.sh-BackfillForm {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: var(--sh-border-radius);
+	padding: 1rem 1.5rem;
+}
+
+.sh-BackfillForm-title {
+	margin: 0 0 0.5rem 0;
+	padding: 0;
+	font-size: 14px;
+	font-weight: 400;
+}
+
+.sh-BackfillForm-table {
+	margin: 0;
+}
+
+.sh-BackfillForm-table th {
+	padding: 0.75rem 0.75rem 0.75rem 0;
+	width: 100px;
+}
+
+.sh-BackfillForm-table td {
+	padding: 0.75rem 0;
+}
+
+/* Premium Feature Modal */
+.sh-PremiumFeatureModal.components-modal__frame,
+.components-modal__frame.sh-PremiumFeatureModal {
+	background-color: var(--sh-color-cream);
+	max-width: 500px;
+}
+
+.sh-PremiumFeatureModal .components-modal__content,
+.components-modal__frame.sh-PremiumFeatureModal .components-modal__content {
+	padding: 2rem;
+	background-color: var(--sh-color-cream);
+}
+
+.sh-PremiumFeatureModal-icon {
+	display: flex;
+	justify-content: center;
+	margin-bottom: 1rem;
+}
+
+.sh-PremiumFeatureModal-icon svg {
+	width: 48px;
+	height: 48px;
+	fill: var(--sh-color-black);
+}
+
+.sh-PremiumFeatureModal-title {
+	text-align: center;
+	font-size: 1.5rem;
+	font-weight: 600;
+	margin: 0 0 0.75rem 0;
+	line-height: 1.3;
+}
+
+.sh-PremiumFeatureModal-description {
+	text-align: center;
+	color: var(--sh-color-black-2);
+	margin: 0 0 1.5rem 0;
+	font-size: 1rem;
+	line-height: 1.5;
+}
+
+.sh-PremiumFeatureModal-imageContainer {
+	background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+	border-radius: 8px;
+	padding: 1rem;
+	margin-bottom: 1.5rem;
+}
+
+.sh-PremiumFeatureModal-image {
+	width: 100%;
+	height: auto;
+	border-radius: var(--sh-border-radius);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	display: block;
+}
+
+.sh-PremiumFeatureModal-actions {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.75rem;
+}
+
+.sh-PremiumFeatureModal-upgradeButton.components-button.is-primary {
+	background-color: var(--sh-color-blue);
+	color: var(--sh-color-white);
+	padding: 0.75rem 2rem;
+	border-radius: var(--sh-border-radius);
+	font-size: 1rem;
+	font-weight: 500;
+	border: none;
+}
+
+.sh-PremiumFeatureModal-upgradeButton.components-button.is-primary:hover {
+	background-color: #0039cc;
+}
+
+.sh-PremiumFeatureModal-later {
+	background: none;
+	border: none;
+	color: var(--sh-color-blue);
+	cursor: pointer;
+	font-size: 0.875rem;
+	padding: 0.5rem;
+}
+
+.sh-PremiumFeatureModal-later:hover {
+	text-decoration: underline;
+}
+
+.sh-PageNav {
+	width: 100%;
+	display: flex;
+	margin-top: 1rem;
+	margin-left: -1rem;
+	margin-bottom: -1.5rem;
+	gap: 2rem;
+}
+
+/* If only one page then we hide the tabs. */
+.sh-PageNav--count-1 {
+	display: none;
+}
+
+.sh-PageNav-tab {
+	display: block;
+	position: relative;
+	text-decoration: none;
+	color: inherit;
+	padding: 0.5rem 1rem 1rem;
+}
+
+.sh-PageNav-tab::after {
+	content: "";
+	position: absolute;
+	bottom: 0;
+	left: 0.5rem;
+	right: 0.5rem;
+	height: 3px;
+	font-weight: 600;
+	transition:
+		background-color 0.25s ease-in-out,
+		height 0.15s ease-in-out;
+}
+
+.sh-PageNav-tab:hover::after {
+	background-color: #dcdcde;
+}
+
+.sh-PageNav-tab.is-active::after {
+	background: var(--sh-color-green);
+}
+
+.sh-SettingsPage-settingsField {
+	/* font-size: 1rem; */
+	color: #3c434a;
+}
+
+.sh-SettingsPage-settingsSection-wrap {
+	padding: var(--sh-spacing-medium) 0;
+	margin: var(--sh-spacing-medium) 0;
+}
+
+.sh-SettingsPage-settingsSection-wrap h2 {
+	margin: 0;
+}
+
+.sh-SettingsPage-settingsSection-title,
+.sh-SettingsCard-title {
+	display: block;
+	font-size: 23px;
+	font-weight: 400;
+	margin: 0;
+	padding: 9px 0 4px;
+	line-height: 1.3;
+}
+
+.sh-SettingsPage-settingsSection-icon {
+	--sh-icon-size: 24px;
+	width: var(--sh-icon-size);
+	height: var(--sh-icon-size);
+	display: inline-block;
+	background-size: 100%;
+	vertical-align: middle;
+	margin-right: 0.5em;
+	position: relative;
+	top: -2px;
+}
+
+.sh-SettingsPage-settingsField-icon {
+	--sh-icon-size: 20px;
+	width: var(--sh-icon-size);
+	height: var(--sh-icon-size);
+	display: inline-block;
+	background-size: 100%;
+	vertical-align: middle;
+	margin-right: 0.5em;
+	position: relative;
+	top: -1px;
+	left: 2px;
+}
+
+/* Highlight settings sections when navigated to via #hash. */
+.sh-SettingsPage-settingsSection-wrap td > div:target,
+.sh-SettingsPage-settingsSection-wrap:target {
+	background-color: lightyellow;
+	/* Push target down when navigated to via #hash. */
+	scroll-margin-top: 2rem;
+}
+
+.sh-SettingsPage-settingsSection-wrap td > div:target {
+	padding: 1rem;
+}
+
+.sh-SettingsPage-settingsSection-wrap:target {
+	padding: 0.5rem 1rem;
+	border-radius: var(--sh-border-radius);
+}
+
+.sh-PageNav-icon {
+	--sh-icon-size: 20px;
+	width: var(--sh-icon-size);
+	height: var(--sh-icon-size);
+	/* background-image: url(./icons/info_FILL0_wght400_GRAD0_opsz48.svg); */
+	display: inline-block;
+	background-size: 100%;
+	vertical-align: middle;
+	margin-right: 0.5em;
+	position: relative;
+	top: -2px;
+}
+
+/** Subtabs on settings page */
+.sh-SettingsTabs {
+	border-bottom: 1px solid rgb(206, 206, 206);
+	margin-bottom: 0;
+	margin-left: -2.5em;
+	padding-left: 2.5em;
+}
+
+.sh-SettingsTabs-tabs {
+	display: flex;
+	flex-wrap: nowrap;
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+	scrollbar-width: thin;
+	margin: 0;
+	/* border-bottom: 1px solid #dcdcde; */
+}
+
+.sh-SettingsTabs-tab {
+	flex-shrink: 0;
+	margin-bottom: 0;
+}
+
+.sh-SettingsTabs-link {
+	text-decoration: none;
+	display: block;
+	padding: 1rem 1.5rem;
+	color: inherit;
+}
+
+.sh-SettingsTabs-link.is-active {
+	font-weight: bold;
+	box-shadow: inset 0 -2px #979797;
+}
+
+a.sh-SettingsTabs-link:hover {
+	color: var(--sh-color-green);
+}
+
+.sh-SettingsSection {
+	font-size: 1.5rem;
+}
+
+.sh-SettingsSectionIntroduction {
+	margin-bottom: 1.5em;
+}
+
+.sh-SettingsSectionIntroduction p {
+	font-size: var(--sh-font-size-large);
+}
+
+.sh-mr-0 {
+	margin-right: 0px;
+}
+
+.sh-mr-1 {
+	margin-right: 0.25rem; /* 4px */
+}
+.sh-mr-2 {
+	margin-right: 0.5rem; /* 8px */
+}
+.sh-mr-3 {
+	margin-right: 0.75rem; /* 12px */
+}
+
+.sh-LicencesPage-plugin {
+	background: var(--sh-color-white);
+	border-radius: 8px;
+	margin-bottom: 1.5rem;
+	padding: 1.5rem;
+	border: 1px solid var(--sh-color-gray);
+}
+
+.form-table .sh-LicencesPage-plugin-name {
+	margin: 0;
+	font-weight: bold;
+	font-size: 1.25em;
+	font-weight: 400;
+}
+
+.form-table .sh-LicencesPage-plugin-version {
+	color: #888;
+	margin-bottom: 1rem;
+}
+
+.form-table .sh-LicencesPage-plugin-active {
+	margin-bottom: 1rem;
+}
+
+.sh-FeedIntroduction {
+	background: #f6f7f7;
+	border-radius: var(--sh-border-radius);
+	padding: 1em;
+	display: flex;
+	flex-direction: column;
+	gap: 1em;
+	max-width: 80ch;
+	font-size: 15px;
+}
+
+.sh-FeedIntroduction img {
+	border-radius: 10px;
+	width: 1.25rem;
+	height: auto;
+	line-height: 1;
+	vertical-align: text-bottom;
+}
+
+.sh-FeedIntroduction-row {
+	display: flex;
+	gap: 1em;
+	margin: 0;
+	font-size: 1em;
+}
+
+.sh-FeedIntroduction-emoji {
+	display: block;
+	font-size: 1.5em;
+	line-height: 1;
+}
+
+/* .sh-FeedIntroduction-ps {
+	font-size: 13px;
+} */
+
+/* Filters, moved from old filter-dropin.css */
+.SimpleHistory__filters {
+	/* hide by default while log is loading */
+	opacity: 0.5;
+	transition: all 0.25s ease-out;
+}
+
+.SimpleHistory--isLoaded .SimpleHistory__filters {
+	opacity: 1;
+}
+
+.SimpleHistory__filters__form select {
+	/* width: 100%; */
+	width: 310px;
+}
+
+.SimpleHistory__filters__form input[type="text"],
+.SimpleHistory__filters__form input[type="search"] {
+	/* width: 100%; */
+	width: 310px !important;
+}
+
+.SimpleHistory__filters__filter--date,
+.SimpleHistoryFilterDropin-searchInput {
+	width: 310px;
+}
+
+.SimpleHistory__filters__filterLabel {
+	display: inline-block;
+	width: 150px;
+	vertical-align: middle;
+}
+
+.SimpleHistory__filters__filterSubmitWrap {
+	margin-left: 150px; /* same width as the label */
+}
+
+/* Component FormTokenField always adds element for label */
+.SimpleHistory__filters__loglevels__select .components-form-token-field__label {
+	display: none;
+}
+
+@media (max-width: 600px) {
+	.SimpleHistory__filters__filterLabel {
+		display: block;
+		width: auto;
+	}
+
+	.SimpleHistory__filters__filterSubmitWrap {
+		margin-left: 0;
+	}
+}
+
+@media (min-width: 600px) {
+	/* prevent "jump" during page load because of select elm changing to select2 */
+	.SimpleHistoryWrap .SimpleHistory__filters__filterRow {
+		height: 41px;
+		line-height: 41px;
+	}
+
+	.SimpleHistoryWrap
+		.wp-admin
+		select[multiple].SimpleHistory__filters__filter--date {
+		height: 2.25em;
+		overflow: hidden;
+	}
+}
+
+/* always label as blocks on dashboard because we don't know the width because of columns */
+.postbox .SimpleHistory__filters__filterLabel {
+	display: block;
+	width: auto;
+}
+.postbox .SimpleHistory__filters__filterSubmitWrap {
+	margin-left: 0;
+}
+
+/**
+ * Search results in filter
+ */
+.SimpleHistory__filters__userfilter__gravatar,
+.SimpleHistory__filters__userfilter__primary,
+.SimpleHistory__filters__userfilter__secondary {
+	display: inline-block;
+	vertical-align: middle;
+	line-height: 1;
+}
+
+.SimpleHistory__filters__userfilter__primary {
+	margin-right: 5px;
+}
+
+.SimpleHistory__filters__userfilter__gravatar {
+	margin-right: 10px;
+}
+
+.SimpleHistoryFilterDropin-showMoreFilters {
+	margin-left: 1rem;
+}
+
+/* more filters are hidden by default */
+.SimpleHistory__filters__moreFilters {
+	display: none;
+	margin-bottom: 20px;
+}
+
+.SimpleHistory__filters.is-showingMoreFilters
+	.SimpleHistoryFilterDropin-showMoreFilters--first {
+	display: none;
+}
+
+.SimpleHistory__filters.is-showingMoreFilters
+	.SimpleHistory__filters__moreFilters {
+	display: block;
+}
+
+.SimpleHistory__filters.is-showingMoreFilters
+	.SimpleHistoryFilterDropin-doFilterButton--first {
+	display: none;
+}
+
+/* dashboard */
+.postbox .SimpleHistory__filters {
+	margin-left: 13px;
+	margin-right: 13px;
+}
+
+/* day filter */
+/* hidden by default, shown by js when selecting "custom range" in dates picker */
+.SimpleHistory__filters__filter--dayValuesWrap {
+	display: block;
+	visibility: hidden;
+	opacity: 0;
+	margin-left: 155px;
+	max-height: 0;
+	overflow: hidden;
+	transition:
+		max-height 0.25s ease-in-out,
+		opacity 0.25s ease-in-out,
+		visibility 0s 1s;
+}
+
+.is-customDateFilterActive .SimpleHistory__filters__filter--dayValuesWrap {
+	visibility: visible;
+	opacity: 1;
+	max-height: 150px;
+	margin-top: 1em;
+	transition:
+		max-height 0.25s ease-in-out,
+		opacity 0.25s ease-in-out,
+		visibility 0s 0s;
+}
+
+.is-customDateFilterActive .SimpleHistory__filters__filterRow--date {
+	line-height: inherit;
+	height: inherit;
+}
+
+.postbox .SimpleHistory__filters__filter--dayValuesWrap {
+	margin-left: 0;
+}
+
+.SimpleHistory__filters__filter--day {
+	display: block;
+}
+
+.SimpleHistory__filters__filter--day select {
+	width: 200px;
+}
+
+/* Old styles moved from new-rows-notifier-dropin.css */
+.SimpleHistoryDropin__NewRowsNotifier {
+	max-height: 0;
+	overflow: hidden;
+	text-align: center;
+	background: rgba(0, 255, 30, 0.15);
+	/* Make room for divider label that will overlap otherwise. */
+	border-bottom: 30px;
+	transition:
+		max-height 0.5s ease-out,
+		background 0s;
+}
+
+.SimpleHistoryDropin__NewRowsNotifier--haveNewRows {
+	max-height: 50px;
+	cursor: pointer;
+}
+
+/* when there is a remote error or server down etc */
+.SimpleHistoryDropin__NewRowsNotifier--haveErrorCheck {
+	max-height: 50px;
+	background: rgb(254, 247, 241);
+}
+
+.SimpleHistoryLogitem--newRowSinceReload {
+	background: rgba(254, 255, 0, 0.1);
+}
+
+/* Center event highlight for surrounding events view */
+.SimpleHistoryLogitem--is-center-event {
+	background: var(--sh-color-blue-light);
+	box-shadow: inset 4px 0 0 0 var(--sh-color-blue);
+}
+
+.SimpleHistoryLogitem--is-center-event:hover {
+	background: color-mix(
+		in srgb,
+		var(--sh-color-blue-light),
+		var(--sh-color-blue) 10%
+	);
+}
+
+/* Old styles moved from ip-info-dropin.css */
+
+.SimpleHistoryIpInfoDropin__ipInfoTable {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.SimpleHistoryIpInfoDropin__ipInfoTable th,
+.SimpleHistoryIpInfoDropin__ipInfoTable td {
+	vertical-align: top;
+	text-align: left;
+	padding: 5px 5px;
+	border-top: 1px solid #eee;
+}
+
+.SimpleHistoryIpInfoDropin__ipInfoTable tr:first-of-type th,
+.SimpleHistoryIpInfoDropin__ipInfoTable tr:first-of-type td {
+	border-top: 0;
+}
+
+.SimpleHistoryIpInfoDropin__ipInfoTable__mapRow a {
+	display: inline-block;
+}
+
+.SimpleHistoryIpInfoDropin__ipInfoTable__mapRow td {
+	padding: 0;
+}
+
+.SimpleHistoryIpInfoDropin__ipInfoTable__key {
+	white-space: nowrap;
+}
+
+/* New styles for React */
+.SimpleHistoryReactRoot {
+	flex: 1;
+}
+
+.SimpleHistoryReactRoot-loading {
+	display: block;
+	min-height: 400px;
+	padding: var(--sh-spacing-medium);
+	color: var(--sh-color-black-2);
+}
+
+.SimpleHistoryReactRoot.is-dashboard .SimpleHistory-filters {
+	padding: 0 11px;
+}
+
+.SimpleHistory__modal {
+	min-width: 50vw;
+	min-height: 50vh;
+}
+
+.sh-PageHeader a,
+.sh-NotificationBar a,
+.sh-Page-content a {
+	text-underline-position: from-font;
+}
+
+/*
+Styles for plugin update details. Markup looks like this:
+
+<div class="sh-PluginUpdateDetails">
+    <h4 class="sh-PluginUpdateDetails-title">What's new in this version</h4>
+    <ul class="sh-PluginUpdateDetails-features">
+        <li class="sh-PluginUpdateDetails-feature">Feature 1</li>
+        <li class="sh-PluginUpdateDetails-feature">Feature 2</li>
+    </ul>
+    <p class="sh-PluginUpdateDetails-releaseLink">
+        <a href="..." target="_blank">Read full release notes</a>
+    </p>
+</div>
+*/
+
+.sh-PluginUpdateDetails {
+	margin-top: var(--sh-spacing-medium);
+	margin-bottom: var(--sh-spacing-medium);
+}
+
+.sh-PluginUpdateDetails-title {
+	font-size: var(--sh-font-size-medium);
+	font-weight: 600;
+	margin-bottom: var(--sh-spacing-small);
+}
+
+.sh-PluginUpdateDetails-features {
+	list-style: disc;
+	padding-left: var(--sh-spacing-medium);
+	margin: var(--sh-spacing-small) 0;
+}
+
+.SimpleHistoryLogitem__details .sh-PluginUpdateDetails-releaseLink {
+	margin-top: var(--sh-spacing-small);
+	margin-bottom: var(--sh-spacing-small);
+}
+
+/* Make chart canvas show pointer cursor to indicate it's clickable */
+.SimpleHistory_SidebarChart_ChartCanvas {
+	cursor: pointer;
+}
+
+/**
+ * Settings Page Cards
+ * Modern card-based layout for settings sections.
+ */
+.sh-SettingsCard {
+	background: var(--sh-color-white);
+	border-radius: 8px;
+	padding: var(--sh-spacing-large);
+	margin: var(--sh-spacing-medium) 0;
+	border: 1px solid var(--sh-color-separator);
+}
+
+.sh-SettingsCard .form-table {
+	margin-top: 0;
+}
+
+.sh-SettingsCard .form-table th {
+	padding-top: var(--sh-spacing-medium);
+	padding-bottom: var(--sh-spacing-medium);
+}
+
+.sh-SettingsCard .form-table td {
+	padding-top: var(--sh-spacing-medium);
+	padding-bottom: var(--sh-spacing-medium);
+}
+
+/* Remove default border from form-table rows inside cards */
+/* .sh-SettingsCard .form-table tr {
+	border-bottom: 1px solid var(--sh-color-separator);
+} */
+
+/* .sh-SettingsCard .form-table tr:last-child {
+	border-bottom: none;
+} */
+
+/* Make section title inside card more prominent */
+.sh-SettingsCard h2 {
+	margin-top: 0;
+	margin-bottom: var(--sh-spacing-small);
+}
+
+/* Override default WordPress form-table width in cards */
+.sh-SettingsCard .form-table th {
+	width: 220px;
+}
+
+@media (max-width: 782px) {
+	.sh-SettingsCard .form-table th {
+		width: auto;
+	}
+}
+
+/* Email Promo Card - Promotional card in sidebar for weekly email summary feature */
+.sh-EmailPromoCard {
+	border: none;
+}
+
+.sh-EmailPromoCard-badge {
+	padding: 0;
+}
+
+.sh-EmailPromoCard-badgeImageLink {
+	display: block;
+	width: 100px;
+	float: right;
+	margin-block: var(--sh-spacing-medium);
+	margin-inline-start: var(--sh-spacing-medium);
+	transform: scale(1) rotate(5deg);
+	transition: transform 0.2s ease-in-out;
+
+	&:hover {
+		transform: scale(1.05) rotate(10deg);
+	}
+}
+
+.sh-EmailPromoCard-badgeImage {
+	width: 100%;
+}
+
+.sh-EmailPromoCard-text {
+	line-height: 1.3;
+}
+
+.sh-EmailPromoCard-text--intro {
+	font-size: var(--sh-font-size-medium);
+	font-weight: 600;
+}
+
+.sh-EmailPromoCard-cta {
+	margin-block-start: var(--sh-spacing-large);
+	margin-block-end: var(--sh-spacing-medium);
+}
+
+/* Increase specificity to override .button-link styles */
+.sh-EmailPromoCard .sh-EmailPromoCard-dismiss {
+	display: block;
+	width: 100%;
+	text-align: center;
+}
+
+/**
+ * Channel Status - Generic status display for channel settings.
+ *
+ * Displays connection events as a chronological mini-log:
+ *   <div class="sh-ChannelStatus">
+ *     <h4>Connection Status</h4>
+ *     <ul class="sh-ChannelStatus-log">
+ *       <li class="sh-ChannelStatus-log-item sh-ChannelStatus-log-item--success">...</li>
+ *       <li class="sh-ChannelStatus-log-item sh-ChannelStatus-log-item--error">...</li>
+ *     </ul>
+ *   </div>
+ */
+.sh-ChannelStatus {
+	padding: 1em;
+	background: #f6f7f7;
+	border-left: 4px solid #c3c4c7;
+}
+
+/* Legacy styles - kept for backward compatibility */
+.sh-ChannelStatus--success {
+	color: #2e7d32;
+}
+
+.sh-ChannelStatus--error {
+	color: #b32d2e;
+}
+
+.sh-ChannelStatus--errorMessage {
+	margin: 0.5em 0 0 0;
+	padding: 0.75em;
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	font-family:
+		Menlo,
+		Consolas,
+		Monaco,
+		Liberation Mono,
+		Lucida Console,
+		monospace;
+	font-size: 12px;
+	line-height: 1.5;
+	color: #50575e;
+	word-break: break-word;
+}
+
+/* Mini-log styles */
+.sh-ChannelStatus-log {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.sh-ChannelStatus-log-item {
+	display: flex;
+	gap: 1em;
+	padding: 0.5em 0;
+	border-bottom: 1px solid #dcdcde;
+	line-height: 1.4;
+}
+
+.sh-ChannelStatus-log-item:last-child {
+	border-bottom: none;
+}
+
+.sh-ChannelStatus-log-time {
+	flex-shrink: 0;
+	color: #50575e;
+}
+
+.sh-ChannelStatus-log-message {
+	word-break: break-word;
+}
+
+.sh-ChannelStatus-log-item--success .sh-ChannelStatus-log-message {
+	color: #2e7d32;
+}
+
+.sh-ChannelStatus-log-item--error .sh-ChannelStatus-log-message {
+	color: #b32d2e;
+}
+
+.sh-ChannelStatus-log-item--disabled .sh-ChannelStatus-log-message {
+	color: #b32d2e;
+	font-weight: 600;
+}
+
+.sh-ChannelStatus-hint {
+	margin: 1em 0 0 0;
+	padding: 0.5em 0.75em;
+	background: #fff8e5;
+	border-left: 3px solid #dba617;
+	font-size: 13px;
+}
+
+.sh-ChannelStatus--empty {
+	color: #50575e;
+	font-style: italic;
+}
+
+/**
+ * Channel Test Connection - Generic test button for channel settings.
+ */
+.sh-ChannelTestConnection {
+	margin-top: 0;
+}
+
+.sh-ChannelTestConnection-hint {
+	margin-top: 0.5em;
+}
+
+.sh-ChannelTestConnection .spinner {
+	float: none;
+	margin-top: 0;
+}
+
+.sh-ChannelTestResult {
+	margin-top: 0.75em;
+	padding: 0.75em 1em;
+	border-radius: 4px;
+	line-height: 1.5;
+	word-break: break-word;
+}
+
+.sh-ChannelTestResult.sh-ChannelTestResult--success {
+	background: #edfaef;
+	border-left: 4px solid #00a32a;
+	color: #1e4620;
+}
+
+.sh-ChannelTestResult.sh-ChannelTestResult--error {
+	background: #fcf0f1;
+	border-left: 4px solid #d63638;
+	color: #8a2424;
+}
+
+/**
+ * Alerts Settings Page Teaser
+ * Premium feature promotional page that previews the Alerts settings.
+ * Mirrors the premium UI with functional tabs but disabled content (inert).
+ */
+
+/* Alerts internal sub-navigation - styled as subtle links, not tabs */
+.sh-AlertsTabs {
+	margin-bottom: var(--sh-spacing-large);
+	border-bottom: none;
+}
+
+.sh-AlertsTabs .nav-tab {
+	background: none;
+	border: none;
+	padding: 0.5em 0;
+	margin-right: 1.5em;
+	color: var(--sh-color-text-muted, #50575e);
+	font-weight: 400;
+}
+
+.sh-AlertsTabs .nav-tab:hover,
+.sh-AlertsTabs .nav-tab:focus {
+	background: none;
+	color: var(--sh-color-text, #1d2327);
+}
+
+.sh-AlertsTabs .nav-tab-active,
+.sh-AlertsTabs .nav-tab-active:hover,
+.sh-AlertsTabs .nav-tab-active:focus {
+	background: none;
+	border: none;
+	border-bottom: 2px solid var(--sh-color-blue, #2271b1);
+	color: var(--sh-color-text, #1d2327);
+	font-weight: 400;
+}
+
+.sh-AlertsTabs-count {
+	font-weight: 400;
+	color: var(--sh-color-text-muted, #50575e);
+}
+
+.sh-AlertsTabs--teaser {
+	display: flex;
+	align-items: center;
+	margin-bottom: 0;
+}
+
+.sh-AlertsTabs-badge {
+	margin-left: auto;
+}
+
+.sh-AlertsTabs-icon {
+	margin-right: 0.35em;
+	opacity: 0.7;
+}
+
+.sh-AlertsTabs-errorIndicator {
+	color: #dba617;
+	margin-left: 0.25em;
+}
+
+/* Preview Mode Banner - explains this is a non-functional preview */
+.sh-AlertsTeaser-banner {
+	display: flex;
+	align-items: center;
+	gap: var(--sh-spacing-medium);
+	padding: var(--sh-spacing-medium) var(--sh-spacing-large);
+	margin-top: var(--sh-spacing-large);
+	margin-bottom: var(--sh-spacing-large);
+	background: var(--sh-color-cream);
+	border-radius: var(--sh-border-radius);
+}
+
+.sh-AlertsTeaser-banner-icon {
+	font-size: 24px;
+	width: 24px;
+	height: 24px;
+	line-height: 1;
+	color: #00a32a;
+}
+
+.sh-AlertsTeaser-banner-content {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.sh-AlertsTeaser-banner-title {
+	display: flex;
+	align-items: center;
+	gap: var(--sh-spacing-small);
+	font-size: 14px;
+	font-weight: 600;
+	color: #1d2327;
+}
+
+.sh-AlertsTeaser-banner-content > span {
+	font-size: 13px;
+	color: #3c434a;
+}
+
+.sh-AlertsTeaser-banner-content a {
+	font-size: 13px;
+	margin-top: var(--sh-spacing-xsmall);
+}
+
+/* Main teaser container - disabled state */
+.sh-AlertsTeaser {
+	max-width: 900px;
+}
+
+.sh-AlertsTeaser[inert] {
+	opacity: 0.55;
+	filter: grayscale(30%);
+	cursor: not-allowed;
+	position: relative;
+}
+
+.sh-AlertsTeaser[inert] button,
+.sh-AlertsTeaser[inert] input,
+.sh-AlertsTeaser[inert] a {
+	pointer-events: none;
+}
+
+/* Wrapper for sticky CTA positioning */
+.sh-AlertsTeaser-wrap {
+	position: relative;
+	padding-bottom: 180px;
+}
+
+/* Shared Card Header - used in destinations and alert rules */
+.sh-CardHeader {
+	display: flex;
+	align-items: flex-start;
+	gap: var(--sh-spacing-small);
+	margin-bottom: var(--sh-spacing-medium);
+}
+
+.sh-CardHeader .dashicons {
+	color: var(--sh-color-blue);
+	margin-top: 2px;
+}
+
+.sh-CardHeader-content {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sh-spacing-xxsmall);
+}
+
+.sh-CardHeader-description {
+	color: #50575e;
+	font-size: 13px;
+}
+
+/* Shared Status Icon - used in alert rules and destinations */
+.sh-StatusIcon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 16px;
+	height: 16px;
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 16px;
+	text-align: center;
+	border-radius: 50%;
+	flex-shrink: 0;
+}
+
+.sh-StatusIcon--ok {
+	color: #1e4620;
+	background: #d4edda;
+}
+
+.sh-StatusIcon--error {
+	color: #721c24;
+	background: #f8d7da;
+}
+
+.sh-StatusIcon--unused {
+	color: #646970;
+	background: #f0f0f1;
+}
+
+/* Destinations */
+.sh-Destinations {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sh-spacing-large);
+}
+
+/* Remove card margins inside flex containers - gap handles spacing */
+.sh-Destinations .sh-SettingsCard,
+.sh-PresetCards .sh-SettingsCard {
+	margin: 0;
+}
+
+.sh-DestinationType-list {
+	margin-bottom: var(--sh-spacing-medium);
+}
+
+.sh-DestinationType-empty {
+	color: #646970;
+	font-style: italic;
+	margin: 0;
+}
+
+/* Destination table - column widths */
+.sh-DestinationType .wp-list-table .column-name {
+	width: 25%;
+}
+
+.sh-DestinationType .wp-list-table .column-status {
+	width: 150px;
+}
+
+.sh-DestinationType .wp-list-table .column-usedby {
+	width: 100px;
+}
+
+.sh-DestinationType .wp-list-table .column-details {
+	word-break: break-word;
+}
+
+/* Destination status indicators */
+.sh-DestinationStatus {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.sh-DestinationStatus--ok {
+	color: #1e4620;
+}
+
+/* Button with icon - reusable component */
+.sh-Button--withIcon {
+	display: inline-flex !important;
+	align-items: center;
+	gap: var(--sh-spacing-xsmall);
+}
+
+.sh-Button--withIcon .dashicons {
+	width: 20px;
+	height: 20px;
+	font-size: 20px;
+	line-height: 1;
+}
+
+/* Alert Presets */
+.sh-AlertPresets {
+	margin-bottom: var(--sh-spacing-xlarge);
+}
+
+.sh-AlertPresets-title {
+	display: flex;
+	align-items: center;
+	gap: var(--sh-spacing-small);
+	font-size: 1.25em;
+	margin-bottom: var(--sh-spacing-small);
+}
+
+.sh-AlertPresets-title .dashicons {
+	color: var(--sh-color-blue);
+}
+
+.sh-AlertPresets-description {
+	margin-bottom: var(--sh-spacing-large);
+	color: #50575e;
+}
+
+/* Preset Cards */
+.sh-PresetCards {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sh-spacing-large);
+}
+
+.sh-PresetCard-destinations {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sh-spacing-small);
+}
+
+.sh-PresetCard-destinationsLabel {
+	font-weight: 500;
+	font-size: 13px;
+	color: #1d2327;
+}
+
+.sh-PresetCard-destinationGroups {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--sh-spacing-medium);
+}
+
+.sh-PresetCard-destinationGroup {
+	min-width: 180px;
+}
+
+.sh-PresetCard-destinationGroupLabel {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	text-transform: uppercase;
+	font-size: 11px;
+	margin-bottom: 6px;
+	padding-bottom: 4px;
+	border-bottom: 1px solid var(--sh-color-gray);
+}
+
+.sh-PresetCard-destinationGroupLabel .dashicons {
+	font-size: 14px;
+	width: 14px;
+	height: 14px;
+}
+
+.sh-PresetCard-destinationEmpty,
+.sh-PresetCard-destinationManage {
+	margin: 0;
+	font-size: 12px;
+}
+
+.sh-PresetCard-destinationManage {
+	margin-top: 12px;
+}
+
+.sh-PresetCard-destinationEmpty a,
+.sh-PresetCard-destinationManage a {
+	text-decoration: none;
+}
+
+.sh-PresetCard-destinationGroupItems {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.sh-PresetCard-destinationItem {
+	display: flex;
+	align-items: center;
+	gap: var(--sh-spacing-xsmall);
+	cursor: pointer;
+	padding: 4px 8px;
+	margin: -4px -8px;
+	border-radius: 4px;
+}
+
+.sh-PresetCard-destinationName {
+	font-size: 13px;
+}
+
+.sh-PresetCard-emailRecipients {
+	display: inline-flex;
+	align-items: center;
+	gap: 2px;
+	color: #646970;
+	font-size: 12px;
+	margin-left: 4px;
+	padding: 1px 5px 1px 3px;
+	background: #f0f0f1;
+	border-radius: 10px;
+}
+
+.sh-PresetCard-emailRecipients .dashicons {
+	font-size: 14px;
+	width: 14px;
+	height: 14px;
+}
+
+.sh-PresetCard-destinationStatus {
+	margin-left: 6px;
+}
+
+/* Preset Events - Expandable event list using native <details>/<summary> */
+.sh-PresetEvents {
+	margin-top: var(--sh-spacing-xsmall);
+}
+
+.sh-PresetEvents-toggle {
+	font-size: 13px;
+	color: #2271b1;
+	cursor: pointer;
+	list-style: none;
+}
+
+.sh-PresetEvents-toggle::-webkit-details-marker {
+	display: none;
+}
+
+.sh-PresetEvents-toggle::after {
+	content: " ▶";
+	font-size: 9px;
+	margin-left: 4px;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.sh-PresetEvents[open] > .sh-PresetEvents-toggle::after {
+	content: " ▼";
+}
+
+.sh-PresetEvents-list {
+	margin: var(--sh-spacing-xsmall) 0 0 var(--sh-spacing-medium);
+	columns: 2;
+	list-style-type: disc;
+}
+
+.sh-PresetEvents-list li {
+	break-inside: avoid;
+}
+
+/* Custom Rules */
+.sh-CustomRules {
+	margin-top: var(--sh-spacing-medium);
+}
+
+.sh-CustomRules-empty {
+	color: #646970;
+	font-style: italic;
+}
+
+.sh-CustomRules-actions {
+	margin-top: var(--sh-spacing-medium);
+}
+
+/* CTA Section - Sticky at bottom */
+.sh-AlertsTeaser-cta {
+	position: fixed;
+	bottom: 0;
+	left: 160px;
+	right: 0;
+	padding: var(--sh-spacing-medium) var(--sh-spacing-large);
+	background: var(--sh-color-cream);
+	border-top: 1px solid #e0d9c8;
+	box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.06);
+	z-index: 100;
+}
+
+/* Adjust for collapsed admin menu */
+.folded .sh-AlertsTeaser-cta {
+	left: 36px;
+}
+
+/* Mobile responsive */
+@media screen and (max-width: 782px) {
+	.sh-AlertsTeaser-cta {
+		left: 0;
+	}
+}
+
+.sh-AlertsTeaser-cta-content {
+	max-width: 800px;
+	margin: 0 auto;
+	display: flex;
+	align-items: center;
+	gap: var(--sh-spacing-large);
+	flex-wrap: wrap;
+}
+
+.sh-AlertsTeaser-cta-content h3 {
+	margin: 0;
+	font-size: 14px;
+	font-weight: 600;
+	display: flex;
+	align-items: center;
+	gap: var(--sh-spacing-small);
+}
+
+.sh-AlertsTeaser-cta-content p {
+	margin: 0;
+	color: #50575e;
+	font-size: 13px;
+	flex: 1;
+	min-width: 200px;
+}
+
+.sh-AlertsTeaser-cta-content a:not(.button) {
+	font-size: 13px;
+	white-space: nowrap;
+}
+
+/**
+ * Message Control Settings Page Teaser
+ * Premium feature promotional page that previews the Message Control settings.
+ * Reuses many styles from Alerts teaser.
+ */
+
+/* Wrapper for sticky CTA positioning */
+.sh-MessageControlTeaser-wrap {
+	position: relative;
+	padding-bottom: 180px;
+}
+
+/* Main teaser container - disabled state */
+.sh-MessageControlTeaser {
+	max-width: 900px;
+}
+
+.sh-MessageControlTeaser[inert] {
+	opacity: 0.55;
+	filter: grayscale(30%);
+	cursor: not-allowed;
+	position: relative;
+}
+
+.sh-MessageControlTeaser[inert] button,
+.sh-MessageControlTeaser[inert] input,
+.sh-MessageControlTeaser[inert] a {
+	pointer-events: none;
+}
+
+/* Loggers list styling */
+.sh-MessageControlTeaser-loggers {
+	margin-top: var(--sh-spacing-medium);
+}
+
+.sh-MessageControlTeaser-stats {
+	margin-bottom: var(--sh-spacing-medium);
+	color: #50575e;
+}
+
+.sh-MessageControlTeaser-stats strong {
+	color: #1d2327;
+}
+
+/* Loggers table - similar to premium Message Control */
+.sh-MessageControlTeaser .loggers {
+	--sh-border-width: 4px;
+}
+
+.sh-MessageControlTeaser .loggers .enabled .column-name {
+	border-left: var(--sh-border-width) solid #72aee6;
+}
+
+.sh-MessageControlTeaser .loggers .disabled .column-name {
+	padding-left: calc(3em + var(--sh-border-width));
+}
+
+.sh-MessageControlTeaser .loggers .column-name {
+	position: relative;
+}
+
+.sh-MessageControlTeaser .loggers .column-name strong {
+	display: block;
+	margin-bottom: 0.2em;
+	font-size: 14px;
+}
+
+.sh-MessageControlTeaser .loggers .disabled strong {
+	font-weight: 400;
+}
+
+.sh-MessageControlTeaser .loggers th,
+.sh-MessageControlTeaser .loggers td {
+	padding: 1.25em 2em 1.25em 3em;
+}
+
+.sh-MessageControlTeaser .loggers .enabled th,
+.sh-MessageControlTeaser .loggers .enabled td {
+	box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+	background-color: #f0f6fc;
+}
+
+.sh-MessageControlTeaser .loggers span[class^="sh-Icon--"] {
+	--icon-size: 20px;
+	width: var(--icon-size);
+	height: var(--icon-size);
+	position: absolute;
+	background-size: 100%;
+	left: 0.8em;
+	top: 1.2em;
+}
+
+.sh-MessageControlTeaser .loggers .disabled span[class^="sh-Icon--"] {
+	left: calc(0.8em + var(--sh-border-width));
+}
+
+.sh-MessageControlTeaser .loggers .column-status {
+	width: 120px;
+	display: flex;
+	align-items: center;
+	gap: var(--sh-spacing-xsmall);
+}
+
+.sh-MessageControlTeaser .loggers .description {
+	color: #646970;
+	margin: 0;
+}
+
+/**
+ * Failed Logins Settings Page Teaser
+ * Premium feature promotional page that previews the Failed Login settings.
+ * Reuses many styles from Alerts teaser.
+ */
+
+/* Wrapper for sticky CTA positioning */
+.sh-FailedLoginsTeaser-wrap {
+	position: relative;
+	padding-bottom: 180px;
+}
+
+/* Main teaser container - disabled state */
+.sh-FailedLoginsTeaser {
+	max-width: 900px;
+}
+
+.sh-FailedLoginsTeaser[inert] {
+	opacity: 0.55;
+	filter: grayscale(30%);
+	cursor: not-allowed;
+	position: relative;
+}
+
+.sh-FailedLoginsTeaser[inert] button,
+.sh-FailedLoginsTeaser[inert] input,
+.sh-FailedLoginsTeaser[inert] a {
+	pointer-events: none;
+}
+
+/* Settings form styling */
+.sh-FailedLoginsTeaser-settings {
+	margin-top: var(--sh-spacing-medium);
+}
+
+.sh-FailedLoginsTeaser .form-table th {
+	padding-left: 0;
+}
+
+.sh-FailedLoginsTeaser .form-table td p {
+	margin-top: 0;
+}
+
+.sh-FailedLoginsTeaser .form-table td label {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+/**
+ * Help & Support Page Styles
+ * Styles for the Help & Support page including status bar and system info.
+ */
+
+/* Status Bar - shown at top of Help & Support page */
+.sh-StatusBar {
+	background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+	border: 1px solid #e5e7eb;
+	border-radius: var(--sh-border-radius);
+	padding: var(--sh-spacing-medium) var(--sh-spacing-large);
+	margin-bottom: var(--sh-spacing-large);
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--sh-spacing-medium);
+}
+
+.sh-StatusBar-item {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.sh-StatusBar-connected {
+	color: #1e1e1e;
+}
+
+.sh-StatusBar-connected .dashicons {
+	color: #00a32a;
+}
+
+.sh-StatusBar-version {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-weight: 500;
+}
+
+.sh-StatusBar-stats {
+	color: #50575e;
+	padding-left: var(--sh-spacing-medium);
+	border-left: 1px solid #e5e7eb;
+}
+
+.sh-StatusBar-stats a {
+	color: inherit;
+}
+
+.sh-StatusBar-error {
+	color: #d63638;
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.sh-StatusBar-error .dashicons {
+	color: #d63638;
+}
+
+.sh-StatusBar-hasError {
+	border-color: #d63638;
+	background: #fcf0f1;
+}
+
+/* Support info textarea */
+.sh-HelpPage-supportInfoTextarea {
+	width: 100%;
+	font-family:
+		Menlo,
+		Consolas,
+		Monaco,
+		Liberation Mono,
+		Lucida Console,
+		monospace;
+	font-size: 12px;
+	line-height: 1.5;
+	background: #f6f7f7;
+	border: 1px solid #c3c4c7;
+	border-radius: var(--sh-border-radius);
+	padding: var(--sh-spacing-medium);
+	resize: vertical;
+}
+
+/* Buttons row */
+.sh-HelpPage-buttons {
+	display: flex;
+	align-items: center;
+	gap: var(--sh-spacing-small);
+	margin-top: var(--sh-spacing-small);
+}
+
+/* Copy status message - shown below buttons */
+.sh-HelpPage-copyStatus {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	margin: 0;
+	min-height: 24px;
+	font-size: 13px;
+}
+
+.sh-HelpPage-copyStatus .dashicons {
+	font-size: 18px;
+	width: 18px;
+	height: 18px;
+}
+
+/* Help page grid - Get Help spans 2 rows, Documentation and FAQ stacked on right */
+.sh-HelpPage-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	grid-template-rows: auto auto;
+	gap: var(--sh-spacing-medium);
+}
+
+.sh-HelpPage-getHelp {
+	grid-row: span 2;
+}
+
+@media (max-width: 782px) {
+	.sh-HelpPage-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.sh-HelpPage-getHelp {
+		grid-row: auto;
+	}
+}
+
+/* Help page sponsor section */
+.sh-HelpPage-sponsor {
+	margin-top: var(--sh-spacing-large);
+}
+
+.sh-HelpPage-sponsor-content {
+	display: flex;
+	align-items: center;
+	gap: var(--sh-spacing-large);
+	flex-wrap: wrap;
+	justify-content: center;
+}
+
+.sh-HelpPage-sponsor-logo img {
+	height: 40px;
+	width: auto;
+	display: block;
+}
+
+.sh-HelpPage-sponsor-text {
+	flex: 1 1 400px;
+	text-align: center;
+	margin: 0;
+}
+
+/* Help page section title adjustment */
+.sh-HelpAndSupportPage > .sh-SettingsPage-settingsSection-title {
+	margin-bottom: 1rem;
+}

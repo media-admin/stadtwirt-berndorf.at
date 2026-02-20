@@ -1,0 +1,55 @@
+// Theme Toggle Button
+.theme-toggle {
+  // Statt fixed bottom-right:
+  
+  // Option 1: Top right
+  // top: $spacing-4;
+  // right: $spacing-4;
+  
+  // Option 2: In Header integrieren
+  // position: relative;
+  // display: inline-flex;
+  position: fixed;
+  bottom: $spacing-4;
+  right: $spacing-4;
+  z-index: 1000;
+  width: 50px;
+  height: 50px;
+  border-radius: $radius-full;
+  background: $color-primary;
+  border: none;
+  cursor: pointer;
+  box-shadow: $shadow-lg;
+  transition: all $transition-base;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  &:hover {
+    transform: scale(1.1);
+  }
+  
+  &__icon {
+    font-size: 24px;
+    position: absolute;
+    transition: all $transition-base;
+    
+    &--light {
+      opacity: 1;
+    }
+    
+    &--dark {
+      opacity: 0;
+    }
+  }
+  
+  &.is-dark {
+    .theme-toggle__icon--light {
+      opacity: 0;
+    }
+    
+    .theme-toggle__icon--dark {
+      opacity: 1;
+    }
+  }
+}

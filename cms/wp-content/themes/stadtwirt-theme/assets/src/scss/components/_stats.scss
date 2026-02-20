@@ -1,0 +1,257 @@
+// Stats/Counter Component
+.stats {
+  display: grid;
+  gap: $spacing-6;
+  margin: $spacing-8 0;
+  
+  // Grid Layout basierend auf Columns
+  &[data-columns="2"] {
+    grid-template-columns: 1fr;
+    
+    @include respond-to('md') {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  &[data-columns="3"] {
+    grid-template-columns: 1fr;
+    
+    @include respond-to('md') {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    @include respond-to('lg') {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  
+  &[data-columns="4"] {
+    grid-template-columns: 1fr;
+    
+    @include respond-to('sm') {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    @include respond-to('lg') {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+}
+
+// Single Stat
+.stat {
+  text-align: center;
+  padding: $spacing-6;
+  
+  // Icon
+  &__icon {
+    margin-bottom: $spacing-3;
+    
+    .dashicons {
+      font-size: 48px;
+      width: 48px;
+      height: 48px;
+      color: $color-primary;
+    }
+  }
+  
+  // Content
+  &__content {
+    // Spacing
+  }
+  
+  // Number
+  &__number {
+    font-size: 48px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--color-text);
+    margin-bottom: $spacing-2;
+    
+    @include respond-to('lg') {
+      font-size: 56px;
+    }
+  }
+  
+  &__prefix,
+  &__suffix {
+    font-size: 32px;
+    font-weight: 600;
+    
+    @include respond-to('lg') {
+      font-size: 40px;
+    }
+  }
+  
+  &__value {
+    display: inline-block;
+    min-width: 1ch;
+  }
+  
+  // Label
+  &__label {
+    font-size: $font-size-lg;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: $spacing-2;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  
+  // Description
+  &__description {
+    font-size: $font-size-sm;
+    color: var(--color-text-secondary);
+    margin: $spacing-2 0 0;
+    line-height: 1.6;
+  }
+  
+  // ============================================
+  // COLOR VARIANTS
+  // ============================================
+  
+  &--primary {
+    .stat__number {
+      color: $color-primary;
+    }
+    
+    .stat__icon .dashicons {
+      color: $color-primary;
+    }
+  }
+  
+  &--success {
+    .stat__number {
+      color: $color-success;
+    }
+    
+    .stat__icon .dashicons {
+      color: $color-success;
+    }
+  }
+  
+  &--error {
+    .stat__number {
+      color: $color-error;
+    }
+    
+    .stat__icon .dashicons {
+      color: $color-error;
+    }
+  }
+  
+  &--warning {
+    .stat__number {
+      color: darken($color-warning, 10%);
+    }
+    
+    .stat__icon .dashicons {
+      color: darken($color-warning, 10%);
+    }
+  }
+  
+  &--info {
+    .stat__number {
+      color: $color-info;
+    }
+    
+    .stat__icon .dashicons {
+      color: $color-info;
+    }
+  }
+}
+
+// ============================================
+// STYLE VARIANTS
+// ============================================
+
+// Minimal Style
+.stats--minimal {
+  .stat {
+    padding: $spacing-4;
+    
+    &__number {
+      font-size: 40px;
+      
+      @include respond-to('lg') {
+        font-size: 48px;
+      }
+    }
+    
+    &__label {
+      font-size: $font-size-base;
+      text-transform: none;
+      letter-spacing: normal;
+      font-weight: 500;
+    }
+    
+    &__icon .dashicons {
+      font-size: 36px;
+      width: 36px;
+      height: 36px;
+    }
+  }
+}
+
+// Card Style
+.stats--card {
+  .stat {
+    background: var(--color-card-bg);
+    border-radius: $radius-lg;
+    box-shadow: $shadow-sm;
+    transition: all $transition-base;
+    
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: $shadow-lg;
+    }
+    
+    &__icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto $spacing-4;
+      background: rgba($color-primary, 0.1);
+      border-radius: $radius-full;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      .dashicons {
+        margin: 0;
+      }
+    }
+  }
+}
+
+// ============================================
+// ANIMATION
+// ============================================
+
+.stat__value {
+  &.is-counting {
+    // Optional: Add pulse animation during counting
+  }
+}
+
+// ============================================
+// RESPONSIVE
+// ============================================
+
+@include respond-to('sm') {
+  .stat {
+    &__number {
+      font-size: 40px;
+    }
+  }
+}
+
+// Dark Mode
+@media (prefers-color-scheme: dark) {
+  .stats--card {
+    .stat {
+      &__icon {
+        background: rgba($color-primary, 0.2);
+      }
+    }
+  }
+}

@@ -1,0 +1,69 @@
+// ============================================
+// HERO IMAGE
+// ============================================
+
+.hero-image {
+  position: relative;
+  width: 100%;
+  height: clamp(300px, 40vw, 600px);
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+
+  // ─── Bild ───────────────────────────────
+  &__img,
+  picture {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  &__img {
+    object-fit: cover;
+    object-position: center;
+  }
+
+  picture img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  // ─── Overlay ────────────────────────────
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, var(--hero-opacity, 0.4));
+  }
+
+  // ─── Content ────────────────────────────
+  &__content {
+    position: relative;
+    z-index: 1;
+    padding-bottom: 2.5rem;
+    width: 100%;
+  }
+
+  &__title {
+    color: $color-white;
+    font-size: clamp(1.75rem, 4vw, 3rem);
+    font-weight: $font-weight-bold;
+    line-height: $line-height-tight;
+    margin: 0;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  // ─── Responsive ─────────────────────────
+  @media (max-width: 768px) {
+    height: clamp(250px, 55vw, 400px);
+    align-items: flex-end;
+
+    &__content {
+      padding-bottom: 1.5rem;
+    }
+  }
+}

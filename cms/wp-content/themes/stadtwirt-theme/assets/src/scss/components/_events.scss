@@ -1,0 +1,195 @@
+// ============================================
+// EVENTS
+// ============================================
+
+.events-grid {
+  display: grid;
+  gap: 2rem;
+  margin: 2rem 0;
+
+  &--columns-1 { grid-template-columns: 1fr; }
+
+  &--columns-2 {
+    grid-template-columns: repeat(2, 1fr);
+    @media (max-width: 768px) { grid-template-columns: 1fr; }
+  }
+
+  &--columns-3 {
+    grid-template-columns: repeat(3, 1fr);
+    @media (max-width: 1024px) { grid-template-columns: repeat(2, 1fr); }
+    @media (max-width: 640px)  { grid-template-columns: 1fr; }
+  }
+
+  &--columns-4 {
+    grid-template-columns: repeat(4, 1fr);
+    @media (max-width: 1200px) { grid-template-columns: repeat(3, 1fr); }
+    @media (max-width: 768px)  { grid-template-columns: repeat(2, 1fr); }
+    @media (max-width: 480px)  { grid-template-columns: 1fr; }
+  }
+}
+
+// Event Card
+.event-card {
+  background: $color-white;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  box-shadow: $shadow-sm;
+  transition: $transition-base;
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    box-shadow: $shadow-lg;
+    transform: translateY(-4px);
+  }
+
+  // Thumbnail
+  &__thumbnail {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+    background: $color-gray-100;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    &:hover img {
+      transform: scale(1.05);
+    }
+  }
+
+  // Price Badge
+  &__price {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: $color-primary;
+    color: white;
+    padding: 0.35rem 0.85rem;
+    border-radius: $radius-full;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-bold;
+  }
+
+  // Content
+  &__content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    flex-grow: 1;
+  }
+
+  // Categories
+  &__categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  &__category {
+    font-size: 12px;
+    padding: 0.2rem 0.6rem;
+    background: rgba($color-primary, 0.1);
+    color: $color-primary;
+    border-radius: $radius-full;
+    font-weight: $font-weight-semibold;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  // Title
+  &__title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+    margin: 0;
+    line-height: $line-height-tight;
+
+    a {
+      color: $color-text;
+      text-decoration: none;
+      transition: color 0.2s ease;
+      &:hover { color: $color-primary; }
+    }
+  }
+
+  // Meta (date, location)
+  &__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  &__date,
+  &__location {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+  }
+
+  // Excerpt
+  &__excerpt {
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+    line-height: $line-height-base;
+    flex-grow: 1;
+
+    p { margin: 0; }
+  }
+
+  // Link
+  &__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: $color-primary;
+    text-decoration: none;
+    font-weight: $font-weight-semibold;
+    font-size: $font-size-sm;
+    margin-top: auto;
+    transition: gap 0.2s ease;
+
+    &:hover { gap: 0.75rem; }
+  }
+}
+
+// Event Detail (Single)
+.event-detail {
+  &__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1.5rem;
+    background: $color-white;
+    border-radius: $radius-lg;
+    box-shadow: $shadow-sm;
+    margin-bottom: 2rem;
+  }
+
+  &__meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: $font-size-base;
+    color: $color-text;
+
+    strong {
+      color: $color-text;
+      min-width: 80px;
+    }
+  }
+}
+
+// No results
+.events-no-results {
+  text-align: center;
+  padding: 3rem;
+  color: $color-text-muted;
+  font-size: $font-size-lg;
+}

@@ -1,0 +1,549 @@
+// ============================================
+// AJAX SEARCH
+// ============================================
+
+.ajax-search {
+  position: relative;
+  max-width: 600px;
+  margin: 0 auto;
+  
+  &__form {
+    position: relative;
+  }
+  
+  &__input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  
+  &__input {
+    width: 100%;
+    padding: 1rem 3.5rem 1rem 3rem;
+    border: 2px solid $color-border;
+    border-radius: $radius-full;
+    font-size: $font-size-base;
+    transition: $transition-base;
+    
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+    }
+    
+    &::-webkit-search-cancel-button {
+      display: none;
+    }
+  }
+  
+  &__icon {
+    position: absolute;
+    left: 1rem;
+    color: $color-text-muted;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+  }
+
+
+  // ============================================
+  // SUBMIT BUTTON (NEU!)
+  // ============================================
+
+  &__submit {
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: $color-primary;
+    color: $color-white;
+    border: none;
+    border-radius: $radius-full;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: $transition-base;
+    z-index: 2;
+    
+    &:hover {
+      background: darken($color-primary, 10%);
+      transform: translateY(-50%) scale(1.05);
+    }
+    
+    &:active {
+      transform: translateY(-50%) scale(0.95);
+    }
+    
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba($color-primary, 0.3);
+    }
+    
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  &__loading {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $color-primary;
+    display: none;
+    z-index: 2;
+    
+    svg {
+      animation: spin 1s linear infinite;
+    }
+  }
+
+  // Form styling
+  &__form {
+    position: relative;
+    width: 100%;
+  }
+
+
+
+  
+  &__clear,
+  &__loading {
+    position: absolute;
+    right: 1rem;
+    background: transparent;
+    border: none;
+    color: $color-text-muted;
+    cursor: pointer;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    transition: $transition-base;
+    
+    &:hover {
+      color: $color-text;
+    }
+  }
+  
+  &__loading {
+    pointer-events: none;
+    animation: spin 1s linear infinite;
+  }
+  
+  &__results {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 0;
+    right: 0;
+    background: $color-white;
+    border: 1px solid $color-border;
+    border-radius: $radius-lg;
+    box-shadow: $shadow-xl;
+    max-height: 400px;
+    overflow-y: auto;
+    z-index: 100;
+    
+    &-list {
+      padding: 0.5rem 0;
+    }
+  }
+  
+  // ============================================
+  // SEARCH RESULTS ITEMS (NEU: Item statt Result)
+  // ============================================
+  
+  &__item,
+  &__result {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+    text-decoration: none;
+    color: $color-text;
+    transition: $transition-base;
+    border-bottom: 1px solid $color-border;
+    border-left: 3px solid transparent;
+    
+    &:last-child {
+      border-bottom: none;
+    }
+    
+    &:hover,
+    &.is-active {
+      background: $color-gray-500;
+    }
+    
+    // ============================================
+    // POST TYPE SPECIFIC STYLING (NEU!)
+    // ============================================
+    
+    &--post {
+      border-left-color: $color-primary;
+    }
+    
+    &--page {
+      border-left-color: $color-gray-400;
+    }
+    
+    &--product {
+      border-left-color: $color-success;
+      
+      .ajax-search__price {
+        color: $color-success;
+      }
+    }
+    
+    &--project {
+      border-left-color: $color-info;
+    }
+    
+    &--service {
+      border-left-color: $color-warning;
+    }
+  }
+  
+  &__thumbnail,
+  &__result-thumbnail {
+    flex-shrink: 0;
+    width: 60px;
+    height: 60px;
+    border-radius: $radius-base;
+    overflow: hidden;
+    background: $color-gray-100;
+    
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+  
+  &__content,
+  &__result-content {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  &__title,
+  &__result-title {
+    font-size: $font-size-base;
+    font-weight: $font-weight-semibold;
+    margin-bottom: 0.25rem;
+    color: $color-text;
+    
+    mark {
+      background: rgba($color-primary, 0.2);
+      color: $color-primary;
+      padding: 0 0.2em;
+      border-radius: 2px;
+    }
+  }
+  
+  &__excerpt,
+  &__result-excerpt {
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+    
+    mark {
+      background: rgba($color-primary, 0.2);
+      color: $color-primary;
+      padding: 0 0.2em;
+      border-radius: 2px;
+    }
+  }
+  
+  // ============================================
+  // META INFORMATION (ERWEITERT!)
+  // ============================================
+  
+  &__meta,
+  &__result-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    font-size: $font-size-xs;
+    color: $color-text-muted;
+  }
+  
+  &__type,
+  &__result-type {
+    padding: 0.25rem 0.5rem;
+    background: $color-gray-100;
+    border-radius: $radius-sm;
+    font-weight: $font-weight-medium;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    
+    // ============================================
+    // TYPE BADGES (NEU!)
+    // ============================================
+    
+    .ajax-search__item--post &,
+    .ajax-search__result--post & {
+      background: rgba($color-primary, 0.1);
+      color: $color-primary;
+    }
+    
+    .ajax-search__item--page &,
+    .ajax-search__result--page & {
+      background: $color-gray-200;
+      color: $color-text-muted;
+    }
+    
+    .ajax-search__item--product &,
+    .ajax-search__result--product & {
+      background: rgba($color-success, 0.1);
+      color: $color-success;
+    }
+    
+    .ajax-search__item--project &,
+    .ajax-search__result--project & {
+      background: rgba($color-info, 0.1);
+      color: $color-info;
+    }
+    
+    .ajax-search__item--service &,
+    .ajax-search__result--service & {
+      background: rgba($color-warning, 0.1);
+      color: $color-warning;
+    }
+  }
+  
+  &__date,
+  &__result-date {
+    &::before {
+      content: '•';
+      margin-right: 0.5rem;
+    }
+  }
+  
+  // ============================================
+  // PRODUCT PRICE (NEU!)
+  // ============================================
+  
+  &__price {
+    color: $color-success;
+    font-weight: $font-weight-bold;
+    font-size: $font-size-base;
+    margin-left: auto;
+    white-space: nowrap;
+    
+    // Sale price styling
+    del {
+      color: $color-text-muted;
+      font-size: $font-size-sm;
+      font-weight: $font-weight-regular;
+      margin-right: 0.5rem;
+      opacity: 0.7;
+    }
+    
+    ins {
+      text-decoration: none;
+      color: $color-error;
+    }
+    
+    // Regular price in .woocommerce-Price-amount
+    .woocommerce-Price-amount {
+      font-weight: $font-weight-bold;
+    }
+    
+    // Currency symbol
+    .woocommerce-Price-currencySymbol {
+      font-size: 0.9em;
+    }
+  }
+  
+  // ============================================
+  // STOCK STATUS (NEU!)
+  // ============================================
+  
+  &__stock {
+    padding: 0.25rem 0.5rem;
+    border-radius: $radius-sm;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    text-transform: uppercase;
+    
+    &--in-stock {
+      background: rgba($color-success, 0.1);
+      color: $color-success;
+    }
+    
+    &--out-of-stock {
+      background: rgba($color-error, 0.1);
+      color: $color-error;
+    }
+  }
+  
+  // ============================================
+  // NO RESULTS & ERROR
+  // ============================================
+  
+  &__no-results,
+  &__error {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 0;
+    right: 0;
+    background: $color-white;
+    border: 1px solid $color-border;
+    border-radius: $radius-lg;
+    box-shadow: $shadow-xl;
+    padding: 2rem;
+    text-align: center;
+    z-index: 100;
+    
+    p {
+      color: $color-text-muted;
+      margin: 0;
+    }
+  }
+  
+  &__error {
+    border-color: $color-error;
+    
+    p {
+      color: $color-error;
+    }
+  }
+}
+
+// ============================================
+// COMPACT STYLE VARIANT
+// ============================================
+
+.ajax-search--compact {
+  .ajax-search__input {
+    padding: 0.75rem 3rem 0.75rem 2.5rem;
+  }
+  
+  .ajax-search__icon {
+    left: 0.75rem;
+  }
+  
+  .ajax-search__item,
+  .ajax-search__result {
+    padding: 0.75rem 1rem;
+    
+    &-thumbnail {
+      width: 40px;
+      height: 40px;
+    }
+    
+    &-title {
+      font-size: $font-size-sm;
+    }
+    
+    &-excerpt {
+      display: none;
+    }
+  }
+  
+  .ajax-search__thumbnail,
+  .ajax-search__result-thumbnail {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .ajax-search__title,
+  .ajax-search__result-title {
+    font-size: $font-size-sm;
+  }
+  
+  .ajax-search__excerpt,
+  .ajax-search__result-excerpt {
+    display: none;
+  }
+  
+  .ajax-search__price {
+    font-size: $font-size-sm;
+  }
+}
+
+// ============================================
+// LIST VARIANT (Alternative Layout)
+// ============================================
+
+.ajax-search--list {
+  .ajax-search__results {
+    max-height: 500px;
+  }
+  
+  .ajax-search__item,
+  .ajax-search__result {
+    flex-direction: column;
+    align-items: stretch;
+    
+    &-thumbnail {
+      width: 100%;
+      height: 120px;
+      margin-bottom: 0.75rem;
+    }
+  }
+  
+  .ajax-search__thumbnail,
+  .ajax-search__result-thumbnail {
+    width: 100%;
+    height: 120px;
+    margin-bottom: 0.75rem;
+  }
+}
+
+// ============================================
+// ANIMATIONS
+// ============================================
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+// ============================================
+// RESPONSIVE
+// ============================================
+
+@media (max-width: 768px) {
+  .ajax-search {
+    max-width: 100%;
+    
+    &__item,
+    &__result {
+      padding: 0.75rem;
+      
+      &-thumbnail {
+        width: 50px;
+        height: 50px;
+      }
+    }
+    
+    &__thumbnail,
+    &__result-thumbnail {
+      width: 50px;
+      height: 50px;
+    }
+    
+    &__price {
+      font-size: $font-size-sm;
+      
+      del {
+        display: none; // Hide old price on mobile
+      }
+    }
+    
+    &__meta,
+    &__result-meta {
+      font-size: 10px;
+    }
+  }
+}

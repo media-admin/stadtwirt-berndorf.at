@@ -1,0 +1,178 @@
+{
+    "key": "group_gmap",
+    "title": "Map Details",
+    "fields": [
+        {
+            "key": "field_gmap_address",
+            "label": "Adresse",
+            "name": "address",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Vollständige Adresse für die Karte",
+            "required": 1,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placeholder": "Musterstraße 123, 1010 Wien",
+            "default_value": "",
+            "maxlength": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_gmap_lat",
+            "label": "Latitude (Breitengrad)",
+            "name": "latitude",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "z.B. 48.2082 (Google Maps → Rechtsklick → Koordinaten)",
+            "required": 1,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placeholder": "48.2082",
+            "default_value": "",
+            "maxlength": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_gmap_lng",
+            "label": "Longitude (Längengrad)",
+            "name": "longitude",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "z.B. 16.3738",
+            "required": 1,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placeholder": "16.3738",
+            "default_value": "",
+            "maxlength": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_gmap_zoom",
+            "label": "Zoom Level",
+            "name": "zoom",
+            "aria-label": "",
+            "type": "number",
+            "instructions": "1 = Welt, 15 = Stadt, 20 = Gebäude",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": 15,
+            "min": 1,
+            "max": 20,
+            "step": 1,
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_gmap_marker_title",
+            "label": "Marker Titel",
+            "name": "marker_title",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placeholder": "Unser Büro",
+            "default_value": "",
+            "maxlength": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_gmap_marker_description",
+            "label": "Marker Beschreibung",
+            "name": "marker_description",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "rows": 3,
+            "placeholder": "Zusätzliche Infos für den Marker",
+            "default_value": "",
+            "new_lines": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_gmap_style",
+            "label": "Map Style",
+            "name": "map_style",
+            "aria-label": "",
+            "type": "select",
+            "instructions": "",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "default": "Standard",
+                "silver": "Silber",
+                "dark": "Dark Mode",
+                "retro": "Retro"
+            },
+            "default_value": "default",
+            "multiple": 0,
+            "allow_null": 0,
+            "ui": 0,
+            "ajax": 0,
+            "placeholder": "",
+            "return_format": "value",
+            "create_options": 0,
+            "save_options": 0
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "gmap"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": [],
+    "active": true,
+    "description": "",
+    "show_in_rest": false,
+    "display_title": "",
+    "modified": 1771236278
+}

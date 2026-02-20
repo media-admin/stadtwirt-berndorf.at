@@ -1,0 +1,74 @@
+// Services Section
+.services-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-4;
+  
+  @include respond-to('md') {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  @include respond-to('lg') {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.service-card {
+  background: var(--color-surface);
+  border-radius: $radius-lg;
+  padding: $spacing-4;
+  text-align: center;
+  transition: all $transition-base;
+  
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: $shadow-lg;
+  }
+  
+  &__icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto $spacing-3;
+    
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+  
+  &__title {
+    font-size: $font-size-h4;
+    font-weight: $font-weight-bold;
+    margin-bottom: $spacing-2;
+    color: var(--color-text);
+  }
+  
+  &__description {
+    color: var(--color-text-secondary);
+    margin-bottom: $spacing-3;
+  }
+  
+  &__features {
+    list-style: none;
+    padding: 0;
+    margin-bottom: $spacing-3;
+    
+    li {
+      padding: $spacing-1 0;
+      color: var(--color-text);
+      
+      &::before {
+        content: '✓ ';
+        color: $color-primary;
+        font-weight: bold;
+      }
+    }
+  }
+  
+  &__price {
+    font-size: $font-size-h5;
+    font-weight: $font-weight-bold;
+    color: $color-primary;
+  }
+}

@@ -1,0 +1,20 @@
+[data-target="tag-generator-panel-honeypot"],
+[data-target="tag-generator-panel-acf_field"],
+[data-target*="cf7apps_"] {
+    color: #0D2149;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    border-radius: 2px;
+    border: 1px solid #208AAE;
+    background: #E0FDFF;
+}
+.cf7apps-settings svg{
+    padding-top: 10px;
+}
+
+/* Override CF7 v2 tag generator invalid field background to white */
+form.tag-generator-panel[data-version="2"] .control-box input:invalid,
+form.tag-generator-panel[data-version="2"] .control-box textarea:invalid {
+    background-color: #ffffff !important;
+}

@@ -1,0 +1,56 @@
+<?php
+/**
+ * Plugin Name: Media Lab Agency Core
+ * Plugin URI: https://github.com/media-admin/media-lab-starter-kit
+ * Description: Core functionality for Media Lab agency websites. Provides shortcodes, security features, and admin customizations.
+ * Version: 1.0.0
+ * Author: Media Lab
+ * Author URI: https://medialab.at
+ * Text Domain: media-lab-core
+ * Domain Path: /languages
+ * Requires at least: 6.0
+ * Requires PHP: 8.0
+ */
+
+if (!defined('ABSPATH')) {
+    exit; // Exit if accessed directly
+}
+
+// Plugin Constants
+define('MEDIALAB_CORE_VERSION', '1.0.0');
+define('MEDIALAB_CORE_FILE', __FILE__);
+define('MEDIALAB_CORE_PATH', plugin_dir_path(__FILE__));
+define('MEDIALAB_CORE_URL', plugin_dir_url(__FILE__));
+define('MEDIALAB_CORE_BASENAME', plugin_basename(__FILE__));
+
+/**
+ * Initialize Plugin
+ */
+function medialab_core_init() {
+    // Load text domain
+    load_plugin_textdomain('media-lab-core', false, dirname(MEDIALAB_CORE_BASENAME) . '/languages');
+    
+    // Load core components
+    require_once MEDIALAB_CORE_PATH . 'inc/shortcodes.php';
+    require_once MEDIALAB_CORE_PATH . 'inc/security.php';
+    require_once MEDIALAB_CORE_PATH . 'inc/admin.php';
+    require_once MEDIALAB_CORE_PATH . 'inc/helpers.php';
+}
+add_action('plugins_loaded', 'medialab_core_init', 5);
+
+/**
+ * Activation Hook
+ */
+function medialab_core_activate() {
+    // Flush rewrite rules
+    flush_rewrite_rules();
+}
+register_activation_hook(__FILE__, 'medialab_core_activate');
+
+/**
+ * Deactivation Hook
+ */
+function medialab_core_deactivate() {
+    flush_rewrite_rules();
+}
+register_deactivation_hook(__FILE__, 'medialab_core_deactivate');

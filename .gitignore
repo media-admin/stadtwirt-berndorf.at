@@ -1,98 +1,99 @@
-# GENERAL SETTINGS
-# -----------------------------
-# Numerous always-ignore extensions
-# -----------------------------
-*.diff
-*.err
-*.orig
-*.log
-*.rej
-*.swo
-*.swp
-*.vi
-*~
-*.sass-cache
-.tmp/
+# ============================================
+# WORDPRESS CORE
+# ============================================
+/cms/wp-admin/
+/cms/wp-includes/
+/cms/wp-*.php
+/cms/xmlrpc.php
+/cms/readme.html
+/cms/license.txt
 
+# ============================================
+# WORDPRESS CONFIG
+# ============================================
+/cms/wp-config.php
+/cms/wp-config-local.php
+/cms/wp-config-staging.php
+/cms/wp-config-production.php
 
+# ============================================
+# CONTENT
+# ============================================
+/cms/wp-content/uploads/
+/cms/wp-content/upgrade/
+/cms/wp-content/cache/
+/cms/wp-content/w3tc-config/
 
-# OS or Editor folders
-# -----------------------------
-Thumbs.db
-.cache
-.project
-.settings
-.tmproj
-.nova
+# ============================================
+# PLUGINS - Third Party (ignorieren)
+# ============================================
+/cms/wp-content/plugins/advanced-custom-fields/
+/cms/wp-content/plugins/advanced-custom-fields-pro/
+/cms/wp-content/plugins/contact-form-7/
+/cms/wp-content/plugins/wordpress-importer/
+/cms/wp-content/plugins/woocommerce/
+/cms/wp-content/plugins/better-search-replace/
+/cms/wp-content/plugins/ewww-image-optimizer/
+/cms/wp-content/plugins/wp-fastest-cache/
 
+# ============================================
+# THEMES
+# ============================================
+/cms/wp-content/themes/twenty*/
 
-# Ignore every DS_Store File on any location
-# -----------------------------
+# ============================================
+# BUILD & DEPENDENCIES
+# ============================================
+node_modules/
+npm-debug.log
+yarn-error.log
+/cms/wp-content/themes/*/assets/dist/
+*.map
+/vendor/
+
+# ============================================
+# OS & IDE
+# ============================================
 .DS_Store
-*.DS_Store
-*/*.DS_Store
+Thumbs.db
+*~
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
 
+# ============================================
+# LOGS & TEMP
+# ============================================
+*.log
+/cms/wp-content/debug.log
+*.tmp
+*.temp
+.cache/
 
+# ============================================
+# BACKUPS & DATABASE
+# ============================================
+*.backup
+*-backup/
+*.sql
+*.sql.gz
+docs-backup/
 
+# ============================================
+# ENVIRONMENT
+# ============================================
+.env
+.env.local
 
+# ============================================
+# PROJEKT SPEZIFISCH - Stadtwirt
+# ============================================
 
-# STATIC ENVIRONMENT
-# -----------------------------
+# Stadtwirt Plugin (wird committed)
+!/cms/wp-content/plugins/stadtwirt-plugin/
 
-# Ignore .htaccess files
-# -----------------------------
-*.htaccess
-*/.htaccess
-
-
-# Ignore node dependency directories
-# -----------------------------
-/node_modules
-package-lock.json
-*package-lock.json
-*/package-lock.json
-
-
-
-
-# Exclude static environment's dist folder
-# -----------------------------
-dist
-
-
-# Exclude WordPress Installation temporarily <<<<<< INCLUDE WHEN STATIC DEVELOPMENT HAS BEEN FINISHED >>>>>>>
-# -----------------------------
-index.php
-backups/*
-
-!cms
-
-cms/wp-admin
-cms/wp-includes
-cms/*.php
-cms/*.html
-cms/*.txt
-
-
-# DYNAMIC ENVIRONMENT
-# -----------------------------
-
-# ignore everything in the "wp-content" directory, except:
-# "mu-plugins", "plugins", "themes" directory
-# -----------------------------
-cms/wp-content/*
-
-!cms/wp-content/mu-plugins/
-!cms/wp-content/mu-plugins/*
-
-!cms/wp-content/plugins/
-!cms/wp-content/plugins/*
-
-!cms/wp-content/themes/
-!cms/wp-content/themes/*
-
-cms/wp-content/themes/index.php
-cms/wp-content/themes/twentytwenty/*
-cms/wp-content/themes/twentytwentyone/*
-cms/wp-content/themes/twentytwentytwo/*
-cms/wp-content/themes/twentytwentythree/*
+# Stadtwirt Theme (wird committed)
+!/cms/wp-content/themes/stadtwirt-theme/

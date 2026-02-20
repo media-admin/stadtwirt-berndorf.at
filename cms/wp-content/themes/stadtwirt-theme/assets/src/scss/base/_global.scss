@@ -1,0 +1,48 @@
+// Global Styles
+body {
+  background: var(--color-background);
+  background: $color-bg-dark;
+  color: var(--color-text);
+  color: $color-text-light;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.site {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.site-main {
+  flex: 1;
+}
+
+.container {
+  @include container;
+}
+
+// Cards anpassen für Dark Mode
+.card {
+  background: var(--color-surface);
+  color: var(--color-text);
+  border-color: var(--color-border);
+  transition: all $transition-base;
+}
+
+// Links
+a {
+  color: $color-primary;
+  
+  &:hover {
+    color: darken($color-primary, 15%);
+  }
+}
+
+// Sections mit Background
+.bg-light {
+  background: var(--color-surface);
+  
+  [data-theme="dark"] & {
+    background: rgba(255, 255, 255, 0.05);
+  }
+}

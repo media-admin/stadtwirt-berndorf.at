@@ -1,0 +1,1 @@
+/Users/markus.tritremmel/Valet-Umgebung/media-lab-starter-kit/cms/wp-content/plugins/query-monitor/wp-content/db.php

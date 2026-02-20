@@ -1,0 +1,530 @@
+{
+    "key": "group_job",
+    "title": "Job Details",
+    "fields": [
+        {
+            "key": "field_job_subtitle",
+            "label": "Subtitle \/ Tagline",
+            "name": "subtitle",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Optional: Kurzer Untertitel für die Job-Anzeige",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placeholder": "z.B. \"Join our team\"",
+            "default_value": "",
+            "maxlength": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_job_employment_type",
+            "label": "Employment Type",
+            "name": "employment_type",
+            "aria-label": "",
+            "type": "select",
+            "instructions": "",
+            "required": 1,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "full-time": "Full-Time (Vollzeit)",
+                "part-time": "Part-Time (Teilzeit)",
+                "contract": "Contract (Vertrag)",
+                "temporary": "Temporary (Befristet)",
+                "internship": "Internship (Praktikum)",
+                "freelance": "Freelance"
+            },
+            "default_value": "full-time",
+            "multiple": 0,
+            "allow_null": 0,
+            "ui": 0,
+            "ajax": 0,
+            "placeholder": "",
+            "return_format": "value",
+            "create_options": 0,
+            "save_options": 0
+        },
+        {
+            "key": "field_job_experience_level",
+            "label": "Experience Level",
+            "name": "experience_level",
+            "aria-label": "",
+            "type": "select",
+            "instructions": "",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "entry": "Entry Level (Berufseinsteiger)",
+                "junior": "Junior (1-3 Jahre)",
+                "mid": "Mid-Level (3-5 Jahre)",
+                "senior": "Senior (5+ Jahre)",
+                "lead": "Lead\/Manager"
+            },
+            "default_value": "mid",
+            "multiple": 0,
+            "allow_null": 0,
+            "ui": 0,
+            "ajax": 0,
+            "placeholder": "",
+            "return_format": "value",
+            "create_options": 0,
+            "save_options": 0
+        },
+        {
+            "key": "field_job_remote",
+            "label": "Remote Work",
+            "name": "remote_work",
+            "aria-label": "",
+            "type": "select",
+            "instructions": "",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "office": "Office Only (Nur vor Ort)",
+                "hybrid": "Hybrid (Teilweise Remote)",
+                "remote": "Fully Remote (Vollständig Remote)"
+            },
+            "default_value": "hybrid",
+            "multiple": 0,
+            "allow_null": 0,
+            "ui": 0,
+            "ajax": 0,
+            "placeholder": "",
+            "return_format": "value",
+            "create_options": 0,
+            "save_options": 0
+        },
+        {
+            "key": "field_job_salary_min",
+            "label": "Salary Min (€)",
+            "name": "salary_min",
+            "aria-label": "",
+            "type": "number",
+            "instructions": "Mindestgehalt pro Jahr in Euro (leer lassen für \"Nach Vereinbarung\")",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placeholder": "40000",
+            "default_value": "",
+            "min": "",
+            "max": "",
+            "step": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_job_salary_max",
+            "label": "Salary Max (€)",
+            "name": "salary_max",
+            "aria-label": "",
+            "type": "number",
+            "instructions": "Maximalgehalt pro Jahr in Euro",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placeholder": "60000",
+            "default_value": "",
+            "min": "",
+            "max": "",
+            "step": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_job_salary_display",
+            "label": "Display Salary",
+            "name": "salary_display",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "Gehalt auf der Webseite anzeigen?",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": 1,
+            "ui": 1,
+            "message": "",
+            "ui_on_text": "",
+            "ui_off_text": ""
+        },
+        {
+            "key": "field_job_benefits",
+            "label": "Benefits",
+            "name": "benefits",
+            "aria-label": "",
+            "type": "repeater",
+            "instructions": "",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "button_label": "Add Benefit",
+            "layout": "table",
+            "sub_fields": [
+                {
+                    "key": "field_benefit_text",
+                    "label": "Benefit",
+                    "name": "benefit_text",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": false,
+                    "conditional_logic": false,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "placeholder": "z.B. 30 Urlaubstage, Homeoffice, etc.",
+                    "default_value": "",
+                    "maxlength": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_job_benefits"
+                },
+                {
+                    "key": "field_benefit_icon",
+                    "label": "Icon (optional)",
+                    "name": "benefit_icon",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": false,
+                    "conditional_logic": false,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "placeholder": "dashicons-yes",
+                    "default_value": "",
+                    "maxlength": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_job_benefits"
+                }
+            ],
+            "min": 0,
+            "max": 0,
+            "rows_per_page": 20,
+            "collapsed": ""
+        },
+        {
+            "key": "field_job_requirements",
+            "label": "Requirements",
+            "name": "requirements",
+            "aria-label": "",
+            "type": "repeater",
+            "instructions": "Was muss der Bewerber mitbringen?",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "button_label": "Add Requirement",
+            "layout": "table",
+            "sub_fields": [
+                {
+                    "key": "field_requirement_text",
+                    "label": "Requirement",
+                    "name": "requirement_text",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": false,
+                    "conditional_logic": false,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "placeholder": "z.B. 3+ Jahre Erfahrung mit React",
+                    "default_value": "",
+                    "maxlength": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_job_requirements"
+                }
+            ],
+            "min": 0,
+            "max": 0,
+            "rows_per_page": 20,
+            "collapsed": ""
+        },
+        {
+            "key": "field_job_responsibilities",
+            "label": "Responsibilities",
+            "name": "responsibilities",
+            "aria-label": "",
+            "type": "repeater",
+            "instructions": "Was sind die Hauptaufgaben?",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "button_label": "Add Responsibility",
+            "layout": "table",
+            "sub_fields": [
+                {
+                    "key": "field_responsibility_text",
+                    "label": "Responsibility",
+                    "name": "responsibility_text",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": false,
+                    "conditional_logic": false,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "placeholder": "z.B. Entwicklung von Web-Applikationen",
+                    "default_value": "",
+                    "maxlength": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_job_responsibilities"
+                }
+            ],
+            "min": 0,
+            "max": 0,
+            "rows_per_page": 20,
+            "collapsed": ""
+        },
+        {
+            "key": "field_job_skills",
+            "label": "Required Skills",
+            "name": "skills",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "Eine Zeile pro Skill",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "rows": 3,
+            "placeholder": "Eine Zeile pro Skill, z.B.:\n                                    JavaScript\n                                    React\n                                    Node.js",
+            "default_value": "",
+            "new_lines": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_job_application_deadline",
+            "label": "Application Deadline",
+            "name": "application_deadline",
+            "aria-label": "",
+            "type": "date_picker",
+            "instructions": "Bewerbungsfrist (optional)",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "display_format": "d.m.Y",
+            "return_format": "Y-m-d",
+            "first_day": 1,
+            "default_to_current_date": 0
+        },
+        {
+            "key": "field_job_application_email",
+            "label": "Application Email",
+            "name": "application_email",
+            "aria-label": "",
+            "type": "email",
+            "instructions": "E-Mail für Bewerbungen",
+            "required": 1,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placeholder": "jobs@example.com",
+            "default_value": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_job_application_url",
+            "label": "Application URL (optional)",
+            "name": "application_url",
+            "aria-label": "",
+            "type": "url",
+            "instructions": "Optional: Externer Bewerbungslink",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placeholder": "https:\/\/example.com\/apply",
+            "default_value": ""
+        },
+        {
+            "key": "field_job_contact_person",
+            "label": "Contact Person",
+            "name": "contact_person",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Ansprechpartner für Rückfragen",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placeholder": "Max Mustermann",
+            "default_value": "",
+            "maxlength": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_job_contact_phone",
+            "label": "Contact Phone",
+            "name": "contact_phone",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placeholder": "+43 XXX XXX XXX",
+            "default_value": "",
+            "maxlength": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_job_featured",
+            "label": "Featured Job",
+            "name": "featured",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "Job als \"Featured\" hervorheben?",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": 0,
+            "ui": 1,
+            "message": "",
+            "ui_on_text": "",
+            "ui_off_text": ""
+        },
+        {
+            "key": "field_job_urgent",
+            "label": "Urgent Hiring",
+            "name": "urgent",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "Dringende Stellenbesetzung?",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": 0,
+            "ui": 1,
+            "message": "",
+            "ui_on_text": "",
+            "ui_off_text": ""
+        },
+        {
+            "key": "field_job_start_date",
+            "label": "Start Date",
+            "name": "start_date",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Gewünschtes Startdatum",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placeholder": "z.B. \"Sofort\", \"01.06.2025\", \"Nach Vereinbarung\"",
+            "default_value": "",
+            "maxlength": "",
+            "prepend": "",
+            "append": ""
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "job"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": [],
+    "active": true,
+    "description": "",
+    "show_in_rest": false,
+    "display_title": "",
+    "modified": 1771236278
+}

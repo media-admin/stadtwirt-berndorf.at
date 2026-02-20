@@ -1,0 +1,194 @@
+// Tabs Component
+.tabs {
+  margin: $spacing-8 0;
+  
+  // Navigation Container
+  &__navigation {
+    display: flex;
+    gap: $spacing-1;
+    border-bottom: 2px solid var(--color-border);
+    margin-bottom: $spacing-6;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    
+    // Hide scrollbar
+    &::-webkit-scrollbar {
+      height: 4px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: var(--color-border);
+      border-radius: 2px;
+    }
+  }
+  
+  // Tab Buttons
+  &__button {
+    flex-shrink: 0;
+    padding: $spacing-3 $spacing-4;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: var(--color-text-secondary);
+    font-size: $font-size-base;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all $transition-base;
+    position: relative;
+    bottom: -2px;
+    white-space: nowrap;
+    
+    .dashicons {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      vertical-align: middle;
+      margin-right: $spacing-1;
+    }
+    
+    &:hover {
+      color: var(--color-text);
+      background: var(--color-hover-bg);
+    }
+    
+    &.is-active {
+      color: $color-primary;
+      border-bottom-color: $color-primary;
+      font-weight: 600;
+    }
+    
+    &:focus {
+      outline: 2px solid $color-primary;
+      outline-offset: 2px;
+    }
+  }
+  
+  // Content Container
+  &__content {
+    position: relative;
+  }
+  
+  // Tab Panels
+  &__panel {
+    display: none;
+    animation: fadeIn 0.3s ease-in-out;
+    
+    &.is-active {
+      display: block;
+    }
+    
+    // Content Styling
+    p:first-child {
+      margin-top: 0;
+    }
+    
+    p:last-child {
+      margin-bottom: 0;
+    }
+    
+    h2, h3, h4 {
+      margin-top: $spacing-6;
+      
+      &:first-child {
+        margin-top: 0;
+      }
+    }
+    
+    ul, ol {
+      margin: $spacing-4 0;
+    }
+    
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: $radius-md;
+    }
+  }
+}
+
+// ============================================
+// STYLE VARIANTS
+// ============================================
+
+// Pills Style
+.tabs--pills {
+  .tabs__navigation {
+    border-bottom: none;
+    gap: $spacing-2;
+    margin-bottom: $spacing-4;
+  }
+  
+  .tabs__button {
+    border: 1px solid var(--color-border);
+    border-radius: $radius-full;
+    padding: $spacing-2 $spacing-4;
+    bottom: 0;
+    
+    &.is-active {
+      background: $color-primary;
+      color: $color-white;
+      border-color: $color-primary;
+    }
+    
+    &:hover:not(.is-active) {
+      border-color: $color-primary;
+      background: rgba($color-primary, 0.1);
+    }
+  }
+}
+
+// Underline Style (Minimalistisch)
+.tabs--underline {
+  .tabs__navigation {
+    border-bottom: 1px solid var(--color-border);
+    gap: $spacing-4;
+  }
+  
+  .tabs__button {
+    padding: $spacing-2 0;
+    border-bottom-width: 2px;
+    
+    &:hover {
+      background: transparent;
+    }
+  }
+}
+
+// ============================================
+// RESPONSIVE
+// ============================================
+
+@include respond-to('sm') {
+  .tabs {
+    &__navigation {
+      flex-wrap: wrap;
+    }
+  }
+}
+
+// ============================================
+// ANIMATIONS
+// ============================================
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Dark Mode Support
+@media (prefers-color-scheme: dark) {
+  .tabs {
+    &__button {
+      &:hover {
+        background: rgba(255, 255, 255, 0.05);
+      }
+    }
+  }
+}

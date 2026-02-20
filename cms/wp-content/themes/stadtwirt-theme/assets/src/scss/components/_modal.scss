@@ -1,0 +1,160 @@
+// Modal
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 9998;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-4;
+  
+  &.is-active {
+    display: flex;
+  }
+  
+  &__dialog {
+    background: var(--color-surface);
+    color: var(--color-text);
+    border-radius: $radius-lg;
+    max-width: 600px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: $shadow-xl;
+    animation: modalSlideIn 0.3s ease;
+  }
+  
+  &__header {
+    padding: $spacing-4;
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  &__title {
+    font-size: $font-size-h4;
+    font-weight: $font-weight-bold;
+    margin: 0;
+    color: var(--color-text);
+  }
+  
+  &__close {
+    background: none;
+    border: none;
+    font-size: 28px;
+    line-height: 1;
+    cursor: pointer;
+    color: var(--color-text-light);
+    transition: color $transition-fast;
+    
+    &:hover {
+      color: var(--color-text);
+    }
+  }
+  
+  &__body {
+    padding: $spacing-4;
+    color: var(--color-text);
+  }
+  
+  &__footer {
+    padding: $spacing-4;
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    gap: $spacing-2;
+    justify-content: flex-end;
+  }
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Contact Form 7 im Modal
+.modal__body {
+  .wpcf7 {
+    .wpcf7-form {
+      p {
+        margin-bottom: $spacing-3;
+      }
+      
+      input[type="text"],
+      input[type="email"],
+      input[type="tel"],
+      textarea {
+        width: 100%;
+        padding: $spacing-2;
+        border: 1px solid var(--color-border);
+        border-radius: $radius-sm;
+        background: var(--color-input-bg);
+        color: var(--color-text);
+        font-family: inherit;
+        
+        &:focus {
+          outline: none;
+          border-color: $color-primary;
+          box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+        }
+      }
+      
+      textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+      
+      input[type="submit"] {
+        background: $color-primary;
+        color: $color-white;
+        border: none;
+        padding: $spacing-2 $spacing-4;
+        border-radius: $radius-sm;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background $transition-base;
+        
+        &:hover {
+          background: darken($color-primary, 10%);
+        }
+      }
+      
+      // Validation Fehler
+      .wpcf7-not-valid-tip {
+        color: $color-error;
+        font-size: $font-size-sm;
+        margin-top: $spacing-1;
+      }
+      
+      // Success/Error Messages
+      .wpcf7-response-output {
+        margin-top: $spacing-3;
+        padding: $spacing-2;
+        border-radius: $radius-sm;
+        
+        &.wpcf7-validation-errors {
+          background: rgba($color-error, 0.1); // 10% Opacity statt lighten
+          border: 1px solid $color-error;
+          color: $color-error;
+        }
+        
+        &.wpcf7-mail-sent-ok {
+          background: rgba($color-error, 0.1); // 10% Opacity statt lighten
+          border: 1px solid $color-success;
+          color: darken($color-success, 20%);
+        }
+      }
+    }
+  }
+}
+

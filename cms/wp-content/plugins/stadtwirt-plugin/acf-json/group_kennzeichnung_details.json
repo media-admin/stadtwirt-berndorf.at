@@ -1,0 +1,12 @@
+{
+    "key": "group_kennzeichnung_details",
+    "title": "Kennzeichnung Details",
+    "fields": [
+        {"key": "field_kennzeichnung_icon", "label": "Icon", "name": "icon", "type": "image", "return_format": "array", "preview_size": "thumbnail"},
+        {"key": "field_kennzeichnung_farbe", "label": "Farbe", "name": "farbe", "type": "color_picker", "default_value": "#4CAF50", "return_format": "string"},
+        {"key": "field_kennzeichnung_beschreibung", "label": "Beschreibung", "name": "beschreibung", "type": "textarea", "rows": 2}
+    ],
+    "location": [[{"param": "taxonomy", "operator": "==", "value": "kennzeichnung"}]],
+    "menu_order": 1,
+    "active": true
+}

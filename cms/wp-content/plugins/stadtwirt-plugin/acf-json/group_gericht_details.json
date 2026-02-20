@@ -1,0 +1,16 @@
+{
+    "key": "group_gericht_details",
+    "title": "Gericht Details",
+    "fields": [
+        {"key": "field_preis", "label": "Preis", "name": "preis", "type": "number", "required": 1, "prepend": "€", "step": 0.1, "min": 0},
+        {"key": "field_zutatenliste", "label": "Zutatenliste (detailliert)", "name": "zutatenliste", "type": "textarea", "rows": 4, "placeholder": "z.B. 200g Rinderfilet vom Weiderind, 50g Schalotten, 100ml Sahne"},
+        {"key": "field_allergene", "label": "Allergene", "name": "allergene", "type": "checkbox", "choices": {"A": "A - Glutenhaltiges Getreide", "B": "B - Krebstiere", "C": "C - Eier", "D": "D - Fische", "E": "E - Erdnüsse", "F": "F - Sojabohnen", "G": "G - Milch/Laktose", "H": "H - Schalenfrüchte", "L": "L - Sellerie", "M": "M - Senf", "N": "N - Sesamsamen", "O": "O - Schwefeldioxid/Sulfite", "P": "P - Lupinen", "R": "R - Weichtiere"}, "layout": "vertical", "toggle": 1, "return_format": "value"},
+        {"key": "field_aktion", "label": "Aktionsangebot", "name": "aktion", "type": "true_false", "message": "Dieses Gericht ist ein Aktionsangebot", "default_value": 0, "ui": 1},
+        {"key": "field_aktionspreis", "label": "Aktionspreis", "name": "aktionspreis", "type": "number", "conditional_logic": [[{"field": "field_aktion", "operator": "==", "value": "1"}]], "prepend": "€", "step": 0.1, "min": 0},
+        {"key": "field_portionsgroesse", "label": "Portionsgröße", "name": "portionsgroesse", "type": "text", "placeholder": "z.B. ca. 350g, 0,5l"},
+        {"key": "field_zusatzinfo", "label": "Zusatzinformationen", "name": "zusatzinfo", "type": "text", "placeholder": "z.B. mit Beilage nach Wahl"}
+    ],
+    "location": [[{"param": "post_type", "operator": "==", "value": "gericht"}]],
+    "menu_order": 2,
+    "active": true
+}
