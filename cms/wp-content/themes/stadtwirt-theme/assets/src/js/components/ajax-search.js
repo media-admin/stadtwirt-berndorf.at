@@ -1,7 +1,7 @@
 /**
  * AJAX Live Search Component
  */
-document.addEventListener('DOMContentLoaded', function() {
+(function() {  // Direkte Ausführung – Dynamic Import läuft nach DOMContentLoaded
     const searchContainers = document.querySelectorAll('.ajax-search');
     
     if (searchContainers.length === 0) return;
@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-});
+})();
 
 /**
  * Perform AJAX Search

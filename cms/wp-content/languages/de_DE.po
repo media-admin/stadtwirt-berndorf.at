@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the WordPress - 6.9.x - Development package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2026-02-19 18:46:18+0000\n"
+"PO-Revision-Date: 2026-03-02 00:24:24+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1046,8 +1046,8 @@ msgstr "%1$s–%2$s Minuten"
 #: wp-includes/blocks/post-comments-link.php:49
 msgid "%1$s comment<span class=\"screen-reader-text\"> on %2$s</span>"
 msgid_plural "%1$s comments<span class=\"screen-reader-text\"> on %2$s</span>"
-msgstr[0] "%1$s Kommentar<span class=\"screen-reader-text\"> auf %2$s</span>"
-msgstr[1] "%1$s Kommentare<span class=\"screen-reader-text\"> auf %2$s</span>"
+msgstr[0] "%1$s Kommentar<span class=\"screen-reader-text\"> zu %2$s</span>"
+msgstr[1] "%1$s Kommentare<span class=\"screen-reader-text\"> zu %2$s</span>"
 
 #. translators: %s post title
 #: wp-includes/blocks/post-comments-link.php:43
@@ -3784,8 +3784,8 @@ msgstr "Template bearbeiten"
 #: wp-admin/includes/class-wp-list-table.php:855
 msgid "%s comment"
 msgid_plural "%s comments"
-msgstr[0] "%s Kommentar"
-msgstr[1] "%s Kommentare"
+msgstr[0] "%s Kommentar"
+msgstr[1] "%s Kommentare"
 
 #: wp-signup.php:646
 msgid "Create a site or only a username:"
@@ -4201,13 +4201,13 @@ msgstr "Ein WordPress-Kommentator"
 #: wp-includes/blocks/comments-title.php:71
 #: wp-includes/js/dist/block-library.js:10759
 msgid "Responses to %s"
-msgstr "Antworten auf %s"
+msgstr "Kommentare zu %s"
 
 #. translators: %s: Post title.
 #: wp-includes/blocks/comments-title.php:68
 #: wp-includes/js/dist/block-library.js:10757
 msgid "Response to %s"
-msgstr "Antwort auf %s"
+msgstr "Kommentar zu %s"
 
 #: wp-includes/js/dist/block-library.js:9675
 #: wp-includes/blocks/comment-date/block.json
@@ -4433,12 +4433,12 @@ msgstr "Das Hinzufügen eines RSS-Feeds zur Homepage dieser Website wird nicht u
 #: wp-includes/blocks/comments-title.php:76
 #: wp-includes/js/dist/block-library.js:10764
 msgid "Responses"
-msgstr "Antworten"
+msgstr "Kommentare"
 
 #: wp-includes/blocks/comments-title.php:74
 #: wp-includes/js/dist/block-library.js:10762
 msgid "Response"
-msgstr "Antwort"
+msgstr "Kommentar"
 
 #: wp-includes/blocks/comments-pagination-previous.php:20
 #: wp-includes/js/dist/block-library.js:8932
@@ -8680,7 +8680,7 @@ msgstr "Andere Felder als %s werden für den Sitemap-Index aktuell nicht unterst
 
 #: wp-login.php:1243
 msgid "Check your email"
-msgstr "Überprüfen Sie Ihr E-Mail-Postfach"
+msgstr "Überprüfe dein E-Mail-Postfach"
 
 #. translators: %s: Link to the login page.
 #: wp-login.php:1233
@@ -9630,8 +9630,8 @@ msgstr "Wiederherstellungsmodus verlassen"
 #: wp-admin/menu.php:103
 msgid "%s Comment in moderation"
 msgid_plural "%s Comments in moderation"
-msgstr[0] "%s Kommentar in Moderation"
-msgstr[1] "%s Kommentare in Moderation"
+msgstr[0] "%s Kommentar in Moderation"
+msgstr[1] "%s Kommentare in Moderation"
 
 #: wp-content/plugins/hello.php:68 hello.php:68
 msgid "Quote from Hello Dolly song, by Jerry Herman:"
@@ -10583,7 +10583,7 @@ msgstr "Eigene"
 
 #: wp-includes/rest-api/endpoints/class-wp-rest-post-types-controller.php:351
 msgid "Whether or not the post type can be viewed."
-msgstr "Ob der Inhaltstyp angezeigt werden kann, oder nicht."
+msgstr "Ob der Inhaltstyp angezeigt werden kann oder nicht."
 
 #: wp-includes/functions.php:3703
 msgid "The link you followed has expired."
@@ -11612,7 +11612,7 @@ msgstr "Es ist ein Authentifizierungsproblem aufgetreten. Bitte lade die Seite n
 #: wp-includes/script-loader.php:1346 wp-includes/script-loader.php:1348
 msgid "Unable to save due to %s invalid setting."
 msgid_plural "Unable to save due to %s invalid settings."
-msgstr[0] "Das Speichern ist aufgrund %s ungültigen Einstellung nicht möglich."
+msgstr[0] "Das Speichern ist aufgrund %s ungültiger Einstellung nicht möglich."
 msgstr[1] "Das Speichern ist aufgrund %s ungültiger Einstellungen nicht möglich."
 
 #: wp-includes/class-wp-customize-manager.php:2685
@@ -12171,7 +12171,7 @@ msgstr "Visuell lesbare Beschriftungen des Inhaltstyps für verschiedene Kontext
 
 #: wp-includes/rest-api/endpoints/class-wp-rest-post-types-controller.php:345
 msgid "Whether or not the post type should have children."
-msgstr "Ob der Inhaltstyp untergeordnete Elemente haben soll, oder nicht."
+msgstr "Ob der Inhaltstyp untergeordnete Elemente haben soll oder nicht."
 
 #: wp-includes/rest-api/endpoints/class-wp-rest-post-types-controller.php:339
 msgid "A human-readable description of the post type."
@@ -12822,7 +12822,7 @@ msgstr "Trackbacks sind für diesen Beitrag geschlossen."
 
 #: wp-trackback.php:96
 msgid "I really need an ID for this to work."
-msgstr "Damit das funktioniert brauche ich wirklich eine ID."
+msgstr "Damit das funktioniert, wird eine ID benötigt."
 
 #: wp-includes/class-wp-customize-manager.php:5680
 #: wp-includes/js/dist/editor.js:7288 wp-includes/js/dist/editor.js:12693
@@ -12996,7 +12996,7 @@ msgstr "Ergebnisse auf Taxonomien begrenzen, die einem bestimmten Inhaltstyp zug
 
 #: wp-includes/rest-api/endpoints/class-wp-rest-taxonomies-controller.php:379
 msgid "Whether or not the term cloud should be displayed."
-msgstr "Ob die Schlagwort-Wolke angezeigt werden soll, oder nicht."
+msgstr "Ob die Schlagwort-Wolke angezeigt werden soll oder nicht."
 
 #. translators: %s: Property name.
 #. translators: %s: Custom field key.
@@ -13004,7 +13004,7 @@ msgstr "Ob die Schlagwort-Wolke angezeigt werden soll, oder nicht."
 #: wp-includes/rest-api/fields/class-wp-rest-meta-fields.php:170
 #: wp-includes/rest-api/fields/class-wp-rest-meta-fields.php:188
 msgid "The %s property has an invalid stored value, and cannot be updated to null."
-msgstr "Die %s-Eigenschaft ist mit einem ungültigen Wert gespeichert, und kann nicht auf null aktualisiert werden."
+msgstr "Die %s-Eigenschaft ist mit einem ungültigen Wert gespeichert und kann nicht auf null aktualisiert werden."
 
 #: wp-includes/rest-api/endpoints/class-wp-rest-revisions-controller.php:208
 msgid "Invalid revision ID."
@@ -13069,7 +13069,7 @@ msgstr "Ein Passwort, um vor Zugriff auf Inhalt und Textauszug zu schützen."
 
 #: wp-includes/rest-api/endpoints/class-wp-rest-posts-controller.php:2688
 msgid "Whether or not the post should be treated as sticky."
-msgstr "Ob der Beitrag als oben gehalten behandelt werden soll, oder nicht."
+msgstr "Ob der Beitrag als oben gehalten behandelt werden soll oder nicht."
 
 #: wp-includes/rest-api/endpoints/class-wp-rest-posts-controller.php:2672
 msgid "The format for the post."
@@ -13077,11 +13077,11 @@ msgstr "Das Format für den Beitrag."
 
 #: wp-includes/rest-api/endpoints/class-wp-rest-posts-controller.php:2652
 msgid "Whether or not the post can be pinged."
-msgstr "Ob der Beitrag gepingt werden kann, oder nicht."
+msgstr "Ob der Beitrag gepingt werden kann oder nicht."
 
 #: wp-includes/rest-api/endpoints/class-wp-rest-posts-controller.php:2646
 msgid "Whether or not comments are open on the post."
-msgstr "Ob Kommentare für den Beitrag geöffnet sind, oder nicht."
+msgstr "Ob Kommentare für den Beitrag geöffnet sind oder nicht."
 
 #: wp-includes/rest-api/endpoints/class-wp-rest-posts-controller.php:2638
 msgid "The ID of the featured media for the post."
@@ -13229,7 +13229,7 @@ msgstr "Visuell lesbare Beschriftungen der Taxonomie für verschiedene Kontexte.
 
 #: wp-includes/rest-api/endpoints/class-wp-rest-taxonomies-controller.php:355
 msgid "Whether or not the taxonomy should have children."
-msgstr "Ob die Taxonomie untergeordnete Elemente haben soll, oder nicht."
+msgstr "Ob die Taxonomie untergeordnete Elemente haben soll oder nicht."
 
 #: wp-includes/rest-api/endpoints/class-wp-rest-taxonomies-controller.php:349
 msgid "A human-readable description of the taxonomy."
@@ -15132,7 +15132,7 @@ msgstr "Du erhältst eine Registrierungsbestätigung per E-Mail."
 #: wp-admin/user-edit.php:700 wp-admin/user-new.php:608
 #: wp-admin/js/password-toggle.js:28 wp-admin/js/user-profile.js:97
 msgid "Hide"
-msgstr "Verbergen"
+msgstr "Ausblenden"
 
 #: wp-includes/js/dist/block-editor.js:51320
 #: wp-includes/js/dist/block-editor.js:53441 wp-admin/includes/media.php:1620
@@ -15709,8 +15709,8 @@ msgstr "Wechseln"
 #: wp-includes/js/dist/block-library.js:10737
 msgid "%1$s response to %2$s"
 msgid_plural "%1$s responses to %2$s"
-msgstr[0] "%1$s Antwort zu %2$s"
-msgstr[1] "%1$s Antworten zu %2$s"
+msgstr[0] "%1$s Kommentar zu %2$s"
+msgstr[1] "%1$s Kommentare zu %2$s"
 
 #: wp-includes/theme.php:3759
 msgid "Customizer"
@@ -15872,8 +15872,8 @@ msgstr "Kommentare deaktiviert<span class=\"screen-reader-text\"> für %s</span>
 #: wp-includes/comment-template.php:1661
 msgid "%1$s Comment<span class=\"screen-reader-text\"> on %2$s</span>"
 msgid_plural "%1$s Comments<span class=\"screen-reader-text\"> on %2$s</span>"
-msgstr[0] "%1$s Kommentar<span class=\"screen-reader-text\"> zu %2$s</span>"
-msgstr[1] "%1$s Kommentare<span class=\"screen-reader-text\"> zu %2$s</span>"
+msgstr[0] "%1$s Kommentar<span class=\"screen-reader-text\"> zu %2$s</span>"
+msgstr[1] "%1$s Kommentare<span class=\"screen-reader-text\"> zu %2$s</span>"
 
 #. translators: %s: Post title.
 #: wp-includes/comment-template.php:1656
@@ -18562,7 +18562,7 @@ msgstr "Konfigurationsdatei erstellen"
 #. translators: %s: wp-config.php
 #: wp-load.php:99
 msgid "You can create a %s file through a web interface, but this doesn't work for all server setups. The safest way is to manually create the file."
-msgstr "Du kannst die Datei %s durch das Webinterface erstellen, aber das funktioniert nicht mit allen Server-Konfigurationen. Der sicherste Weg ist, die Datei manuell zu erstellen."
+msgstr "Du kannst die Datei %s über das Webinterface erstellen, aber das funktioniert nicht mit allen Server-Konfigurationen. Der sicherste Weg ist, die Datei manuell zu erstellen."
 
 #. translators: 1: Link to new site, 2: Login URL, 3: Username.
 #: wp-signup.php:559
@@ -18679,8 +18679,8 @@ msgstr "Datenbankfehler"
 #: wp-admin/includes/ajax-actions.php:1441 wp-admin/includes/dashboard.php:334
 msgid "%s Comment"
 msgid_plural "%s Comments"
-msgstr[0] "%s Kommentar"
-msgstr[1] "%s Kommentare"
+msgstr[0] "%s Kommentar"
+msgstr[1] "%s Kommentare"
 
 #: wp-includes/admin-bar.php:187
 #: wp-includes/widgets/class-wp-widget-meta.php:92
@@ -19156,13 +19156,13 @@ msgstr "&#8222;%s&#8220;"
 #: wp-includes/js/dist/block-library.js:10751
 msgid "%s response"
 msgid_plural "%s responses"
-msgstr[0] "%s Antwort"
-msgstr[1] "%s Antworten"
+msgstr[0] "%s Kommentar"
+msgstr[1] "%s Kommentare"
 
 #: wp-includes/blocks/comments-title.php:57
 #: wp-includes/js/dist/block-library.js:10747
 msgid "One response"
-msgstr "Eine Antwort"
+msgstr "Ein Kommentar"
 
 #: wp-includes/theme-compat/comments.php:24
 msgid "This post is password protected. Enter the password to view comments."
@@ -19525,15 +19525,15 @@ msgstr "Dies ist der Kurzlink."
 #: wp-includes/update.php:995
 msgid "%d Theme Update"
 msgid_plural "%d Theme Updates"
-msgstr[0] "%d Theme-Aktualisierung"
-msgstr[1] "%d Theme-Aktualisierungen"
+msgstr[0] "%d Theme-Aktualisierung"
+msgstr[1] "%d Theme-Aktualisierungen"
 
 #. translators: %d: Number of available plugin updates.
 #: wp-includes/update.php:990
 msgid "%d Plugin Update"
 msgid_plural "%d Plugin Updates"
-msgstr[0] "%d Plugin-Aktualisierung"
-msgstr[1] "%d Plugin-Aktualisierungen"
+msgstr[0] "%d Plugin-Aktualisierung"
+msgstr[1] "%d Plugin-Aktualisierungen"
 
 #. translators: %d: Number of available WordPress updates.
 #: wp-includes/update.php:985
@@ -19653,7 +19653,7 @@ msgstr "Suchergebnisse für: „%s“"
 #: wp-includes/js/dist/block-library.js:8927
 #: wp-includes/js/dist/block-library.js:10733
 msgid "One response to %s"
-msgstr "Eine Antwort zu %s"
+msgstr "Ein Kommentar zu %s"
 
 #: wp-includes/admin-bar.php:1107
 #: wp-includes/class-wp-customize-nav-menus.php:681
@@ -21314,7 +21314,7 @@ msgstr "Antwort abbrechen"
 #. translators: %s: Author of the comment being replied to.
 #: wp-includes/comment-template.php:2121 wp-includes/comment-template.php:2658
 msgid "Leave a Reply to %s"
-msgstr "Schreibe einen Kommentar zu %s"
+msgstr "Antworte auf den Kommentar von %s"
 
 #: wp-includes/comment-template.php:2116 wp-includes/comment-template.php:2656
 #: wp-includes/js/dist/block-library.js:8817

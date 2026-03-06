@@ -16,6 +16,11 @@ add_action('wp_ajax_agency_search', 'agency_core_ajax_search');
 add_action('wp_ajax_nopriv_agency_search', 'agency_core_ajax_search');
 
 function agency_core_ajax_search() {
+    // Rate-Limiting: max. 20 Anfragen / 60 Sekunden pro IP (F-03, Search ist teurer)
+    if ( ! medialab_check_rate_limit( 'ajax_search', 20, 60 ) ) {
+        wp_send_json_error( array( 'message' => 'Too many requests. Please try again later.' ), 429 );
+    }
+
     // Verify nonce - MUSS MIT functions.php ÜBEREINSTIMMEN!
     check_ajax_referer('agency_search_nonce', 'nonce');
     

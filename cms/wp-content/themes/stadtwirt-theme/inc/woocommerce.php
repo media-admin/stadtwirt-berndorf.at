@@ -60,18 +60,19 @@ remove_action('woocommerce_before_main_content', 'woocommerce_breadcrumb', 20);
  * Custom Add to Cart button text
  */
 add_filter('woocommerce_product_single_add_to_cart_text', function($text) {
-    return __('In den Warenkorb', 'custom-theme');
+    return __('In den Warenkorb', 'stadtwirt-theme');
 });
-
-add_filter('woocommerce_product_add_to_cart_text', function($text) {
-    global $product;
+add_filter('woocommerce_product_add_to_cart_text', function($text, $product) {
+    if (!$product || !is_a($product, 'WC_Product')) {
+        return $text;
+    }
     
     if ($product->is_type('simple')) {
-        return __('Kaufen', 'custom-theme');
+        return __('Kaufen', 'stadtwirt-theme');
     }
     
     return $text;
-});
+}, 10, 2);
 
 /**
  * Custom sale badge

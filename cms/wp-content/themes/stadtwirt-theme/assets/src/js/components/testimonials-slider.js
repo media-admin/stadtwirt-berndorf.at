@@ -1,25 +1,18 @@
 /**
  * Testimonials Slider
  */
+import Swiper from 'swiper';
+import { Navigation, Pagination, Autoplay } from 'swiper/modules';
 
 export default class TestimonialsSlider {
   constructor() {
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', () => this.init());
-    } else {
-      this.init();
-    }
+    this.init();
   }
   
   init() {
     this.sliders = document.querySelectorAll('.testimonials--slider');
     
     if (this.sliders.length === 0) return;
-    
-    if (typeof Swiper === 'undefined') {
-      console.warn('Swiper library not loaded for testimonials slider');
-      return;
-    }
     
     this.sliders.forEach(slider => {
       this.initSlider(slider);
@@ -38,6 +31,7 @@ export default class TestimonialsSlider {
       const shouldLoop = slideCount > 3;
       
       const swiperInstance = new Swiper(sliderElement, {
+        modules: [Navigation, Pagination, Autoplay],
         slidesPerView: 1,
         spaceBetween: 30,
         loop: shouldLoop, // Dynamisch: nur wenn genug Slides

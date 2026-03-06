@@ -1,0 +1,17 @@
+{
+  "name": "media-lab-theme",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:css\" \"npm run dev:js\"",
+    "dev:css": "sass --watch assets/src/scss/style.scss assets/dist/css/style.css",
+    "dev:js": "vite",
+    "build": "npm run build:css && npm run build:js",
+    "build:css": "sass assets/src/scss/style.scss assets/dist/css/style.css --style=compressed --no-source-map",
+    "build:js": "vite build"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0",
+    "sass": "^1.69.0",
+    "vite": "^5.0.0"
+  }
+}

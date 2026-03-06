@@ -1,3 +1,5 @@
+@use '../abstracts' as *;
+
 // ============================================
 // AJAX SEARCH
 // ============================================
@@ -55,27 +57,22 @@
     right: 0.5rem;
     top: 50%;
     transform: translateY(-50%);
-    background: $color-primary;
-    color: $color-white;
-    border: none;
+    // Icon-only Submit-Button: kein @extend, da quadratisch + transform-Override nötig
+    background:    $color-primary;
+    color:         $color-white;
+    border:        none;
     border-radius: $radius-full;
-    width: 2.5rem;
-    height: 2.5rem;
-    display: flex;
-    align-items: center;
+    width:         2.5rem;
+    height:        2.5rem;
+    display:       flex;
+    align-items:   center;
     justify-content: center;
-    cursor: pointer;
-    transition: $transition-base;
-    z-index: 2;
-    
-    &:hover {
-      background: darken($color-primary, 10%);
-      transform: translateY(-50%) scale(1.05);
-    }
-    
-    &:active {
-      transform: translateY(-50%) scale(0.95);
-    }
+    cursor:        pointer;
+    transition:    $transition-base;
+    z-index:       2;
+
+    &:hover  { background: $color-primary-dark; transform: translateY(-50%) scale(1.05); }
+    &:active { transform: translateY(-50%) scale(0.95); }
     
     &:focus {
       outline: none;
@@ -174,7 +171,7 @@
     
     &:hover,
     &.is-active {
-      background: $color-gray-500;
+      background: $color-gray-50;
     }
     
     // ============================================
@@ -339,7 +336,7 @@
     del {
       color: $color-text-muted;
       font-size: $font-size-sm;
-      font-weight: $font-weight-regular;
+      font-weight: $font-weight-normal;
       margin-right: 0.5rem;
       opacity: 0.7;
     }

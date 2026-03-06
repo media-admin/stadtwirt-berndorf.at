@@ -1,3 +1,5 @@
+@use '../abstracts' as *;
+
 // Modal
 .modal {
   position: fixed;
@@ -115,18 +117,9 @@
       }
       
       input[type="submit"] {
-        background: $color-primary;
-        color: $color-white;
-        border: none;
-        padding: $spacing-2 $spacing-4;
-        border-radius: $radius-sm;
-        cursor: pointer;
-        font-weight: 600;
-        transition: background $transition-base;
-        
-        &:hover {
-          background: darken($color-primary, 10%);
-        }
+        @include btn-base;
+        @include btn-primary;
+        @include btn-sm;
       }
       
       // Validation Fehler
@@ -151,7 +144,7 @@
         &.wpcf7-mail-sent-ok {
           background: rgba($color-error, 0.1); // 10% Opacity statt lighten
           border: 1px solid $color-success;
-          color: darken($color-success, 20%);
+          color: $color-success-dark;
         }
       }
     }

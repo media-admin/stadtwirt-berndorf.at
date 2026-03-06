@@ -1,3 +1,5 @@
+@use '../abstracts' as *;
+
 // ============================================
 // FAQ ACCORDION
 // ============================================
@@ -21,7 +23,7 @@
     &.is-active {
       .faq-question {
         color: $color-primary;
-        background: $color-gray-500;
+        background: $color-gray-50;
         
         .faq-question__icon {
           transform: rotate(180deg);
@@ -51,7 +53,7 @@
     
     &:hover {
       color: $color-primary;
-      background: $color-gray-500;
+      background: $color-gray-50;
     }
     
     &__text {
@@ -107,7 +109,7 @@
         text-decoration: underline;
         
         &:hover {
-          color: darken($color-primary, 10%);
+          color: $color-primary-dark;
         }
       }
     }

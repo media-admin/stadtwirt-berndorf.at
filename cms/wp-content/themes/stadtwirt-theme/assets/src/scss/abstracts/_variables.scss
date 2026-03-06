@@ -1,178 +1,343 @@
-// ============================================
-// DESIGN TOKENS – Berndorfer Stadtwirt
-// ============================================
-
-// ─── Farben ──────────────────────────────────
-$color-primary:        #7B1A1A;   // Dunkelrot (Nav, Topbar, Akzente)
-$color-primary-dark:   #5c1313;   // Hover
-$color-primary-light:  #9e2222;   // Lighter variant
-
-$color-bg-dark:        #1a1a1a;   // Dunkle Sections
-$color-bg-dark-2:      #2a2626;   // Leicht heller dunkel
-$color-bg-light:       #e8e4df;   // Cremeweiß (helle Sections)
-$color-bg-light-2:     #f2efea;   // Noch heller
-
-$color-white:          #ffffff;
-$color-black:          #0d0d0d;
-
-$color-text:           #1a1a1a;
-$color-text-muted:     #6b6b6b;
-$color-text-light:     #e8e4df;   // Text auf dunklem BG
-$color-text-light-muted: #a89e9e;
-
-$color-gray-100:       #f2efea;
-$color-gray-200:       #e8e4df;
-$color-gray-300:       #d4cfc9;
-$color-gray-400:       #a89e9e;
-$color-gray-500:       #6b6b6b;
-$color-gray-600:       #4a4a4a;
-$color-gray-700:       #2a2a2a;
-$color-gray-800:       #1a1a1a;
+// =============================================================================
+// DESIGN TOKENS
+// Media Lab Starter Kit – Single Source of Truth
+// Version: 1.1.0 – 2026-03-04 (bereinigt und vereinheitlicht)
+//
+// REGELN:
+//  - Jede Variable NUR EINMAL definieren
+//  - Hardcodierte Werte in Components → immer Token verwenden
+//  - CSS Custom Properties und SCSS-Variablen sind synchron gehalten
+// =============================================================================
 
 
-// Semantic Colors
-$color-success: #10b981;
-$color-warning: #f59e0b;
-$color-error: #ef4444;
-$color-info: #3b82f6;
+// ─────────────────────────────────────────────────────────────────
+// 1. BRAND COLORS
+//    Primärfarben – direkt aus Figma
+// ─────────────────────────────────────────────────────────────────
+
+$color-primary:   #ff0000;  // Figma: "Primary"
+$color-secondary: #ff6b6b;  // Figma: "Secondary"
+$color-accent:    #00d9ff;  // Figma: "Accent"
+
+// Hero-Slider Gradient (ersetzt hardcodiertes #667eea)
+$color-hero-gradient: #667eea;
 
 
+// ─────────────────────────────────────────────────────────────────
+// 2. NEUTRAL PALETTE
+//    Grau-Skala – keine Duplikate
+// ─────────────────────────────────────────────────────────────────
 
-// Usage Colors
-$color-text: $color-primary-dark;
-$color-text-muted: $color-gray-600;
-$color-border: $color-gray-300;
+$color-black:      #000000;
+$color-dark:       #1a1a1a;
+$color-grey-dark:  #4a4a4a;
+$color-grey:       #9b9b9b;
+$color-grey-light: #e0e0e0;
+$color-light:      #f5f5f5;
+$color-white:      #ffffff;
 
-
-
-// Use CSS Variables
-$color-background: var(--color-background);
-$color-text: var(--color-text);
-$color-text-muted: var(--color-text-muted);
-$color-text-light: var(--color-text-light);
-$color-border: var(--color-border);
-
-
-
-// ─── Typografie ──────────────────────────────
-// Google Fonts, Local Installation
-$font-primary:    'Work Sans', sans-serif;           // Body
-$font-heading:    'Lobster', serif;                 // Headlines, Script-Titles
-$font-display:    'Work Sans', sans-serif;          // Navigation, Labels, Buttons
-
-$font-size-xs:    0.75rem;    // 12px
-$font-size-sm:    0.875rem;   // 14px
-$font-size-base:  1rem;       // 16px
-$font-size-md:    1.125rem;   // 18px
-$font-size-lg:    1.25rem;    // 20px
-$font-size-xl:    1.5rem;     // 24px
-$font-size-2xl:   2rem;       // 32px
-$font-size-3xl:   2.5rem;     // 40px
-$font-size-4xl:   3.5rem;     // 56px
+// Aliase für Konsistenz (verweisen auf obige Tokens)
+$color-gray-900: $color-dark;
+$color-gray-700: $color-grey-dark;
+$color-gray-400: $color-grey;
+$color-gray-200: $color-grey-light;
+$color-gray-100: #f0f0f0;  // Zwischen $color-grey-light und $color-light
+$color-gray-50:  $color-light;
 
 
-// Headings (aus Figma Text Styles)
-$font-size-h1: 48px;       // Figma: "Heading 1"
-$font-size-h2: 36px;       // Figma: "Heading 2"
-$font-size-h3: 28px;       // Figma: "Heading 3"
-$font-size-h4: 24px;       // Figma: "Heading 4"
-$font-size-h5: 20px;       // Figma: "Heading 5"
-$font-size-h6: 18px;       // Figma: "Heading 6"
+// ─────────────────────────────────────────────────────────────────
+// 3. SEMANTIC / STATUS COLORS
+//    Je Farbe: Basis + Light-Variante
+// ─────────────────────────────────────────────────────────────────
+
+$color-success:       #10b981;
+$color-success-light: #d1fae5;
+
+$color-warning:       #f59e0b;
+$color-warning-light: #fef3c7;
+
+$color-error:         #ef4444;
+$color-error-light:   #fee2e2;
+
+$color-info:          #3b82f6;
+$color-info-light:    #dbeafe;
+
+$color-danger: $color-error; // Alias
+
+$color-woo-danger: #cc0000;  // WooCommerce Sale/Error Badge
+
+// Extended Status – hellere Dark-Mode-Varianten
+$color-info-dark:    #1e40af;   // Info Text (Light Mode)
+$color-info-dim:     #93c5fd;   // Info Text (Dark Mode)
+$color-success-dim:  #86efac;   // Success Text (Dark Mode)
+$color-warning-dark: #92400e;   // Warning Text (Light Mode)
+$color-warning-dim:  #fcd34d;   // Warning Text (Dark Mode)
+$color-error-dark:   #991b1b;   // Error Text (Light Mode)
+$color-error-dim:    #fca5a5;   // Error Text (Dark Mode)
+
+// Accent Farben (für Highlights, Badges, etc.)
+$color-gold:   #fbbf24;   // Sterne, Ratings
+$color-purple: #8b5cf6;   // Highlights, Badges
+
+// ─────────────────────────────────────────────────────────────────
+// 3b. VORKOMPILIERTE FARBVARIANTEN
+//     Ersatz für deprecated darken()/lighten() Funktionen.
+//     Berechnet via color.adjust($color, $lightness: ±n%).
+//     NICHT in Components verwenden – nur über diese Tokens!
+// ─────────────────────────────────────────────────────────────────
+
+$color-primary-dark:        #cc0000;  // darken($color-primary, 10%)
+$color-primary-darker:      #b20000;  // darken($color-primary, 15%)
+
+$color-success-dark:        #075b3f;  // darken($color-success, 20%)
+$color-success-light-bg:    #b5f8e2;  // lighten($color-success, 45%)
+
+$color-warning-dark:        #c47e08;  // darken($color-warning, 10%)
+$color-warning-darker:      #935f06;  // darken($color-warning, 20%)
+$color-warning-light-bg:    #fdebce;  // lighten($color-warning, 40%)
+$color-warning-light-bg2:   #fef5e7;  // lighten($color-warning, 45%)
+
+$color-error-light-bg:      #fce4e4;  // lighten($color-error, 38%) – lesbar
+
+$color-info-light-bg:       #dbeafe;  // entspricht $color-info-light
+
+$color-hero-gradient-dark:  #3958e3;  // darken($color-hero-gradient, 10%)
 
 
-$font-weight-regular:  400;
+// ─────────────────────────────────────────────────────────────────
+// 4. SEMANTIC USAGE TOKENS
+//    Light Mode defaults – überschrieben durch CSS Custom Properties
+// ─────────────────────────────────────────────────────────────────
+
+$color-text:       $color-dark;
+$color-text-muted: $color-grey-dark;
+$color-text-light: $color-grey;
+$color-background: $color-white;
+$color-border:     $color-grey-light;
+$color-surface:    $color-white;
+$color-card-bg:    $color-white;
+$color-input-bg:   $color-white;
+
+
+// ─────────────────────────────────────────────────────────────────
+// 5. CSS CUSTOM PROPERTIES (Dark Mode Support)
+//    SCSS-Variablen oben werden hier als CSS-Vars gespiegelt.
+//    Alle genutzten --color-* müssen hier definiert sein.
+// ─────────────────────────────────────────────────────────────────
+
+:root {
+  // Basis
+  --color-primary:        #{$color-primary};
+  --color-secondary:      #{$color-secondary};
+  --color-accent:         #{$color-accent};
+
+  // Hintergrund & Oberflächen
+  --color-background:     #{$color-white};
+  --color-surface:        #{$color-white};
+  --color-card-bg:        #{$color-white};
+  --color-input-bg:       #{$color-white};
+  --color-dark:           #{$color-dark};
+  --color-light:          #{$color-light};
+
+  // Text
+  --color-text:           #{$color-dark};
+  --color-text-muted:     #{$color-grey-dark};
+  --color-text-light:     #{$color-grey};
+  --color-text-secondary: #{$color-grey-dark};   // Alias für --color-text-muted
+
+  // Rahmen
+  --color-border:         #{$color-grey-light};
+
+  // Status
+  --color-success:        #{$color-success};
+  --color-warning:        #{$color-warning};
+  --color-error:          #{$color-error};
+  --color-info:           #{$color-info};
+
+  // Notification variants (Light Mode)
+  --notification-info-bg:      #{$color-info-light};
+  --notification-info-border:  #{$color-info};
+  --notification-info-text:    #{$color-info-dark};
+  --notification-info-dim:     #{$color-info};
+
+  --notification-success-bg:      #{$color-success-light};
+  --notification-success-border:  #{$color-success};
+  --notification-success-text:    #166534;
+  --notification-success-dim:     #{$color-success};
+
+  --notification-warning-bg:      #{$color-warning-light};
+  --notification-warning-border:  #{$color-warning};
+  --notification-warning-text:    #{$color-warning-dark};
+  --notification-warning-dim:     #{$color-warning};
+
+  --notification-error-bg:      #{$color-error-light};
+  --notification-error-border:  #{$color-error};
+  --notification-error-text:    #{$color-error-dark};
+  --notification-error-dim:     #{$color-error};
+
+  // Accent
+  --color-gold:   #{$color-gold};
+  --color-purple: #{$color-purple};
+}
+
+[data-theme="dark"] {
+  --color-background:     #1a1a1a;
+  --color-surface:        #242424;
+  --color-card-bg:        #2a2a2a;
+  --color-input-bg:       #2a2a2a;
+  --color-dark:           #f5f5f5;   // Invertiert: dark → hell
+  --color-light:          #1a1a1a;   // Invertiert: light → dunkel
+
+  --color-text:           #f5f5f5;
+  --color-text-muted:     #a0a0a0;
+  --color-text-light:     #b0b0b0;
+  --color-text-secondary: #a0a0a0;
+
+  --color-border:         #333333;
+}
+
+// SCSS-Variablen auf CSS Custom Properties umschalten (Dark-Mode-fähig)
+$color-background:     var(--color-background);
+$color-surface:        var(--color-surface);
+$color-card-bg:        var(--color-card-bg);
+$color-input-bg:       var(--color-input-bg);
+$color-text:           var(--color-text);
+$color-text-muted:     var(--color-text-muted);
+$color-text-light:     var(--color-text-light);
+$color-border:         var(--color-border);
+
+
+// ─────────────────────────────────────────────────────────────────
+// 6. TYPOGRAPHY
+// ─────────────────────────────────────────────────────────────────
+
+$font-primary:   'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+$font-secondary: 'Merriweather', Georgia, serif;
+
+// Fluid Font Scale (px)
+$font-size-xs:   12px;  // Figma: Text/XSmall
+$font-size-sm:   14px;  // Figma: Text/Small
+$font-size-base: 16px;  // Figma: Text/Base
+$font-size-lg:   18px;  // Figma: Text/Large
+$font-size-xl:   20px;  // Figma: Text/XLarge
+$font-size-2xl:  24px;  // Figma: Text/2XLarge
+$font-size-3xl:  28px;  // Figma: Text/3XLarge
+$font-size-4xl:  32px;
+$font-size-5xl:  40px;
+$font-size-6xl:  48px;
+$font-size-7xl:  56px;
+
+// Heading Aliases
+$font-size-h1: $font-size-6xl;  // 48px
+$font-size-h2: 36px;
+$font-size-h3: $font-size-3xl;  // 28px
+$font-size-h4: $font-size-2xl;  // 24px
+$font-size-h5: $font-size-xl;   // 20px
+$font-size-h6: $font-size-lg;   // 18px
+
+// Font Weights
+$font-weight-light:    300;
+$font-weight-normal:   400;
 $font-weight-medium:   500;
 $font-weight-semibold: 600;
 $font-weight-bold:     700;
 
-$line-height-tight:  1.2;
-$line-height-snug:   1.35;
-$line-height-base:   1.65;
-$line-height-loose:  1.8;
+// Line Heights
+$line-height-tight:   1.2;
+$line-height-base:    1.6;
 $line-height-relaxed: 1.8;
 
-$letter-spacing-wide:  0.08em;
-$letter-spacing-wider: 0.15em;
 
-// ─── Abstände ────────────────────────────────
-$spacing-1:  0.25rem;
-$spacing-2:  0.5rem;
-$spacing-3:  0.75rem;
-$spacing-4:  1rem;
-$spacing-5:  1.25rem;
-$spacing-6:  1.5rem;
-$spacing-8:  2rem;
-$spacing-10: 2.5rem;
-$spacing-12: 3rem;
-$spacing-16: 4rem;
-$spacing-20: 5rem;
-$spacing-24: 6rem;
-$spacing-32: 8rem;
+// ─────────────────────────────────────────────────────────────────
+// 7. SPACING (8px Grid)
+// ─────────────────────────────────────────────────────────────────
 
-$section-padding:        5rem;
-$section-padding-mobile: 3rem;
+$spacing-unit: 8px;
 
-// ─── Border Radius ───────────────────────────
-$radius-sm:   2px;
-$radius-base: 4px;
-$radius-lg:   6px;
-$radius-xl:   12px;
-$radius-full: 9999px;
+$spacing-0:  0;
+$spacing-1:  $spacing-unit;         //  8px
+$spacing-2:  $spacing-unit * 2;     // 16px
+$spacing-3:  $spacing-unit * 3;     // 24px
+$spacing-4:  $spacing-unit * 4;     // 32px
+$spacing-5:  $spacing-unit * 5;     // 40px
+$spacing-6:  $spacing-unit * 6;     // 48px
+$spacing-7:  $spacing-unit * 7;     // 56px
+$spacing-8:  $spacing-unit * 8;     // 64px
+$spacing-10: $spacing-unit * 10;    // 80px
+$spacing-12: $spacing-unit * 12;    // 96px
+$spacing-16: $spacing-unit * 16;    // 128px
+
+// Semantische Aliases
+$spacing-xs:  $spacing-1;   //  8px
+$spacing-sm:  $spacing-2;   // 16px
+$spacing-md:  $spacing-3;   // 24px
+$spacing-lg:  $spacing-4;   // 32px
+$spacing-xl:  $spacing-6;   // 48px
+$spacing-2xl: $spacing-8;   // 64px
 
 
-$radius-base: 2px;
+// ─────────────────────────────────────────────────────────────────
+// 8. LAYOUT & BREAKPOINTS
+//    Breakpoints sind EINMALIG hier definiert.
+//    _mixins.scss respond-to() referenziert diese Werte.
+// ─────────────────────────────────────────────────────────────────
+
+$container-width:     1200px;
+$container-max-width: $container-width;  // Alias
+$container-padding:   $spacing-md;
+
+$breakpoint-xs:  375px;   // Mobile
+$breakpoint-sm:  576px;   // Mobile Landscape
+$breakpoint-md:  768px;   // Tablet
+$breakpoint-lg:  992px;   // Tablet Landscape
+$breakpoint-xl:  1200px;  // Desktop
+$breakpoint-2xl: 1440px;  // Large Desktop
+
+$grid-columns: 12;
+$grid-gap:     $spacing-3;
+
+
+// ─────────────────────────────────────────────────────────────────
+// 9. BORDER RADIUS
+//    Einmalig definiert – keine Überschreibungen
+// ─────────────────────────────────────────────────────────────────
+
 $radius-none: 0;
-$radius-sm: 4px;
-$radius-md: 8px;
-$radius-lg: 16px;
-$radius-xl: 24px;
+$radius-sm:   4px;
+$radius-base: 8px;   // Standard
+$radius-md:   8px;   // Alias für $radius-base
+$radius-lg:   16px;
+$radius-xl:   24px;
 $radius-full: 9999px;
 
 
+// ─────────────────────────────────────────────────────────────────
+// 10. SHADOWS
+//     Einmalig definiert
+// ─────────────────────────────────────────────────────────────────
 
-// ─── Shadows ─────────────────────────────────
-$shadow-sm:  0 1px 3px rgba(0,0,0,0.25);
-$shadow-md:  0 4px 12px rgba(0,0,0,0.3);
-$shadow-lg:  0 8px 24px rgba(0,0,0,0.35);
-$shadow-xl:  0 16px 48px rgba(0,0,0,0.4);
-
-// ─── Transitions ─────────────────────────────
-$transition-fast:   all 0.15s ease;
-$transition-base:   all 0.25s ease;
-$transition-slow:   all 0.4s ease;
-
-// ─── Container ───────────────────────────────
-$container-width: 1200px;
-$container-max-width:    1280px;
-$container-wide:   1440px;
-$container-narrow: 900px;
-$container-padding: 2rem;
-
-// ─── Breakpoints ─────────────────────────────
-$bp-sm:   640px;
-$bp-md:   768px;
-$bp-lg:   1024px;
-$bp-xl:   1280px;
-$bp-2xl:  1536px;
-
-$breakpoint-xs: 375px;        // Mobile
-$breakpoint-sm: 576px;        // Mobile Landscape
-$breakpoint-md: 768px;        // Tablet
-$breakpoint-lg: 992px;        // Tablet Landscape
-$breakpoint-xl: 1200px;       // Desktop
-$breakpoint-2xl: 1440px;      // Large Desktop
+$shadow-sm:   0 1px 3px rgba(0, 0, 0, 0.1);
+$shadow-base: 0 4px 6px rgba(0, 0, 0, 0.1);
+$shadow-md:   $shadow-base;                   // Alias
+$shadow-lg:   0 10px 15px rgba(0, 0, 0, 0.1);
+$shadow-xl:   0 20px 25px rgba(0, 0, 0, 0.15);
 
 
-// ─── Z-Index ─────────────────────────────────
-$z-base:    1;
-$z-dropdown: 100;
-$z-sticky:  200;
-$z-fixed:   300;
-$z-overlay: 400;
-$z-modal:   500;
-$z-toast:   600;
+// ─────────────────────────────────────────────────────────────────
+// 11. TRANSITIONS
+//     Einmalig definiert – alle mit `all` Prefix für Konsistenz
+// ─────────────────────────────────────────────────────────────────
 
-$z-header: 100;
+$transition-fast:  all 0.15s ease;
+$transition-base:  all 0.3s ease;
+$transition-slow:  all 0.5s ease;
+
+
+// ─────────────────────────────────────────────────────────────────
+// 12. Z-INDEX SCALE
+// ─────────────────────────────────────────────────────────────────
+
+$z-header:   100;
 $z-dropdown: 1000;
-$z-modal: 2000;
-$z-tooltip: 3000;
+$z-modal:    2000;
+$z-tooltip:  3000;

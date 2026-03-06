@@ -275,13 +275,5 @@ export default class LoadMore {
   }
 }
 
-// Initialize when DOM is ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    console.log('🚀 LoadMore: Initializing after DOMContentLoaded');
-    new LoadMore();
-  });
-} else {
-  console.log('🚀 LoadMore: DOM already ready, initializing now');
-  new LoadMore();
-}
+// Direkte Initialisierung – Dynamic Import läuft immer nach DOMContentLoaded
+new LoadMore();

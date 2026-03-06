@@ -1,9 +1,9 @@
+@use '../abstracts' as *;
+
 // Global Styles
 body {
   background: var(--color-background);
-  background: $color-bg-dark;
   color: var(--color-text);
-  color: $color-text-light;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -34,7 +34,7 @@ a {
   color: $color-primary;
   
   &:hover {
-    color: darken($color-primary, 15%);
+    color: $color-primary-darker;
   }
 }
 

@@ -1,45 +1,115 @@
-// Footer (aus Figma Footer Component)
+@use '../abstracts' as *;
+
+// =============================================================================
+// Site Footer
+// =============================================================================
 
 .site-footer {
-  background: var(--color-surface);
-  color: var(--color-text);
-  padding: $spacing-6 0 $spacing-4;
-  margin-top: auto;
-  text-align: center;
-  border-top: 1px solid var(--color-border);
-  transition: all 0.3s ease;
-  
-  a {
-    color: $color-white;
-    opacity: 0.8;
-    
-    &:hover {
-      opacity: 1;
-    }
-  }
+    background: var(--color-surface);
+    border-top: 1px solid var(--color-border);
+    padding: $spacing-8 0 $spacing-4;
+    margin-top: auto;
 
-  p {
-    margin: 0;
-    opacity: 0.8;
-    color: var(--color-text-secondary);
-  }
-  
-  .site-info {
-    margin-top: $spacing-6;
-    padding-top: $spacing-4;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    text-align: center;
-    font-size: $font-size-sm;
-    opacity: 0.7;
-  }
+    // ── Oberer Bereich: Logo + Navigation ────────────────────────────────────
+    &__inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: $spacing-6;
+        padding-bottom: $spacing-6;
+        border-bottom: 1px solid var(--color-border);
+        flex-wrap: wrap;
+
+        @media (max-width: 767px) {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: $spacing-4;
+        }
+    }
+
+    // ── Brand / Logo ──────────────────────────────────────────────────────────
+    &__brand {
+        flex-shrink: 0;
+    }
+
+    &__logo-link {
+        display: inline-block;
+        line-height: 0;
+    }
+
+    &__logo {
+        max-height: 40px;
+        width: auto;
+    }
+
+    &__site-name {
+        font-size: $font-size-xl;
+        font-weight: 700;
+        color: var(--color-text);
+        text-decoration: none;
+        transition: color 0.2s;
+
+        &:hover {
+            color: $color-primary;
+        }
+    }
+
+    // ── Unterer Bereich: Copyright ────────────────────────────────────────────
+    &__bottom {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding-top: $spacing-4;
+    }
+
+    &__copyright {
+        font-size: $font-size-sm;
+        color: var(--color-text-muted);
+        margin: 0;
+    }
 }
 
-.footer-widgets {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: $spacing-6;
-  
-  @include respond-to('md') {
-    grid-template-columns: repeat(2, 1fr);
-  }
+// =============================================================================
+// Footer Navigation
+// =============================================================================
+
+.footer-nav {
+
+    &__list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: $spacing-1 $spacing-4;
+        align-items: center;
+
+        @media (max-width: 767px) {
+            gap: $spacing-1 $spacing-3;
+        }
+    }
+
+    // Menu-Items
+    li {
+        margin: 0;
+        padding: 0;
+
+        // Aktueller Menüpunkt
+        &.current-menu-item > a,
+        &.current_page_item > a {
+            color: $color-primary;
+        }
+    }
+
+    a {
+        font-size: $font-size-sm;
+        color: var(--color-text-muted);
+        text-decoration: none;
+        transition: color 0.2s;
+        white-space: nowrap;
+
+        &:hover {
+            color: $color-primary;
+        }
+    }
 }

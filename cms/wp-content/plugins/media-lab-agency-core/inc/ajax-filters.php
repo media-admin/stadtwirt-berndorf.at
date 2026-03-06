@@ -21,6 +21,11 @@ add_action('wp_ajax_nopriv_ajax_filter_posts', 'agency_core_ajax_filter_posts');
  * AJAX Filter Posts Handler
  */
 function agency_core_ajax_filter_posts() {
+    // Rate-Limiting: max. 30 Anfragen / 60 Sekunden pro IP (F-03)
+    if ( ! medialab_check_rate_limit( 'ajax_filter', 30, 60 ) ) {
+        wp_send_json_error( array( 'message' => 'Too many requests. Please try again later.' ), 429 );
+    }
+
     // Verify nonce
     check_ajax_referer('ajax_filters_nonce', 'nonce');
     

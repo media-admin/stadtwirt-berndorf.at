@@ -13,7 +13,7 @@ console.log('🚀 Starting Staging Deployment...\n');
 // Configuration
 const STAGING_SERVER = 'user@staging.your-domain.com';
 const STAGING_PATH = '/var/www/staging';
-const LOCAL_THEME = './cms/wp-content/themes/custom-theme';
+const LOCAL_THEME = './cms/wp-content/themes/stadtwirt-theme';
 const LOCAL_PLUGINS = './cms/wp-content/mu-plugins';
 
 try {
@@ -23,7 +23,7 @@ try {
   
   // 2. Sync theme
   console.log('\n📤 Syncing theme to staging...');
-  execSync(`rsync -avz --delete ${LOCAL_THEME}/ ${STAGING_SERVER}:${STAGING_PATH}/wp-content/themes/custom-theme/`, {
+  execSync(`rsync -avz --delete ${LOCAL_THEME}/ ${STAGING_SERVER}:${STAGING_PATH}/wp-content/themes/stadtwirt-theme/`, {
     stdio: 'inherit'
   });
   

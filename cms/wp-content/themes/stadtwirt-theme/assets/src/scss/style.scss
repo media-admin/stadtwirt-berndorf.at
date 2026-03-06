@@ -1,68 +1,72 @@
-// ==========================================================================
-// Main Stylesheet - Agency Starter Kit
-// ==========================================================================
+// =============================================================================
+// Main Stylesheet – Media Lab Starter Kit
+// Sass Module System (@use/@forward) – Dart Sass 2.0+ kompatibel
+// =============================================================================
 
-// Configuration
-@import 'abstracts/variables';
-@import 'abstracts/mixins';
+// Configuration – lädt variables + mixins via abstracts/_index.scss
+@use 'abstracts' as *;
 
 // Base
-@import 'base/reset';
-@import 'base/fonts';
-@import 'base/typography';
-@import 'base/global';
-@import 'base/grid-fix';
+@use 'base/reset';
+@use 'base/typography';
+@use 'base/global';
+@use 'base/grid-fix';
 
 // Layout
-@import 'layout/header';
-@import 'layout/navigation';
-@import 'layout/footer';
-@import 'layout/grid';
+@use 'layout/top-header';
+@use 'layout/header';
+@use 'layout/footer';
+@use 'layout/grid';
 
 // Components
-@import 'components/theme-toggle';
-@import 'components/buttons';
-@import 'components/cards';
-@import 'components/events';
-@import 'components/hero-image';
-@import 'components/forms';
-@import 'components/hero-slider';
-@import 'components/accordion';
-@import 'components/lightbox';
-@import 'components/modal';
-@import 'components/back-to-top';
-@import 'components/cookie-notice';
-@import 'components/team';
-@import 'components/testimonials';
-@import 'components/services';
-@import 'components/tabs';
-@import 'components/notification';
-@import 'components/notifications';
-@import 'components/stats';
-@import 'components/timeline';
-@import 'components/image-comparison';
-@import 'components/logo-carousel';
-@import 'components/team-cards';
-@import 'components/video-player';
-@import 'components/faq-accordion';
-@import 'components/contact-form-7';
-@import 'components/cpt-grids';
-@import 'components/spoiler';
-@import 'components/pricing-tables';
-@import 'components/ajax-search';
-@import 'components/load-more';
-@import 'components/google-maps';
-@import 'components/job-card';
-@import 'components/ajax-filters';
-
+@use 'components/theme-toggle';
+@use 'components/buttons';
+@use 'components/cards';
+@use 'components/events';
+@use 'components/hero-image';
+@use 'components/forms';
+@use 'components/hero-slider';
+@use 'components/accordion';
+@use 'components/lightbox';
+@use 'components/modal';
+@use 'components/back-to-top';
+@use 'components/cookie-notice';
+@use 'components/team';
+@use 'components/testimonials';
+@use 'components/services';
+@use 'components/tabs';
+@use 'components/notification';
+@use 'components/notifications';
+@use 'components/stats';
+@use 'components/timeline';
+@use 'components/image-comparison';
+@use 'components/logo-carousel';
+@use 'components/team-cards';
+@use 'components/video-player';
+@use 'components/faq-accordion';
+@use 'components/contact-form-7';
+@use 'components/cpt-grids';
+@use 'components/spoiler';
+@use 'layout/navigation';
+@use 'components/pricing-tables';
+@use 'components/ajax-search';
+@use 'components/load-more';
+@use 'components/google-maps';
+@use 'components/projects-grid';
+@use 'components/job-card';
+@use 'components/ajax-filters';
 
 // Templates
-@import 'templates/page-builder';
-@import 'templates/search-results';
+@use 'templates/page-builder';
+@use 'templates/search-results';
 
 // Utilities
-@import 'utilities/helpers';
-@import 'utilities/animations';
+@use 'utilities/helpers';
+@use 'utilities/animations';
 
 // Pages
-@import 'pages/home';
+@use 'pages/home';
+
+// WooCommerce
+@use 'pages/page-404';
+@use 'woocommerce/woocommerce';

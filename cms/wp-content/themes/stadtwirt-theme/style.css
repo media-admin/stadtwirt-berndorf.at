@@ -1,17 +1,12 @@
 /*
-Theme Name: Stadtwirt Berndorf Theme
-Theme URI: https://www.media-lab.at
-Description: Custom WordPress Theme from Figma Design
-Author: Media Lab Tritremmel GmbH
-Author URI: https://www.media-lab.at
-Version: 1.0.0
+Theme Name: Stadtwirt Berndorf
+Theme URI: https://stadtwirt-berndorf.at
+Author: Media Lab
+Author URI: https://medialab.at
+Description: Custom WordPress Theme for Stadtwirt Berndorf. Built on Media Lab Starter Kit v1.6.
+Version: 1.6.0
 Requires at least: 6.0
-Tested up to: 6.4
+Tested up to: 6.7
 Requires PHP: 8.0
-License: GNU General Public License v2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Text Domain: customtheme
-Tags: custom, figma, modern
+Text Domain: stadtwirt-theme
 */
-
-/* Theme styles werden über Vite kompiliert */

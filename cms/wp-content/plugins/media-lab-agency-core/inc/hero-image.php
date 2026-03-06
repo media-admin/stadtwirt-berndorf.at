@@ -8,18 +8,7 @@ if (!defined('ABSPATH')) exit;
 add_action('acf/init', function() {
     if (!function_exists('acf_add_local_field_group')) return;
 
-    // ─── Options Page (globales Fallback) ────────────────────
-    if (function_exists('acf_add_options_sub_page')) {
-        acf_add_options_sub_page(array(
-            'page_title'  => 'Hero Image',
-            'menu_title'  => 'Hero Image',
-            'parent_slug' => 'agency-core',
-            'capability'  => 'manage_options',
-            'slug'        => 'hero-image-settings',
-        ));
-    }
-
-    // ─── Globale Fallback-Felder ──────────────────────────────
+    // ─── Globale Fallback-Felder (jetzt in Agency Core Settings) ─
     acf_add_local_field_group(array(
         'key'    => 'group_hero_global',
         'title'  => 'Hero Image – Globale Einstellungen',
@@ -57,8 +46,9 @@ add_action('acf/init', function() {
         'location' => array(array(array(
             'param'    => 'options_page',
             'operator' => '==',
-            'value'    => 'hero-image-settings',
+            'value'    => 'agency-core-settings',
         ))),
+        'menu_order' => 15,
     ));
 
     // ─── Post-spezifische Felder ──────────────────────────────

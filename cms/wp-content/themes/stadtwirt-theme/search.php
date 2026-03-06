@@ -17,9 +17,9 @@ get_header();
                 <?php
                 $search_query = get_search_query();
                 if ($search_query) {
-                    printf(__('Suchergebnisse für: "%s"', 'custom-theme'), esc_html($search_query));
+                    printf(__('Suchergebnisse für: "%s"', 'stadtwirt-theme'), esc_html($search_query));
                 } else {
-                    _e('Suchergebnisse', 'custom-theme');
+                    _e('Suchergebnisse', 'stadtwirt-theme');
                 }
                 ?>
             </h1>
@@ -30,7 +30,7 @@ get_header();
                 printf(
                     '<p class="search-results__count">%s %s gefunden</p>',
                     number_format_i18n($wp_query->found_posts),
-                    _n('Ergebnis', 'Ergebnisse', $wp_query->found_posts, 'custom-theme')
+                    _n('Ergebnis', 'Ergebnisse', $wp_query->found_posts, 'stadtwirt-theme')
                 );
             }
             ?>

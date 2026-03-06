@@ -1,3 +1,5 @@
+@use '../abstracts' as *;
+
 // Timeline Component
 .timeline {
   position: relative;
@@ -184,11 +186,11 @@
   
   &--warning {
     .timeline-item__marker {
-      background: darken($color-warning, 10%);
+      background: $color-warning-dark;
     }
     
     .timeline-item__date {
-      color: darken($color-warning, 10%);
+      color: $color-warning-dark;
     }
   }
   

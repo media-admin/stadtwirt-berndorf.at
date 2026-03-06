@@ -1,3 +1,5 @@
+@use '../abstracts' as *;
+
 // Notification Component
 .notification {
   display: flex;
@@ -98,61 +100,61 @@
 
 // Info (Blue)
 .notification--info {
-  background: #eff6ff;
-  border-color: #3b82f6;
-  color: #1e40af;
+  background: var(--notification-info-bg);
+  border-color: var(--notification-info-border);
+  color: var(--notification-info-text);
   
   .notification__icon {
-    color: #3b82f6;
+    color: var(--notification-info-border);
   }
   
   a {
-    color: #1e40af;
+    color: var(--notification-info-text);
   }
 }
 
 // Success (Green)
 .notification--success {
-  background: #f0fdf4;
-  border-color: #22c55e;
-  color: #166534;
+  background: var(--notification-success-bg);
+  border-color: var(--notification-success-border);
+  color: var(--notification-success-text);
   
   .notification__icon {
-    color: #22c55e;
+    color: var(--notification-success-border);
   }
   
   a {
-    color: #166534;
+    color: var(--notification-success-text);
   }
 }
 
 // Warning (Yellow/Orange)
 .notification--warning {
-  background: #fffbeb;
-  border-color: #f59e0b;
-  color: #92400e;
+  background: var(--notification-warning-bg);
+  border-color: var(--notification-warning-border);
+  color: var(--notification-warning-text);
   
   .notification__icon {
-    color: #f59e0b;
+    color: var(--notification-warning-border);
   }
   
   a {
-    color: #92400e;
+    color: var(--notification-warning-text);
   }
 }
 
 // Error (Red)
 .notification--error {
-  background: #fef2f2;
-  border-color: #ef4444;
-  color: #991b1b;
+  background: var(--notification-error-bg);
+  border-color: var(--notification-error-border);
+  color: var(--notification-error-text);
   
   .notification__icon {
-    color: #ef4444;
+    color: var(--notification-error-border);
   }
   
   a {
-    color: #991b1b;
+    color: var(--notification-error-text);
   }
 }
 
@@ -182,38 +184,38 @@
 
 [data-theme="dark"] {
   .notification--info {
-    background: rgba(59, 130, 246, 0.1);
-    color: #93c5fd;
+    background: rgba($color-info, 0.1);
+    color: var(--notification-info-dim);
     
     a {
-      color: #93c5fd;
+      color: var(--notification-info-dim);
     }
   }
   
   .notification--success {
-    background: rgba(34, 197, 94, 0.1);
-    color: #86efac;
+    background: rgba($color-success, 0.1);
+    color: var(--notification-success-dim);
     
     a {
-      color: #86efac;
+      color: var(--notification-success-dim);
     }
   }
   
   .notification--warning {
-    background: rgba(245, 158, 11, 0.1);
-    color: #fcd34d;
+    background: rgba($color-warning, 0.1);
+    color: var(--notification-warning-dim);
     
     a {
-      color: #fcd34d;
+      color: var(--notification-warning-dim);
     }
   }
   
   .notification--error {
-    background: rgba(239, 68, 68, 0.1);
-    color: #fca5a5;
+    background: rgba($color-error, 0.1);
+    color: var(--notification-error-dim);
     
     a {
-      color: #fca5a5;
+      color: var(--notification-error-dim);
     }
   }
 }

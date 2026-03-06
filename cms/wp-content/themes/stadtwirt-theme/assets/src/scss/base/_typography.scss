@@ -1,9 +1,11 @@
+@use '../abstracts' as *;
+
 // Typography (aus Figma Text Styles)
 
 body {
   font-family: $font-primary;
   font-size: $font-size-base;
-  font-weight: $font-weight-regular;
+  font-weight: $font-weight-normal;
   color: $color-text;
   line-height: $line-height-base;
 }
@@ -16,7 +18,6 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 {
-  font-family: $font-heading;
   font-size: $font-size-h1;
   
   @include respond-to('md') {
@@ -55,7 +56,7 @@ a {
   transition: color $transition-fast;
   
   &:hover {
-    color: darken($color-primary, 15%);
+    color: $color-primary-darker;
     
   }
 }

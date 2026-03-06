@@ -1,0 +1,114 @@
+@use '../abstracts' as *;
+
+/**
+ * WooCommerce Styles
+ */
+
+// Shop Grid
+.woocommerce ul.products {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 2rem !important;
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 2rem 0 !important;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr !important;
+  }
+
+  li.product {
+    background: $color-white !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+    transition: all 0.2s ease !important;
+    display: flex !important;
+    flex-direction: column !important;
+    position: relative !important;
+
+    &:hover {
+      box-shadow: 0 20px 25px rgba(0, 0, 0, 0.1) !important;
+      transform: translateY(-4px) !important;
+    }
+
+    .woocommerce-loop-product__link {
+      display: block !important;
+      position: relative !important;
+      
+      img {
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        width: 100% !important;
+        height: auto !important;
+        aspect-ratio: 1 / 1 !important;
+        object-fit: cover !important;
+        display: block !important;
+      }
+    }
+
+    .woocommerce-loop-product__title {
+      font-size: 18px !important;
+      font-weight: 600 !important;
+      margin: 1rem !important;
+      color: var(--color-text) !important;
+      min-height: 2.5em !important;
+      display: -webkit-box !important;
+      -webkit-line-clamp: 2 !important;
+      -webkit-box-orient: vertical !important;
+      overflow: hidden !important;
+    }
+
+    .price {
+      display: flex !important;
+      align-items: center !important;
+      gap: 0.5rem !important;
+      margin: 0 1rem 1rem !important;
+      font-size: 20px !important;
+      font-weight: 700 !important;
+      color: red !important;
+
+      del {
+        font-size: 16px !important;
+        color: var(--color-text-muted) !important;
+      }
+    }
+
+    .button {
+      display: block !important;
+      width: calc(100% - 2rem) !important;
+      margin: 0 1rem 1rem !important;
+      padding: 0.75rem 1.5rem !important;
+      background: red !important;
+      color: $color-white !important;
+      text-align: center !important;
+      border-radius: 8px !important;
+      font-weight: 600 !important;
+      transition: all 0.2s ease !important;
+      margin-top: auto !important;
+
+      &:hover {
+        background: $color-woo-danger !important;
+      }
+    }
+  }
+}
+
+// Leerer Warenkorb
+.woocommerce-cart,
+.cart-empty {
+  .cart-empty {
+    text-align: center !important;
+    padding: 4rem 2rem !important;
+  }
+  
+  .return-to-shop {
+    text-align: center !important;
+    margin: 2rem 0 !important;
+  }
+}

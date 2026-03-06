@@ -1,6 +1,8 @@
 /**
  * Carousel Component (Swiper-based)
  */
+import Swiper from 'swiper';
+import { Navigation, Pagination, Autoplay } from 'swiper/modules';
 
 export default class Carousel {
   constructor() {
@@ -12,13 +14,6 @@ export default class Carousel {
     if (this.carousels.length === 0) {
       return;
     }
-    
-    if (typeof Swiper === 'undefined') {
-      console.error('❌ Swiper nicht geladen für Carousel!');
-      return;
-    }
-    
-    console.log(`✅ ${this.carousels.length} Carousel(s) gefunden`);
     
     this.carousels.forEach((carouselElement) => {
       this.initCarousel(carouselElement);
@@ -35,6 +30,7 @@ export default class Carousel {
     const tabletSlides = parseInt(carouselElement.getAttribute('data-tablet')) || 2;
     
     const swiper = new Swiper(carouselElement, {
+      modules: [Navigation, Pagination, Autoplay],
       slidesPerView: mobileSlides,
       spaceBetween: 15,
       loop: loop,

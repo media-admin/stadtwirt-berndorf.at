@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the WordPress - 6.9.x - Development - Administration - Network Admin package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2026-02-13 23:00:47+0000\n"
+"PO-Revision-Date: 2026-03-01 15:11:18+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -369,7 +369,7 @@ msgstr "Nur Kleinbuchstaben (a-z), Ziffern und Bindestriche sind erlaubt."
 #. translators: %s: wp-config.php
 #: wp-admin/includes/network.php:581
 msgid "These unique authentication keys are also missing from your %s file."
-msgstr "Diese einmaligen Authentifizierungsschlüssel fehlen ebenfalls in der Datei %s."
+msgstr "Diese eindeutigen Authentifizierungsschlüssel fehlen ebenfalls in der Datei %s."
 
 #. translators: %s: wp-config.php
 #: wp-admin/includes/network.php:575
@@ -815,7 +815,7 @@ msgstr "Unterverzeichnis-Netzwerke können mit eigenen wp-content-Verzeichnissen
 
 #: wp-admin/network.php:64
 msgid "Add the designated lines of code to wp-config.php (just before <code>/*...stop editing...*/</code>) and <code>.htaccess</code> (replacing the existing WordPress rules)."
-msgstr "Füge die bezeichneten Zeilen Code zur wp-config.php (kurz vor <code>/*... stop editing...*/</code>) und <code>.htaccess</code> hinzu (ersetzt die bestehenden WordPress-Regeln)."
+msgstr "Füge die angegebenen Code-Zeilen zur wp-config.php (kurz vor <code>/*… Schluss mit dem Bearbeiten …*/</code>) und <code>.htaccess</code> hinzu (ersetzt die bestehenden WordPress-Regeln)."
 
 #: wp-admin/network/settings.php:457
 msgid "Language Settings"
@@ -839,7 +839,7 @@ msgstr "Der Benutzer wurde erstellt."
 
 #: wp-admin/network/site-users.php:286
 msgid "Select a user to remove."
-msgstr "Bitte einen Benutzer auswählen, um diesen zu löschen."
+msgstr "Bitte wähle einen Benutzer zum Entfernen aus."
 
 #: wp-admin/network/site-users.php:279
 msgid "Select a user to change role."

@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Plugins - Flamingo - Stable (latest release) package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2026-02-20 12:38:46+0000\n"
+"PO-Revision-Date: 2026-02-20 21:25:02+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -175,7 +175,7 @@ msgstr "Wähle aus den meistgenutzten Schlagwörtern"
 
 #: admin/includes/meta-boxes.php:84
 msgid "Separate tags with commas"
-msgstr "Trenne Schlagwörter mit Komma"
+msgstr "Schlagwörter durch Kommas trennen"
 
 #: admin/includes/meta-boxes.php:36
 msgid "Add contact"

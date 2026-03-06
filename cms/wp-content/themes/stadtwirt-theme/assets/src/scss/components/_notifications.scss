@@ -1,3 +1,5 @@
+@use '../abstracts' as *;
+
 // Notifications Component
 .notification {
   display: flex;
@@ -74,7 +76,7 @@
   // Success
   &--success {
     border-left-color: $color-success;
-    background: lighten($color-success, 45%);
+    background: $color-success-light-bg;
     
     .notification__icon {
       color: $color-success;
@@ -84,7 +86,7 @@
   // Error
   &--error {
     border-left-color: $color-error;
-    background: lighten($color-error, 40%);
+    background: $color-error-light-bg;
     
     .notification__icon {
       color: $color-error;
@@ -94,17 +96,17 @@
   // Warning
   &--warning {
     border-left-color: $color-warning;
-    background: lighten($color-warning, 40%);
+    background: $color-warning-light-bg;
     
     .notification__icon {
-      color: darken($color-warning, 10%);
+      color: $color-warning-dark;
     }
   }
   
   // Info
   &--info {
     border-left-color: $color-info;
-    background: lighten($color-info, 40%);
+    background: $color-info-light-bg;
     
     .notification__icon {
       color: $color-info;
@@ -305,10 +307,10 @@
   }
 
   // Typen
-  &.notification--info    .notification-popup__icon { color: #3b82f6; }
-  &.notification--success .notification-popup__icon { color: #22c55e; }
-  &.notification--warning .notification-popup__icon { color: #f59e0b; }
-  &.notification--error   .notification-popup__icon { color: #ef4444; }
+  &.notification--info    .notification-popup__icon { color: $color-info; }
+  &.notification--success .notification-popup__icon { color: $color-success; }
+  &.notification--warning .notification-popup__icon { color: $color-warning; }
+  &.notification--error   .notification-popup__icon { color: $color-error; }
 }
 
 body.popup-open { overflow: hidden; }

@@ -34,29 +34,22 @@ function medialab_seo_output_twitter() {
     }
     
     // Title
-    $title = is_front_page() ? get_bloginfo('name') : get_the_title();
+    $post_id = get_the_ID();
+    $title = is_front_page() ? get_bloginfo('name') : medialab_seo_get_title($post_id);
     echo '<meta name="twitter:title" content="' . esc_attr($title) . '">' . "\n";
     
     // Description
-    $description = '';
-    if (is_single() || is_page()) {
-        $description = get_the_excerpt();
-    }
-    if (empty($description)) {
-        $description = get_bloginfo('description');
-    }
+    $description = (is_single() || is_page()) && function_exists('medialab_seo_get_description')
+        ? medialab_seo_get_description($post_id)
+        : get_bloginfo('description');
     if (!empty($description)) {
         echo '<meta name="twitter:description" content="' . esc_attr(wp_trim_words($description, 30)) . '">' . "\n";
     }
     
     // Image
-    $image = '';
-    if (has_post_thumbnail()) {
-        $image = get_the_post_thumbnail_url(null, 'full');
-    }
-    if (empty($image)) {
-        $image = get_option('medialab_seo_default_image');
-    }
+    $image = function_exists('medialab_seo_get_og_image')
+        ? medialab_seo_get_og_image($post_id)
+        : (has_post_thumbnail() ? get_the_post_thumbnail_url(null, 'full') : get_option('medialab_seo_default_image'));
     if (!empty($image)) {
         echo '<meta name="twitter:image" content="' . esc_url($image) . '">' . "\n";
     }

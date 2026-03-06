@@ -468,9 +468,9 @@ function hero_slider_query_shortcode($atts) {
         // Background
         $output .= '<div class="hero-slide__background" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;">';
         $output .= '<picture>';
-        $output .= '<source media="(min-width: 768px)" srcset="' . esc_url($image_desktop) . '">';
-        $output .= '<source media="(max-width: 767px)" srcset="' . esc_url($image_mobile) . '">';
-        $output .= '<img src="' . esc_url($image_desktop) . '" alt="' . esc_attr($title) . '" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">';
+        $output .= '<source media="(min-width: 768px)" srcset="' . esc_url(is_array($image_desktop) ? ($image_desktop["url"] ?? "") : $image_desktop) . '">';
+        $output .= '<source media="(max-width: 767px)" srcset="' . esc_url(is_array($image_mobile) ? ($image_mobile["url"] ?? "") : $image_mobile) . '">';
+        $output .= '<img src="' . esc_url(is_array($image_desktop) ? ($image_desktop["url"] ?? "") : $image_desktop) . '" alt="' . esc_attr($title) . '" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">';
         $output .= '</picture>';
         $output .= '<div class="hero-slide__overlay" style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,' . ($overlay_opacity / 100) . ');z-index:1;"></div>';
         $output .= '</div>';
@@ -1406,13 +1406,13 @@ function team_query_shortcode($atts) {
             $email = get_field('email');
             $phone = get_field('phone');
             $social = get_field('social_media');
-            $thumbnail = get_the_post_thumbnail_url(get_the_ID(), 'medium');
+            $thumbnail_img = medialab_get_thumbnail(get_the_ID(), 'medium', ['class' => 'team-member__image']);
             ?>
             
             <div class="team-member" data-animate="fade-in-up">
-                <?php if ($thumbnail) : ?>
+                <?php if ($thumbnail_img) : ?>
                     <div class="team-member__image-wrapper">
-                        <img src="<?php echo esc_url($thumbnail); ?>" alt="<?php the_title(); ?>" class="team-member__image">
+                        <?php echo $thumbnail_img; // phpcs:ignore WordPress.Security.EscapeOutput ?>
                         
                         <?php if ($social || $email) : ?>
                             <div class="team-member__overlay">
@@ -1520,14 +1520,14 @@ function projects_query_shortcode($atts) {
             $client = get_field('client_name');
             $year = get_field('project_year');
             $url = get_field('project_url');
-            $thumbnail = get_the_post_thumbnail_url(get_the_ID(), 'large');
+            $thumbnail_img = medialab_get_thumbnail(get_the_ID(), 'large', ['class' => 'project-card__img']);
             $categories = get_the_terms(get_the_ID(), 'project_category');
             ?>
             
             <div class="project-card" data-animate="fade-in-up">
-                <?php if ($thumbnail) : ?>
+                <?php if ($thumbnail_img) : ?>
                     <div class="project-card__image">
-                        <img src="<?php echo esc_url($thumbnail); ?>" alt="<?php the_title(); ?>">
+                        <?php echo $thumbnail_img; // phpcs:ignore WordPress.Security.EscapeOutput ?>
                         <div class="project-card__overlay">
                             <a href="<?php the_permalink(); ?>" class="project-card__link">
                                 <span class="dashicons dashicons-visibility"></span>
@@ -1643,7 +1643,7 @@ function testimonials_query_shortcode($atts) {
                 $company = get_field('company');
                 $role = get_field('role');
                 $rating = get_field('rating');
-                $thumbnail = get_the_post_thumbnail_url(get_the_ID(), 'thumbnail');
+                $thumbnail_img = medialab_get_thumbnail(get_the_ID(), 'thumbnail', ['class' => 'testimonial__avatar-img']);
                 ?>
                 
                 <div class="<?php echo $item_class; ?>" data-animate="fade-in-up">
@@ -1746,7 +1746,7 @@ function services_query_shortcode($atts) {
             $price = get_field('price');
             $features = get_field('features');
             $cta = get_field('cta');
-            $thumbnail = get_the_post_thumbnail_url(get_the_ID(), 'medium');
+            $thumbnail_img = medialab_get_thumbnail(get_the_ID(), 'medium', ['class' => 'service-card__img']);
             ?>
             
             <div class="service-card" data-animate="fade-in-up">
@@ -2037,7 +2037,7 @@ function ajax_search_shortcode($atts) {
                     class="ajax-search__input" 
                     placeholder="<?php echo esc_attr($atts['placeholder']); ?>"
                     autocomplete="off"
-                    value="<?php echo get_search_query(); ?>"
+                    value="<?php echo esc_attr( get_search_query() ); ?>"
                 >
                 
                 <!-- Submit Button -->
@@ -2224,7 +2224,7 @@ function posts_load_more_render_template($template) {
  */
 function posts_load_more_template_card() {
     ?>
-    <article class="post-card" data-post-id="<?php echo get_the_ID(); ?>">
+    <article class="post-card" data-post-id="<?php echo esc_attr( get_the_ID() ); ?>">
         <?php if (has_post_thumbnail()) : ?>
             <div class="post-card__thumbnail">
                 <a href="<?php the_permalink(); ?>">
@@ -2239,7 +2239,7 @@ function posts_load_more_template_card() {
             </h3>
             
             <div class="post-card__meta">
-                <span class="post-card__date"><?php echo get_the_date('d.m.Y'); ?></span>
+                <span class="post-card__date"><?php echo esc_html( get_the_date('d.m.Y') ); ?></span>
             </div>
             
             <div class="post-card__excerpt">
@@ -2264,7 +2264,7 @@ function posts_load_more_template_team() {
     $role = get_field('role');
     $email = get_field('email');
     ?>
-    <div class="team-card" data-post-id="<?php echo get_the_ID(); ?>">
+    <div class="team-card" data-post-id="<?php echo esc_attr( get_the_ID() ); ?>">
         <?php if (has_post_thumbnail()) : ?>
             <div class="team-card__image">
                 <?php the_post_thumbnail('medium'); ?>
@@ -2295,7 +2295,7 @@ function posts_load_more_template_project() {
     $client = get_field('client');
     $project_date = get_field('project_date');
     ?>
-    <article class="project-card" data-post-id="<?php echo get_the_ID(); ?>">
+    <article class="project-card" data-post-id="<?php echo esc_attr( get_the_ID() ); ?>">
         <?php if (has_post_thumbnail()) : ?>
             <div class="project-card__image">
                 <a href="<?php the_permalink(); ?>">
@@ -2326,14 +2326,14 @@ function posts_load_more_template_project() {
  */
 function posts_load_more_template_list() {
     ?>
-    <article class="post-list-item" data-post-id="<?php echo get_the_ID(); ?>">
+    <article class="post-list-item" data-post-id="<?php echo esc_attr( get_the_ID() ); ?>">
         <div class="post-list-item__content">
             <h3 class="post-list-item__title">
                 <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
             </h3>
             
             <div class="post-list-item__meta">
-                <span class="post-list-item__date"><?php echo get_the_date('d.m.Y'); ?></span>
+                <span class="post-list-item__date"><?php echo esc_html( get_the_date('d.m.Y') ); ?></span>
             </div>
             
             <div class="post-list-item__excerpt">

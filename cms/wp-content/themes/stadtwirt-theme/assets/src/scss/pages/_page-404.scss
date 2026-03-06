@@ -1,0 +1,42 @@
+@use '../abstracts' as *;
+
+// =============================================================================
+// 404 Page
+// =============================================================================
+
+.page-404 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    text-align: center;
+    padding: $spacing-16 $spacing-4;
+
+    &__number {
+        font-size: clamp(6rem, 20vw, 12rem);
+        font-weight: $font-weight-bold;
+        line-height: 1;
+        color: $color-primary;
+        animation: pulse 2s ease-in-out infinite;
+    }
+
+    &__title {
+        margin-top: $spacing-4;
+        font-size: $font-size-2xl;
+    }
+
+    &__text {
+        margin-top: $spacing-2;
+        color: var(--color-text-muted);
+        max-width: 40ch;
+    }
+
+    &__actions {
+        display: flex;
+        gap: $spacing-3;
+        margin-top: $spacing-8;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}

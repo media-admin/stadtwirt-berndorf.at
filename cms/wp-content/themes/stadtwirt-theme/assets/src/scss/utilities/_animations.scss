@@ -1,3 +1,5 @@
+@use '../abstracts' as *;
+
 // Animation Base
 [data-animate] {
   opacity: 0;

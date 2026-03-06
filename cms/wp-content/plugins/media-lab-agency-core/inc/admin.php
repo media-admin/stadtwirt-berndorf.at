@@ -11,67 +11,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-/**
- * Add custom admin menu
- */
-add_action('admin_menu', function() {
-    add_menu_page(
-        __('Agency Core', 'agency-core'),
-        __('Agency Core', 'agency-core'),
-        'manage_options',
-        'agency-core',
-        'agency_core_admin_page',
-        'dashicons-admin-generic',
-        100
-    );
-});
-
-/**
- * Admin page callback
- */
-function agency_core_admin_page() {
-    ?>
-    <div class="wrap">
-        <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
-        
-        <div class="card">
-            <h2>Plugin Information</h2>
-            <p><strong>Version:</strong> <?php echo MEDIALAB_CORE_VERSION; ?></p>
-            <p><strong>Status:</strong> <span style="color: green;">●</span> Active</p>
-        </div>
-        
-        <div class="card">
-            <h2>Registered Custom Post Types</h2>
-            <ul>
-                <li>✅ Hero Slides</li>
-                <li>✅ Team Members</li>
-                <li>✅ Projects</li>
-                <li>✅ Testimonials</li>
-                <li>✅ FAQs</li>
-                <li>✅ Google Maps</li>
-                <li>✅ Carousel</li>
-                <li>✅ Services</li>
-            </ul>
-        </div>
-        
-        <div class="card">
-            <h2>Available Shortcodes</h2>
-            <p>All shortcodes are available and work with any theme.</p>
-            <p><a href="<?php echo admin_url('admin.php?page=agency-core-docs'); ?>" class="button">View Documentation</a></p>
-        </div>
-        
-        <div class="card">
-            <h2>Theme Compatibility</h2>
-            <p>Current Theme: <strong><?php echo wp_get_theme()->get('Name'); ?></strong></p>
-            <?php if (defined('MEDIALAB_CORE_VERSION')) : ?>
-                <p style="color: green;">✅ Agency Core is active and working correctly.</p>
-            <?php else : ?>
-                <p style="color: red;">❌ Agency Core is not properly loaded.</p>
-            <?php endif; ?>
-        </div>
-    </div>
-    <?php
-}
+// Menu registration is handled by ACF options page in inc/acf-settings.php (slug: agency-core)
 
 /**
  * Add custom columns to CPT admin lists

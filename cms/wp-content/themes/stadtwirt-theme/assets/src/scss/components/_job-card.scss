@@ -1,3 +1,5 @@
+@use '../abstracts' as *;
+
 // ============================================
 // JOBS GRID
 // ============================================
@@ -48,7 +50,7 @@
   
   &--featured {
     border-color: $color-warning;
-    background: lighten($color-warning, 45%);
+    background: $color-warning-light-bg2;
   }
   
   &--urgent {

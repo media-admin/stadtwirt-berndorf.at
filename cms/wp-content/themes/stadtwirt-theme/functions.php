@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Theme version
-define('CUSTOM_THEME_VERSION', '1.0.0');
+define('CUSTOM_THEME_VERSION', '1.6.0');
 
 /**
  * Check Required Plugins
@@ -21,7 +21,7 @@ define('CUSTOM_THEME_VERSION', '1.0.0');
 function customtheme_check_required_plugins() {
     $required_plugins = array(
         'media-lab-agency-core' => 'Media Lab Agency Core',
-        'media-lab-project-starter' => 'Media Lab Project Starter',
+        'stadtwirt-plugin' => 'Stadtwirt Plugin',
     );
     
     $missing_plugins = array();
@@ -63,8 +63,8 @@ function customtheme_setup() {
     
     // Navigation menus
     register_nav_menus(array(
-        'primary' => __('Primary Menu', 'custom-theme'),
-        'footer' => __('Footer Menu', 'custom-theme'),
+        'primary' => __('Primary Menu', 'stadtwirt-theme'),
+        'footer' => __('Footer Menu', 'stadtwirt-theme'),
     ));
     
     // Image sizes

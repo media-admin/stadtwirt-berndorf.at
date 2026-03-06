@@ -1,53 +1,356 @@
-// Cookie Notice
-.cookie-notice {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 9997;
-  background: var(--color-card-bg);
-  border-top: 2px solid $color-primary;
-  box-shadow: $shadow-xl;
-  transform: translateY(100%);
-  transition: transform $transition-base;
-  
-  &.is-visible {
-    transform: translateY(0);
-  }
-  
-  &__content {
-    @include container;
-    padding-top: $spacing-3;
-    padding-bottom: $spacing-3;
+@use '../abstracts' as *;
+
+// =============================================================================
+// Cookie Consent – Banner + Modal + Floating Button
+// =============================================================================
+
+// ── Banner ────────────────────────────────────────────────────────────────────
+
+.cookie-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 9998;
+    background: var(--color-surface);
+    border-top: 2px solid $color-primary;
+    box-shadow: $shadow-xl;
+    transform: translateY(100%);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &.is-visible {
+        transform: translateY(0);
+    }
+
+    &__inner {
+        @include container;
+        padding-top: $spacing-4;
+        padding-bottom: $spacing-4;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: $spacing-6;
+        flex-wrap: wrap;
+
+        @media (max-width: 767px) {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: $spacing-3;
+        }
+    }
+
+    &__body {
+        flex: 1;
+        min-width: 0;
+    }
+
+    &__title {
+        font-weight: 700;
+        font-size: $font-size-base;
+        color: var(--color-text);
+        margin: 0 0 $spacing-1;
+    }
+
+    &__text {
+        font-size: $font-size-sm;
+        color: var(--color-text-muted);
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    &__link {
+        color: $color-primary;
+        text-decoration: underline;
+
+        &:hover {
+            text-decoration: none;
+        }
+    }
+
+    &__actions {
+        display: flex;
+        gap: $spacing-2;
+        flex-wrap: wrap;
+        flex-shrink: 0;
+
+        @media (max-width: 767px) {
+            width: 100%;
+        }
+    }
+}
+
+// ── Modal ─────────────────────────────────────────────────────────────────────
+
+.cookie-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: none;          // hidden by default – nicht durch [hidden] überschreiben
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-4;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+
+    // Sobald JS hidden-Attribut entfernt: sichtbar machen
+    &:not([hidden]) {
+        display: flex;
+        pointer-events: auto;
+    }
+
+    &.is-visible {
+        opacity: 1;
+    }
+
+    &__backdrop {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        cursor: pointer;
+    }
+
+    &__box {
+        position: relative;
+        background: var(--color-surface);
+        border-radius: $radius-lg;
+        box-shadow: $shadow-xl;
+        width: 100%;
+        max-width: 540px;
+        max-height: 90vh;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        transform: translateY(16px);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+        .cookie-modal.is-visible & {
+            transform: translateY(0);
+        }
+    }
+
+    &__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: $spacing-4 $spacing-5;
+        border-bottom: 1px solid var(--color-border);
+        position: sticky;
+        top: 0;
+        background: var(--color-surface);
+        border-radius: $radius-lg $radius-lg 0 0;
+        z-index: 1;
+    }
+
+    &__title {
+        font-size: $font-size-xl;
+        font-weight: 700;
+        margin: 0;
+        color: var(--color-text);
+    }
+
+    &__close {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        border-radius: $radius-md;
+        color: var(--color-text-muted);
+        transition: background-color 0.2s, color 0.2s;
+
+        &:hover {
+            background: var(--color-border);
+            color: var(--color-text);
+        }
+    }
+
+    &__intro {
+        font-size: $font-size-sm;
+        color: var(--color-text-muted);
+        padding: $spacing-4 $spacing-5 0;
+        margin: 0;
+        line-height: 1.6;
+    }
+
+    &__categories {
+        padding: $spacing-3 $spacing-5;
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-1;
+    }
+
+    &__category {
+        padding: $spacing-3 0;
+        border-bottom: 1px solid var(--color-border);
+
+        &:last-child {
+            border-bottom: none;
+        }
+    }
+
+    &__category-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: $spacing-4;
+    }
+
+    &__category-info {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        flex: 1;
+        min-width: 0;
+    }
+
+    &__category-name {
+        font-weight: 600;
+        font-size: $font-size-sm;
+        color: var(--color-text);
+    }
+
+    &__category-desc {
+        font-size: $font-size-sm;
+        color: var(--color-text-muted);
+        line-height: 1.5;
+    }
+
+    &__always-active {
+        font-size: $font-size-sm;
+        color: $color-success;
+        font-weight: 600;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    &__footer {
+        display: flex;
+        gap: $spacing-2;
+        padding: $spacing-4 $spacing-5;
+        border-top: 1px solid var(--color-border);
+        position: sticky;
+        bottom: 0;
+        background: var(--color-surface);
+        border-radius: 0 0 $radius-lg $radius-lg;
+    }
+}
+
+// body-Klasse verhindert Scroll im Hintergrund
+.cookie-modal-open {
+    overflow: hidden;
+}
+
+// ── Toggle Switch ─────────────────────────────────────────────────────────────
+
+.cookie-toggle {
+    position: relative;
+    display: inline-flex;
+    cursor: pointer;
+    flex-shrink: 0;
+
+    input {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+
+        &:checked + .cookie-toggle__track {
+            background: $color-primary;
+        }
+
+        &:checked + .cookie-toggle__track .cookie-toggle__thumb {
+            transform: translateX(20px);
+        }
+
+        &:focus-visible + .cookie-toggle__track {
+            outline: 2px solid $color-primary;
+            outline-offset: 2px;
+        }
+    }
+
+    &__track {
+        width: 44px;
+        height: 24px;
+        background: var(--color-border);
+        border-radius: $radius-full;
+        transition: background-color 0.2s ease;
+        position: relative;
+    }
+
+    &__thumb {
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 18px;
+        height: 18px;
+        background: $color-white;
+        border-radius: $radius-full;
+        box-shadow: $shadow-sm;
+        transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+}
+
+// ── Floating Button ───────────────────────────────────────────────────────────
+
+.cookie-settings-btn {
+    position: fixed;
+    bottom: $spacing-4;
+    left: $spacing-4;
+    z-index: 9997;
+
+    width: 44px;
+    height: 44px;
+    border-radius: $radius-full;
+    border: none;
+    background: var(--color-surface);
+    box-shadow: $shadow-lg;
+    cursor: pointer;
+    font-size: 22px;
+    line-height: 1;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: $spacing-4;
-    flex-wrap: wrap;
-    
-    @include respond-to('md') {
-      flex-wrap: nowrap;
-    }
-  }
-  
-  &__text {
-    margin: 0;
+    justify-content: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
     color: var(--color-text);
-    font-size: $font-size-sm;
-    flex: 1;
-  }
-  
-  &__link {
-    color: $color-primary;
-    text-decoration: underline;
-    
-    &:hover {
-      text-decoration: none;
+
+    // Nicht mit Banner überlagern
+    .cookie-banner.is-visible ~ & {
+        bottom: calc(#{$spacing-4} + 80px);
     }
-  }
-  
-  &__actions {
-    display: flex;
-    gap: $spacing-2;
-  }
+
+    &:hover {
+        transform: scale(1.1);
+        box-shadow: $shadow-xl;
+    }
+
+    &:focus-visible {
+        outline: 2px solid $color-primary;
+        outline-offset: 2px;
+    }
+
+    // Tooltip
+    &::after {
+        content: attr(aria-label);
+        position: absolute;
+        left: calc(100% + 8px);
+        top: 50%;
+        transform: translateY(-50%);
+        background: var(--color-text);
+        color: var(--color-background);
+        font-size: $font-size-sm;
+        white-space: nowrap;
+        padding: 4px 10px;
+        border-radius: $radius-md;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.2s;
+    }
+
+    &:hover::after {
+        opacity: 1;
+    }
 }

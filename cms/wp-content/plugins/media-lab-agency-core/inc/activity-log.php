@@ -24,7 +24,7 @@ class MediaLab_Activity_Log {
         $this->table_name = $wpdb->prefix . 'medialab_activity_log';
         
         register_activation_hook(MEDIALAB_CORE_FILE, array($this, 'create_table'));
-        add_action('admin_menu', array($this, 'add_admin_page'));
+        add_action('admin_menu', array($this, 'add_admin_page'), 999);
         
         $this->register_hooks();
     }
@@ -75,15 +75,101 @@ class MediaLab_Activity_Log {
             'object_id'   => $object_id,
             'object_name' => sanitize_text_field($object_name),
             'details'     => sanitize_textarea_field($details),
-            'ip_address'  => $_SERVER['REMOTE_ADDR'] ?? '',
+            'ip_address'  => $this->get_client_ip(),
             'created_at'  => current_time('mysql'),
         ));
+    }
+
+    /**
+     * Client-IP ermitteln (Proxy-sicher)
+     *
+     * Reihenfolge: Cloudflare → X-Real-IP → X-Forwarded-For → REMOTE_ADDR
+     * Nur öffentliche IPs werden akzeptiert (kein IP-Spoofing via Private-Range).
+     * DSGVO: IP wird nach 90 Tagen automatisch anonymisiert (letztes Oktett → 0).
+     */
+    private function get_client_ip(): string {
+        $candidates = [
+            'HTTP_CF_CONNECTING_IP',   // Cloudflare
+            'HTTP_X_REAL_IP',          // nginx Proxy
+            'HTTP_X_FORWARDED_FOR',    // Standard Proxy (kann mehrere IPs enthalten)
+            'REMOTE_ADDR',             // Direkte Verbindung
+        ];
+
+        foreach ($candidates as $key) {
+            if (empty($_SERVER[$key])) {
+                continue;
+            }
+            // X-Forwarded-For: erste (Client-)IP nehmen
+            $ip = trim(explode(',', $_SERVER[$key])[0]);
+
+            // Nur gültige öffentliche IPs akzeptieren (kein Spoofing via Private-Range)
+            if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+                return $ip;
+            }
+        }
+
+        // Fallback: REMOTE_ADDR auch bei privater Range (Localhost-Entwicklung)
+        return filter_var($_SERVER['REMOTE_ADDR'] ?? '', FILTER_VALIDATE_IP) ?: '0.0.0.0';
+    }
+
+    /**
+     * IP-Adresse anonymisieren
+     * IPv4: letztes Oktett → 0  (z.B. 192.168.1.123 → 192.168.1.0)
+     * IPv6: letzte 80 Bit → 0   (z.B. 2001:db8::1234 → 2001:db8::)
+     */
+    public static function anonymize_ip(string $ip): string {
+        if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+            return preg_replace('/\.\d+$/', '.0', $ip);
+        }
+        if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+            // Letzte 5 Gruppen auf 0 setzen
+            $parts = explode(':', inet_ntop(inet_pton($ip)));
+            $parts = array_pad($parts, 8, '0');
+            for ($i = 3; $i < 8; $i++) {
+                $parts[$i] = '0';
+            }
+            return implode(':', $parts);
+        }
+        return '0.0.0.0';
+    }
+
+    /**
+     * DSGVO: Alle IPs älter als 90 Tage anonymisieren (Cron-Job)
+     */
+    public function anonymize_old_ip_addresses(): void {
+        global $wpdb;
+
+        $rows = $wpdb->get_results($wpdb->prepare(
+            "SELECT id, ip_address FROM {$this->table_name}
+             WHERE created_at < %s
+             AND ip_address != ''
+             AND ip_address NOT LIKE '%.0'
+             AND ip_address NOT LIKE '%::0'
+             LIMIT 500",
+            date('Y-m-d H:i:s', strtotime('-90 days'))
+        ));
+
+        foreach ((array) $rows as $row) {
+            $wpdb->update(
+                $this->table_name,
+                ['ip_address' => self::anonymize_ip($row->ip_address)],
+                ['id'         => $row->id],
+                ['%s'],
+                ['%d']
+            );
+        }
     }
 
     /**
      * Hooks registrieren
      */
     private function register_hooks() {
+        // DSGVO: IP-Anonymisierung nach 90 Tagen via WP Cron (täglich prüfen)
+        add_action('medialab_anonymize_ip_addresses', array($this, 'anonymize_old_ip_addresses'));
+        if (!wp_next_scheduled('medialab_anonymize_ip_addresses')) {
+            wp_schedule_event(time(), 'daily', 'medialab_anonymize_ip_addresses');
+        }
+
         // Posts & Pages
         add_action('save_post', array($this, 'log_post_save'), 10, 3);
         add_action('before_delete_post', array($this, 'log_post_delete'));

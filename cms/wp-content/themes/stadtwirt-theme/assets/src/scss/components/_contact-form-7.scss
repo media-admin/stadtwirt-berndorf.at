@@ -1,3 +1,5 @@
+@use '../abstracts' as *;
+
 // Contact Form 7 Custom Styles
 .wpcf7 {
   margin: $spacing-6 0;
@@ -135,27 +137,10 @@
     // Submit button
     input[type="submit"],
     button[type="submit"] {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: $spacing-3 $spacing-6;
-      background: $color-primary;
-      color: $color-white;
-      border: none;
-      border-radius: $radius-md;
-      font-size: $font-size-base;
-      font-weight: 600;
+      @include btn-base;
+      @include btn-primary;
       font-family: inherit;
-      cursor: pointer;
-      transition: all $transition-base;
-      box-shadow: $shadow-sm;
-      
-      &:hover {
-        background: darken($color-primary, 10%);
-        transform: translateY(-2px);
-        box-shadow: $shadow-lg;
-      }
-      
+
       &:active {
         transform: translateY(0);
         box-shadow: $shadow-sm;
@@ -216,7 +201,7 @@
   // Invalid field highlight
   .wpcf7-not-valid {
     border-color: $color-error !important;
-    background: lighten($color-error, 45%) !important;
+    background: $color-error-light-bg !important;
   }
   
   // Response messages
@@ -229,7 +214,7 @@
     
     // Validation errors
     &.wpcf7-validation-errors {
-      background: lighten($color-error, 45%);
+      background: $color-error-light-bg;
       border-color: $color-error;
       color: $color-error;
       
@@ -240,9 +225,9 @@
     
     // Mail sent successfully
     &.wpcf7-mail-sent-ok {
-      background: lighten($color-success, 45%);
+      background: $color-success-light-bg;
       border-color: $color-success;
-      color: darken($color-success, 20%);
+      color: $color-success-dark;
       
       &::before {
         content: "✓ ";
@@ -251,7 +236,7 @@
     
     // Mail failed to send
     &.wpcf7-mail-sent-ng {
-      background: lighten($color-error, 45%);
+      background: $color-error-light-bg;
       border-color: $color-error;
       color: $color-error;
       
@@ -262,9 +247,9 @@
     
     // Spam detected
     &.wpcf7-spam-blocked {
-      background: lighten($color-warning, 40%);
+      background: $color-warning-light-bg;
       border-color: $color-warning;
-      color: darken($color-warning, 20%);
+      color: $color-warning-darker;
       
       &::before {
         content: "🛡️ ";

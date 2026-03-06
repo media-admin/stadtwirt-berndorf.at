@@ -1,3 +1,5 @@
+@use '../abstracts' as *;
+
 // ============================================
 // PRICING TABLES GRID - FIXED
 // ============================================
@@ -154,14 +156,9 @@
   }
   
   &__button {
+    @include btn-base;
+    @include btn-outline;
     width: 100%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: $spacing-4 $spacing-6;
-    text-decoration: none;
-    font-weight: 600;
-    transition: all $transition-base;
   }
   
   // Featured State
@@ -189,15 +186,7 @@
     }
     
     .pricing-table__button {
-      background: $color-primary;
-      color: $color-white;
-      box-shadow: $shadow-md;
-      
-      &:hover {
-        background: darken($color-primary, 10%);
-        transform: translateY(-2px);
-        box-shadow: $shadow-lg;
-      }
+      @include btn-primary;
     }
   }
 }
@@ -353,7 +342,7 @@
     color: $color-white;
     
     &:hover {
-      background: darken($color-primary, 10%);
+      background: $color-primary-dark;
     }
   }
   

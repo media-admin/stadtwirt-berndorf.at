@@ -19,6 +19,11 @@ add_action('wp_ajax_nopriv_agency_load_more', 'agency_core_ajax_load_more');
  * AJAX Load More Handler
  */
 function agency_core_ajax_load_more() {
+    // Rate-Limiting: max. 30 Anfragen / 60 Sekunden pro IP (F-03)
+    if ( ! medialab_check_rate_limit( 'ajax_load_more', 30, 60 ) ) {
+        wp_send_json_error( array( 'message' => 'Too many requests. Please try again later.' ), 429 );
+    }
+
     // Verify nonce
     if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'agency_load_more_nonce')) {
         wp_send_json_error(array('message' => 'Invalid security token'));

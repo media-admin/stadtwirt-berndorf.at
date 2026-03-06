@@ -25,7 +25,7 @@ rl.question('Type "DEPLOY" to confirm: ', (answer) => {
 function deployToProduction() {
   const PROD_SERVER = 'production';  // SSH config alias
   const PROD_PATH = '/var/www/production';
-  const LOCAL_THEME = './cms/wp-content/themes/custom-theme';
+  const LOCAL_THEME = './cms/wp-content/themes/stadtwirt-theme';
   const LOCAL_PLUGINS = './cms/wp-content/mu-plugins';
   
   try {
@@ -41,7 +41,7 @@ function deployToProduction() {
     
     // 3. Sync theme
     console.log('\n📤 Syncing theme to production...');
-    execSync(`rsync -avz --delete ${LOCAL_THEME}/ ${PROD_SERVER}:${PROD_PATH}/wp-content/themes/custom-theme/`, {
+    execSync(`rsync -avz --delete ${LOCAL_THEME}/ ${PROD_SERVER}:${PROD_PATH}/wp-content/themes/stadtwirt-theme/`, {
       stdio: 'inherit'
     });
     

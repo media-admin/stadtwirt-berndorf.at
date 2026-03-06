@@ -1,3 +1,5 @@
+@use '../abstracts' as *;
+
 // Header (aus Figma Header Component)
 
 .site-header {
@@ -21,7 +23,7 @@
   a {
     font-size: $font-size-xl;
     font-weight: $font-weight-bold;
-    color: $color-black;
+    color: $color-dark;
     text-decoration: none;
   }
 }
@@ -76,4 +78,39 @@
     font-size: 24px;
     cursor: pointer;
   }
+}
+// ==========================================================================
+// Logo – Desktop / Mobile Variante
+// ==========================================================================
+.site-logo {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+
+    &__img {
+        display: block;
+        height: auto;
+        max-height: 60px; // Sicherheits-Cap, damit das Logo den Header nicht sprengt
+    }
+
+    // Mobile-Logo standardmäßig ausblenden
+    &__img--mobile {
+        display: none;
+    }
+
+    // Auf Mobile: Desktop-Logo ausblenden, Mobile-Logo einblenden
+    @media (max-width: 767px) {
+        &__img--desktop {
+            display: none;
+        }
+        &__img--mobile {
+            display: block;
+        }
+    }
+
+    &__text {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: inherit;
+    }
 }

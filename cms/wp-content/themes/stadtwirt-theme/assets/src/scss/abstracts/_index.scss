@@ -1,0 +1,7 @@
+// =============================================================================
+// Abstracts – zentraler Einstiegspunkt
+// Alle anderen SCSS-Dateien laden per: @use '../abstracts' as *
+// =============================================================================
+
+@forward 'variables';
+@forward 'mixins';

@@ -1,3 +1,5 @@
+@use '../abstracts' as *;
+
 // ============================================
 // GOOGLE MAPS (DSGVO)
 // ============================================
@@ -64,14 +66,14 @@
       text-decoration: underline;
       
       &:hover {
-        color: darken($color-primary, 10%);
+        color: $color-primary-dark;
       }
     }
   }
   
   &__address {
     padding: 1rem;
-    background: $color-gray-500;
+    background: $color-gray-50;
     border-radius: $radius-base;
     margin-bottom: 1.5rem;
     font-size: $font-size-sm;
@@ -83,28 +85,9 @@
   }
   
   &__button {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 1rem 2rem;
-    background: $color-primary;
-    color: $color-white;
-    border: none;
-    border-radius: $radius-full;
-    font-size: $font-size-lg;
-    font-weight: $font-weight-semibold;
-    cursor: pointer;
-    transition: $transition-base;
-    
-    &:hover {
-      background: darken($color-primary, 10%);
-      transform: translateY(-2px);
-      box-shadow: $shadow-lg;
-    }
-    
-    &:active {
-      transform: translateY(0);
-    }
+    @include btn-base;
+    @include btn-primary;
+    @include btn-lg;
   }
   
   &__privacy {
