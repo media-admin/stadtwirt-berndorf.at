@@ -1,6 +1,6 @@
 # Media Lab Starter Kit - Internal Documentation
 
-**Version:** 1.6.0  
+**Version:** 1.7.0  
 **Last Updated:** March 6, 2026  
 **Architecture:** Modular Plugin System
 
@@ -198,6 +198,13 @@ wp transient delete --all
 ---
 
 ## 📈 Changelog
+
+### v1.7.0 (2026-03-06)
+- ✅ Fullwidth-Helper (Klasse + Mixin, 3 Varianten)
+- ✅ Navigation auf 4 Ebenen erweitert (Header + Mobile + Footer)
+- ✅ Viewport-Kollisionserkennung für Desktop-Flyouts
+- ✅ Footer-Nav: Flyout nach oben (Desktop), Accordion (Mobile)
+- ✅ Docs aktualisiert
 
 ### v1.6.0 (2026-03-06)
 - ✅ Cookie Consent Manager (Banner, Modal, Floating Button 🍪)

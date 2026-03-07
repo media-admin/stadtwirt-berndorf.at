@@ -1,10 +1,10 @@
 # ACF Fields Reference
 
-**Version:** 1.6.0  
-**Letzte Aktualisierung:** 2026-03-04  
+**Version:** 1.7.0  
+**Letzte Aktualisierung:** 2026-03-06  
 **Plugin:** Media Lab Project Starter v1.0.0 (optional)
 
-Complete reference for all 11 ACF Field Groups (65 custom fields).
+Complete reference for all ACF Field Groups: 11 CPT Field Groups (JSON, 65 custom fields) + 10 Options Sub-Pages (PHP, 92 custom fields).
 
 ---
 
@@ -53,9 +53,9 @@ cms/wp-content/plugins/media-lab-project-starter/acf-json/
 
 ### Total Fields
 
-- **11 Field Groups**
-- **65 Custom Fields**
-- **All in JSON format**
+- **11 CPT Field Groups** (JSON-Export, 65 Custom Fields)
+- **10 Options Sub-Pages** (PHP, 92 Custom Fields)
+- **13 Field Groups total** (inkl. group_maintenance, group_cookie_consent)
 
 ### Accessing Fields
 ```php
@@ -625,10 +625,29 @@ Paste code → Import
 
 ---
 
+## Options Sub-Pages – Übersicht
+
+Das Agency Core Plugin registriert 10 separate Unterseiten unter **Agency Core** im WP-Admin:
+
+| # | Menübezeichnung | Slug | Field Group |
+|---|---|---|---|
+| 1 | Plugin Status | `agency-core-plugin-status` | `group_plugin_status` |
+| 2 | Maintenance Mode / Wartungsmodus | `agency-core-maintenance` | `group_maintenance` |
+| 3 | Logo / Globale Einstellungen | `agency-core-logo` | `group_logo` |
+| 4 | Hero Image / Globale Einstellungen | `agency-core-hero` | `group_hero_global`, `group_hero_image` |
+| 5 | Cookie Consent | `agency-core-cookie-consent` | `group_cookie_consent` |
+| 6 | E-Mail / SMTP | `agency-core-smtp` | `group_smtp` |
+| 7 | Spam-Schutz / E-Mail Obfuskierung | `agency-core-spam` | `group_obfuscation` |
+| 8 | Top Header / Kontaktdaten | `agency-core-top-header` | `group_top_header` |
+| 9 | Multi Language / Mehrsprachigkeit | `agency-core-multilang` | `group_multi_language` |
+| 10 | White Label / Agentur-Branding | `agency-core-white-label` | `group_white_label` |
+
+> **Hinweis:** Gespeicherte Feldwerte bleiben bei einer Slug-Änderung erhalten, da ACF Options-Werte nach dem Feld-`name` (nicht nach dem Page-Slug) in der Datenbank gespeichert werden.
+
 ## 12. Maintenance Mode Settings
 
 **Field Group:** `group_maintenance`  
-**Options Page:** Agency Core → Einstellungen → Maintenance Mode  
+**Options Page:** Agency Core → Maintenance Mode / Wartungsmodus  
 **Plugin:** media-lab-agency-core
 
 | Field | Name | Typ | Beschreibung |
@@ -654,7 +673,7 @@ define('MEDIALAB_MAINTENANCE_MODE', true);
 ## 13. Cookie Consent Settings
 
 **Field Group:** `group_cookie_consent`  
-**Options Page:** Agency Core → Einstellungen → Cookie Consent  
+**Options Page:** Agency Core → Cookie Consent  
 **Plugin:** media-lab-agency-core
 
 ### Allgemein

@@ -46,7 +46,7 @@ add_action('acf/init', function() {
         'location' => array(array(array(
             'param'    => 'options_page',
             'operator' => '==',
-            'value'    => 'agency-core-settings',
+            'value'    => 'agency-core-hero',
         ))),
         'menu_order' => 15,
     ));

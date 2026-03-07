@@ -32,7 +32,7 @@ Dieses Plugin wird **unverändert auf allen Projekten eingesetzt**. Nie direkt m
 | `inc/smtp.php` | PHPMailer-Konfiguration via wp-config.php Konstanten |
 | `inc/svg-support.php` | SVG-Upload mit Allowlist-Sanitizer |
 | `inc/activity-log.php` | Activity Log mit DSGVO-IP-Anonymisierung |
-| `inc/acf-settings.php` | ACF Options Page für Plugin-Einstellungen |
+| `inc/acf-settings.php` | 10 separate ACF Options Sub-Pages (Plugin Status, Maintenance, Logo, Hero, Cookie Consent, SMTP, Spam-Schutz, Top Header, Mehrsprachigkeit, White Label) |
 | `inc/post-order.php` | Drag & Drop Post/Term-Order |
 | `inc/white-label.php` | Admin White-Labeling |
 | `assets/js/smtp-test.js` | SMTP Test-Mail Admin-Script |
@@ -55,7 +55,7 @@ define('MEDIALAB_SMTP_FROM',      'noreply@example.com');
 define('MEDIALAB_SMTP_FROM_NAME', 'Meine Website');
 ```
 
-Alternativ (weniger sicher): Konfiguration via **Einstellungen → Agency Core → SMTP**.
+Alternativ (weniger sicher): Konfiguration via **Agency Core → E-Mail / SMTP**.
 
 ### SVG-Uploads
 
@@ -66,7 +66,7 @@ SVG-Upload ist auf **Administratoren beschränkt**. Uploads werden automatisch s
 
 ### Maintenance Mode
 
-Aktivierung unter **Agency Core → Einstellungen → Maintenance Mode**.
+Aktivierung unter **Agency Core → Maintenance Mode / Wartungsmodus**.
 
 - HTTP 503 + `Retry-After: 3600` (SEO-konform)
 - Eingeloggte Admins sehen die normale Website + orangen Admin-Bar-Hinweis
@@ -95,7 +95,7 @@ Ermöglicht das Ersetzen von Mediendateien ohne Verlust der Attachment-ID oder V
 
 ### Cookie Consent Manager
 
-Aktivierung: automatisch aktiv. Konfiguration unter **Agency Core → Einstellungen → Cookie Consent**.
+Aktivierung: automatisch aktiv. Konfiguration unter **Agency Core → Cookie Consent**.
 
 **Features:**
 - Banner mit „Alle akzeptieren" / „Einstellungen" / „Ablehnen"

@@ -6,6 +6,52 @@ Versionierung nach [Semantic Versioning](https://semver.org/lang/de/).
 
 ---
 
+## [1.7.1] - 2026-03-06
+
+### media-lab-agency-core
+
+#### Changed
+- **acf-settings.php:** Einzelne `Einstellungen`-Unterseite ersetzt durch 10 separate Unterseiten:
+  Plugin Status · Maintenance Mode / Wartungsmodus · Logo / Globale Einstellungen ·
+  Hero Image / Globale Einstellungen · Cookie Consent · E-Mail / SMTP ·
+  Spam-Schutz / E-Mail Obfuskierung · Top Header / Kontaktdaten ·
+  Multi Language / Mehrsprachigkeit · White Label / Agentur-Branding
+- **cookie-consent.php, hero-image.php:** Field Group Locations auf neue Slugs aktualisiert
+- **smtp.php:** Script-Enqueue prüft neuen Slug `agency-core-smtp`
+- **maintenance.php:** Admin-Bar Link zeigt direkt auf `agency-core-maintenance`
+
+### Docs
+
+- `03_PLUGINS.md`: Navigationspfade auf neue Unterseiten aktualisiert, `acf-settings.php`-Beschreibung erweitert
+- `09_ACF-FIELDS.md`: Options Sub-Pages Übersichtstabelle (alle 10 Seiten mit Slug + Field Group), Options Page Pfade aktualisiert, Feldgruppenzähler korrigiert
+
+---
+
+## [1.7.0] - 2026-03-06
+
+### custom-theme 1.7.0
+
+#### Added
+- **Fullwidth-Helper** – `utilities/_helpers.scss` + `abstracts/_mixins.scss`
+  - `@mixin fullwidth` / `@mixin fullwidth-media` für SCSS-Komponenten
+  - `.fullwidth` – bricht aus Container aus (100vw)
+  - `.fullwidth--bg` – + Padding + Hintergrundfarbe via CSS Custom Property `--fw-bg`
+  - `.fullwidth--media` – für Bilder, Videos, iFrames (overflow hidden, object-fit cover)
+  - `.fullwidth__inner` – zentriert Inhalt auf Container-Breite innerhalb fullwidth
+  - Weitere Utilities: `.sr-only`, `.hidden`, `.text-center/left/right`, `.text-muted/primary`
+
+#### Changed
+- **Navigation 4 Ebenen** – `layout/_navigation.scss` + `components/navigation.js`
+  - Desktop Level 4: Flyout rechts, `border-left: $color-primary` als Tiefenindikator
+  - Viewport-Kollision: `.opens-left` wird automatisch gesetzt wenn Flyout über Rand ragt
+  - Mobile: Level 4 mit tiefster Einrückung + kursiver Schrift
+  - Footer-Nav: Flyout nach **oben** auf Desktop, Accordion auf Mobile (< 768px)
+  - JS: Toggle-Icon via JS eingefügt (Link bleibt separat klickbar)
+  - JS: Erster Tap öffnet Submenu, zweiter Tap navigiert (bei echten Links)
+  - JS: Footer-Submenüs als Accordion auf Mobile
+
+---
+
 ## [1.6.0] - 2026-03-06
 
 ### media-lab-agency-core 1.5.4

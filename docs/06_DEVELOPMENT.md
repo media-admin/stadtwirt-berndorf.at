@@ -1,7 +1,7 @@
 # Development Guide
 
-**Version:** 1.6.0  
-**Letzte Aktualisierung:** 2026-03-04
+**Version:** 1.7.0  
+**Letzte Aktualisierung:** 2026-03-06
 
 ---
 
@@ -114,7 +114,7 @@ assets/src/scss/
 │   └── _search-results.scss
 ├── utilities/
 │   ├── _animations.scss
-│   └── _helpers.scss
+│   └── _helpers.scss      ← Fullwidth, sr-only, text-*, spacing-*
 ├── woocommerce/
 │   └── _woocommerce.scss
 └── style.scss             ← Haupt-Entry
@@ -192,6 +192,45 @@ Buttons werden zentral über Mixins in `abstracts/_mixins.scss` gesteuert.
 | `btn-lg` | Größere Größe |
 
 **Niemals** duplizierte Button-Styles in Komponenten schreiben – immer `@include` verwenden.
+
+
+### Fullwidth – aus Container ausbrechen
+
+Für Bereiche die den vollen Viewport füllen sollen, unabhängig von der Container-Breite.
+
+**Als HTML-Klasse:**
+```html
+<!-- Einfaches Ausbrechen -->
+<div class="fullwidth">...</div>
+
+<!-- Mit Hintergrundfarbe (CSS Custom Property) -->
+<section class="fullwidth fullwidth--bg" style="--fw-bg: #f0f4ff">
+  <div class="fullwidth__inner">Inhalt bleibt auf Container-Breite zentriert</div>
+</section>
+
+<!-- Für Bilder, Videos, Maps -->
+<div class="fullwidth fullwidth--media">
+  <img src="bild.jpg" alt="...">
+  <!-- oder: <video>, <iframe> -->
+</div>
+```
+
+**Als SCSS-Mixin (in eigenen Komponenten):**
+```scss
+.mein-hero {
+  @include fullwidth;         // bricht aus Container aus
+  @include fullwidth-media;   // + overflow:hidden + img/video 100%
+  height: 600px;
+}
+```
+
+| Klasse / Mixin | Beschreibung |
+|---|---|
+| `.fullwidth` / `@include fullwidth` | Bricht aus dem Container aus, füllt 100vw |
+| `.fullwidth--bg` | + Padding + Hintergrundfarbe via `--fw-bg` |
+| `.fullwidth--media` | Für Bilder/Video (overflow hidden, object-fit cover) |
+| `.fullwidth__inner` | Inhaltsbereich auf Container-Breite zentrieren |
+| `@include fullwidth-media` | Mixin-Variante für SCSS-Komponenten |
 
 
 ### Design-Tokens (Auswahl)
@@ -448,6 +487,47 @@ padding: $spacing-md;         // nie: padding: 16px;
 // ❌ Keine darken()/lighten() – stattdessen vorkompilierte Tokens
 color: $color-primary-dark;   // statt: darken($color-primary, 10%)
 ```
+
+
+### Navigation – 4 Ebenen
+
+Das Navigations-System unterstützt 4 Ebenen in Header und Footer.
+
+**Ebenen-Verhalten Desktop (Header):**
+
+| Ebene | Verhalten | Häufigkeit |
+|---|---|---|
+| Level 1 | Horizontale Leiste | immer |
+| Level 2 | Dropdown nach unten | häufig |
+| Level 3 | Flyout nach rechts | selten |
+| Level 4 | Flyout nach rechts, dezente Schrift, blauer Rand | Ausnahme |
+
+**Viewport-Kollision** wird automatisch erkannt: ragt ein Flyout über den rechten Bildschirmrand, wechselt er automatisch auf `.opens-left`.
+
+**Mobile:** Alle Ebenen als Accordion, progressive Einrückung via `border-left`. Erster Tap öffnet das Untermenü, zweiter Tap navigiert (bei echten Links).
+
+**Footer:** Desktop öffnet Submenüs nach **oben** (Footer sitzt am Seitenende). Mobile als Accordion.
+
+**WordPress-Menüs registrieren** (in `functions.php`):
+```php
+register_nav_menus([
+    'primary'        => 'Hauptmenü',
+    'footer-primary' => 'Footer Navigation',
+    'footer-legal'   => 'Footer Rechtliches',
+]);
+```
+
+**Template-Ausgabe** (wp_nav_menu mit korrekten Walker-Klassen):
+```php
+wp_nav_menu([
+    'theme_location' => 'primary',
+    'container'      => false,
+    'menu_class'     => '',
+    'items_wrap'     => '<ul>%3$s</ul>',
+    'depth'          => 4,   // Wichtig: 4 Ebenen aktivieren
+]);
+```
+
 
 ### JavaScript
 
