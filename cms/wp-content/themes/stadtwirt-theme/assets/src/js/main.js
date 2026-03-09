@@ -14,6 +14,7 @@ if (import.meta.env.PROD) {
 
 // ─── Kern-Komponenten (immer geladen) ────────────────────────────────────────
 import Navigation    from './components/navigation';
+import Toggle        from './components/toggle';
 import DarkMode      from './components/theme-switcher';
 import CookieConsent from './components/cookie-notice';
 import BackToTop     from './components/back-to-top';
@@ -35,6 +36,7 @@ const initApp = async () => {
 
   // Kern (immer)
   safeInit('Navigation',    () => new Navigation());
+  safeInit('Toggle',       () => new Toggle());
   safeInit('DarkMode',      () => new DarkMode());
   safeInit('CookieConsent', () => {
     const instance = new CookieConsent();

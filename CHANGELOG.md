@@ -6,6 +6,27 @@ Versionierung nach [Semantic Versioning](https://semver.org/lang/de/).
 
 ---
 
+## [1.7.2] - 2026-03-06
+
+### custom-theme 1.7.2
+
+#### Added
+- **Toggle – 3-State Switch** (`components/_toggle.scss`, `components/toggle.js`, `functions.php`)
+  - 3 States: `on` (Primary-Farbe), `off` (Border-Farbe), `unavailable` (ausgegraut, nicht klickbar)
+  - Größenvarianten: `toggle--sm` / default / `toggle--lg`
+  - `toggle--stacked` für vertikales Label
+  - ARIA-konform: `role="switch"`, `aria-pressed`, `aria-disabled`, `tabindex`
+  - Keyboard-Support: Space / Enter
+  - `toggle.change` CustomEvent mit `{ state, previous, element }`
+  - Statische Methoden: `Toggle.setState(el, state)`, `Toggle.getState(el)`
+  - PHP-Helper `medialab_toggle($id, $state, $label, $args)` in `functions.php`
+  - Automatisch in `style.scss` + `main.js` eingebunden
+
+### Docs
+- `06_DEVELOPMENT.md`: Toggle-Sektion mit HTML, PHP, JS und Tabelle
+
+---
+
 ## [1.7.1] - 2026-03-06
 
 ### media-lab-agency-core

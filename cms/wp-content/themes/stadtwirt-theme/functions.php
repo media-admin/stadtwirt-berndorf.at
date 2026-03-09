@@ -116,3 +116,59 @@ if (class_exists('WooCommerce')) {
     add_theme_support('wc-product-gallery-lightbox');
     add_theme_support('wc-product-gallery-slider');
 }
+
+
+// =============================================================================
+// Toggle Helper
+// =============================================================================
+if ( ! function_exists('medialab_toggle') ) {
+    /**
+     * Gibt ein Toggle-Element aus.
+     *
+     * @param string      $id      – Eindeutige ID (für aria-labelledby etc.)
+     * @param bool|string $state   – true/'on' | false/'off' | 'unavailable'
+     * @param string      $label   – Optionaler Label-Text
+     * @param array       $args    – Zusätzliche Argumente:
+     *                               'size'    => 'sm' | '' | 'lg'
+     *                               'class'   => zusätzliche CSS-Klassen
+     *                               'stacked' => bool
+     */
+    function medialab_toggle( string $id, $state = 'off', string $label = '', array $args = [] ) : void {
+        // State normalisieren
+        if ( $state === true  ) $state = 'on';
+        if ( $state === false ) $state = 'off';
+        if ( ! in_array( $state, [ 'on', 'off', 'unavailable' ], true ) ) $state = 'off';
+
+        $size    = isset( $args['size'] ) ? sanitize_html_class( $args['size'] ) : '';
+        $extra   = isset( $args['class'] ) ? ' ' . esc_attr( $args['class'] ) : '';
+        $stacked = ! empty( $args['stacked'] );
+
+        $classes = 'toggle';
+        if ( $size )    $classes .= ' toggle--' . $size;
+        if ( $stacked ) $classes .= ' toggle--stacked';
+        $classes .= $extra;
+
+        $aria_pressed  = $state === 'on' ? 'true' : 'false';
+        $aria_disabled = $state === 'unavailable' ? ' aria-disabled="true"' : '';
+        $tabindex      = $state === 'unavailable' ? ' tabindex="-1"' : '';
+        $role          = $state !== 'unavailable' ? ' role="switch" aria-pressed="' . esc_attr( $aria_pressed ) . '"' : '';
+        ?>
+        <button
+            id="<?php echo esc_attr( $id ); ?>"
+            class="<?php echo esc_attr( $classes ); ?>"
+            data-toggle="<?php echo esc_attr( $state ); ?>"
+            <?php echo $role; // already escaped ?>
+            <?php echo $aria_disabled; // already escaped ?>
+            <?php echo $tabindex; // already escaped ?>
+            type="button"
+        >
+            <span class="toggle__track" aria-hidden="true">
+                <span class="toggle__thumb"></span>
+            </span>
+            <?php if ( $label ) : ?>
+                <span class="toggle__label"><?php echo esc_html( $label ); ?></span>
+            <?php endif; ?>
+        </button>
+        <?php
+    }
+}

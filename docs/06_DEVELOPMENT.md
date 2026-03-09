@@ -1,6 +1,6 @@
 # Development Guide
 
-**Version:** 1.7.0  
+**Version:** 1.7.1  
 **Letzte Aktualisierung:** 2026-03-06
 
 ---
@@ -192,6 +192,77 @@ Buttons werden zentral über Mixins in `abstracts/_mixins.scss` gesteuert.
 | `btn-lg` | Größere Größe |
 
 **Niemals** duplizierte Button-Styles in Komponenten schreiben – immer `@include` verwenden.
+
+
+### Toggle – 3-State Switch
+
+Zentrales UI-Element für Ja/Nein/Nicht verfügbar-Zustände. Platzierung im Theme (`components/`), da er in jedem Projekt gebraucht wird und keine Plugin-Logik enthält.
+
+**HTML direkt:**
+```html
+<!-- State: ON -->
+<button class="toggle" data-toggle="on" role="switch" aria-pressed="true" type="button">
+  <span class="toggle__track" aria-hidden="true">
+    <span class="toggle__thumb"></span>
+  </span>
+  <span class="toggle__label">Newsletter aktiv</span>
+</button>
+
+<!-- State: OFF -->
+<button class="toggle" data-toggle="off" role="switch" aria-pressed="false" type="button">
+  <span class="toggle__track" aria-hidden="true"><span class="toggle__thumb"></span></span>
+  <span class="toggle__label">Newsletter inaktiv</span>
+</button>
+
+<!-- State: UNAVAILABLE -->
+<button class="toggle" data-toggle="unavailable" aria-disabled="true" tabindex="-1" type="button">
+  <span class="toggle__track" aria-hidden="true"><span class="toggle__thumb"></span></span>
+  <span class="toggle__label">Nicht verfügbar</span>
+</button>
+```
+
+**PHP-Helper:**
+```php
+<?php medialab_toggle('toggle-newsletter', 'on',          'Newsletter');     ?>
+<?php medialab_toggle('toggle-smtp',       false,         'SMTP');           ?>
+<?php medialab_toggle('toggle-plan',       'unavailable', 'Pro-Feature');    ?>
+
+// Mit Größe und gestapeltem Label:
+<?php medialab_toggle('toggle-xl', true, 'Aktiviert', ['size' => 'lg', 'stacked' => true]); ?>
+```
+
+**Größenvarianten:**
+
+| Klasse | Breite | Höhe |
+|---|---|---|
+| `toggle--sm` | 38px | 20px |
+| *(default)* | 48px | 26px |
+| `toggle--lg` | 60px | 32px |
+
+**JavaScript – programmatischer Zugriff:**
+```javascript
+import Toggle from './components/toggle';
+
+// Zustand setzen
+Toggle.setState(document.querySelector('#mein-toggle'), 'on');
+Toggle.setState(el, 'unavailable');
+
+// Zustand lesen
+const state = Toggle.getState(el); // 'on' | 'off' | 'unavailable'
+
+// Event abhören
+document.addEventListener('toggle.change', (e) => {
+  const { state, previous, element } = e.detail;
+  console.log(`${previous} → ${state}`);
+});
+
+// Mit Callback
+new Toggle(document, {
+  onChange: ({ state, element }) => {
+    // z.B. AJAX-Call auslösen
+  }
+});
+```
 
 
 ### Fullwidth – aus Container ausbrechen
