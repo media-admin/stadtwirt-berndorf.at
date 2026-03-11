@@ -23,7 +23,7 @@ export default defineConfig(({ command }) => ({
   // Im Dev-Modus absolute URL damit @vite/client & HMR erreichbar sind.
   // Im Build-Modus der echte Pfad für die enqueued Assets.
   base: command === 'serve'
-    ? 'http://localhost:3000/'
+    ? '/'
     : '/wp-content/themes/stadtwirt-theme/assets/dist/',
 
   plugins: [
