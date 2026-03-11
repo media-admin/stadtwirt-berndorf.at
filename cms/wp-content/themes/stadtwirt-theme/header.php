@@ -19,6 +19,20 @@
 <?php wp_body_open(); ?>
 
 <?php
+// ── Scroll Progress Bar ───────────────────────────────────────────────────
+// Nur auf Einzelbeitrags-Seiten (single.php), per ACF ein-/ausschaltbar
+if ( function_exists('get_field') && get_field('scroll_progress_enabled', 'option') && is_single() ) : ?>
+<div
+    class="scroll-progress"
+    role="progressbar"
+    aria-valuemin="0"
+    aria-valuemax="100"
+    aria-valuenow="0"
+    aria-label="<?php esc_attr_e('Lesefortschritt', 'custom-theme'); ?>"
+></div>
+<?php endif; ?>
+
+<?php
 /**
  * Top Header (über dem Main Header)
  * Wird nur ausgegeben, wenn in Agency Core Settings aktiviert.
@@ -103,13 +117,16 @@ if (function_exists('get_field') && get_field('top_header_enable', 'option')) :
         <?php endif; ?>
 
     </div><!-- .top-header__inner -->
+
 </div><!-- .top-header -->
 <?php endif; // top_header_enable ?>
 
-
-
 <header class="site-header">
-    <nav class="site-navigation" role="navigation" aria-label="Primary Navigation">
+
+    <?php get_template_part('template-parts/hero-image'); ?>
+
+    <div class="top-header__inner container site-branding">
+        <mark>Testen</mark>
         <!-- Logo -->
         <a href="<?php echo esc_url(home_url('/')); ?>" class="site-logo" aria-label="<?php bloginfo('name'); ?>">
             <?php
@@ -121,18 +138,18 @@ if (function_exists('get_field') && get_field('top_header_enable', 'option')) :
             if ($logo_desktop) :
                 // Desktop-Logo (immer angezeigt, auf Mobile ggf. via CSS ausgeblendet)
                 echo '<img src="' . esc_url($logo_desktop['url']) . '"'
-                   . ' alt="' . esc_attr($logo_desktop['alt'] ?: get_bloginfo('name')) . '"'
-                   . ' width="' . esc_attr($logo_desktop_width) . '"'
-                   . ' class="site-logo__img site-logo__img--desktop"'
-                   . ' loading="eager">';
+                    . ' alt="' . esc_attr($logo_desktop['alt'] ?: get_bloginfo('name')) . '"'
+                    . ' width="' . esc_attr($logo_desktop_width) . '"'
+                    . ' class="site-logo__img site-logo__img--desktop"'
+                    . ' loading="eager">';
 
                 // Mobiles Logo (nur wenn ein separates hochgeladen wurde)
                 if ($logo_mobile) :
                     echo '<img src="' . esc_url($logo_mobile['url']) . '"'
-                       . ' alt="' . esc_attr($logo_mobile['alt'] ?: get_bloginfo('name')) . '"'
-                       . ' width="' . esc_attr($logo_mobile_width) . '"'
-                       . ' class="site-logo__img site-logo__img--mobile"'
-                       . ' loading="eager">';
+                        . ' alt="' . esc_attr($logo_mobile['alt'] ?: get_bloginfo('name')) . '"'
+                        . ' width="' . esc_attr($logo_mobile_width) . '"'
+                        . ' class="site-logo__img site-logo__img--mobile"'
+                        . ' loading="eager">';
                 endif;
 
             else :
@@ -141,6 +158,11 @@ if (function_exists('get_field') && get_field('top_header_enable', 'option')) :
             endif;
             ?>
         </a>
+
+    </div>
+
+
+    <nav class="site-navigation" role="navigation" aria-label="Primary Navigation">
         
         <!-- Desktop Menu -->
         <div class="primary-menu">
@@ -150,7 +172,7 @@ if (function_exists('get_field') && get_field('top_header_enable', 'option')) :
                 'container' => false,
                 'menu_class' => '',
                 'fallback_cb' => false,
-                'depth' => 3, // 3 levels
+                'depth' => 4, // 4 levels
             ));
             ?>
         </div>
@@ -170,7 +192,7 @@ if (function_exists('get_field') && get_field('top_header_enable', 'option')) :
         'container' => false,
         'menu_class' => '',
         'fallback_cb' => false,
-        'depth' => 3,
+        'depth' => 4,
     ));
     ?>
 </div>

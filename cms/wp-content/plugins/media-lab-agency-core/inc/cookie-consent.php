@@ -254,6 +254,7 @@ class MediaLab_Cookie_Consent {
                     'label'   => 'Code-Snippets',
                     'name'    => 'cc_tab_snippets',
                     'type'    => 'message',
+                    'label'   => ' ',
                     'message' => '<strong style="font-size:13px;">Code-Snippets pro Kategorie</strong>'
                               . '<p style="margin:.5rem 0 0;color:#666;font-size:12px;">Trage hier deinen Tracking-Code ein. Er wird nur ausgegeben, wenn der Besucher der jeweiligen Kategorie zugestimmt hat.<br>'
                               . '<strong>Head-Code:</strong> Script-Tags, die in den &lt;head&gt; gehören (GA4, FB Pixel …)<br>'

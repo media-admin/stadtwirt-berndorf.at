@@ -18,7 +18,7 @@ export function initSentry() {
     
     // Performance Monitoring
     integrations: [
-      new Sentry.BrowserTracing({
+      Sentry.browserTracingIntegration({
         tracePropagationTargets: [
           "localhost",
           /^\//,

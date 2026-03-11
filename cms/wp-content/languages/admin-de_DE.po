@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the WordPress - 6.9.x - Development - Administration package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2026-03-07 02:11:31+0000\n"
+"PO-Revision-Date: 2026-03-10 23:38:24+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -39,7 +39,7 @@ msgstr "Europe/Berlin"
 
 #: wp-admin/about.php:172
 msgid "WordPress 6.9 includes a broad set of performance enhancements. A better <abbr>LCP</abbr> (Largest Contentful Paint) metric is achieved through improved loading of conditional and inlined stylesheets, script loading with fetchpriority support, and additional core optimizations. Editor advances include fixes for layout shifts caused by the Video block and faster loading of the terms selector."
-msgstr "WordPress 6.9 enthält eine breite Palette von Leistungsverbesserungen. Eine bessere Metrik für <abbr>LCP</abbr> (Largest Contentful Paint) wird durch verbessertes Laden von bedingten und Inline-Stylesheets, das Laden von Skripten mit fetchpriority-Unterstützung und zusätzliche Core-Optimierungen erreicht. Zu den Verbesserungen des Editors gehören Korrekturen für Layoutverschiebungen, die durch den Videoblock verursacht werden, und ein schnelleres Laden der Begriffsselektoren."
+msgstr "WordPress 6.9 enthält eine breite Palette von Leistungsverbesserungen. Eine bessere Metrik für <abbr>LCP</abbr> (Largest Contentful Paint) wird durch verbessertes Laden von bedingten und Inline-Stylesheets, das Laden von Skripten mit fetchpriority-Unterstützung und zusätzliche Core-Optimierungen erreicht. Zu den Verbesserungen des Editors gehören Korrekturen für Layoutverschiebungen, die durch den Videoblock verursacht werden, und ein schnelleres Laden des Begriffsselektors."
 
 #: wp-admin/theme-editor.php:257
 msgid "It is likely that this unminified stylesheet will not be served to visitors."
@@ -135,7 +135,7 @@ msgstr "Textanpassung an den Container"
 
 #: wp-admin/about.php:136
 msgid "Access the Command Palette from any part of your site, whether you&#8217;re writing your latest post, deep in design in the Site Editor, or browsing your plugins. Everything you need, just a few keystrokes away."
-msgstr "Greife von jedem Bereich deiner Website aus auf die Befehlspalette zu, egal ob du gerade deinen neuesten Beitrag schreibst, tief in der Designarbeit im Website-Editor vertieft bist oder deine Plugins durchsuchst. Alles, was du brauchst, ist nur wenige Tastenanschläge entfernt."
+msgstr "Greife von jedem Bereich deiner Website aus auf die Befehlspalette zu, egal ob du gerade deinen neuesten Beitrag schreibst, tief in die Designarbeit im Website-Editor vertieft bist oder deine Plugins durchsuchst. Alles, was du brauchst, ist nur wenige Tastenanschläge entfernt."
 
 #: wp-admin/about.php:135
 msgid "Your tools are always at hand."
@@ -159,7 +159,7 @@ msgstr "Visuelles Drag-and-drop"
 
 #: wp-admin/about.php:106
 msgid "With notes attached directly to blocks, your team can stay aligned, track changes, and turn feedback into action all in one place. Whether you&#8217;re working on copy or refining design, collaboration happens seamlessly on the canvas itself."
-msgstr "Mit Anmerkungen, die direkt an Blöcken angefügt werden, kann dein Team sich abstimmen, Änderungen nachverfolgen und Feedback in Maßnahmen umsetzen – alles an einem Ort. Ganz gleich, ob du an Texten arbeitest oder Designs veredelst: Die Zusammenarbeit erfolgt nahtlos direkt auf der Arbeitsfläche."
+msgstr "Mit Anmerkungen, die direkt an Blöcke angefügt werden, kann dein Team sich abstimmen, Änderungen nachverfolgen und Feedback in Maßnahmen umsetzen – alles an einem Ort. Ganz gleich, ob du an Texten arbeitest oder Designs veredelst: Die Zusammenarbeit erfolgt nahtlos direkt auf der Arbeitsfläche."
 
 #: wp-admin/about.php:105
 msgid "Leave feedback right where you’re working."
@@ -266,7 +266,7 @@ msgstr "robots.txt"
 #. translators: %s: robots.txt
 #: wp-admin/includes/class-wp-debug-data.php:525
 msgid "WordPress cannot dynamically serve a %s file due to a lack of rewrite rule support"
-msgstr "WordPress kann eine %s-Datei nicht dynamisch bereitstellen, da die Weiterleitungsregeln nicht unterstützt werden."
+msgstr "WordPress kann eine %s-Datei nicht dynamisch bereitstellen, da die Umschreibungsregeln nicht unterstützt werden."
 
 #. translators: %s: robots.txt
 #: wp-admin/includes/class-wp-debug-data.php:519
@@ -281,7 +281,7 @@ msgstr "Es gibt eine statische %s-Datei in deinem Installationsordner. WordPress
 #: wp-admin/includes/class-custom-image-header.php:834
 #: wp-admin/includes/class-custom-image-header.php:1022
 msgid "The active theme does not support uploading a custom header image. Please ensure your theme supports custom headers and try again."
-msgstr "Das aktive Theme unterstützt den Upload eines individuellen Header-Bildes nicht. Bitte stelle sicher, dass dein Theme individuelle Header unterstützt und versuche es erneut."
+msgstr "Das aktive Theme unterstützt den Upload eines individuellen Header-Bildes nicht. Bitte stelle sicher, dass dein Theme individuelle Header unterstützt, und versuche es erneut."
 
 #: wp-admin/includes/class-custom-image-header.php:833
 #: wp-admin/includes/class-custom-image-header.php:1021
@@ -2270,7 +2270,7 @@ msgstr "Du musst die Datei %1$s beschreibbar machen, bevor du deine Änderungen 
 #: wp-admin/options-permalink.php:474 wp-admin/options-permalink.php:506
 #: wp-admin/options-permalink.php:541
 msgid "Rewrite rules:"
-msgstr "Weiterleitungsregeln:"
+msgstr "Umschreibungsregeln:"
 
 #: wp-admin/nav-menus.php:1166
 msgid "List of menu items selected for deletion:"
@@ -2612,7 +2612,7 @@ msgstr "Suchergebnisse"
 
 #: wp-admin/includes/privacy-tools.php:945
 msgid "Invalid request ID when processing personal data to erase."
-msgstr "Ungültige Anfrage-ID bei der Verarbeitung von Löschdaten des Benutzer-Datenschutzes."
+msgstr "Ungültige Anfrage-ID bei der Verarbeitung von zu löschenden personenbezogenen Daten."
 
 #: wp-admin/includes/privacy-tools.php:794
 msgid "Invalid request ID when merging personal data to export."
@@ -2832,8 +2832,8 @@ msgstr "Name des neuen Anwendungspassworts"
 #: wp-admin/user-edit.php:805
 msgid "Application passwords grant access to <a href=\"%1$s\">the %2$s site in this installation that you have permissions on</a>."
 msgid_plural "Application passwords grant access to <a href=\"%1$s\">all %2$s sites in this installation that you have permissions on</a>."
-msgstr[0] "Anwendungskennwörter gewähren Zugriff auf <a href=\"%1$s\">die %2$s Website in dieser Installation, für die du die entsprechenden Rechte hast</a>."
-msgstr[1] "Anwendungskennwörter gewähren Zugriff auf <a href=\"%1$s\">alle %2$s Websites in dieser Installation, für die du die entsprechenden Rechte hast</a>."
+msgstr[0] "Anwendungspasswörter gewähren Zugriff auf <a href=\"%1$s\">die %2$s Website dieser Installation, für die du die entsprechenden Rechte hast</a>."
+msgstr[1] "Anwendungspasswörter gewähren Zugriff auf <a href=\"%1$s\">alle %2$s Websites dieser Installation, für die du die entsprechenden Rechte hast</a>."
 
 #: wp-admin/user-edit.php:793
 msgid "Application passwords allow authentication via non-interactive systems, such as XML-RPC or the REST API, without providing your actual password. Application passwords can be easily revoked. They cannot be used for traditional logins to your website."
@@ -4414,7 +4414,7 @@ msgstr "Die Datei existiert nicht! Bitte überprüfe den Namen noch einmal und v
 #: wp-admin/includes/image-edit.php:364 wp-admin/includes/image-edit.php:459
 #: wp-admin/includes/image-edit.php:638
 msgid "%1$s needs to be a %2$s object."
-msgstr "%1$s muss ein %2$s Objekt sein."
+msgstr "%1$s muss ein %2$s-Objekt sein."
 
 #. translators: %s: Recovery Mode exit link.
 #: wp-admin/includes/update.php:1030
@@ -5919,7 +5919,7 @@ msgstr "Das Löschen einer Kategorie löscht nicht die Beiträge in dieser Kateg
 #. translators: %s: A link to install the Classic Widgets plugin.
 #: wp-admin/widgets-form-blocks.php:114
 msgid "The block widgets require JavaScript. Please enable JavaScript in your browser settings, or install the <a href=\"%s\">Classic Widgets plugin</a>."
-msgstr "Die Block-Widgets erfordern JavaScript. Bitte aktiviere JavaScript in deinen Browser-Einstellungen oder installiere das Plugin <a href=\"%s\">Classic Editor</a>."
+msgstr "Die Block-Widgets erfordern JavaScript. Bitte aktiviere JavaScript in deinen Browser-Einstellungen oder installiere das Plugin <a href=\"%s\">Classic Widgets</a>."
 
 #: wp-admin/post.php:47
 msgid "A post type mismatch has been detected."
@@ -6409,7 +6409,7 @@ msgstr "Die Adresse unserer Website ist: %s."
 #. translators: Privacy policy tutorial.
 #: wp-admin/includes/class-wp-privacy-policy-content.php:473
 msgid "The amount of information you may be required to show will vary depending on your local or national business regulations. You may, for example, be required to display a physical address, a registered address, or your company registration number."
-msgstr "Der Umfang der Informationen, für die es erforderlich sein kann, sie anzuzeigen, wird in Abhängigkeit von deinen lokalen oder nationalen Geschäftsordnungen variieren. Es kann zum Beispiel erforderlich sein, deine physische Adresse, eine registrierte Adresse oder die Registernummer deines Unternehmens anzugeben."
+msgstr "Die Menge an Informationen, die du möglicherweise angeben musst, variiert je nach lokalen oder nationalen Unternehmensvorschriften. Du kannst beispielsweise verpflichtet sein, eine physische Adresse, eine eingetragene Geschäftsadresse oder die Registernummer deines Unternehmens anzugeben."
 
 #. translators: Privacy policy tutorial.
 #: wp-admin/includes/class-wp-privacy-policy-content.php:471
@@ -6997,7 +6997,7 @@ msgstr "%s zur Permalink-Struktur hinzugefügt"
 #. translators: %s: Permalink structure tag.
 #: wp-admin/options-permalink.php:298
 msgid "%s (A sanitized version of the author name.)"
-msgstr "%s (Eine bereinigte Version des Autor-Namens.)"
+msgstr "%s (Eine bereinigte Version des Autorennamens.)"
 
 #. translators: %s: Permalink structure tag.
 #: wp-admin/options-permalink.php:296
@@ -7710,7 +7710,7 @@ msgstr "Du bist leider nicht berechtigt, Inhalte von dieser Website zu exportier
 
 #: wp-admin/edit.php:265
 msgid "You can filter the list of posts by post status using the text links above the posts list to only show posts with that status. The default view is to show all posts."
-msgstr "Du kannst die Beitragsliste nach Beitragsstatus filtern, indem du die Text-Links über der Beitragsliste benutzt um nur Beiträge des gewählten Status anzuzeigen. Die Standardansicht ist alle Beiträge anzuzeigen."
+msgstr "Du kannst die Beitragsliste nach Beitragsstatus filtern, indem du die Text-Links über der Beitragsliste benutzt, um nur Beiträge des gewählten Status anzuzeigen. Die Standardansicht ist, alle Beiträge anzuzeigen."
 
 #. translators: Hidden accessibility text.
 #: wp-admin/customize.php:217
@@ -9324,7 +9324,7 @@ msgstr "Das Anklicken eines Elements öffnet ein Dialogfeld mit den Anhang-Detai
 
 #: wp-admin/upload.php:183
 msgid "To delete media items, click the Bulk Select button at the top of the screen. Select any items you wish to delete, then click the Delete Selected button. Clicking the Cancel Selection button takes you back to viewing your media."
-msgstr "Um Dateien aus der Mediathek zu löschen, klicke auf den Button „Mehrfachauswahl“ oben am Bildschirm. Wähle dann die Elemente aus, die du löschen möchtest und klicke auf den Button „Ausgewählte löschen“. Indem du auf „Auswahl abbrechen“ klickst, wird diese Aktion abgebrochen und du kommst in die Übersicht der Mediathek zurück."
+msgstr "Um Dateien aus der Mediathek zu löschen, klicke auf den Button „Mehrfachauswahl“ oben am Bildschirm. Wähle dann die Elemente aus, die du löschen möchtest, und klicke auf den Button „Ausgewählte löschen“. Indem du auf „Auswahl abbrechen“ klickst, wird diese Aktion abgebrochen und du kommst in die Übersicht der Mediathek zurück."
 
 #: wp-admin/upload.php:182 wp-admin/upload.php:373
 msgid "You can view your media in a simple visual grid or a list with columns. Switch between these views using the icons to the left above the media."
@@ -9936,7 +9936,7 @@ msgstr "Das bedeutet, dass deine Website entweder offline oder defekt ist. Keine
 #. translators: 1: Home URL, 2: WordPress latest version.
 #: wp-admin/includes/class-wp-automatic-updater.php:1036
 msgid "Your site at %1$s experienced a critical failure while trying to update to the latest version of WordPress, %2$s."
-msgstr "Deine Website %1$s hat einen kritischen Fehler gemeldet, als versucht wurde WordPress auf die neueste Version %2$s zu aktualisieren."
+msgstr "Auf deiner Website unter %1$s ist ein schwerwiegender Fehler aufgetreten, als versucht wurde, WordPress auf die neueste Version %2$s zu aktualisieren."
 
 #: wp-admin/includes/class-wp-automatic-updater.php:996
 #: wp-admin/includes/class-wp-automatic-updater.php:1021
@@ -10809,7 +10809,7 @@ msgstr "Favoriten"
 
 #: wp-admin/theme-install.php:130
 msgid "To install the theme so you can preview it with your site&#8217;s content and customize its theme options, click the \"Install\" button at the top of the left-hand pane. The theme files will be downloaded to your website automatically. When this is complete, the theme is now available for activation, which you can do by clicking the \"Activate\" link, or by navigating to your Manage Themes screen and clicking the \"Live Preview\" link under any installed theme&#8217;s thumbnail image."
-msgstr "Um das Theme zu installieren und du somit den Inhalt deiner Website in einer Vorschau ansehen sowie die Optionen des Themes anpassen kannst, klicke bitte auf den Button „Installieren“ oben im linken Fensterbereich. Die Dateien des Themes werden dadurch automatisch auf deine Website heruntergeladen. Wenn dieser Vorgang abgeschlossen ist, kannst du das Theme aktivieren, indem du auf den Link „Aktivieren“ klickst oder indem du zum Bildschirm „Themes“, wo diese verwaltet werden, navigierst und dort auf den Link „Live-Vorschau“ unterhalb des Miniaturansichtsbildes eines installierten Themes klickst."
+msgstr "Damit du das Theme installieren, den Inhalt deiner Website in einer Vorschau ansehen und die Optionen des Themes anpassen kannst, klicke bitte auf den Button „Installieren“ oben im linken Fensterbereich. Die Dateien des Themes werden dadurch automatisch auf deine Website heruntergeladen. Wenn dieser Vorgang abgeschlossen ist, kannst du das Theme aktivieren, indem du auf den Link „Aktivieren“ klickst oder indem du zum Bildschirm „Themes“, wo diese verwaltet werden, navigierst und dort auf den Link „Live-Vorschau“ unterhalb des Vorschaubildes eines installierten Themes klickst."
 
 #: wp-admin/includes/widgets.php:264
 msgctxt "widget"
@@ -10949,7 +10949,7 @@ msgstr "Falls dein Theme mehr als ein Standard-Header-Bild hat oder du mehr als 
 
 #: wp-admin/includes/class-custom-image-header.php:121
 msgid "Some themes come with additional header images bundled. If you see multiple images displayed, select the one you would like and click the &#8220;Save Changes&#8221; button."
-msgstr "Manche Themes bringen gleich mehrere zusätzliche Header-Bilder mit. Wenn dir diese Bilder angezeigt werden, wähle einfach dasjenige aus, das dir gefällt und klicke anschließend auf den Button &#8222;Änderungen speichern&#8220;."
+msgstr "Manche Themes bringen gleich mehrere zusätzliche Header-Bilder mit. Wenn dir diese Bilder angezeigt werden, wähle einfach dasjenige aus, das dir gefällt, und klicke anschließend auf den Button &#8222;Änderungen speichern&#8220;."
 
 #: wp-admin/includes/class-custom-image-header.php:111
 msgid "You can choose from the theme&#8217;s default header images, or use one of your own. You can also customize how your Site Title and Tagline are displayed."
@@ -12519,7 +12519,7 @@ msgstr "Denke daran, auf Aktualisieren zu klicken, um die eingegebenen oder geä
 
 #: wp-admin/edit-form-advanced.php:341
 msgid "Note that you crop the image by clicking on it (the Crop icon is already selected) and dragging the cropping frame to select the desired part. Then click Save to retain the cropping."
-msgstr "Hinweis: Du kannst das Bild zuschneiden, indem du darauf klickst, das Icon „Zuschneiden“ ist standardmäßig ausgewählt. Halte den Mauszeiger gedrückt und ziehe einen Rahmen über den gewünschten Bildausschnitt, diesen Auswahlrahmen kannst du anschließend noch verschieben oder verändern. Klick dann auf „Zuschnitt anwenden“ und auf „Bearbeitungen speichern“."
+msgstr "Hinweis: Du kannst das Bild zuschneiden, indem du darauf klickst (das Icon „Zuschneiden“ ist bereits ausgewählt) und den Zuschneiderahmen bei gedrückter Maustaste ziehst, um den gewünschten Bildausschnitt auszuwählen. Klicke anschließend auf „Speichern“, um den Ausschnitt zu übernehmen."
 
 #: wp-admin/edit-form-advanced.php:340
 msgid "For images only, you can click on Edit Image under the thumbnail to expand out an inline image editor with icons for cropping, rotating, or flipping the image as well as for undoing and redoing. The boxes on the right give you more options for scaling the image, for cropping it, and for cropping the thumbnail in a different way than you crop the original image. You can click on Help in those boxes to get more information."
@@ -13306,7 +13306,7 @@ msgstr[1] "%s Kommentare wurden in den Papierkorb verschoben."
 
 #: wp-admin/update-core.php:660
 msgid "The following themes have new versions available. Check the ones you want to update and then click &#8220;Update Themes&#8221;."
-msgstr "Für folgende Themes liegen Aktualisierungen vor. Markiere diejenigen, die du aktualisieren möchtest und klicke auf &#8222;Themes aktualisieren&#8220;."
+msgstr "Für folgende Themes liegen Aktualisierungen vor. Markiere diejenigen, die du aktualisieren möchtest, und klicke auf &#8222;Themes aktualisieren&#8220;."
 
 #: wp-admin/user-new.php:365
 msgid "That user is already a member of this site."
@@ -13322,7 +13322,7 @@ msgstr "Die Einladungs-E-Mail wurde versandt. Der Benutzer muss den Bestätigung
 
 #: wp-admin/update-core.php:493
 msgid "The following plugins have new versions available. Check the ones you want to update and then click &#8220;Update Plugins&#8221;."
-msgstr "Für die folgenden Plugins sind neue Versionen verfügbar. Markiere diejenigen, die du aktualisieren möchtest und klicke auf &#8222;Plugins aktualisieren&#8220;."
+msgstr "Für die folgenden Plugins sind neue Versionen verfügbar. Markiere diejenigen, die du aktualisieren möchtest, und klicke auf &#8222;Plugins aktualisieren&#8220;."
 
 #: wp-admin/includes/class-custom-background.php:328
 msgid "This will remove the background image. You will not be able to restore any customizations."
@@ -14178,7 +14178,7 @@ msgstr "Wenn du das Stammverzeichnis deiner Website kurzfristig beschreibbar mac
 #. translators: %s: web.config
 #: wp-admin/options-permalink.php:485
 msgid "If you temporarily make your %s file writable to generate rewrite rules automatically, do not forget to revert the permissions after the rule has been saved."
-msgstr "Wenn du deine %s-Datei temporär beschreibbar machst, um die Weiterleitungsregeln automatisch eintragen zu lassen, vergiss nicht, die Berechtigungen zurückzusetzen, nachdem die Regeln gespeichert worden sind."
+msgstr "Wenn du deine %s-Datei temporär beschreibbar machst, um die Umschreibungsregeln automatisch eintragen zu lassen, vergiss nicht, die Berechtigungen zurückzusetzen, nachdem die Regeln gespeichert worden sind."
 
 #: wp-admin/options-permalink.php:435
 msgid "Tag base"
@@ -14767,7 +14767,7 @@ msgstr "Wähle eine Datei von deinem Computer:"
 
 #: wp-admin/includes/template.php:1013
 msgid "Before you can upload your import file, you will need to fix the following error:"
-msgstr "Ehe du die Importdatei hochladen kannst, musst du folgende Fehler beheben:"
+msgstr "Bevor du deine Importdatei hochladen kannst, musst du folgenden Fehler beheben:"
 
 #: wp-admin/includes/template.php:779
 msgid "Add Custom Field"
@@ -15579,7 +15579,7 @@ msgstr "Kommentar-Template"
 
 #: wp-admin/includes/file.php:60
 msgid ".htaccess (for rewrite rules )"
-msgstr ".htaccess (für Weiterleitungsregeln)"
+msgstr ".htaccess (für Umschreibungsregeln)"
 
 #: wp-admin/includes/file.php:59
 msgid "my-hacks.php (legacy hacks support)"

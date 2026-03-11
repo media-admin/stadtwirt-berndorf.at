@@ -155,6 +155,7 @@ add_action('acf/init', function () {
                 'label'   => 'Plugin Status',
                 'name'    => 'plugin_info',
                 'type'    => 'message',
+                'label'   => ' ',
                 'message' => '<strong>Media Lab Agency Core</strong> &nbsp;·&nbsp; Version '
                            . MEDIALAB_CORE_VERSION
                            . ' &nbsp;<span style="color:#00a32a;">● Aktiv</span><br><br>'
@@ -371,6 +372,35 @@ add_action('acf/init', function () {
                 'instructions' => 'Maximale Breite des Logos auf Mobile',
             ),
 
+            // ── UI-Features ───────────────────────────────────────────────────
+            array(
+                'key'     => 'field_ui_features_heading',
+                'label'   => ' ',
+                'name'    => 'ui_features_heading',
+                'type'    => 'message',
+                'message' => '<strong style="font-size:13px;">UI-Features</strong>',
+            ),
+
+            array(
+                'key'           => 'field_btt_enabled',
+                'label'         => 'Back-to-Top Button',
+                'name'          => 'btt_enabled',
+                'type'          => 'true_false',
+                'ui'            => 1,
+                'default_value' => 1,
+                'instructions'  => 'Zeigt einen Button zum schnellen Zurückspringen an den Seitenanfang.',
+            ),
+
+            array(
+                'key'           => 'field_scroll_progress_enabled',
+                'label'         => 'Scroll Progress Bar',
+                'name'          => 'scroll_progress_enabled',
+                'type'          => 'true_false',
+                'ui'            => 1,
+                'default_value' => 0,
+                'instructions'  => 'Zeigt eine dünne Fortschritts-Linie am oberen Rand nur auf Einzelbeitrags-Seiten (single.php).',
+            ),
+
         ),
         'location' => array(
             array(
@@ -512,6 +542,7 @@ add_action('acf/init', function () {
                         'label'   => 'Test-Mail',
                         'name'    => 'smtp_test_notice',
                         'type'    => 'message',
+                        'label'   => ' ',
                         'message' => '<button type="button" id="medialab-smtp-test" class="button button-secondary">Test-Mail senden</button>
                                       <input type="email" id="medialab-smtp-test-to" placeholder="' . esc_attr(get_option('admin_email')) . '" style="margin-left:8px;width:260px;" class="regular-text">
                                       <span id="medialab-smtp-test-result" style="margin-left:10px;font-weight:600;"></span>',
@@ -575,9 +606,138 @@ add_action('acf/init', function () {
                         'label'   => 'Shortcode',
                         'name'    => 'obf_shortcode_hint',
                         'type'    => 'message',
+                        'label'   => ' ',
                         'message' => '<code>[obfuscate_email email="info@example.com" label="Kontakt aufnehmen"]</code><br>Schützt eine einzelne E-Mail-Adresse manuell.',
                         'conditional_logic' => array(array(array(
                             'field' => 'field_obf_enabled', 'operator' => '==', 'value' => '1',
+                        ))),
+                    ),
+
+                    // ── hCaptcha ──────────────────────────────────────────────
+                    array(
+                        'key'     => 'field_hcaptcha_separator',
+                        'label'   => ' ',
+                        'name'    => 'hcaptcha_separator',
+                        'type'    => 'message',
+                        'message' => '<strong style="font-size:13px;">hCaptcha</strong>',
+                    ),
+
+                    array(
+                        'key'           => 'field_hcaptcha_enabled',
+                        'label'         => 'hCaptcha aktivieren',
+                        'name'          => 'hcaptcha_enabled',
+                        'type'          => 'true_false',
+                        'ui'            => 1,
+                        'default_value' => 0,
+                        'instructions'  => 'CAPTCHA-Schutz via hCaptcha. Site- und Secret-Key unter hcaptcha.com holen.',
+                    ),
+
+                    array(
+                        'key'          => 'field_hcaptcha_site_key',
+                        'label'        => 'Site Key',
+                        'name'         => 'hcaptcha_site_key',
+                        'type'         => 'text',
+                        'placeholder'  => '10000000-ffff-ffff-ffff-000000000001',
+                        'instructions' => 'Öffentlicher Schlüssel von hcaptcha.com → Sites.',
+                        'conditional_logic' => array(array(array(
+                            'field' => 'field_hcaptcha_enabled', 'operator' => '==', 'value' => '1',
+                        ))),
+                    ),
+
+                    array(
+                        'key'          => 'field_hcaptcha_secret_key',
+                        'label'        => 'Secret Key',
+                        'name'         => 'hcaptcha_secret_key',
+                        'type'         => 'text',
+                        'placeholder'  => '0x0000000000000000000000000000000000000000',
+                        'instructions' => 'Privater Schlüssel – wird nur serverseitig verwendet, nie im HTML ausgegeben.',
+                        'conditional_logic' => array(array(array(
+                            'field' => 'field_hcaptcha_enabled', 'operator' => '==', 'value' => '1',
+                        ))),
+                    ),
+
+                    array(
+                        'key'           => 'field_hcaptcha_cf7',
+                        'label'         => 'Contact Form 7',
+                        'name'          => 'hcaptcha_cf7',
+                        'type'          => 'true_false',
+                        'ui'            => 1,
+                        'default_value' => 1,
+                        'instructions'  => 'Schützt alle CF7-Formulare.',
+                        'conditional_logic' => array(array(array(
+                            'field' => 'field_hcaptcha_enabled', 'operator' => '==', 'value' => '1',
+                        ))),
+                    ),
+
+                    array(
+                        'key'           => 'field_hcaptcha_wp_login',
+                        'label'         => 'WordPress Login',
+                        'name'          => 'hcaptcha_wp_login',
+                        'type'          => 'true_false',
+                        'ui'            => 1,
+                        'default_value' => 1,
+                        'instructions'  => 'Schützt wp-login.php gegen Brute-Force.',
+                        'conditional_logic' => array(array(array(
+                            'field' => 'field_hcaptcha_enabled', 'operator' => '==', 'value' => '1',
+                        ))),
+                    ),
+
+                    array(
+                        'key'           => 'field_hcaptcha_woo_checkout',
+                        'label'         => 'WooCommerce Checkout',
+                        'name'          => 'hcaptcha_woo_checkout',
+                        'type'          => 'true_false',
+                        'ui'            => 1,
+                        'default_value' => 0,
+                        'instructions'  => 'Schützt den Checkout-Schritt.',
+                        'conditional_logic' => array(array(array(
+                            'field' => 'field_hcaptcha_enabled', 'operator' => '==', 'value' => '1',
+                        ))),
+                    ),
+
+                    array(
+                        'key'           => 'field_hcaptcha_woo_register',
+                        'label'         => 'WooCommerce Registrierung',
+                        'name'          => 'hcaptcha_woo_register',
+                        'type'          => 'true_false',
+                        'ui'            => 1,
+                        'default_value' => 0,
+                        'instructions'  => 'Schützt das Registrierungsformular unter „Mein Konto".',
+                        'conditional_logic' => array(array(array(
+                            'field' => 'field_hcaptcha_enabled', 'operator' => '==', 'value' => '1',
+                        ))),
+                    ),
+
+                    array(
+                        'key'           => 'field_hcaptcha_theme',
+                        'label'         => 'Widget-Theme',
+                        'name'          => 'hcaptcha_theme',
+                        'type'          => 'select',
+                        'choices'       => array( 'light' => 'Light', 'dark' => 'Dark' ),
+                        'default_value' => 'light',
+                        'allow_null'    => 0,
+                        'return_format' => 'value',
+                        'conditional_logic' => array(array(array(
+                            'field' => 'field_hcaptcha_enabled', 'operator' => '==', 'value' => '1',
+                        ))),
+                    ),
+
+                    array(
+                        'key'           => 'field_hcaptcha_size',
+                        'label'         => 'Widget-Größe',
+                        'name'          => 'hcaptcha_size',
+                        'type'          => 'select',
+                        'choices'       => array(
+                            'normal'    => 'Normal',
+                            'compact'   => 'Compact',
+                            'invisible' => 'Invisible',
+                        ),
+                        'default_value' => 'normal',
+                        'allow_null'    => 0,
+                        'return_format' => 'value',
+                        'instructions'  => 'Invisible: kein sichtbares Widget, nur bei verdächtigem Verhalten ausgelöst.',
+                        'conditional_logic' => array(array(array(
+                            'field' => 'field_hcaptcha_enabled', 'operator' => '==', 'value' => '1',
                         ))),
                     ),
                 ),
@@ -843,6 +1003,7 @@ add_action('acf/init', function () {
                 'label'   => 'Hinweis',
                 'name'    => 'maintenance_admin_hint',
                 'type'    => 'message',
+                'label'   => ' ',
                 'message' => '<div style="background:#fff3cd;border-left:4px solid #f0ad4e;padding:10px 14px;border-radius:0 4px 4px 0;">'
                            . '⚠️ <strong>Hinweis:</strong> Wenn aktiv, sehen alle Besucher die Wartungsseite (HTTP 503). '
                            . 'Eingeloggte Administratoren werden automatisch durchgelassen und sehen einen orangenen Indikator in der Admin-Bar.'

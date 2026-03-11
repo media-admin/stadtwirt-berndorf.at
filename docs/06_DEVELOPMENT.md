@@ -1,6 +1,6 @@
 # Development Guide
 
-**Version:** 1.7.1  
+**Version:** 1.8.0  
 **Letzte Aktualisierung:** 2026-03-06
 
 ---
@@ -192,6 +192,66 @@ Buttons werden zentral über Mixins in `abstracts/_mixins.scss` gesteuert.
 | `btn-lg` | Größere Größe |
 
 **Niemals** duplizierte Button-Styles in Komponenten schreiben – immer `@include` verwenden.
+
+
+### Breadcrumbs
+
+Eigenständige Implementierung im SEO-Plugin (`media-lab-seo/inc/breadcrumbs.php`), Ausgabe über Template-Part im Theme. Schema.org `BreadcrumbList` JSON-LD wird automatisch ausgegeben.
+
+**Im Template verwenden:**
+```php
+// Einfach
+<?php get_template_part('template-parts/components/breadcrumbs'); ?>
+
+// Mit Optionen
+<?php
+set_query_var('breadcrumbs_args', ['separator' => '/']);
+get_template_part('template-parts/components/breadcrumbs');
+?>
+
+// Direkt
+<?php medialab_breadcrumbs(['show_home' => true, 'home_label' => 'Start']); ?>
+```
+
+**Alle Optionen:**
+
+| Option | Typ | Default | Beschreibung |
+|---|---|---|---|
+| `separator` | string | `›` | Trennzeichen zwischen Ebenen |
+| `show_home` | bool | `true` | Startseite als erstes Element |
+| `home_label` | string | `Start` | Label der Startseite |
+| `show_current` | bool | `true` | Aktuelle Seite anzeigen |
+| `container` | string | `nav` | HTML-Wrapper: `nav`, `div`, `ol` |
+| `class` | string | `breadcrumbs` | CSS-Basisklasse |
+| `schema` | bool | `true` | Schema.org JSON-LD ausgeben |
+
+**SCSS-Varianten:**
+```html
+<!-- Standard -->
+<nav class="breadcrumbs"> … </nav>
+
+<!-- Auf dunklem Hintergrund (Hero etc.) -->
+<nav class="breadcrumbs breadcrumbs--light"> … </nav>
+
+<!-- Kleinere Schrift -->
+<nav class="breadcrumbs breadcrumbs--compact"> … </nav>
+
+<!-- Zentriert -->
+<nav class="breadcrumbs breadcrumbs--centered"> … </nav>
+
+<!-- Volle Breite mit Hintergrundbalken (direkt unter Header) -->
+<nav class="breadcrumbs breadcrumbs--bar"> … </nav>
+```
+
+**Unterstützte Seitentypen:** Startseite (keine Ausgabe), 404, Suche, Seiten, Beiträge (inkl. Kategorie-Pfad), Custom Post Types (inkl. Archive-Link), Taxonomien, Datum-Archive, Autor-Archive.
+
+**Filter:**
+```php
+// HTML nachbearbeiten
+add_filter('medialab_breadcrumbs_html', function($html, $crumbs, $args) {
+    return $html;
+}, 10, 3);
+```
 
 
 ### Toggle – 3-State Switch

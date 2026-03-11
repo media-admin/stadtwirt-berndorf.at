@@ -13,9 +13,22 @@ if (!defined('ABSPATH')) {
  * Add Settings Page
  */
 function medialab_seo_add_settings_page() {
-    add_options_page(
-        'SEO Toolkit Settings',
-        'SEO Toolkit',
+    // Top-Level-Menüeintrag
+    add_menu_page(
+        'Media Lab SEO',
+        'Media Lab SEO',
+        'manage_options',
+        'medialab-seo',
+        'medialab_seo_render_settings_page',
+        'dashicons-search',
+        58
+    );
+
+    // Erste Unterseite = gleiche Seite wie Top-Level (Label überschreiben)
+    add_submenu_page(
+        'medialab-seo',
+        'SEO Einstellungen',
+        '⚙️ Einstellungen',
         'manage_options',
         'medialab-seo',
         'medialab_seo_render_settings_page'

@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the WordPress - 6.9.x - Development package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2026-03-07 03:18:04+0000\n"
+"PO-Revision-Date: 2026-03-10 23:29:12+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -329,7 +329,7 @@ msgstr "Begriffe"
 #: wp-includes/blocks/terms-query/block.json
 msgctxt "block description"
 msgid "An advanced block that allows displaying taxonomy terms based on different query parameters and visual configurations."
-msgstr "Ein erweiterter Block, der das Anzeigen von Taxonomiebegriffen anhand verschiedener Abfrage-Parameter und visueller Konfigurationen erlaubt."
+msgstr "Ein erweiterter Block, der das Anzeigen von Taxonomiebegriffen anhand verschiedener Abfrageparameter und visueller Konfigurationen erlaubt."
 
 #: wp-includes/blocks/terms-query/block.json
 msgctxt "block title"
@@ -1287,7 +1287,7 @@ msgstr "Die Fähigkeits-Kategorie „%s“ ist bereits registriert."
 #: wp-includes/abilities-api/class-wp-abilities-registry.php:278
 #: wp-includes/abilities-api/class-wp-ability-categories-registry.php:209
 msgid "Ability API should not be initialized before the %s action has fired."
-msgstr "Die Ability-API sollte nicht initialisiert werden, bevor die Aktion %s ausgeführt wurde."
+msgstr "Die Fähigkeits-API sollte nicht initialisiert werden, bevor die Aktion %s ausgeführt wurde."
 
 #. translators: %s: Ability name.
 #: wp-includes/abilities-api/class-wp-abilities-registry.php:195
@@ -2798,7 +2798,7 @@ msgstr "Als JSON exportieren"
 
 #: wp-includes/post.php:455
 msgid "Template part updated."
-msgstr "Der Template-Teil wurde aktualisiert."
+msgstr "Das Template-Teil wurde aktualisiert."
 
 #: wp-includes/taxonomy.php:235
 msgctxt "taxonomy singular name"
@@ -4776,7 +4776,7 @@ msgstr "Zu verarbeitende URL."
 
 #: wp-includes/rest-api/endpoints/class-wp-rest-templates-controller.php:1196
 msgid "Where the template part is intended for use (header, footer, etc.)"
-msgstr "Wo der Template-Teil verwendet werden soll (Header, Footer etc.)."
+msgstr "Wo das Template-Teil verwendet werden soll (Header, Footer etc.)."
 
 #: wp-includes/rest-api/endpoints/class-wp-rest-templates-controller.php:1181
 msgid "Whether a template is a custom template."
@@ -5121,7 +5121,7 @@ msgstr "Globale Stile"
 
 #: wp-includes/post.php:457
 msgid "Template parts to include in your templates."
-msgstr "Template-Teile zum Einfügen in dein Template."
+msgstr "Template-Teile zum Einfügen in deine Templates."
 
 #: wp-includes/post.php:454
 msgid "Template parts list"
@@ -5141,7 +5141,7 @@ msgstr "Zu diesem Template-Teil hochgeladen"
 
 #: wp-includes/post.php:450
 msgid "Insert into template part"
-msgstr "In den Template-Teil einfügen"
+msgstr "In das Template-Teil einfügen"
 
 #: wp-includes/post.php:449
 msgid "Template part archives"
@@ -5177,7 +5177,7 @@ msgstr "Template-Teil bearbeiten"
 
 #: wp-includes/post.php:441
 msgid "New Template Part"
-msgstr "Neuer Template-Teil"
+msgstr "Neues Template-Teil"
 
 #: wp-includes/post.php:438
 msgctxt "post type singular name"
@@ -5260,7 +5260,7 @@ msgstr "Der Blockstil-Name darf keine Leerzeichen enthalten."
 #: wp-includes/blocks/template-part.php:122
 #: wp-includes/js/dist/block-library.js:54202
 msgid "Template part has been deleted or is unavailable: %s"
-msgstr "Der Template-Teil wurde gelöscht oder ist nicht verfügbar: %s"
+msgstr "Das Template-Teil wurde gelöscht oder ist nicht verfügbar: %s"
 
 #: wp-includes/blocks/post-navigation-link.php:83
 msgctxt "label before the title of the previous post"
@@ -5947,7 +5947,7 @@ msgstr "Bild"
 #: wp-includes/blocks/media-text/block.json
 msgctxt "block description"
 msgid "Set media and words side-by-side for a richer layout."
-msgstr "Setze Medien und Wörter für ein vielfältigeres Layout nebeneinander."
+msgstr "Setze Medien und Text für ein vielfältigeres Layout nebeneinander."
 
 #: wp-includes/blocks/loginout/block.json
 msgctxt "block keyword"
@@ -6779,11 +6779,11 @@ msgstr "Template-Archiv"
 
 #: wp-includes/post.php:383
 msgid "No templates found in Trash."
-msgstr "Im Papierkorb wurde kein Template gefunden."
+msgstr "Im Papierkorb wurden keine Templates gefunden."
 
 #: wp-includes/post.php:382
 msgid "No templates found."
-msgstr "Es wurde kein Template gefunden."
+msgstr "Es wurden keine Templates gefunden."
 
 #: wp-includes/post.php:381
 msgid "Parent Template:"
@@ -8499,7 +8499,7 @@ msgstr "Variationen des Block-Stils."
 
 #: wp-includes/rest-api/endpoints/class-wp-rest-block-types-controller.php:631
 msgid "Public facing style handles."
-msgstr "Öffentlich sichtbare Stil-Handles."
+msgstr "Öffentlich zugängliche Stil-Handles."
 
 #: wp-includes/rest-api/endpoints/class-wp-rest-block-types-controller.php:611
 msgid "Editor style handles."
@@ -11275,16 +11275,16 @@ msgid ""
 "###SITEURL###"
 msgstr ""
 "Hallo ###USERNAME###,\n"
-" \n"
-"du hast vor kurzem angefordert, dass die E-Mail-Adresse des Netzwerkadministrators in deinem Netzwerk geändert werden soll. \n"
-" \n"
+"\n"
+"du hast vor kurzem angefordert, dass die E-Mail-Adresse des Netzwerkadministrators in deinem Netzwerk geändert werden soll.\n"
+"\n"
 "Wenn das richtig ist, klicke zur Änderung bitte auf den folgenden Link:\n"
 "###ADMIN_URL###\n"
-" \n"
+"\n"
 "Du kannst diese E-Mail ruhig ignorieren und löschen, wenn du das nicht tun möchtest.\n"
-" \n"
+"\n"
 "Diese E-Mail wurde an ###EMAIL### versandt.\n"
-" \n"
+"\n"
 "Viele Grüße\n"
 "Alle von ###SITENAME###\n"
 "###SITEURL###"
@@ -13362,7 +13362,7 @@ msgstr "Antwort auf Beiträge einschränken, die vor einem gegebenen ISO8601-kon
 
 #: wp-includes/rest-api/endpoints/class-wp-rest-comments-controller.php:1684
 msgid "Limit result set to that from a specific author email. Requires authorization."
-msgstr "Ergebnissatz begrenzen, auf den einer speziellen E-Mail-Adresse eines Autors. Erfordert eine Autorisierung."
+msgstr "Den Ergebnissatz auf den einer speziellen E-Mail-Adresse eines Autors begrenzen. Erfordert eine Autorisierung."
 
 #: wp-includes/rest-api/endpoints/class-wp-rest-comments-controller.php:1675
 msgid "Ensure result set excludes comments assigned to specific user IDs. Requires authorization."
@@ -13663,7 +13663,7 @@ msgstr "Ein Zeitformat für alle zeitbasierten Zeichenfolgen."
 
 #: wp-includes/option.php:2822
 msgid "A date format for all date strings."
-msgstr "Ein Zeitformat für alle datumsbasierten Zeichenfolgen."
+msgstr "Ein Datumsformat für alle datumsbasierten Zeichenfolgen."
 
 #: wp-includes/option.php:2812
 msgid "A city in the same timezone as you."
@@ -13721,7 +13721,7 @@ msgstr "Neue Version verfügbar. %s"
 #. translators: %s: Theme name.
 #: wp-includes/customize/class-wp-customize-theme-control.php:67
 msgid "Install and preview theme: %s"
-msgstr "Installation und Vorschau des Theme: %s"
+msgstr "Installation und Vorschau des Themes: %s"
 
 #. translators: %s: Theme name.
 #: wp-includes/customize/class-wp-customize-theme-control.php:65
@@ -13740,19 +13740,19 @@ msgstr "Details zu Theme: %s"
 
 #: wp-includes/customize/class-wp-customize-selective-refresh.php:181
 msgid "Click to edit this element."
-msgstr "Klick, zum Bearbeiten dieses Elements."
+msgstr "Klicken, um dieses Element zu bearbeiten."
 
 #: wp-includes/customize/class-wp-customize-selective-refresh.php:180
 msgid "Click to edit the site title."
-msgstr "Klick, zum Bearbeiten des Website-Titels."
+msgstr "Klicken, um den Website-Titel zu bearbeiten."
 
 #: wp-includes/customize/class-wp-customize-selective-refresh.php:179
 msgid "Click to edit this widget."
-msgstr "Klick, zum Bearbeiten des Widgets."
+msgstr "Klicken, um dieses Widget zu bearbeiten."
 
 #: wp-includes/customize/class-wp-customize-selective-refresh.php:178
 msgid "Click to edit this menu."
-msgstr "Klick, zum Bearbeiten des Menüs."
+msgstr "Klicken, um dieses Menü zu bearbeiten."
 
 #: wp-includes/customize/class-wp-customize-custom-css-setting.php:167
 #: wp-includes/rest-api/endpoints/class-wp-rest-global-styles-controller.php:674
@@ -15351,7 +15351,7 @@ msgstr "Listeneintrag"
 
 #: wp-includes/script-loader.php:816
 msgid "Close numbered list tag"
-msgstr "Nummerierte-Liste-Tag schließen"
+msgstr "Tag für nummerierte Liste schließen"
 
 #: wp-includes/script-loader.php:814
 msgid "Close bulleted list tag"

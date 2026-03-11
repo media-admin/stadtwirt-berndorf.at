@@ -3,7 +3,7 @@
  * Plugin Name: Media Lab SEO Toolkit
  * Plugin URI: https://github.com/media-admin/media-lab-starter-kit
  * Description: Comprehensive SEO solution. Schema.org markup, Open Graph, Twitter Cards, breadcrumbs, and meta management.
- * Version:           1.1.1
+ * Version:           1.3.0
  * Author: Media Lab
  * Author URI: https://medialab.at
  * Text Domain: media-lab-seo
@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Plugin Constants
-define('MEDIALAB_SEO_VERSION', '1.1.1');
+define('MEDIALAB_SEO_VERSION', '1.3.0');
 define('MEDIALAB_SEO_FILE', __FILE__);
 define('MEDIALAB_SEO_PATH', plugin_dir_path(__FILE__));
 define('MEDIALAB_SEO_URL', plugin_dir_url(__FILE__));
@@ -35,6 +35,15 @@ function medialab_seo_init() {
     require_once MEDIALAB_SEO_PATH . 'inc/meta.php';
     require_once MEDIALAB_SEO_PATH . 'inc/breadcrumbs.php';
     require_once MEDIALAB_SEO_PATH . 'inc/redirects.php';
+
+    // SEO Dashboard + Reporting (v1.2.0)
+    require_once MEDIALAB_SEO_PATH . 'inc/gsc-api.php';
+    require_once MEDIALAB_SEO_PATH . 'inc/analytics-adapter.php';
+    require_once MEDIALAB_SEO_PATH . 'inc/adapter-ga4.php';
+    require_once MEDIALAB_SEO_PATH . 'inc/adapter-matomo.php';
+    require_once MEDIALAB_SEO_PATH . 'inc/seo-report-template.php';
+    require_once MEDIALAB_SEO_PATH . 'inc/seo-report-mailer.php';
+    require_once MEDIALAB_SEO_PATH . 'inc/seo-dashboard.php';
 }
 add_action('plugins_loaded', 'medialab_seo_init');
 

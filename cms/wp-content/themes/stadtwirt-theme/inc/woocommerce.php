@@ -9,6 +9,9 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// Gesamte Datei nur laden wenn WooCommerce aktiv ist
+if ( ! class_exists( 'WooCommerce' ) ) return;
+
 /**
  * Disable default WooCommerce styles
  */
@@ -60,7 +63,7 @@ remove_action('woocommerce_before_main_content', 'woocommerce_breadcrumb', 20);
  * Custom Add to Cart button text
  */
 add_filter('woocommerce_product_single_add_to_cart_text', function($text) {
-    return __('In den Warenkorb', 'stadtwirt-theme');
+    return __('In den Warenkorb', 'custom-theme');
 });
 add_filter('woocommerce_product_add_to_cart_text', function($text, $product) {
     if (!$product || !is_a($product, 'WC_Product')) {
@@ -68,7 +71,7 @@ add_filter('woocommerce_product_add_to_cart_text', function($text, $product) {
     }
     
     if ($product->is_type('simple')) {
-        return __('Kaufen', 'stadtwirt-theme');
+        return __('Kaufen', 'custom-theme');
     }
     
     return $text;

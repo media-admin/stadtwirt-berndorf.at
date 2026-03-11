@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Plugins - Advanced Custom Fields (ACF®) - Stable (latest release) package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2026-01-16 00:03:42+0000\n"
+"PO-Revision-Date: 2026-03-09 00:28:19+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -600,7 +600,7 @@ msgstr "Lizensierte URL"
 msgid "Search icons..."
 msgstr "Icons suchen …"
 
-#: src/Site_Health/Site_Health.php:769
+#: src/Site_Health/Site_Health.php:779
 msgid "Shortcode Enabled"
 msgstr "Shortcode aktiviert"
 
@@ -1023,7 +1023,7 @@ msgstr "Es wurden keine Ergebnisse für diesen Suchbegriff gefunden."
 msgid "Browse Media Library"
 msgstr "Mediathek durchsuchen"
 
-#: src/Site_Health/Site_Health.php:775
+#: src/Site_Health/Site_Health.php:785
 msgid "Registered ACF Forms"
 msgstr "Registrierte ACF-Formulare"
 
@@ -1442,8 +1442,8 @@ msgstr "Feldgruppen verlinken"
 msgid "(Duplicated from %s)"
 msgstr "(Duplikat von %s)"
 
-#: includes/fields/class-acf-field-page_link.php:507
-#: includes/fields/class-acf-field-post_object.php:420
+#: includes/fields/class-acf-field-page_link.php:505
+#: includes/fields/class-acf-field-post_object.php:418
 #: includes/fields/class-acf-field-select.php:387
 #: includes/fields/class-acf-field-user.php:120
 msgid "Select Multiple"
@@ -1552,9 +1552,9 @@ msgstr "Keine Beschreibung"
 msgid "No fields"
 msgstr "Keine Felder"
 
-#: includes/fields/class-acf-field-page_link.php:474
-#: includes/fields/class-acf-field-post_object.php:383
-#: includes/fields/class-acf-field-relationship.php:582
+#: includes/fields/class-acf-field-page_link.php:472
+#: includes/fields/class-acf-field-post_object.php:381
+#: includes/fields/class-acf-field-relationship.php:610
 msgid "Any post status"
 msgstr "Jeder Beitragsstatus"
 
@@ -1649,9 +1649,9 @@ msgstr "Eine einfache Texteingabe, nützlich für die Speicherung einzelner Zeic
 msgid "Allows the selection of one or more taxonomy terms based on the criteria and options specified in the fields settings."
 msgstr "Ermöglicht die Auswahl von einem oder mehreren Taxonomiebegriffen auf der Grundlage der in den Feldeinstellungen angegebenen Kriterien und Optionen."
 
-#: includes/fields/class-acf-field-page_link.php:466
-#: includes/fields/class-acf-field-post_object.php:375
-#: includes/fields/class-acf-field-relationship.php:574
+#: includes/fields/class-acf-field-page_link.php:464
+#: includes/fields/class-acf-field-post_object.php:373
+#: includes/fields/class-acf-field-relationship.php:602
 msgid "Filter by Post Status"
 msgstr "Nach Beitragsstatus filtern"
 
@@ -2857,13 +2857,13 @@ msgstr "Keine Metabox"
 msgid "Invalid post type selected for review."
 msgstr "Der für die Betrachtung ausgewählte Inhaltstyp ist ungültig."
 
-#: includes/admin/tools/class-acf-admin-tool-export.php:363
-msgid "The following code can be used to register a local version of the selected items. Storing field groups, post types, or taxonomies locally can provide many benefits such as faster load times, version control & dynamic fields/settings. Simply copy and paste the following code to your theme's functions.php file or include it within an external file, then deactivate or delete the items from the ACF admin."
-msgstr "Der folgende Code kann verwendet werden, um eine lokale Version der ausgewählten Elemente zu registrieren. Die lokale Speicherung von Feldgruppen, Inhaltstypen oder Taxonomien kann viele Vorteile bieten, wie z. B. schnellere Ladezeiten, Versionskontrolle und dynamische Felder/Einstellungen. Kopiere den folgenden Code in die Datei functions.php deines Themes oder füge ihn in eine externe Datei ein und deaktiviere oder lösche anschließend die Elemente in der ACF-Administration."
-
 #: includes/admin/tools/class-acf-admin-tool-import.php:130
 msgid "Importing a Post Type or Taxonomy with the same key as one that already exists will overwrite the settings for the existing Post Type or Taxonomy with those of the import."
 msgstr "Wenn ein Inhaltstyp oder eine Taxonomie mit einem Schlüssel importiert wird, der bereits vorhanden ist, werden die Einstellungen des vorhandenen Inhaltstyps oder der vorhandenen Taxonomie mit denen des Imports überschrieben."
+
+#: includes/admin/tools/class-acf-admin-tool-export.php:363
+msgid "The following code can be used to register a local version of the selected items. Storing field groups, post types, or taxonomies locally can provide many benefits such as faster load times, version control & dynamic fields/settings. Simply copy and paste the following code to your theme's functions.php file or include it within an external file, then deactivate or delete the items from the ACF admin."
+msgstr "Der folgende Code kann verwendet werden, um eine lokale Version der ausgewählten Elemente zu registrieren. Die lokale Speicherung von Feldgruppen, Inhaltstypen oder Taxonomien kann viele Vorteile bieten, wie z. B. schnellere Ladezeiten, Versionskontrolle und dynamische Felder/Einstellungen. Kopiere den folgenden Code in die Datei functions.php deines Themes oder füge ihn in eine externe Datei ein und deaktiviere oder lösche anschließend die Elemente in der ACF-Administration."
 
 #: includes/admin/tools/class-acf-admin-tool-import.php:239
 msgid "Nothing from Custom Post Type UI plugin selected for import."
@@ -3701,13 +3701,13 @@ msgstr[1] "%1$s muss einen Benutzer mit einer der folgenden rollen haben: %2$s"
 msgid "%1$s must have a valid user ID."
 msgstr "%1$s muss eine gültige Benutzer-ID haben."
 
-#: includes/fields/class-acf-field-post_object.php:669
+#: includes/fields/class-acf-field-post_object.php:667
 msgid "%1$s must have term %2$s."
 msgid_plural "%1$s must have one of the following terms: %2$s"
 msgstr[0] "%1$s muss den Begriff %2$s haben."
 msgstr[1] "%1$s muss einen der folgenden Begriffe haben: %2$s"
 
-#: includes/fields/class-acf-field-post_object.php:644
+#: includes/fields/class-acf-field-post_object.php:642
 msgid "%1$s must have a valid post ID."
 msgstr "%1$s muss eine gültige Beitrags-ID haben."
 
@@ -3715,7 +3715,7 @@ msgstr "%1$s muss eine gültige Beitrags-ID haben."
 msgid "%s requires a valid attachment ID."
 msgstr "%s erfordert eine gültige Anhangs-ID."
 
-#: includes/fields/class-acf-field-post_object.php:653
+#: includes/fields/class-acf-field-post_object.php:651
 msgid "%1$s must be of post type %2$s."
 msgid_plural "%1$s must be of one of the following post types: %2$s"
 msgstr[0] "%1$s muss vom Inhaltstyp %2$s sein."
@@ -4363,7 +4363,7 @@ msgstr "Mittel"
 msgid "Thumbnail"
 msgstr "Vorschaubild"
 
-#: includes/fields/class-acf-field-page_link.php:205
+#: includes/fields/class-acf-field-page_link.php:203
 msgid "Archives"
 msgstr "Archive"
 
@@ -4398,7 +4398,7 @@ msgstr "Keine %s"
 msgid "Toggle All"
 msgstr "Alle umschalten"
 
-#: includes/fields/class-acf-field-page_link.php:496
+#: includes/fields/class-acf-field-page_link.php:494
 msgid "Allow Archives URLs"
 msgstr "Archiv-URLs erlauben"
 
@@ -4426,8 +4426,8 @@ msgstr "Auswahlmöglichkeiten"
 msgid "Button Group"
 msgstr "Button-Gruppe"
 
-#: includes/fields/class-acf-field-page_link.php:282
-#: includes/fields/class-acf-field-post_object.php:263
+#: includes/fields/class-acf-field-page_link.php:280
+#: includes/fields/class-acf-field-post_object.php:261
 #: includes/fields/class-acf-field-taxonomy.php:890
 msgid "Parent"
 msgstr "Übergeordnet"
@@ -4483,61 +4483,61 @@ msgstr "Anhängen"
 msgid "Prepend"
 msgstr "Voranstellen"
 
-#: includes/fields/class-acf-field-post_object.php:411
-#: includes/fields/class-acf-field-relationship.php:625
+#: includes/fields/class-acf-field-post_object.php:409
+#: includes/fields/class-acf-field-relationship.php:653
 msgid "Post ID"
 msgstr "Beitrags-ID"
 
 #: includes/fields/class-acf-field-post_object.php:24
-#: includes/fields/class-acf-field-post_object.php:410
-#: includes/fields/class-acf-field-relationship.php:624
+#: includes/fields/class-acf-field-post_object.php:408
+#: includes/fields/class-acf-field-relationship.php:652
 msgid "Post Object"
 msgstr "Beitrags-Objekt"
 
 #: includes/admin/views/acf-field-group/options.php:196
 #: includes/admin/views/acf-post-type/advanced-settings.php:38
-#: includes/fields/class-acf-field-relationship.php:682
+#: includes/fields/class-acf-field-relationship.php:710
 msgid "Featured Image"
 msgstr "Beitragsbild"
 
-#: includes/fields/class-acf-field-relationship.php:677
+#: includes/fields/class-acf-field-relationship.php:705
 msgid "Elements"
 msgstr "Elemente"
 
-#: includes/fields/class-acf-field-relationship.php:611
+#: includes/fields/class-acf-field-relationship.php:639
 #: includes/fields/class-acf-field-taxonomy.php:29
 #: includes/fields/class-acf-field-taxonomy.php:646
 #: includes/locations/class-acf-location-taxonomy.php:31
 msgid "Taxonomy"
 msgstr "Taxonomie"
 
-#: includes/fields/class-acf-field-relationship.php:610
+#: includes/fields/class-acf-field-relationship.php:638
 #: includes/locations/class-acf-location-post-type.php:31
 #: includes/post-types/class-acf-post-type.php:101
 msgid "Post Type"
 msgstr "Inhaltstyp"
 
-#: includes/fields/class-acf-field-relationship.php:604
+#: includes/fields/class-acf-field-relationship.php:632
 msgid "Filters"
 msgstr "Filter"
 
-#: includes/fields/class-acf-field-page_link.php:481
-#: includes/fields/class-acf-field-post_object.php:390
-#: includes/fields/class-acf-field-relationship.php:589
+#: includes/fields/class-acf-field-page_link.php:479
+#: includes/fields/class-acf-field-post_object.php:388
+#: includes/fields/class-acf-field-relationship.php:617
 msgid "Filter by Taxonomy"
 msgstr "Nach Taxonomie filtern"
 
-#: includes/fields/class-acf-field-page_link.php:451
-#: includes/fields/class-acf-field-post_object.php:360
-#: includes/fields/class-acf-field-relationship.php:559
+#: includes/fields/class-acf-field-page_link.php:449
+#: includes/fields/class-acf-field-post_object.php:358
+#: includes/fields/class-acf-field-relationship.php:587
 msgid "Filter by Post Type"
 msgstr "Nach Inhaltstyp filtern"
 
-#: includes/fields/class-acf-field-relationship.php:389
+#: includes/fields/class-acf-field-relationship.php:417
 msgid "Select taxonomy"
 msgstr "Taxonomie auswählen"
 
-#: includes/fields/class-acf-field-relationship.php:381
+#: includes/fields/class-acf-field-relationship.php:409
 msgid "Select post type"
 msgstr "Inhaltstyp auswählen"
 
@@ -4711,8 +4711,8 @@ msgstr "Zoom"
 #: includes/fields/class-acf-field-date_time_picker.php:199
 #: includes/fields/class-acf-field-icon_picker.php:296
 #: includes/fields/class-acf-field-image.php:186
-#: includes/fields/class-acf-field-post_object.php:405
-#: includes/fields/class-acf-field-relationship.php:619
+#: includes/fields/class-acf-field-post_object.php:403
+#: includes/fields/class-acf-field-relationship.php:647
 #: includes/fields/class-acf-field-select.php:371
 #: includes/fields/class-acf-field-time_picker.php:130
 #: includes/fields/class-acf-field-user.php:104
@@ -5225,15 +5225,15 @@ msgstr "Numerisch"
 msgid "Minimum Value"
 msgstr "Mindestwert"
 
-#: includes/fields/class-acf-field-page_link.php:459
-#: includes/fields/class-acf-field-post_object.php:368
-#: includes/fields/class-acf-field-relationship.php:567
+#: includes/fields/class-acf-field-page_link.php:457
+#: includes/fields/class-acf-field-post_object.php:366
+#: includes/fields/class-acf-field-relationship.php:595
 msgid "All post types"
 msgstr "Alle Inhaltstypen"
 
-#: includes/fields/class-acf-field-page_link.php:489
-#: includes/fields/class-acf-field-post_object.php:398
-#: includes/fields/class-acf-field-relationship.php:597
+#: includes/fields/class-acf-field-page_link.php:487
+#: includes/fields/class-acf-field-post_object.php:396
+#: includes/fields/class-acf-field-relationship.php:625
 msgid "All taxonomies"
 msgstr "Alle Taxonomien"
 
@@ -5241,15 +5241,15 @@ msgstr "Alle Taxonomien"
 msgid "Other"
 msgstr "Weitere"
 
-#: includes/fields/class-acf-field-relationship.php:678
+#: includes/fields/class-acf-field-relationship.php:706
 msgid "Selected elements will be displayed in each result"
 msgstr "Die ausgewählten Elemente werden in jedem Ergebnis angezeigt"
 
-#: includes/fields/class-acf-field-relationship.php:647
+#: includes/fields/class-acf-field-relationship.php:675
 msgid "Minimum Posts"
 msgstr "Mindestzahl an Beiträgen"
 
-#: includes/fields/class-acf-field-relationship.php:657
+#: includes/fields/class-acf-field-relationship.php:685
 msgid "Maximum Posts"
 msgstr "Höchstzahl an Beiträgen"
 
@@ -5360,10 +5360,6 @@ msgstr "Menüpositionen"
 msgid "Page Type"
 msgstr "Seitentyp"
 
-#: includes/locations/class-acf-location-page-type.php:120
-msgid "Posts Page"
-msgstr "Beitrags-Seite"
-
 #: includes/locations/class-acf-location-user-form.php:31
 msgid "User Form"
 msgstr "Benutzerformular"
@@ -5426,7 +5422,7 @@ msgstr "Anhang"
 msgid "Site requires database upgrade from %1$s to %2$s"
 msgstr "Die Website erfordert ein Upgrade der Datenbank von %1$s auf %2$s"
 
-#: includes/fields/class-acf-field-relationship.php:762
+#: includes/fields/class-acf-field-relationship.php:790
 msgid "%1$s requires at least %2$s selection"
 msgid_plural "%1$s requires at least %2$s selections"
 msgstr[0] "%1$s erfordert mindestens %2$s Auswahl"
@@ -5446,7 +5442,7 @@ msgid "File size must not exceed %s."
 msgstr "Die Dateigröße darf nicht größer als %s sein."
 
 #: includes/fields/class-acf-field-google-map.php:159
-#: includes/fields/class-acf-field-relationship.php:609
+#: includes/fields/class-acf-field-relationship.php:637
 msgid "Search"
 msgstr "Suchen"
 
@@ -5543,8 +5539,8 @@ msgid "Add New"
 msgstr "Neu hinzufügen"
 
 #: includes/fields/class-acf-field-button-group.php:210
-#: includes/fields/class-acf-field-page_link.php:528
-#: includes/fields/class-acf-field-post_object.php:441
+#: includes/fields/class-acf-field-page_link.php:526
+#: includes/fields/class-acf-field-post_object.php:439
 #: includes/fields/class-acf-field-radio.php:243
 #: includes/fields/class-acf-field-select.php:408
 #: includes/fields/class-acf-field-taxonomy.php:726
@@ -6227,7 +6223,7 @@ msgstr "Übergangslos (keine Metabox)"
 msgid "Multi-Expand"
 msgstr "Mehrfach-Erweiterung"
 
-#: includes/fields/class-acf-field-relationship.php:459
+#: includes/fields/class-acf-field-relationship.php:487
 msgid "Search..."
 msgstr "Suchen …"
 
@@ -6288,7 +6284,11 @@ msgstr "Titelseite"
 msgid "Row"
 msgstr "Zeile"
 
+#: includes/locations/class-acf-location-page-type.php:120
+msgid "Posts Page"
+msgstr "Beitragsseite"
+
 #. Plugin Name of the plugin
 #: acf.php acf.php:341
 msgid "Advanced Custom Fields"
-msgstr "Advanced Custom Fields"
+msgstr "Advanced Custom Fields"

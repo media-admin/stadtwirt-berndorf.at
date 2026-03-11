@@ -773,7 +773,7 @@ function stat_shortcode($atts, $content = null) {
         'prefix' => '',
         'suffix' => '',
         'duration' => '2000',
-        'label' => '',
+        'label'   => ' ',
         'icon' => '',
         'color' => '',
     ), $atts);

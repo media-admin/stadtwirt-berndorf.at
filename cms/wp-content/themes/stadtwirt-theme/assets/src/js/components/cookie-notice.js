@@ -1,6 +1,11 @@
 /**
  * Cookie Consent Manager
+ *
+ * Kategorien-Toggles verwenden die Toggle-Komponente aus toggle.js.
+ * Toggle.setState / Toggle.getState für programmatischen Zugriff.
  */
+import Toggle from './toggle';
+
 export default class CookieConsent {
 
     constructor() {
@@ -73,7 +78,7 @@ export default class CookieConsent {
     // ─── Render ───────────────────────────────────────────────────────────────
 
     _render() {
-        // Banner
+        // ── Banner ────────────────────────────────────────────────────────────
         const bannerEl = document.createElement('div');
         bannerEl.className = 'cookie-banner';
         bannerEl.setAttribute('role', 'dialog');
@@ -103,9 +108,23 @@ export default class CookieConsent {
             </div>`;
         this.banner = bannerEl;
 
-        // Modal – Toggles
-        const togglesHtml = Object.entries(this.categories).map(([key, cat]) => {
-            const checked = cat.required || (this.consent?.[key] ?? false);
+        // ── Modal mit Toggle-Buttons ──────────────────────────────────────────
+        const categoriesHtml = Object.entries(this.categories).map(([key, cat]) => {
+            const isOn = cat.required || (this.consent?.[key] ?? false);
+
+            const control = cat.required
+                ? `<span class="cookie-modal__always-active">${this.texts.alwaysActive}</span>`
+                // Toggle-Komponente: data-toggle-init fehlt → wird nach appendChild initialisiert
+                : `<button
+                       type="button"
+                       class="toggle toggle--sm"
+                       data-toggle="${isOn ? 'on' : 'off'}"
+                       data-category="${key}"
+                       role="switch"
+                       aria-pressed="${isOn}"
+                       aria-label="${cat.label}"
+                   ><span class="toggle__track" aria-hidden="true"><span class="toggle__thumb"></span></span></button>`;
+
             return `
                 <div class="cookie-modal__category">
                     <div class="cookie-modal__category-header">
@@ -113,15 +132,7 @@ export default class CookieConsent {
                             <span class="cookie-modal__category-name">${cat.label}</span>
                             <span class="cookie-modal__category-desc">${cat.description}</span>
                         </div>
-                        ${cat.required
-                            ? `<span class="cookie-modal__always-active">${this.texts.alwaysActive}</span>`
-                            : `<label class="cookie-toggle">
-                                   <input type="checkbox" data-category="${key}" ${checked ? 'checked' : ''}>
-                                   <span class="cookie-toggle__track">
-                                       <span class="cookie-toggle__thumb"></span>
-                                   </span>
-                               </label>`
-                        }
+                        ${control}
                     </div>
                 </div>`;
         }).join('');
@@ -144,7 +155,7 @@ export default class CookieConsent {
                     </button>
                 </div>
                 <p class="cookie-modal__intro">${this.texts.modalIntro}</p>
-                <div class="cookie-modal__categories">${togglesHtml}</div>
+                <div class="cookie-modal__categories">${categoriesHtml}</div>
                 <div class="cookie-modal__footer">
                     <button type="button" class="btn btn--primary btn--sm" id="cc-save-settings">
                         ${this.texts.saveSettings}
@@ -158,9 +169,13 @@ export default class CookieConsent {
 
         document.body.appendChild(this.banner);
         document.body.appendChild(this.modal);
+
+        // Toggle-Komponente auf Modal-Scope initialisieren
+        // (DOM-Elemente erst jetzt im Dokument → _bindToggle greift)
+        new Toggle(this.modal);
     }
 
-    // ─── Events: explizit per Button ─────────────────────────────────────────
+    // ─── Events ───────────────────────────────────────────────────────────────
 
     _bindButtons() {
         // Banner
@@ -217,8 +232,9 @@ export default class CookieConsent {
             if (this.categories[k].required) {
                 selected[k] = true;
             } else {
-                const cb = this.modal.querySelector(`[data-category="${k}"]`);
-                selected[k] = cb ? cb.checked : false;
+                // Toggle-State auslesen statt checkbox.checked
+                const toggleEl = this.modal.querySelector(`[data-category="${k}"]`);
+                selected[k] = Toggle.getState(toggleEl) === 'on';
             }
         });
         this._saveConsent(selected);
@@ -243,10 +259,12 @@ export default class CookieConsent {
     // ─── Modal ────────────────────────────────────────────────────────────────
 
     _openModal() {
+        // Toggle-States auf aktuellen Consent-Stand setzen
         if (this.consent) {
             Object.keys(this.categories).forEach(k => {
-                const cb = this.modal.querySelector(`[data-category="${k}"]`);
-                if (cb) cb.checked = !!this.consent[k];
+                if (this.categories[k].required) return;
+                const toggleEl = this.modal.querySelector(`[data-category="${k}"]`);
+                if (toggleEl) Toggle.setState(toggleEl, this.consent[k] ? 'on' : 'off');
             });
         }
         this.modal.removeAttribute('hidden');
@@ -270,25 +288,19 @@ export default class CookieConsent {
     }
 
     // ─── Snippet-Injektion ────────────────────────────────────────────────────
-    // Liest window.cookieSnippets und injiziert freigegebene Snippets ins DOM.
-    // Wird beim Seitenload (falls Consent bereits gespeichert) und bei
-    // cookies:changed aufgerufen.
 
     _injectSnippets(categories) {
         const snippets = window.cookieSnippets;
         if (!snippets) return;
 
         Object.entries(snippets).forEach(([category, code]) => {
-            // Notwendige Snippets immer laden, Rest nur bei Consent
             if (!code.required && !categories[category]) return;
 
-            // Head-Code
             if (code.head && !document.getElementById(`cc-snippet-${category}-head`)) {
                 const container = document.createElement('div');
                 container.id = `cc-snippet-${category}-head`;
                 container.innerHTML = code.head;
 
-                // Script-Tags müssen neu erstellt werden – innerHTML führt sie nicht aus
                 container.querySelectorAll('script').forEach(oldScript => {
                     const newScript = document.createElement('script');
                     [...oldScript.attributes].forEach(attr =>
@@ -301,7 +313,6 @@ export default class CookieConsent {
                 document.head.appendChild(container);
             }
 
-            // Body-Code (Noscript-Fallbacks)
             if (code.body && !document.getElementById(`cc-snippet-${category}-body`)) {
                 const container = document.createElement('div');
                 container.id = `cc-snippet-${category}-body`;
@@ -310,8 +321,6 @@ export default class CookieConsent {
             }
         });
     }
-
-
 
     // ─── Public API ───────────────────────────────────────────────────────────
 

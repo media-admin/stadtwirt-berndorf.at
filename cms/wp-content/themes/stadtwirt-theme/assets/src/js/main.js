@@ -18,6 +18,7 @@ import Toggle        from './components/toggle';
 import DarkMode      from './components/theme-switcher';
 import CookieConsent from './components/cookie-notice';
 import BackToTop     from './components/back-to-top';
+import ScrollProgress from './components/scroll-progress';
 import Notifications from './components/notifications';
 import initTopHeader from './components/top-header';
 
@@ -42,9 +43,12 @@ const initApp = async () => {
     const instance = new CookieConsent();
     window.CookieConsent = instance;
   });
-  safeInit('BackToTop',     () => new BackToTop());
   safeInit('Notifications', () => new Notifications());
   safeInit('TopHeader',     () => initTopHeader());
+
+  // Nur initialisieren wenn PHP-Element im DOM (ACF-gesteuert)
+  if (has('.back-to-top'))     safeInit('BackToTop',      () => new BackToTop());
+  if (has('.scroll-progress')) safeInit('ScrollProgress', () => new ScrollProgress());
 
   // ── Lazy: nur laden wenn DOM-Element vorhanden ────────────────────────────
 

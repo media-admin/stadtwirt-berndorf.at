@@ -1,0 +1,21 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "medialab/hero",
+  "title": "Hero",
+  "description": "Vollbild-Hero mit Hintergrundbild, Titel, Untertitel und CTA-Button.",
+  "category": "design",
+  "icon": "cover-image",
+  "keywords": ["hero", "banner", "header", "cta"],
+  "textdomain": "media-lab-agency-core",
+  "acf": {
+    "mode": "preview",
+    "renderTemplate": "render.php"
+  },
+  "supports": {
+    "anchor": true,
+    "align": ["full", "wide"],
+    "spacing": { "margin": true }
+  },
+  "example": {}
+}

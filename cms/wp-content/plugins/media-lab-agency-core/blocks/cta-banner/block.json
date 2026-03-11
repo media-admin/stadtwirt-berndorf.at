@@ -1,0 +1,56 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "medialab/cta-banner",
+  "title": "CTA-Banner",
+  "description": "Call-to-Action Banner mit Titel, Text und Button. Fullwidth-fähig.",
+  "category": "design",
+  "icon": "megaphone",
+  "keywords": ["cta", "banner", "call-to-action", "button", "fullwidth"],
+  "textdomain": "media-lab-agency-core",
+  "editorScript": "file:../../assets/dist/js/blocks.js",
+  "editorStyle":  "file:../../assets/dist/css/blocks-editor.css",
+  "style":        "file:../../assets/dist/css/blocks.css",
+  "attributes": {
+    "title": {
+      "type": "string",
+      "default": "Bereit für den nächsten Schritt?"
+    },
+    "text": {
+      "type": "string",
+      "default": ""
+    },
+    "buttonText": {
+      "type": "string",
+      "default": "Jetzt starten"
+    },
+    "buttonUrl": {
+      "type": "string",
+      "default": ""
+    },
+    "buttonStyle": {
+      "type": "string",
+      "default": "primary"
+    },
+    "bgColor": {
+      "type": "string",
+      "default": "primary"
+    },
+    "textAlign": {
+      "type": "string",
+      "default": "center"
+    }
+  },
+  "supports": {
+    "anchor": true,
+    "align": ["full", "wide"],
+    "spacing": { "padding": true, "margin": true }
+  },
+  "example": {
+    "attributes": {
+      "title": "Ihr Projekt startet hier",
+      "text": "Kontaktieren Sie uns für ein unverbindliches Erstgespräch.",
+      "buttonText": "Kontakt aufnehmen"
+    }
+  }
+}

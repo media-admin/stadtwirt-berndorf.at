@@ -13,17 +13,50 @@
         align-items: center;
         justify-content: space-between;
         padding: $spacing-2 0;
-        background-color: var(--color-surface-alt, #{$color-gray-100});
+        background-color: $color-primary;
         font-size: $font-size-sm;
     }
 
     &__contact {
         display: flex;
+        color: $color-gray-100;
         align-items: center;
         gap: $spacing-4;
         list-style: none;
         margin: 0;
         padding: 0;
+    }
+
+    &__address {
+        display: inline-flex;
+    }
+
+    &__address svg {
+        margin-right: 10px;
+    }
+
+    &__hours {
+        display: inline-flex; 
+    }
+
+    &__hours svg {
+        margin-right: 10px;
+    }
+
+    &__phone {
+        display: inline-flex;
+    }
+
+    &__phone svg {
+        margin-right: 10px;
+    }
+
+    &__email {
+        display: inline-flex;
+    }
+
+    &__email svg {
+        margin-right: 10px;
     }
 
     &__social {
@@ -36,7 +69,7 @@
     }
 
     a {
-        color: inherit;
+        color: $color-gray-100;
         text-decoration: none;
 
         &:hover {

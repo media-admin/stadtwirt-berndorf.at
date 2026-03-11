@@ -1,0 +1,146 @@
+@use '../abstracts' as *;
+
+// =============================================================================
+// Breadcrumbs
+// =============================================================================
+//
+// Verwendung:
+//   <nav class="breadcrumbs"> … </nav>
+//   <nav class="breadcrumbs breadcrumbs--light"> … </nav>   (auf dunklem Hintergrund)
+//   <nav class="breadcrumbs breadcrumbs--compact"> … </nav> (kleinere Schrift)
+//   <nav class="breadcrumbs breadcrumbs--centered"> … </nav>
+//
+// PHP:
+//   <?php medialab_breadcrumbs(); ?>
+//   <?php medialab_breadcrumbs(['separator' => '/']); ?>
+//   get_template_part('template-parts/components/breadcrumbs');
+// =============================================================================
+
+.breadcrumbs {
+    // ── Layout ────────────────────────────────────────────────────────────────
+
+    &__list {
+        display:     flex;
+        flex-wrap:   wrap;
+        align-items: center;
+        gap:         0;
+        list-style:  none;
+        margin:      0;
+        padding:     $spacing-3 0;
+    }
+
+    &__item {
+        display:     flex;
+        align-items: center;
+        line-height: 1.4;
+    }
+
+    // ── Links ─────────────────────────────────────────────────────────────────
+
+    &__link {
+        font-size:       $font-size-sm;
+        color:           var(--color-text-muted);
+        text-decoration: none;
+        transition:      color $transition-base;
+        white-space:     nowrap;
+
+        &:hover {
+            color:           $color-primary;
+            text-decoration: underline;
+        }
+
+        // Fokus-Ring
+        &:focus-visible {
+            outline:        2px solid $color-primary;
+            outline-offset: 2px;
+            border-radius:  2px;
+        }
+    }
+
+    // ── Aktuelle Seite ────────────────────────────────────────────────────────
+
+    &__current {
+        font-size:   $font-size-sm;
+        color:       var(--color-text);
+        font-weight: 500;
+        white-space: nowrap;
+
+        // Auf Mobile: langer Seitentitel abschneiden
+        @media (max-width: 640px) {
+            max-width:    180px;
+            overflow:     hidden;
+            text-overflow: ellipsis;
+            white-space:  nowrap;
+            display:      inline-block;
+            vertical-align: middle;
+        }
+    }
+
+    // ── Separator ─────────────────────────────────────────────────────────────
+
+    &__separator {
+        display:     inline-flex;
+        align-items: center;
+        padding:     0 $spacing-1;
+        color:       var(--color-text-light);
+        font-size:   $font-size-sm;
+        user-select: none;
+        flex-shrink: 0;
+    }
+
+    // ── Variante: Light (für dunkle Hintergründe) ─────────────────────────────
+
+    &--light {
+        .breadcrumbs__link {
+            color: rgba(255, 255, 255, 0.7);
+
+            &:hover { color: #fff; }
+        }
+
+        .breadcrumbs__current {
+            color: #fff;
+        }
+
+        .breadcrumbs__separator {
+            color: rgba(255, 255, 255, 0.4);
+        }
+    }
+
+    // ── Variante: Compact (kleinere Schrift, weniger Padding) ────────────────
+
+    &--compact {
+        .breadcrumbs__list   { padding: $spacing-2 0; }
+        .breadcrumbs__link,
+        .breadcrumbs__current { font-size: $font-size-xs; }
+    }
+
+    // ── Variante: Centered ────────────────────────────────────────────────────
+
+    &--centered {
+        .breadcrumbs__list { justify-content: center; }
+    }
+
+    // ── Variante: Contained (mit Hintergrundbalken) ───────────────────────────
+    // Bsp: unter dem Header als volle Breite
+
+    &--bar {
+        background:    var(--color-surface);
+        border-bottom: 1px solid var(--color-border);
+
+        .breadcrumbs__list {
+            max-width: $container-width;
+            margin:    0 auto;
+            padding:   $spacing-2 $spacing-4;
+
+            @include respond-to('md') {
+                padding: $spacing-2 $spacing-6;
+            }
+        }
+    }
+
+    // ── Dark Mode ─────────────────────────────────────────────────────────────
+
+    @media (prefers-color-scheme: dark) {
+        // CSS Custom Properties greifen automatisch, keine Überschreibung nötig
+    }
+}

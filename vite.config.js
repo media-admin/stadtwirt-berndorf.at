@@ -4,49 +4,58 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import autoprefixer from 'autoprefixer';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const themeDir = path.resolve(__dirname, 'cms/wp-content/themes/stadtwirt-theme');
+// Compression (Brotli + Gzip) – graceful fallback wenn nicht installiert
+// Installation: npm install -D vite-plugin-compression2
+let compression = null;
+try {
+    const mod = await import('vite-plugin-compression2');
+    compression = mod.compression ?? mod.default;
+} catch (e) { /* not installed */ }
 
-export default defineConfig({
+const __filename = fileURLToPath(import.meta.url);
+const __dirname  = path.dirname(__filename);
+const themeDir   = path.resolve(__dirname, 'cms/wp-content/themes/stadtwirt-theme');
+
+export default defineConfig(({ command }) => ({
+
   root: path.resolve(themeDir, 'assets'),
-  base: '/wp-content/themes/stadtwirt-theme/assets/dist/',
+
+  // Im Dev-Modus absolute URL damit @vite/client & HMR erreichbar sind.
+  // Im Build-Modus der echte Pfad für die enqueued Assets.
+  base: command === 'serve'
+    ? 'http://localhost:3000/'
+    : '/wp-content/themes/stadtwirt-theme/assets/dist/',
 
   plugins: [
     liveReload([
-      'cms/wp-content/themes/stadtwirt-theme/**/*.php',
+      path.resolve(__dirname, 'cms/wp-content/themes/stadtwirt-theme/**/*.php'),
     ]),
+    ...(compression ? [compression({ algorithm: 'brotliCompress', exclude: [/\.(br|gz)$/] })] : []),
+    ...(compression ? [compression({ algorithm: 'gzip',           exclude: [/\.(br|gz)$/] })] : []),
   ],
 
   build: {
-    outDir: path.resolve(themeDir, 'assets/dist'),
+    outDir:      path.resolve(themeDir, 'assets/dist'),
     emptyOutDir: true,
 
     rollupOptions: {
       input: {
-        // Einziger Entry Point – alle anderen Komponenten via Dynamic Import
         main: path.resolve(themeDir, 'assets/src/js/main.js'),
       },
       output: {
         entryFileNames: 'js/[name].js',
         chunkFileNames: 'js/chunks/[name]-[hash].js',
         assetFileNames: (assetInfo) => {
-          if (assetInfo.name?.endsWith('.css')) {
-            return 'css/style.css';
-          }
-          if (/\.(png|jpe?g|svg|gif|webp)$/.test(assetInfo.name ?? '')) {
-            return 'images/[name][extname]';
-          }
+          if (assetInfo.name?.endsWith('.css'))                          return 'css/style.css';
+          if (/\.(png|jpe?g|svg|gif|webp)$/.test(assetInfo.name ?? '')) return 'images/[name][extname]';
           return 'assets/[name][extname]';
         },
       },
     },
 
-    manifest: true,
-    cssCodeSplit: false,
+    manifest:              true,
+    cssCodeSplit:          false,
     chunkSizeWarningLimit: 200,
-
-    // console.log + debugger in Production entfernen
     minify: 'terser',
     terserOptions: {
       compress: {
@@ -58,21 +67,25 @@ export default defineConfig({
   },
 
   server: {
-    host: 'localhost',
-    port: 3000,
+    host:       'localhost',
+    port:       3000,
     strictPort: true,
-    cors: true,
+    cors:       true,
+    watch: {
+      usePolling: true,
+      interval:   300,
+    },
     hmr: {
-      host: 'localhost',
-      port: 3000,
+      host:       'localhost',
+      port:       3000,
+      protocol:   'ws',
+      clientPort: 3000,
     },
   },
 
   css: {
     preprocessorOptions: {
-      scss: {
-        api: 'modern-compiler', // Unterdrückt legacy-js-api Warning
-      },
+      scss: { api: 'modern-compiler' },
     },
     postcss: {
       plugins: [
@@ -88,4 +101,5 @@ export default defineConfig({
       '@': path.resolve(themeDir, 'assets/src'),
     },
   },
-});
+
+}));

@@ -23,30 +23,28 @@ function customtheme_enqueue_assets() {
 
     $dist     = get_template_directory()     . '/assets/dist';
     $dist_uri = get_template_directory_uri() . '/assets/dist';
+    $is_dev   = defined('VITE_DEV_SERVER') && VITE_DEV_SERVER;
 
-    // ── CSS ───────────────────────────────────────────────────────────────────
-    $css_file = $dist . '/css/style.css';
-    if (file_exists($css_file)) {
-        wp_enqueue_style(
-            'stadtwirt-theme-style',
-            $dist_uri . '/css/style.css',
-            array(),
-            filemtime($css_file)
+    if ($is_dev) {
+        // ── Vite Dev Server (HMR) ─────────────────────────────────────────
+        wp_enqueue_script('vite-client',
+            'http://localhost:3000/@vite/client', [], null, false);
+        wp_enqueue_script('custom-theme-script',
+            'http://localhost:3000/src/js/main.js',
+            [], null, true
         );
-    }
+    } else {
+        // ── Production Build ──────────────────────────────────────────────
+        $css_file = $dist . '/css/style.css';
+        if (file_exists($css_file)) {
+            wp_enqueue_style('custom-theme-style', $dist_uri . '/css/style.css', [], filemtime($css_file));
+        }
 
-    // ── JS ────────────────────────────────────────────────────────────────────
-    $js_file = $dist . '/js/main.js';
-    if (file_exists($js_file)) {
-        wp_enqueue_script(
-            'stadtwirt-theme-script',
-            $dist_uri . '/js/main.js',
-            array(),
-            filemtime($js_file),
-            true  // in footer
-        );
+        $js_file = $dist . '/js/main.js';
+        if (file_exists($js_file)) {
+            wp_enqueue_script('custom-theme-script', $dist_uri . '/js/main.js', [], filemtime($js_file), true);
+        }
     }
-
 }
 add_action('wp_enqueue_scripts', 'customtheme_enqueue_assets');
 
@@ -56,7 +54,7 @@ add_action('wp_enqueue_scripts', 'customtheme_enqueue_assets');
 function customtheme_output_js_config() {
     $config = array(
         'ajaxUrl'          => admin_url('admin-ajax.php'),
-        'nonce'            => wp_create_nonce('stadtwirt-theme-nonce'),
+        'nonce'            => wp_create_nonce('custom-theme-nonce'),
         'searchNonce'      => wp_create_nonce('agency_search_nonce'),
         'loadMoreNonce'    => wp_create_nonce('agency_load_more_nonce'),
         'filtersNonce'     => wp_create_nonce('ajax_filters_nonce'),
@@ -65,7 +63,7 @@ function customtheme_output_js_config() {
         'homeUrl'          => home_url('/'),
         'isDebug'          => defined('WP_DEBUG') && WP_DEBUG,
     );
-    echo '<script id="stadtwirt-theme-config">window.customTheme = '
+    echo '<script id="custom-theme-config">window.customTheme = '
         . wp_json_encode($config)
         . ';</script>' . "\n";
 }
@@ -74,8 +72,8 @@ add_action('wp_head', 'customtheme_output_js_config', 1);
 // ─── type="module" für main.js ────────────────────────────────────────────────
 // ES-Module sind per Spezifikation immer deferred – kein extra defer nötig.
 function customtheme_add_module_type( $tag, $handle, $src ) {
-    if ('stadtwirt-theme-script' === $handle) {
-        return '<script type="module" src="' . esc_url($src) . '"></script>' . "\n";
+    if (in_array($handle, ['custom-theme-script', 'vite-client'])) {
+        return '<script type="module" src="' . $src . '"></script>' . "\n";
     }
     return $tag;
 }
@@ -83,9 +81,24 @@ add_filter('script_loader_tag', 'customtheme_add_module_type', 10, 3);
 
 // ─── Preconnect / DNS-Prefetch ─────────────────────────────────────────────────
 function customtheme_add_preconnect() {
-    // Google Fonts (falls im Theme genutzt)
-    echo '<link rel="preconnect" href="https://fonts.googleapis.com">' . "\n";
-    echo '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' . "\n";
+    // Google Fonts – Preconnect nur wenn tatsächlich eine Google Fonts URL
+    // enqueued ist (verhindert unnötige Verbindungen wenn self-hosted).
+    global $wp_styles;
+    $uses_google_fonts = false;
+    if ( ! empty( $wp_styles->queue ) ) {
+        foreach ( $wp_styles->queue as $handle ) {
+            $src = $wp_styles->registered[ $handle ]->src ?? '';
+            if ( str_contains( (string) $src, 'fonts.googleapis.com' ) ) {
+                $uses_google_fonts = true;
+                break;
+            }
+        }
+    }
+
+    if ( $uses_google_fonts ) {
+        echo '<link rel="preconnect" href="https://fonts.googleapis.com">' . "\n";
+        echo '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' . "\n";
+    }
 
     // Google Maps API (nur wenn API-Key gesetzt)
     if (defined('GOOGLE_MAPS_API_KEY') && GOOGLE_MAPS_API_KEY) {

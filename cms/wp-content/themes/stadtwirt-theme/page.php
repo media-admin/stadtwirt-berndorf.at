@@ -1,5 +1,6 @@
 <?php get_header(); ?>
-<?php get_template_part('template-parts/hero-image'); ?>
+
+<?php get_template_part('template-parts/components/breadcrumbs'); ?>
 
 <main id="primary" class="site-main">
     <div class="container">

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "medialab/team-member",
+  "title": "Team-Mitglied",
+  "description": "Teamkarte mit Foto, Name, Rolle und optionalen Social-Links.",
+  "category": "design",
+  "icon": "admin-users",
+  "keywords": ["team", "mitarbeiter", "person", "mitglied"],
+  "textdomain": "media-lab-agency-core",
+  "acf": {
+    "mode": "preview",
+    "renderTemplate": "render.php"
+  },
+  "supports": {
+    "anchor": true
+  },
+  "example": {}
+}

@@ -1,0 +1,49 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "medialab/icon-text",
+  "title": "Icon + Text",
+  "description": "Feature-Kachel mit Icon (SVG/Dashicon/Emoji), Titel und Text.",
+  "category": "design",
+  "icon": "star-filled",
+  "keywords": ["icon", "feature", "kachel", "vorteil", "benefit"],
+  "textdomain": "media-lab-agency-core",
+  "editorScript": "file:../../assets/dist/js/blocks.js",
+  "style":        "file:../../assets/dist/css/blocks.css",
+  "attributes": {
+    "icon": {
+      "type": "string",
+      "default": "⭐"
+    },
+    "iconType": {
+      "type": "string",
+      "default": "emoji"
+    },
+    "title": {
+      "type": "string",
+      "default": ""
+    },
+    "text": {
+      "type": "string",
+      "default": ""
+    },
+    "iconColor": {
+      "type": "string",
+      "default": ""
+    },
+    "layout": {
+      "type": "string",
+      "default": "top"
+    }
+  },
+  "supports": {
+    "anchor": true
+  },
+  "example": {
+    "attributes": {
+      "icon": "⚡",
+      "title": "Schnelle Umsetzung",
+      "text": "Ihr Projekt geht in 4 Wochen live."
+    }
+  }
+}

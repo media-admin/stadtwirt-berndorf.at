@@ -33,7 +33,7 @@
                     'container'      => 'nav',
                     'container_class'=> 'site-footer__nav footer-nav',
                     'container_aria_label' => 'Footer Navigation',
-                    'depth'          => 1,
+                    'depth'          => 4,
                     'fallback_cb'    => false,
                 ));
             endif;
@@ -44,7 +44,7 @@
         <div class="site-footer__bottom">
             <p class="site-footer__copyright">
                 &copy; <?php echo date('Y'); ?> <?php bloginfo('name'); ?>.
-                <?php esc_html_e('Alle Rechte vorbehalten.', 'stadtwirt-theme'); ?>
+                <?php esc_html_e('Alle Rechte vorbehalten.', 'custom-theme'); ?>
             </p>
         </div>
 
@@ -52,6 +52,20 @@
 </footer>
 
 </div><!-- #page -->
+
+<?php
+// ── Back-to-Top Button ────────────────────────────────────────────────────
+if ( function_exists('get_field') && get_field('btt_enabled', 'option') ) : ?>
+<button
+    class="back-to-top"
+    aria-label="<?php esc_attr_e('Zurück nach oben', 'custom-theme'); ?>"
+    type="button"
+>
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <polyline points="18 15 12 9 6 15"></polyline>
+    </svg>
+</button>
+<?php endif; ?>
 
 <?php wp_footer(); ?>
 </body>

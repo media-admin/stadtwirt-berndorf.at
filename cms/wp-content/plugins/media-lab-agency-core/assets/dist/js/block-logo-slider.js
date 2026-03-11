@@ -1,0 +1,1 @@
+!function(){function e(){document.querySelectorAll(".ml-logo-slider__swiper").forEach(function(e){let t={};try{t=JSON.parse(e.dataset.swiper||"{}")}catch(a){}t.autoplay&&0===t.autoplay.delay&&(t.autoplay.delay=0,t.speed=t.speed||3e3,t.loop=!0),new Swiper(e,t)})}"loading"===document.readyState?document.addEventListener("DOMContentLoaded",e):e()}();

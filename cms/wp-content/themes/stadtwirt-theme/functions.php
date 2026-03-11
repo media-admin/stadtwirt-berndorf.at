@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Theme version
-define('CUSTOM_THEME_VERSION', '1.6.0');
+define('CUSTOM_THEME_VERSION', '1.4.0');
 
 /**
  * Check Required Plugins
@@ -21,7 +21,6 @@ define('CUSTOM_THEME_VERSION', '1.6.0');
 function customtheme_check_required_plugins() {
     $required_plugins = array(
         'media-lab-agency-core' => 'Media Lab Agency Core',
-        'stadtwirt-plugin' => 'Stadtwirt Plugin',
     );
     
     $missing_plugins = array();
@@ -63,8 +62,8 @@ function customtheme_setup() {
     
     // Navigation menus
     register_nav_menus(array(
-        'primary' => __('Primary Menu', 'stadtwirt-theme'),
-        'footer' => __('Footer Menu', 'stadtwirt-theme'),
+        'primary' => __('Primary Menu', 'custom-theme'),
+        'footer' => __('Footer Menu', 'custom-theme'),
     ));
     
     // Image sizes
@@ -78,12 +77,14 @@ add_action('after_setup_theme', 'customtheme_setup');
  * Load Theme Components
  */
 require_once get_template_directory() . '/inc/enqueue.php';
+require_once get_template_directory() . '/inc/performance.php';
 
 // Optional components (only if files exist)
 $optional_components = array(
     'walker-nav-menu.php',
     'helpers.php',
     'woocommerce.php',
+    'woocommerce-emails.php',
 );
 
 foreach ($optional_components as $component) {
@@ -116,7 +117,6 @@ if (class_exists('WooCommerce')) {
     add_theme_support('wc-product-gallery-lightbox');
     add_theme_support('wc-product-gallery-slider');
 }
-
 
 // =============================================================================
 // Toggle Helper
@@ -172,3 +172,4 @@ if ( ! function_exists('medialab_toggle') ) {
         <?php
     }
 }
+

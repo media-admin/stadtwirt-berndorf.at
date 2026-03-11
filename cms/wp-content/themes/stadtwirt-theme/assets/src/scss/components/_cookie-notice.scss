@@ -245,54 +245,10 @@
 }
 
 // ── Toggle Switch ─────────────────────────────────────────────────────────────
+// Kategorie-Toggles verwenden die Toggle-Komponente (_toggle.scss / .toggle--sm).
+// Kein eigener Block nötig – nur flex-shrink sicherstellen.
 
-.cookie-toggle {
-    position: relative;
-    display: inline-flex;
-    cursor: pointer;
-    flex-shrink: 0;
-
-    input {
-        position: absolute;
-        opacity: 0;
-        width: 0;
-        height: 0;
-
-        &:checked + .cookie-toggle__track {
-            background: $color-primary;
-        }
-
-        &:checked + .cookie-toggle__track .cookie-toggle__thumb {
-            transform: translateX(20px);
-        }
-
-        &:focus-visible + .cookie-toggle__track {
-            outline: 2px solid $color-primary;
-            outline-offset: 2px;
-        }
-    }
-
-    &__track {
-        width: 44px;
-        height: 24px;
-        background: var(--color-border);
-        border-radius: $radius-full;
-        transition: background-color 0.2s ease;
-        position: relative;
-    }
-
-    &__thumb {
-        position: absolute;
-        top: 3px;
-        left: 3px;
-        width: 18px;
-        height: 18px;
-        background: $color-white;
-        border-radius: $radius-full;
-        box-shadow: $shadow-sm;
-        transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-}
+.cookie-modal .toggle { flex-shrink: 0; }
 
 // ── Floating Button ───────────────────────────────────────────────────────────
 

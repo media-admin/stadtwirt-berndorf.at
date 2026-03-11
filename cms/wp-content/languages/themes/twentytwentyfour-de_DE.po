@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Themes - Twenty Twenty-Four package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2026-01-20 13:30:02+0000\n"
+"PO-Revision-Date: 2026-02-16 16:57:36+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -657,7 +657,7 @@ msgstr "Extrem groß"
 #: theme.json styles/fossil.json styles/ice.json styles/maelstrom.json
 msgctxt "Font size name"
 msgid "Extra Large"
-msgstr "Extra groß"
+msgstr "Extragroß"
 
 #: theme.json styles/fossil.json styles/ice.json styles/maelstrom.json
 msgctxt "Font size name"
@@ -1186,7 +1186,7 @@ msgstr "Liste von Beiträgen, 3 Spalten"
 #: patterns/posts-1-col.php
 msgctxt "Pattern title"
 msgid "List of posts, 1 column"
-msgstr "Liste von Beiträgen, 1 Spalte"
+msgstr "Liste von Beiträgen, 1 Spalte"
 
 #: patterns/page-rsvp-landing.php:49
 msgid "Green staircase at Western University, London, Canada"

@@ -3,7 +3,7 @@
  * Plugin Name: Media Lab Agency Core
  * Plugin URI: https://github.com/media-admin/media-lab-starter-kit
  * Description: Core functionality for Media Lab agency websites. Provides shortcodes, security features, and admin customizations.
- * Version:           1.5.4
+ * Version:           1.6.0
  * Author: Media Lab
  * Author URI: https://medialab.at
  * Text Domain: media-lab-core
@@ -47,6 +47,9 @@ function medialab_core_init() {
     // ACF: Options Page + all field groups (Top Header, Multi-Language)
     require_once MEDIALAB_CORE_PATH . 'inc/acf-settings.php';
 
+    // Gutenberg Custom Blocks
+    require_once MEDIALAB_CORE_PATH . 'inc/blocks.php';
+
     // Multi-Language (checks ACF toggle internally before activating)
     require_once MEDIALAB_CORE_PATH . 'inc/multi-language.php';
 
@@ -70,6 +73,7 @@ function medialab_core_init() {
 
     // Cookie Consent
     require_once MEDIALAB_CORE_PATH . 'inc/cookie-consent.php';
+    require_once MEDIALAB_CORE_PATH . 'inc/hcaptcha.php';
 
     // Media Replace
     require_once MEDIALAB_CORE_PATH . 'inc/media-replace.php';

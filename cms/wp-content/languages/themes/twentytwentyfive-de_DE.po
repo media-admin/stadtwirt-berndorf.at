@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Themes - Twenty Twenty-Five package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2026-01-01 04:09:40+0000\n"
+"PO-Revision-Date: 2026-02-16 17:00:24+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -152,7 +152,7 @@ msgstr "Manrope"
 #: theme.json
 msgctxt "Space size name"
 msgid "XX-Large"
-msgstr "Extra groß"
+msgstr "Extragroß"
 
 #: theme.json
 msgctxt "Space size name"
@@ -319,7 +319,7 @@ msgstr "Extrem groß"
 #: styles/typography/typography-preset-7.json
 msgctxt "Font size name"
 msgid "Extra Large"
-msgstr "Extra groß"
+msgstr "Extragroß"
 
 #: theme.json styles/02-noon.json styles/04-afternoon.json
 #: styles/05-twilight.json styles/06-morning.json styles/08-midnight.json
@@ -510,12 +510,12 @@ msgstr "Was die Leute sagen"
 #: patterns/testimonials-large.php
 msgctxt "Pattern description"
 msgid "A testimonial with a large image on the right."
-msgstr "Ein Testimonial mit einem großen Bild auf der rechten Seite."
+msgstr "Eine Referenz mit einem großen Bild auf der rechten Seite."
 
 #: patterns/testimonials-large.php
 msgctxt "Pattern title"
 msgid "Review with large image on right"
-msgstr "Rezension mit großen Bild rechts"
+msgstr "Rezension mit großem Bild rechts"
 
 #: patterns/testimonials-6-col.php:18
 msgctxt "Testimonial section heading."
@@ -530,7 +530,7 @@ msgstr "Ein Abschnitt mit drei Spalten und zwei Zeilen, die jeweils ein Testimon
 #: patterns/testimonials-6-col.php
 msgctxt "Pattern title"
 msgid "3 column layout with 6 testimonials"
-msgstr "3-Spalten-Layout mit 6 Testimonials"
+msgstr "3-Spalten-Layout mit 6 Referenzen"
 
 #: patterns/testimonials-2-col.php:67 patterns/testimonials-6-col.php:34
 #: patterns/testimonials-6-col.php:51 patterns/testimonials-6-col.php:68
@@ -566,7 +566,7 @@ msgstr "Bild einer Person"
 #: patterns/testimonials-2-col.php
 msgctxt "Pattern description"
 msgid "Two columns with testimonials and avatars."
-msgstr "Zwei Spalten mit Testimonials und Avataren."
+msgstr "Zwei Spalten mit Referenzen und Avataren."
 
 #: patterns/testimonials-2-col.php
 msgctxt "Pattern title"
@@ -667,7 +667,7 @@ msgstr "Eine Liste von Beiträgen, 1 Spalte, mit Beitragsbild und Beitragsdatum
 #: patterns/template-query-loop.php
 msgctxt "Pattern title"
 msgid "List of posts, 1 column"
-msgstr "Liste von Beiträgen, 1 Spalte"
+msgstr "Liste von Beiträgen, 1 Spalte"
 
 #: patterns/template-page-vertical-header-blog.php
 msgctxt "Pattern title"

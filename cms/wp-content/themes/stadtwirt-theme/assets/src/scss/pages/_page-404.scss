@@ -1,42 +1,132 @@
+// =============================================================================
+// 404 – Seite nicht gefunden
+// =============================================================================
 @use '../abstracts' as *;
 
-// =============================================================================
-// 404 Page
-// =============================================================================
-
-.page-404 {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+.error-404 {
     min-height: 60vh;
-    text-align: center;
-    padding: $spacing-16 $spacing-4;
+    display: flex;
+    align-items: center;
+    padding: $spacing-12 0;
 
-    &__number {
-        font-size: clamp(6rem, 20vw, 12rem);
-        font-weight: $font-weight-bold;
+    &__inner {
+        max-width: 640px;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    // Große 404-Zahl im Hintergrund
+    &__code {
+        font-size: clamp(100px, 20vw, 180px);
+        font-weight: 900;
         line-height: 1;
         color: $color-primary;
-        animation: pulse 2s ease-in-out infinite;
+        opacity: 0.08;
+        margin-bottom: -$spacing-6;
+        pointer-events: none;
+        user-select: none;
+        letter-spacing: -4px;
     }
 
     &__title {
-        margin-top: $spacing-4;
-        font-size: $font-size-2xl;
+        font-size: clamp($font-size-3xl, 4vw, 48px);
+        font-weight: 700;
+        color: $color-text;
+        margin-bottom: $spacing-3;
     }
 
-    &__text {
-        margin-top: $spacing-2;
-        color: var(--color-text-muted);
-        max-width: 40ch;
+    &__message {
+        font-size: $font-size-xl;
+        color: $color-text-muted;
+        line-height: 1.6;
+        margin-bottom: $spacing-6;
     }
 
+    // CTA-Buttons
     &__actions {
         display: flex;
         gap: $spacing-3;
-        margin-top: $spacing-8;
-        flex-wrap: wrap;
         justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: $spacing-8;
+    }
+
+    // Suchformular
+    .search-form {
+        display: flex;
+        gap: $spacing-2;
+        max-width: 400px;
+        margin: 0 auto $spacing-8;
+
+        .search-field {
+            flex: 1;
+            padding: $spacing-2 $spacing-3;
+            border: 1px solid $color-border;
+            border-radius: $radius-md;
+            font-size: $font-size-base;
+            background: $color-input-bg;
+            color: $color-text;
+
+            &:focus {
+                outline: none;
+                border-color: $color-primary;
+                box-shadow: 0 0 0 3px rgba($color-primary-dark, 0.15);
+            }
+        }
+
+        .search-submit {
+            padding: $spacing-2 $spacing-3;
+            background: $color-primary;
+            color: $color-white;
+            border: none;
+            border-radius: $radius-md;
+            cursor: pointer;
+            font-size: $font-size-base;
+            transition: background-color 0.2s;
+
+            &:hover {
+                background: $color-primary-dark;
+            }
+        }
+    }
+
+    // Hilfreiche Links
+    &__links {
+        border-top: 1px solid $color-border;
+        padding-top: $spacing-6;
+    }
+
+    &__links-label {
+        font-size: $font-size-sm;
+        color: $color-text-muted;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: $spacing-3;
+    }
+
+    &__links-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: $spacing-2;
+        justify-content: center;
+
+        a {
+            display: inline-block;
+            padding: $spacing-1 $spacing-3;
+            border: 1px solid $color-border;
+            border-radius: $radius-full;
+            font-size: $font-size-sm;
+            color: $color-text-muted;
+            text-decoration: none;
+            transition: border-color 0.2s, color 0.2s;
+
+            &:hover {
+                border-color: $color-primary;
+                color: $color-primary;
+            }
+        }
     }
 }

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "medialab/accordion",
+  "title": "Accordion / FAQ",
+  "description": "Aufklappbare FAQ-Einträge. Enthält beliebig viele Accordion-Items.",
+  "category": "design",
+  "icon": "list-view",
+  "keywords": ["accordion", "faq", "aufklappen", "toggle", "collapse"],
+  "textdomain": "media-lab-agency-core",
+  "editorScript": "file:../../assets/dist/js/blocks.js",
+  "style":        "file:../../assets/dist/css/blocks.css",
+  "attributes": {
+    "allowMultiple": {
+      "type": "boolean",
+      "default": false
+    },
+    "title": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "supports": {
+    "anchor": true,
+    "align": ["wide"]
+  },
+  "example": {}
+}

@@ -1,0 +1,167 @@
+{
+  "id": "media-lab-starter-kit",
+  "viewports": [
+    { "label": "mobile",  "width": 375,  "height": 812 },
+    { "label": "tablet",  "width": 768,  "height": 1024 },
+    { "label": "desktop", "width": 1280, "height": 900 },
+    { "label": "wide",    "width": 1440, "height": 900 }
+  ],
+  "onBeforeScript": "playwright/onBefore.js",
+  "onReadyScript":  "playwright/onReady.js",
+  "scenarios": [
+
+    {
+      "label": "Homepage",
+      "url": "https://media-lab-starter-kit.localdev/",
+      "delay": 500,
+      "hideSelectors": [".cookie-notice", ".admin-bar"],
+      "removeSelectors": [],
+      "misMatchThreshold": 0.2,
+      "requireSameDimensions": true
+    },
+
+    {
+      "label": "Einzelbeitrag (single.php)",
+      "url": "https://media-lab-starter-kit.localdev/beispiel-beitrag/",
+      "delay": 300,
+      "hideSelectors": [".cookie-notice", ".admin-bar"],
+      "misMatchThreshold": 0.2,
+      "requireSameDimensions": true
+    },
+
+    {
+      "label": "Archiv (archive.php)",
+      "url": "https://media-lab-starter-kit.localdev/category/allgemein/",
+      "delay": 300,
+      "hideSelectors": [".cookie-notice", ".admin-bar"],
+      "misMatchThreshold": 0.2,
+      "requireSameDimensions": true
+    },
+
+    {
+      "label": "Suche – mit Ergebnissen",
+      "url": "https://media-lab-starter-kit.localdev/?s=beispiel",
+      "delay": 300,
+      "hideSelectors": [".cookie-notice", ".admin-bar"],
+      "misMatchThreshold": 0.2,
+      "requireSameDimensions": true
+    },
+
+    {
+      "label": "Suche – leer (kein Ergebnis)",
+      "url": "https://media-lab-starter-kit.localdev/?s=xyzohnenErgebnis123",
+      "delay": 300,
+      "hideSelectors": [".cookie-notice", ".admin-bar"],
+      "misMatchThreshold": 0.1,
+      "requireSameDimensions": true
+    },
+
+    {
+      "label": "404-Seite",
+      "url": "https://media-lab-starter-kit.localdev/diese-seite-gibt-es-nicht-xyz/",
+      "delay": 300,
+      "hideSelectors": [".cookie-notice", ".admin-bar"],
+      "misMatchThreshold": 0.1,
+      "requireSameDimensions": true
+    },
+
+    {
+      "label": "Navigation – Desktop Flyout",
+      "url": "https://media-lab-starter-kit.localdev/",
+      "delay": 500,
+      "hideSelectors": [".cookie-notice", ".admin-bar"],
+      "hoverSelectors": [".nav__item--has-children > .nav__link"],
+      "misMatchThreshold": 0.3,
+      "requireSameDimensions": true,
+      "viewports": [{ "label": "desktop", "width": 1280, "height": 900 }]
+    },
+
+    {
+      "label": "Back-to-Top Button – sichtbar",
+      "url": "https://media-lab-starter-kit.localdev/beispiel-beitrag/",
+      "delay": 300,
+      "hideSelectors": [".cookie-notice", ".admin-bar"],
+      "scrollToSelector": "footer",
+      "misMatchThreshold": 0.2,
+      "requireSameDimensions": false
+    },
+
+    {
+      "label": "Scroll Progress Bar",
+      "url": "https://media-lab-starter-kit.localdev/beispiel-beitrag/",
+      "delay": 300,
+      "hideSelectors": [".cookie-notice", ".admin-bar"],
+      "scrollToSelector": ".entry-content",
+      "selectors": [".scroll-progress"],
+      "misMatchThreshold": 0.2,
+      "requireSameDimensions": false
+    },
+
+    {
+      "label": "Hero Image – volle Breite",
+      "url": "https://media-lab-starter-kit.localdev/",
+      "delay": 500,
+      "hideSelectors": [".cookie-notice", ".admin-bar"],
+      "selectors": [".hero-image"],
+      "misMatchThreshold": 0.3,
+      "requireSameDimensions": false
+    },
+
+    {
+      "label": "Cookie Consent Banner",
+      "url": "https://media-lab-starter-kit.localdev/",
+      "delay": 800,
+      "removeSelectors": [],
+      "hideSelectors": [".admin-bar"],
+      "selectors": [".cookie-notice"],
+      "misMatchThreshold": 0.2,
+      "requireSameDimensions": false,
+      "cookiePath": "backstop_data/engine_scripts/cookies_empty.json"
+    },
+
+    {
+      "label": "WooCommerce Shop",
+      "url": "https://media-lab-starter-kit.localdev/shop/",
+      "delay": 500,
+      "hideSelectors": [".cookie-notice", ".admin-bar"],
+      "misMatchThreshold": 0.2,
+      "requireSameDimensions": true
+    },
+
+    {
+      "label": "WooCommerce Einzelprodukt",
+      "url": "https://media-lab-starter-kit.localdev/produkt/beispielprodukt/",
+      "delay": 500,
+      "hideSelectors": [".cookie-notice", ".admin-bar"],
+      "misMatchThreshold": 0.2,
+      "requireSameDimensions": true
+    },
+
+    {
+      "label": "Dark Mode – Homepage",
+      "url": "https://media-lab-starter-kit.localdev/",
+      "delay": 800,
+      "hideSelectors": [".cookie-notice", ".admin-bar"],
+      "misMatchThreshold": 0.2,
+      "requireSameDimensions": true,
+      "onReadyScript": "playwright/setDarkMode.js"
+    }
+
+  ],
+  "paths": {
+    "bitmaps_reference": "backstop_data/bitmaps_reference",
+    "bitmaps_test":      "backstop_data/bitmaps_test",
+    "engine_scripts":    "backstop_data/engine_scripts",
+    "html_report":       "backstop_data/html_report",
+    "ci_report":         "backstop_data/ci_report"
+  },
+  "report":  ["browser", "CI"],
+  "engine":  "playwright",
+  "engineOptions": {
+    "args": ["--no-sandbox"]
+  },
+  "asyncCaptureLimit": 5,
+  "asyncCompareLimit": 50,
+  "debug":   false,
+  "debugWindow": false
+}

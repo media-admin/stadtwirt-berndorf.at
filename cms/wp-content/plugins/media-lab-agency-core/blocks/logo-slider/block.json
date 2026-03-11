@@ -1,0 +1,20 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "medialab/logo-slider",
+  "title": "Logo-Slider",
+  "description": "Automatisch scrollender Logos-/Partner-Slider (Swiper).",
+  "category": "design",
+  "icon": "slides",
+  "keywords": ["logos", "slider", "partner", "carousel", "marquee"],
+  "textdomain": "media-lab-agency-core",
+  "acf": {
+    "mode": "preview",
+    "renderTemplate": "render.php"
+  },
+  "supports": {
+    "anchor": true,
+    "align": ["full", "wide"]
+  },
+  "example": {}
+}

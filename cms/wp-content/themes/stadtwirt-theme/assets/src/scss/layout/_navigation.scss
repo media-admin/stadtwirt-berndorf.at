@@ -11,8 +11,8 @@
     position:    sticky;
     top:         0;
     z-index:     1000;
-    background:  var(--color-white);
-    border-bottom: 1px solid var(--color-border);
+    background:  $color-primary;
+    border-bottom: 0px solid var(--color-border);
     box-shadow:  $shadow-sm;
 }
 
@@ -28,7 +28,7 @@
 .site-logo {
     font-size:       $font-size-xl;
     font-weight:     700;
-    color:           var(--color-text);
+    color:           $color-gray-100;
     text-decoration: none;
     flex-shrink:     0;
 

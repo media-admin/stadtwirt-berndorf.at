@@ -1,0 +1,46 @@
+/* Drag & Drop Post Order */
+
+.medialab-drag-handle {
+    display: inline;
+    margin-right: 6px;
+    color: #999;
+    cursor: grab;
+    font-size: 16px;
+    line-height: inherit;
+    vertical-align: middle;
+    user-select: none;
+    transition: color 0.15s ease;
+    float: left;
+    margin-top: 2px;
+}
+
+.medialab-drag-handle:hover {
+    color: #2271b1;
+}
+
+.medialab-drag-handle:active {
+    cursor: grabbing;
+}
+
+/* Aktive Zeile während Drag */
+#the-list tr.ui-sortable-helper {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    background: #fff;
+    outline: 2px solid #2271b1;
+}
+
+/* Placeholder Zeile */
+#the-list .medialab-sort-placeholder {
+    background: #f0f6fc;
+    border: 2px dashed #2271b1;
+    visibility: visible !important;
+}
+
+#the-list .medialab-sort-placeholder td {
+    display: none;
+}
+
+/* Status Notice */
+#medialab-order-notice {
+    margin: 10px 0;
+}

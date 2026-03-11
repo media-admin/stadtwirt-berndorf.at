@@ -1,0 +1,20 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "medialab/logo-grid",
+  "title": "Logos / Partner-Leiste",
+  "description": "Statisches Raster mit Kunden- oder Partner-Logos.",
+  "category": "design",
+  "icon": "grid-view",
+  "keywords": ["logos", "partner", "kunden", "brands", "leiste"],
+  "textdomain": "media-lab-agency-core",
+  "acf": {
+    "mode": "preview",
+    "renderTemplate": "render.php"
+  },
+  "supports": {
+    "anchor": true,
+    "align": ["full", "wide"]
+  },
+  "example": {}
+}
