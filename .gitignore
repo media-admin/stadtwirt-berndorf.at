@@ -97,3 +97,5 @@ docs-backup/
 
 # Stadtwirt Theme (wird committed)
 !/cms/wp-content/themes/stadtwirt-theme/
+cms/wp-content/themes/stadtwirt-theme/assets/hot
+

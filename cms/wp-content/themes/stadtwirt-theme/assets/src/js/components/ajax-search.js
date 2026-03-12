@@ -105,8 +105,8 @@
  * Perform AJAX Search
  */
 function performSearch(query, resultsContainer, loadingIndicator, submitButton, limit, postTypes) {
-    const ajaxUrl = window.customTheme?.ajaxUrl || '/wp-admin/admin-ajax.php';
-    const nonce = window.customTheme?.searchNonce || '';
+    const ajaxUrl = window.stadtwirtTheme?.ajaxUrl || '/wp-admin/admin-ajax.php';
+    const nonce = window.stadtwirtTheme?.searchNonce || '';
     
     fetch(ajaxUrl, {
         method: 'POST',

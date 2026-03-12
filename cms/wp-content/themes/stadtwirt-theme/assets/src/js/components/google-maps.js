@@ -5,7 +5,7 @@
 export default class GoogleMaps {
   constructor() {
     this.maps = document.querySelectorAll('.google-map-wrapper');
-    this.apiKey = window.customTheme?.googleMapsApiKey || '';
+    this.apiKey = window.stadtwirtTheme?.googleMapsApiKey || '';
     this.apiLoaded = false;
     this.loadedMaps = new Set();
     

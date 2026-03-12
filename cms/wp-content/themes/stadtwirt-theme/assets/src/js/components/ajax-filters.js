@@ -275,7 +275,7 @@ export default class AjaxFilters {
     
     this.showLoading(container);
     
-    if (!window.customTheme || !window.customTheme.filtersNonce) {
+    if (!window.stadtwirtTheme || !window.stadtwirtTheme.filtersNonce) {
       console.error('❌ Filters nonce missing');
       this.showError(container, 'Configuration error');
       container.isLoading = false;
@@ -284,7 +284,7 @@ export default class AjaxFilters {
     
     const formData = new FormData();
     formData.append('action', 'ajax_filter_posts');
-    formData.append('nonce', window.customTheme.filtersNonce);
+    formData.append('nonce', window.stadtwirtTheme.filtersNonce);
     formData.append('post_type', settings.postType);
     formData.append('posts_per_page', settings.postsPerPage);
     formData.append('paged', container.currentPage);
@@ -305,7 +305,7 @@ export default class AjaxFilters {
     console.log(`🔄 [${container.id}] Fetching ${settings.postType}, page ${container.currentPage}`);
     
     try {
-      const response = await fetch(window.customTheme.ajaxUrl, {
+      const response = await fetch(window.stadtwirtTheme.ajaxUrl, {
         method: 'POST',
         body: formData
       });
