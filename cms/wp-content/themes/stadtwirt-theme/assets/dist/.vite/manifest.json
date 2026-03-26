@@ -1,0 +1,180 @@
+{
+  "_autoplay-CfrMw7Ki.js": {
+    "file": "js/chunks/autoplay-CfrMw7Ki.js",
+    "name": "autoplay"
+  },
+  "_pagination-BBFIH0gR.js": {
+    "file": "js/chunks/pagination-BBFIH0gR.js",
+    "name": "pagination",
+    "imports": [
+      "_autoplay-CfrMw7Ki.js"
+    ]
+  },
+  "src/images/slogan_tradition-trifft-kultur.svg": {
+    "file": "images/slogan_tradition-trifft-kultur.svg",
+    "src": "src/images/slogan_tradition-trifft-kultur.svg"
+  },
+  "src/js/components/accordion.js": {
+    "file": "js/chunks/accordion-DztO1EGG.js",
+    "name": "accordion",
+    "src": "src/js/components/accordion.js",
+    "isDynamicEntry": true
+  },
+  "src/js/components/ajax-filters.js": {
+    "file": "js/chunks/ajax-filters-13u5eY5F.js",
+    "name": "ajax-filters",
+    "src": "src/js/components/ajax-filters.js",
+    "isDynamicEntry": true
+  },
+  "src/js/components/ajax-search.js": {
+    "file": "js/chunks/ajax-search-BpUDwAHd.js",
+    "name": "ajax-search",
+    "src": "src/js/components/ajax-search.js",
+    "isDynamicEntry": true
+  },
+  "src/js/components/carousel.js": {
+    "file": "js/chunks/carousel-B_6_yDoS.js",
+    "name": "carousel",
+    "src": "src/js/components/carousel.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_autoplay-CfrMw7Ki.js",
+      "_pagination-BBFIH0gR.js"
+    ]
+  },
+  "src/js/components/faq-accordion.js": {
+    "file": "js/chunks/faq-accordion-Vn7WcFCv.js",
+    "name": "faq-accordion",
+    "src": "src/js/components/faq-accordion.js",
+    "isDynamicEntry": true
+  },
+  "src/js/components/google-maps.js": {
+    "file": "js/chunks/google-maps-uT1r10YF.js",
+    "name": "google-maps",
+    "src": "src/js/components/google-maps.js",
+    "isDynamicEntry": true
+  },
+  "src/js/components/hero-slider.js": {
+    "file": "js/chunks/hero-slider-CJnROJ7T.js",
+    "name": "hero-slider",
+    "src": "src/js/components/hero-slider.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_autoplay-CfrMw7Ki.js",
+      "_pagination-BBFIH0gR.js"
+    ]
+  },
+  "src/js/components/image-comparison.js": {
+    "file": "js/chunks/image-comparison-5jC19DXR.js",
+    "name": "image-comparison",
+    "src": "src/js/components/image-comparison.js",
+    "isDynamicEntry": true
+  },
+  "src/js/components/lightbox.js": {
+    "file": "js/chunks/lightbox-Br9UxQEg.js",
+    "name": "lightbox",
+    "src": "src/js/components/lightbox.js",
+    "isDynamicEntry": true
+  },
+  "src/js/components/load-more.js": {
+    "file": "js/chunks/load-more-LXCAK1fO.js",
+    "name": "load-more",
+    "src": "src/js/components/load-more.js",
+    "isDynamicEntry": true
+  },
+  "src/js/components/logo-carousel.js": {
+    "file": "js/chunks/logo-carousel-C1fGwAn5.js",
+    "name": "logo-carousel",
+    "src": "src/js/components/logo-carousel.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_autoplay-CfrMw7Ki.js"
+    ]
+  },
+  "src/js/components/modal.js": {
+    "file": "js/chunks/modal-CGuka556.js",
+    "name": "modal",
+    "src": "src/js/components/modal.js",
+    "isDynamicEntry": true
+  },
+  "src/js/components/scroll-animations.js": {
+    "file": "js/chunks/scroll-animations-ylYiKnCZ.js",
+    "name": "scroll-animations",
+    "src": "src/js/components/scroll-animations.js",
+    "isDynamicEntry": true
+  },
+  "src/js/components/spoiler.js": {
+    "file": "js/chunks/spoiler-DSjEAr0l.js",
+    "name": "spoiler",
+    "src": "src/js/components/spoiler.js",
+    "isDynamicEntry": true
+  },
+  "src/js/components/stats-counter.js": {
+    "file": "js/chunks/stats-counter-W4czGhxx.js",
+    "name": "stats-counter",
+    "src": "src/js/components/stats-counter.js",
+    "isDynamicEntry": true
+  },
+  "src/js/components/tabs.js": {
+    "file": "js/chunks/tabs-mxO8mfKP.js",
+    "name": "tabs",
+    "src": "src/js/components/tabs.js",
+    "isDynamicEntry": true
+  },
+  "src/js/components/testimonials-slider.js": {
+    "file": "js/chunks/testimonials-slider-CxHYA64s.js",
+    "name": "testimonials-slider",
+    "src": "src/js/components/testimonials-slider.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_autoplay-CfrMw7Ki.js",
+      "_pagination-BBFIH0gR.js"
+    ]
+  },
+  "src/js/components/video-player.js": {
+    "file": "js/chunks/video-player-G53Pj1Fi.js",
+    "name": "video-player",
+    "src": "src/js/components/video-player.js",
+    "isDynamicEntry": true
+  },
+  "src/js/main.js": {
+    "file": "js/main.js",
+    "name": "main",
+    "src": "src/js/main.js",
+    "isEntry": true,
+    "dynamicImports": [
+      "src/js/utils/sentry.js",
+      "src/js/components/accordion.js",
+      "src/js/components/hero-slider.js",
+      "src/js/components/testimonials-slider.js",
+      "src/js/components/logo-carousel.js",
+      "src/js/components/carousel.js",
+      "src/js/components/lightbox.js",
+      "src/js/components/modal.js",
+      "src/js/components/image-comparison.js",
+      "src/js/components/stats-counter.js",
+      "src/js/components/tabs.js",
+      "src/js/components/spoiler.js",
+      "src/js/components/faq-accordion.js",
+      "src/js/components/video-player.js",
+      "src/js/components/scroll-animations.js",
+      "src/js/components/ajax-search.js",
+      "src/js/components/load-more.js",
+      "src/js/components/ajax-filters.js",
+      "src/js/components/google-maps.js"
+    ],
+    "assets": [
+      "images/slogan_tradition-trifft-kultur.svg"
+    ]
+  },
+  "src/js/utils/sentry.js": {
+    "file": "js/chunks/sentry-COInPX85.js",
+    "name": "sentry",
+    "src": "src/js/utils/sentry.js",
+    "isDynamicEntry": true
+  },
+  "style.css": {
+    "file": "css/style.css",
+    "src": "style.css"
+  }
+}
