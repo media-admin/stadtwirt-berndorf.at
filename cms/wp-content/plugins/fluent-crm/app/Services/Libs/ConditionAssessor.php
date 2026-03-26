@@ -1,0 +1,205 @@
+<?php
+
+namespace FluentCrm\App\Services\Libs;
+
+use FluentCrm\Framework\Support\Arr;
+use FluentCrm\Framework\Support\Str;
+
+class ConditionAssessor
+{
+    public static function matchAllGroups($groups, $inputs, $matchType = 'match_any')
+    {
+        $hasConditionMet = true;
+        foreach ($groups as $group) {
+            $hasConditionMet = self::evaluate($group, $inputs);
+            if ($hasConditionMet && $matchType == 'match_any') {
+                return true;
+            }
+            if ($matchType === 'match_all' && !$hasConditionMet) {
+                return false;
+            }
+        }
+
+        return $hasConditionMet;
+    }
+
+    public static function evaluate($conditionGroup, $inputs)
+    {
+        $hasConditionMet = true;
+        $conditionals = Arr::get($conditionGroup, 'conditions', []);
+
+        if ($conditionals) {
+            $toMatch = Arr::get($conditionGroup, 'match_type');
+            foreach ($conditionals as $conditional) {
+                $hasConditionMet = static::assess($conditional, $inputs);
+
+                if ($hasConditionMet && $toMatch == 'match_any') {
+                    return true;
+                }
+                if ($toMatch === 'match_all' && !$hasConditionMet) {
+                    return false;
+                }
+            }
+        }
+
+        return $hasConditionMet;
+    }
+
+    public static function matchAllConditions($conditions, $inputs)
+    {
+        foreach ($conditions as $condition) {
+            if (!static::assess($condition, $inputs)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static function assess($conditional, $inputs)
+    {
+        if ($conditional['data_key']) {
+            $sourceValue = Arr::get($inputs, $conditional['data_key']);
+            $dataValue = $conditional['data_value'];
+
+            if ($conditional['data_key'] === 'order_status' && !strpos('wc-', $sourceValue)) {
+                $sourceValue = str_replace($sourceValue, 'wc-' . $sourceValue, $sourceValue);
+            }
+
+            switch ($conditional['operator']) {
+                case '=':
+                    if (is_array($sourceValue)) {
+                        return in_array($dataValue, $sourceValue);
+                    }
+                    return $sourceValue == $dataValue;
+                    break;
+                case '!=':
+                    if (is_array($sourceValue)) {
+                        return !in_array($dataValue, $sourceValue);
+                    }
+                    return $sourceValue != $dataValue;
+                    break;
+                case '>':
+                    return $sourceValue > $dataValue;
+                    break;
+                case '<':
+                    return $sourceValue < $dataValue;
+                    break;
+                case '>=':
+                    return $sourceValue >= $dataValue;
+                    break;
+                case '<=':
+                    return $sourceValue <= $dataValue;
+                    break;
+                case 'startsWith':
+                    return Str::startsWith($sourceValue, $dataValue);
+                    break;
+                case 'endsWith':
+                    return Str::endsWith($sourceValue, $dataValue);
+                    break;
+                case 'contains':
+
+                    $sourceValue = strtolower($sourceValue);
+                    if (is_string($dataValue)) {
+                        $dataValue = strtolower($dataValue);
+                    }
+
+                    return Str::contains($sourceValue, $dataValue);
+                    break;
+                case 'doNotContains':
+                case 'not_contains':
+                    $sourceValue = strtolower($sourceValue);
+                    if (is_string($dataValue)) {
+                        $dataValue = strtolower($dataValue);
+                    }
+                    return !Str::contains($sourceValue, $dataValue);
+                    break;
+                case 'length_equal':
+                    if (is_array($sourceValue)) {
+                        return count($sourceValue) == $dataValue;
+                    }
+                    $sourceValue = strval($sourceValue);
+                    return strlen($sourceValue) == $dataValue;
+                    break;
+                case 'length_less_than':
+                    if (is_array($sourceValue)) {
+                        return count($sourceValue) < $dataValue;
+                    }
+                    $sourceValue = strval($sourceValue);
+                    return strlen($sourceValue) < $dataValue;
+                    break;
+                case 'length_greater_than':
+                    if (is_array($sourceValue)) {
+                        return count($sourceValue) > $dataValue;
+                    }
+                    $sourceValue = strval($sourceValue);
+                    return strlen($sourceValue) > $dataValue;
+                    break;
+                case 'match_all':
+                    // Exact match (order-independent)
+                    $sourceValue = (array) $sourceValue;
+                    $dataValue = (array) $dataValue;
+                    sort($sourceValue);
+                    sort($dataValue);
+                    $dataValue = array_map('intval', $dataValue);
+                    return $sourceValue == $dataValue;
+                case 'in_all':
+                    $sourceValue = (array)$sourceValue;
+                    $dataValue = (array)$dataValue;
+                    sort($sourceValue);
+                    sort($dataValue);
+                    $dataValue = array_map('intval', $dataValue);
+                    return empty(array_diff($dataValue, $sourceValue));
+                case 'match_none_of':
+                case 'not_in_all':
+                    $sourceValue = (array)$sourceValue;
+                    $dataValue = (array)$dataValue;
+                    return !(array_intersect($sourceValue, $dataValue));
+                    break;
+                case 'in':
+                    $dataValue = (array)$dataValue;
+                    if (!is_array($sourceValue)) {
+                        $sourceValue = array_map('trim', explode(',', $sourceValue));
+                    }
+                    return !!array_intersect($sourceValue, $dataValue);
+                case 'not_in':
+                    $dataValue = (array)$dataValue;
+                    if (is_array($sourceValue)) {
+                        return !(array_intersect($sourceValue, $dataValue));
+                    }
+                    return !in_array($sourceValue, $dataValue);
+                case 'before':
+                    if (!$sourceValue || $sourceValue == '0000-00-00') {
+                        return false;
+                    }
+
+                    return  strtotime($sourceValue) < strtotime($dataValue);
+                case 'after':
+                    if (!$sourceValue || $sourceValue == '0000-00-00') {
+                        return false;
+                    }
+
+                    return strtotime($sourceValue) > strtotime($dataValue);
+                case 'date_equal':
+                    return gmdate('YMD', strtotime($sourceValue)) == gmdate('YMD', strtotime($dataValue));
+                case 'days_before':
+                    if (!$sourceValue || $sourceValue == '0000-00-00') {
+                        return false;
+                    }
+
+                    return strtotime($sourceValue) < strtotime("-{$dataValue} days", current_time('timestamp'));
+                case 'days_within':
+                    if (!$sourceValue || $sourceValue == '0000-00-00') {
+                        return false;
+                    }
+                    return strtotime($sourceValue) > strtotime("-{$dataValue} days", current_time('timestamp'));
+                case 'is_null':
+                    return !$sourceValue;
+                case 'not_null':
+                    return !!$sourceValue;
+            }
+        }
+
+        return false;
+    }
+}

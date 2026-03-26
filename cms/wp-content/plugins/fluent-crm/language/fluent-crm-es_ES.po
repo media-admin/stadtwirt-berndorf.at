@@ -1,0 +1,5117 @@
+# Translation of Plugins - Email Marketing Automation, Newsletter and CRM Plugin for WordPress by FluentCRM - Stable (latest release) in Spanish (Spain)
+# This file is distributed under the same license as the Plugins - Email Marketing Automation, Newsletter and CRM Plugin for WordPress by FluentCRM - Stable (latest release) package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2024-10-16 12:28+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Loco https://localise.biz/\n"
+"Language: es_ES\n"
+"Project-Id-Version: Plugins - Email Marketing Automation, Newsletter and CRM "
+"Plugin for WordPress by FluentCRM - Stable (latest release)\n"
+"Language-Team: Spanish (Spain)\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-04-23 20:19+0000\n"
+"Last-Translator: \n"
+"X-Loco-Version: 2.6.1; wp-5.9.3"
+
+#: app/Services/ExternalIntegrations/MailComplaince/Webhook.php:58
+msgid " at "
+msgstr " en"
+
+#: app/Services/CrmMigrator/ActiveCampaignMigrator.php:312
+#, fuzzy
+#| msgid " contacts has been imported so far."
+msgid " contacts have been imported so far."
+msgstr " contactos se ha importado hasta ahora."
+
+#: app/Services/CrmMigrator/DripMigrator.php:153
+#: app/Services/CrmMigrator/MailChimpMigrator.php:169
+msgid " contacts will be imported"
+msgstr " se importarán los contactos"
+
+#: app/Services/CrmMigrator/MailerLiteMigrator.php:145
+msgid " groups and associate contacts will be imported from MailerLite"
+msgstr " los grupos y los contactos asociados se importarán desde MailerLite"
+
+#: app/Services/CrmMigrator/ActiveCampaignMigrator.php:153
+msgid " lists and associate contacts  will be imported"
+msgstr " se importarán las listas y los contactos asociados"
+
+#: app/Services/ExternalIntegrations/MailComplaince/Webhook.php:227
+msgid " status was set from PostMark Webhook API. Reason: "
+msgstr " el estado fue establecido desde la API de PostMark Webhook. Razón"
+
+#: app/Services/ExternalIntegrations/MailComplaince/Webhook.php:92
+#: app/Services/ExternalIntegrations/MailComplaince/Webhook.php:128
+msgid " status was set from SendGrid Webhook API. Reason: "
+msgstr " el estado se estableció desde la API de SendGrid Webhook. Razón"
+
+#: app/Services/ExternalIntegrations/MailComplaince/Webhook.php:181
+msgid " status was set from Sparkpost Webhook API. Reason: "
+msgstr " el estado se estableció desde la API de Sparkpost Webhook. Razón"
+
+#: app/Services/CrmMigrator/ConvertKitMigrator.php:148
+msgid " tags and associate contacts will be imported from ConvertKit"
+msgstr ""
+" las etiquetas y los contactos asociados se importarán desde ConvertKit"
+
+#: app/Services/CrmMigrator/MailerLiteMigrator.php:271
+#: app/Services/CrmMigrator/ConvertKitMigrator.php:257
+msgid " tags have been imported so far"
+msgstr " etiquetas se han importado hasta ahora"
+
+#: app/Services/ExternalIntegrations/MailComplaince/Webhook.php:58
+msgid " was set by mailgun webhook api with event name: "
+msgstr ""
+" fue establecido por la api de mailgun webhook con el nombre del evento"
+
+#: app/Http/Controllers/SettingsController.php:68
+#: app/Http/Controllers/TemplateController.php:227
+msgid ""
+"##crm.manage_subscription_url## or ##crm.unsubscribe_url## string is "
+"required for compliance. Please include unsubscription or manage "
+"subscription link"
+msgstr ""
+"la cadena ##crm.manage_subscription_url## o ##crm.unsubscribe_url## es "
+"necesaria para el cumplimiento. Por favor, incluya el enlace de "
+"desuscripción o de gestión de la suscripción"
+
+#: app/Hooks/Handlers/PurchaseHistory.php:127
+#, php-format
+msgid "%1$s for %2$s item"
+msgid_plural "%1$s for %2$s items"
+msgstr[0] "%1$s por %2$s producto"
+msgstr[1] "%1$s por %2$s productos"
+
+#: app/Http/Controllers/SubscriberController.php:1151
+msgid "%d subscribers has been attached to the selected automation funnel"
+msgstr ""
+"se han adjuntado %d suscriptores al embudo de automatización seleccionado"
+
+#: app/Http/Controllers/SubscriberController.php:1030
+msgid "%d subscribers has been attached to the selected company"
+msgstr ""
+
+#: app/Http/Controllers/SubscriberController.php:983
+msgid "%d subscribers has been attached to the selected email sequence"
+msgstr ""
+"se han adjuntado %d suscriptores a la secuencia de correo electrónico "
+"seleccionada"
+
+#: app/Http/Controllers/SubscriberController.php:1077
+msgid "%d subscribers has been detached from the selected company"
+msgstr ""
+
+#: app/Services/CrmMigrator/MailChimpMigrator.php:69
+msgid "(Contacts count "
+msgstr "(Recuento de contactos"
+
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:253
+msgid ""
+"(Optional) The selected tags will be removed from the contact (if exist)"
+msgstr ""
+"(Opcional) Las etiquetas seleccionadas se eliminarán del contacto (si "
+"existen)"
+
+#: app/Http/Controllers/CampaignController.php:727
+msgid ", The dynamic tags may not replaced in test email"
+msgstr ""
+"las etiquetas dinámicas no pueden ser reemplazadas en el correo electrónico "
+"de prueba"
+
+#: app/Services/ExternalIntegrations/MailComplaince/Webhook.php:92
+#: app/Services/ExternalIntegrations/MailComplaince/Webhook.php:128
+#: app/Services/ExternalIntegrations/MailComplaince/Webhook.php:181
+#: app/Services/ExternalIntegrations/MailComplaince/Webhook.php:227
+msgid ". Recorded at: "
+msgstr ". Grabado en"
+
+#: app/Http/Controllers/FunnelController.php:537
+msgid "[Copy] "
+msgstr "[Copia]"
+
+#: app/Http/Controllers/CampaignController.php:1171
+#: app/Http/Controllers/TemplateController.php:175
+msgid "[Duplicate] "
+msgstr "[Duplicado]"
+
+#: app/Services/Funnel/BaseBenchMark.php:78
+msgid ""
+"[Essential Point] Select IF this step is required for processing further "
+"actions"
+msgstr ""
+"[Punto esencial] Seleccione si este paso es necesario para procesar otras "
+"acciones"
+
+#: app/Services/Funnel/BaseBenchMark.php:74
+msgid "[Optional Point] This is an optional trigger point"
+msgstr "[Punto opcional] Este es un punto de activación opcional"
+
+#: app/Hooks/Handlers/ExternalPages.php:1069
+#, php-format
+#| msgid ""
+#| "A conformation email has been sent to %s. Please confirm your email "
+#| "address to resubscribe"
+msgid ""
+"A confirmation email has been sent to %s. Please confirm your email address "
+"to resubscribe"
+msgstr ""
+"Se ha enviado un correo electrónico de confirmación a %s. Confirma tu "
+"dirección de correo electrónico para volver a suscribirte"
+
+#: app/Hooks/Handlers/ExternalPages.php:1048
+#, php-format
+#| msgid ""
+#| "A conformation email has been sent to %s. Please confirm your email "
+#| "address to resubscribe with changed email address"
+msgid ""
+"A confirmation email has been sent to %s. Please confirm your email address "
+"to resubscribe with changed email address"
+msgstr ""
+"Se ha enviado un correo electrónico de confirmación a %s. Confirma tu "
+"dirección de correo electrónico para volver a suscribirte con el correo "
+"electrónico modificado"
+
+#: app/Services/CrmMigrator/MailerLiteMigrator.php:33
+msgid "Account -> Integrations -> Developer API"
+msgstr "Cuenta -> Integraciones -> API para desarrolladores"
+
+#: app/Services/CrmMigrator/ConvertKitMigrator.php:34
+msgid "Account -> Settings -> Advanced"
+msgstr "Cuenta -> Configuración -> Avanzada"
+
+#: app/Services/CrmMigrator/DripMigrator.php:36
+msgid "Account ID"
+msgstr "Identificación de la cuenta"
+
+#: app/Hooks/Handlers/PurchaseHistory.php:162
+#: app/Hooks/Handlers/PurchaseHistory.php:399
+msgid "Actions"
+msgstr "Acciones"
+
+#: app/Services/Helper.php:1335
+msgid "Active"
+msgstr "Activo"
+
+#: app/Services/Stats.php:53
+msgid "Active Automations"
+msgstr ""
+
+#: app/Services/Stats.php:18
+msgid "Active Contacts"
+msgstr "Contactos activos"
+
+#: app/Http/Controllers/DocsController.php:94
+msgid "Active Fluent Connect"
+msgstr ""
+
+#: app/Http/Controllers/DocsController.php:67
+msgid "Active Fluent Forms"
+msgstr ""
+
+#: app/Http/Controllers/DocsController.php:76
+msgid "Active Fluent SMTP"
+msgstr ""
+
+#: app/Http/Controllers/DocsController.php:85
+msgid "Active Fluent Support"
+msgstr ""
+
+#: app/Services/CrmMigrator/ActiveCampaignMigrator.php:31
+msgid "ActiveCampaign API Token"
+msgstr "Token API de ActiveCampaign"
+
+#: app/Http/Controllers/SettingsController.php:573
+msgid "Activity Logs"
+msgstr ""
+
+#: app/Services/AutoSubscribe.php:258
+msgid "Add a subscription box to WooCommerce Checkout Form"
+msgstr "Añadir una caja de suscripción al formulario de compra de WooCommerce"
+
+#: app/Services/Funnel/Actions/ApplyCompanyAction.php:23
+msgid "Add contact to the selected company"
+msgstr ""
+
+#: app/Services/Funnel/Actions/ApplyListAction.php:23
+#| msgid "Add this contact to the selected lists"
+msgid "Add contact to the selected lists"
+msgstr "Añadir este contacto a las listas seleccionadas"
+
+#: app/Services/Funnel/Actions/ApplyTagAction.php:23
+msgid "Add this contact to the selected Tags"
+msgstr "Añadir este contacto a las Etiquetas seleccionadas"
+
+#: app/Hooks/Handlers/AdminMenu.php:199 app/Hooks/Handlers/AdminMenu.php:200
+#: app/Hooks/Handlers/AdminMenu.php:1308 app/Hooks/Handlers/AdminMenu.php:1309
+msgid "Addons"
+msgstr "Complementos"
+
+#: app/Hooks/Handlers/PrefFormHandler.php:55
+msgid "Address Information"
+msgstr "Información sobre la dirección"
+
+#: app/Models/Company.php:60 app/Models/Subscriber.php:725
+#: app/Services/Helper.php:167 app/Services/Helper.php:918
+#: app/Hooks/Handlers/PrefFormHandler.php:48
+#: app/Hooks/Handlers/PrefFormHandler.php:433
+#: app/Services/CrmMigrator/BaseMigrator.php:36
+#: app/Services/Funnel/FunnelHelper.php:152
+msgid "Address Line 1"
+msgstr "Dirección, línea 1"
+
+#: app/Models/Company.php:61 app/Models/Subscriber.php:726
+#: app/Services/Helper.php:168 app/Services/Helper.php:923
+#: app/Hooks/Handlers/PrefFormHandler.php:49
+#: app/Hooks/Handlers/PrefFormHandler.php:444
+#: app/Services/CrmMigrator/BaseMigrator.php:37
+#: app/Services/Funnel/FunnelHelper.php:156
+msgid "Address Line 2"
+msgstr "Dirección, línea 2"
+
+#: app/Services/Helper.php:207
+msgid "Admin Email"
+msgstr "Correo electrónico del administrador"
+
+#: app/Services/Helper.php:1320
+msgid "Affiliate ID (Pro Required)"
+msgstr "ID de afiliado (Pro requerido)"
+
+#: app/Hooks/Handlers/CountryNames.php:25
+msgid "Afghanistan"
+msgstr "Afganistán"
+
+#: app/Http/Controllers/SettingsController.php:133
+msgid "After Confirmation Actions"
+msgstr "Acciones después de la confirmación"
+
+#: app/Http/Controllers/SettingsController.php:153
+#: app/Http/Controllers/SettingsController.php:154
+msgid "After Confirmation Message"
+msgstr "Después del mensaje de confirmación"
+
+#: app/Http/Controllers/SettingsController.php:219
+msgid "After Confirmation Message is required"
+msgstr "Tras el mensaje de confirmación es necesario"
+
+#: app/Http/Controllers/SettingsController.php:138
+msgid "After Confirmation Type"
+msgstr "Después de la confirmación Tipo"
+
+#: app/Hooks/Handlers/CountryNames.php:33
+msgid "Albania"
+msgstr "Albania"
+
+#: app/Hooks/Handlers/CountryNames.php:37
+msgid "Algeria"
+msgstr "Argelia"
+
+#: app/Http/Controllers/ImporterController.php:153
+msgid "All"
+msgstr "Todo"
+
+#: app/Hooks/Handlers/AdminMenu.php:356
+msgid "All Campaigns"
+msgstr "Todas las campañas"
+
+#: app/Hooks/CLI/Commands.php:26 app/Hooks/Handlers/AdminMenu.php:304
+msgid "All Contacts"
+msgstr "Todos los contactos"
+
+#: app/Http/Controllers/SubscriberController.php:909
+msgid "All contacts has been processed"
+msgstr ""
+
+#: app/Hooks/CLI/Commands.php:42 app/Hooks/Handlers/AdminMenu.php:380
+msgid "All Emails"
+msgstr "Todos los correos electrónicos"
+
+#: app/Http/Controllers/SettingsController.php:306
+msgid "All FluentCRM Database Tables have been resetted"
+msgstr "Todas las tablas de la base de datos de FluentCRM se han restablecido"
+
+#: app/Http/Controllers/SystemLogController.php:39
+msgid "All logs has been deleted"
+msgstr ""
+
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:218
+msgid ""
+"Allow FluentCRM integration conditionally based on your submission values"
+msgstr ""
+"Permitir la integración de FluentCRM de forma condicional en función de sus "
+"valores de envío"
+
+#: app/Http/Controllers/SettingsController.php:321
+msgid "Amazon SES"
+msgstr "Amazon SES"
+
+#: app/Http/Controllers/SettingsController.php:324
+msgid "Amazon SES Bounce Handler URL"
+msgstr "URL del gestor de rebotes de Amazon SES"
+
+#: app/Hooks/Handlers/CountryNames.php:41
+msgid "American Samoa"
+msgstr "Samoa Americana"
+
+#: app/Services/Funnel/Triggers/UserRegistrationTrigger.php:51
+msgid "An Automated double-optin email will be sent for new subscribers"
+msgstr ""
+"Se enviará un correo electrónico automático de doble apertura para los "
+"nuevos suscriptores"
+
+#: app/Hooks/Handlers/CountryNames.php:45
+msgid "Andorra"
+msgstr "Andorra"
+
+#: app/Hooks/Handlers/CountryNames.php:49
+msgid "Angola"
+msgstr "Angola"
+
+#: app/Hooks/Handlers/CountryNames.php:53
+msgid "Anguilla"
+msgstr "Anguila"
+
+#: app/Hooks/Handlers/CountryNames.php:57
+msgid "Antarctica"
+msgstr "Antártida"
+
+#: app/Hooks/Handlers/CountryNames.php:61
+msgid "Antigua and Barbuda"
+msgstr "Antigua y Barbuda"
+
+#: app/Services/CrmMigrator/ActiveCampaignMigrator.php:37
+#: app/Services/CrmMigrator/ActiveCampaignMigrator.php:38
+msgid "API Access URL"
+msgstr "URL de acceso a la API"
+
+#: app/Services/CrmMigrator/MailerLiteMigrator.php:29
+#: app/Services/CrmMigrator/ConvertKitMigrator.php:30
+#: app/Services/CrmMigrator/MailChimpMigrator.php:32
+msgid "API Key"
+msgstr "Clave API"
+
+#: app/Http/Controllers/SettingsController.php:845
+msgid "API Key has been successfully created"
+msgstr "La clave API ha sido creada con éxito"
+
+#: app/Http/Controllers/SettingsController.php:704
+msgid "API Key has been successfully deleted"
+msgstr ""
+
+#: app/Services/CrmMigrator/ConvertKitMigrator.php:37
+msgid "API Secret"
+msgstr "Secreto de la API"
+
+#: app/Services/CrmMigrator/ActiveCampaignMigrator.php:30
+#: app/Services/CrmMigrator/DripMigrator.php:29
+msgid "API Token"
+msgstr "Token API"
+
+#: app/Services/CrmMigrator/Api/ConvertKit.php:61
+msgid "API_Error"
+msgstr "API_Error"
+
+#: app/Services/Funnel/Actions/ApplyCompanyAction.php:22
+msgid "Apply Company"
+msgstr ""
+
+#: app/Services/Funnel/Actions/ApplyCompanyAction.php:34
+msgid "Apply Company to the contact"
+msgstr ""
+
+#: app/Services/Funnel/Actions/ApplyListAction.php:22
+msgid "Apply List"
+msgstr "Aplicar la lista"
+
+#: app/Services/Funnel/Actions/ApplyListAction.php:34
+msgid "Apply List to the contact"
+msgstr "Aplicar la lista al contacto"
+
+#: app/Services/Funnel/Actions/ApplyTagAction.php:22
+msgid "Apply Tag"
+msgstr "Aplicar la etiqueta"
+
+#: app/Services/Funnel/Actions/ApplyTagAction.php:34
+msgid "Apply Tag to the contact"
+msgstr "Aplicar la etiqueta al contacto"
+
+#: app/Hooks/Handlers/CountryNames.php:65
+msgid "Argentina"
+msgstr "Argentina"
+
+#: app/Hooks/Handlers/CountryNames.php:69
+msgid "Armenia"
+msgstr "Armenia"
+
+#: app/Hooks/Handlers/CountryNames.php:73
+msgid "Aruba"
+msgstr "Aruba"
+
+#: app/Services/AutoSubscribe.php:40 app/Services/AutoSubscribe.php:128
+#: app/Services/AutoSubscribe.php:286
+msgid "Assign List"
+msgstr "Asignar lista"
+
+#: app/Services/RoleBasedTagging.php:46
+msgid "Assign or Remove tags when a contact assign to a user role."
+msgstr ""
+
+#: app/Services/AutoSubscribe.php:54 app/Services/AutoSubscribe.php:141
+#: app/Services/AutoSubscribe.php:299
+msgid "Assign Tags"
+msgstr "Asignar etiquetas"
+
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:135
+msgid ""
+"Associate your FluentCRM merge tags to the appropriate Fluent Form fields by "
+"selecting the appropriate form field from the list."
+msgstr ""
+"Asocie sus etiquetas merge de FluentCRM a los campos apropiados de Fluent "
+"Form seleccionando el campo de formulario apropiado de la lista."
+
+#: app/Hooks/Handlers/CountryNames.php:77
+msgid "Australia"
+msgstr "Australia"
+
+#: app/Hooks/Handlers/CountryNames.php:81
+msgid "Austria"
+msgstr "Austria"
+
+#: app/Services/AutoSubscribe.php:211
+msgid "Auto Sync User Data and Contact Data"
+msgstr "Sincronización automática de los datos del usuario y de los contactos"
+
+#: app/Services/AutoSubscribe.php:29
+msgid "Automatically add your new user signups as subscriber in FluentCRM"
+msgstr ""
+"Añada automáticamente sus nuevas inscripciones de usuarios como suscriptores "
+"en FluentCRM"
+
+#: app/Services/AutoSubscribe.php:107
+msgid "Automatically add your site commenter as subscriber in FluentCRM"
+msgstr ""
+"Agregue automáticamente a los comentaristas de su sitio como suscriptores en "
+"FluentCRM"
+
+#: app/Services/AutoSubscribe.php:265
+msgid ""
+"Automatically fill WooCommerce Checkout field value with current contact data"
+msgstr ""
+
+#: app/Services/AutoSubscribe.php:212
+msgid "Automatically Sync your WP User Data and Fluent CRM Contact Data"
+msgstr ""
+"Sincronice automáticamente sus datos de usuario de WP y los datos de "
+"contacto de Fluent CRM"
+
+#: app/Services/Helper.php:1085
+msgid "Automation Activity -"
+msgstr "Actividad de automatización -"
+
+#: app/Services/PermissionManager.php:95
+msgid "Automation Delete"
+msgstr "Borrar Automatización"
+
+#: app/Services/PermissionManager.php:83
+msgid "Automation Read"
+msgstr "Automatización Leer"
+
+#: app/Services/PermissionManager.php:88
+msgid "Automation Write/Edit/Delete"
+msgstr "Automatización Escribir/Editar/Borrar"
+
+#: app/Services/Stats.php:107 app/Hooks/CLI/Commands.php:38
+#: app/Hooks/Handlers/AdminMenu.php:167 app/Hooks/Handlers/AdminMenu.php:168
+#: app/Hooks/Handlers/AdminMenu.php:400 app/Hooks/Handlers/AdminMenu.php:1287
+#: app/Hooks/Handlers/AdminMenu.php:1288
+msgid "Automations"
+msgstr "Automatizaciones"
+
+#: app/Hooks/Handlers/CountryNames.php:85
+msgid "Azerbaijan"
+msgstr "Azerbaiyán"
+
+#: app/Hooks/Handlers/CountryNames.php:89
+msgid "Bahamas"
+msgstr "Bahamas"
+
+#: app/Hooks/Handlers/CountryNames.php:93
+msgid "Bahrain"
+msgstr "Baréin"
+
+#: app/Hooks/Handlers/CountryNames.php:97
+msgid "Bangladesh"
+msgstr "Bangladés"
+
+#: app/Hooks/Handlers/CountryNames.php:101
+msgid "Barbados"
+msgstr "Barbados"
+
+#: app/Services/CrmMigrator/ActiveCampaignMigrator.php:153
+#: app/Services/CrmMigrator/DripMigrator.php:153
+#: app/Services/CrmMigrator/MailChimpMigrator.php:169
+msgid "Based on your selections "
+msgstr "En función de sus selecciones"
+
+#: app/Services/CrmMigrator/MailerLiteMigrator.php:145
+#: app/Services/CrmMigrator/ConvertKitMigrator.php:148
+msgid "Based on your selections, "
+msgstr "Basado en sus selecciones,"
+
+#: app/Hooks/Handlers/CountryNames.php:105
+msgid "Belarus"
+msgstr "Bielorrusia"
+
+#: app/Hooks/Handlers/CountryNames.php:113
+msgid "Belau"
+msgstr "Belau"
+
+#: app/Hooks/Handlers/CountryNames.php:109
+msgid "Belgium"
+msgstr "Bélgica"
+
+#: app/Hooks/Handlers/CountryNames.php:117
+msgid "Belize"
+msgstr "Belice"
+
+#: app/Services/Funnel/BaseBenchMark.php:69
+msgid "Benchmark type"
+msgstr "Tipo de referencia"
+
+#: app/Hooks/Handlers/CountryNames.php:121
+msgid "Benin"
+msgstr "Benín"
+
+#: app/Hooks/Handlers/CountryNames.php:125
+msgid "Bermuda"
+msgstr "Bermudas"
+
+#: app/Hooks/Handlers/CountryNames.php:129
+msgid "Bhutan"
+msgstr "Bután"
+
+#: app/Services/Helper.php:481
+msgid "Black"
+msgstr "Negro"
+
+#: app/Hooks/Handlers/CountryNames.php:133
+msgid "Bolivia"
+msgstr "Bolivia"
+
+#: app/Hooks/Handlers/CountryNames.php:137
+msgid "Bonaire, Saint Eustatius and Saba"
+msgstr "Bonaire, San Eustaquio y Saba"
+
+#: app/Hooks/Handlers/CountryNames.php:141
+msgid "Bosnia and Herzegovina"
+msgstr "Bosnia y Herzegovina"
+
+#: app/Hooks/Handlers/CountryNames.php:145
+msgid "Botswana"
+msgstr "Botsuana"
+
+#: app/Functions/helpers.php:502 app/Functions/helpers.php:549
+msgid "Bounced"
+msgstr "Rebotado"
+
+#: app/Hooks/Handlers/CountryNames.php:149
+msgid "Bouvet Island"
+msgstr "Isla Bouvet"
+
+#: app/Hooks/Handlers/CountryNames.php:153
+msgid "Brazil"
+msgstr "Brasil"
+
+#: app/Hooks/Handlers/CountryNames.php:157
+msgid "British Indian Ocean Territory"
+msgstr "Territorio Británico del Océano Índico"
+
+#: app/Hooks/Handlers/AdminMenu.php:306
+msgid "Browse all your subscribers and customers"
+msgstr ""
+
+#: app/Hooks/Handlers/AdminMenu.php:318
+msgid "Browse and Manage contact business/companies"
+msgstr ""
+
+#: app/Hooks/Handlers/AdminMenu.php:326
+msgid "Browse and Manage your lists associate with contact"
+msgstr ""
+
+#: app/Hooks/Handlers/AdminMenu.php:332
+msgid "Browse and Manage your tags associate with contact"
+msgstr ""
+
+#: app/Hooks/Handlers/CountryNames.php:161
+msgid "Brunei"
+msgstr "Brunei"
+
+#: app/Hooks/Handlers/CountryNames.php:165
+msgid "Bulgaria"
+msgstr "Bulgaria"
+
+#: app/Hooks/Handlers/CountryNames.php:169
+msgid "Burkina Faso"
+msgstr "Burkina Faso"
+
+#: app/Hooks/Handlers/CountryNames.php:173
+msgid "Burundi"
+msgstr "Burundi"
+
+#: app/Services/Helper.php:206
+msgid "Business Address"
+msgstr "Dirección del negocio"
+
+#: app/Services/Helper.php:205
+msgid "Business Name"
+msgstr "Nombre del negocio"
+
+#: app/Functions/helpers.php:612
+msgid "Call"
+msgstr "Llamada"
+
+#: app/Hooks/Handlers/CountryNames.php:177
+msgid "Cambodia"
+msgstr "Camboya"
+
+#: app/Hooks/Handlers/CountryNames.php:181
+msgid "Cameroon"
+msgstr "Camerún"
+
+#: app/Services/Helper.php:1067
+msgid "Campaign Email -"
+msgstr "Correo electrónico de la campaña -"
+
+#: app/Http/Controllers/CampaignController.php:1197
+msgid "Campaign has been successfully duplicated"
+msgstr "La campaña se ha duplicado con éxito"
+
+#: app/Http/Controllers/CampaignController.php:1110
+msgid "Campaign has been successfully marked as paused"
+msgstr "La campaña ha sido marcada con éxito como pausada"
+
+#: app/Http/Controllers/CampaignController.php:1136
+msgid "Campaign has been successfully resumed"
+msgstr "La campaña se ha reanudado con éxito"
+
+#: app/Http/Controllers/CampaignController.php:1238
+msgid "Campaign has been successfully un-scheduled"
+msgstr "La campaña se ha desprogramado con éxito"
+
+#: app/Http/Controllers/CampaignController.php:1162
+msgid "Campaign has been updated"
+msgstr "La campaña ha sido actualizada"
+
+#: app/Http/Controllers/CampaignController.php:446
+msgid "Campaign status is not in draft status. Please reload the page"
+msgstr ""
+
+#: app/Services/Stats.php:25 app/Hooks/CLI/Commands.php:34
+#: app/Hooks/Handlers/AdminMenu.php:118 app/Hooks/Handlers/AdminMenu.php:119
+msgid "Campaigns"
+msgstr "Campañas"
+
+#: app/Hooks/Handlers/CountryNames.php:185
+msgid "Canada"
+msgstr "Canadá"
+
+#: app/Hooks/Handlers/CountryNames.php:189
+msgid "Cape Verde"
+msgstr "Cabo Verde"
+
+#: app/Hooks/Handlers/CountryNames.php:193
+msgid "Cayman Islands"
+msgstr "Islas Caimán"
+
+#: app/Hooks/Handlers/CountryNames.php:197
+msgid "Central African Republic"
+msgstr "República Centroafricana"
+
+#: app/Hooks/Handlers/CountryNames.php:201
+msgid "Chad"
+msgstr "Chad"
+
+#: app/Services/AutoSubscribe.php:275 app/Services/AutoSubscribe.php:277
+msgid "Checkbox Label for Checkout checkbox"
+msgstr "Etiqueta para la casilla de verificación de la compra"
+
+#: app/Services/AutoSubscribe.php:117 app/Services/AutoSubscribe.php:119
+msgid "Checkbox Label for Comment Form"
+msgstr "Etiqueta de casilla de verificación para el formulario de comentarios"
+
+#: app/Models/CustomContactField.php:70
+msgid "Checkboxes"
+msgstr "Casillas de verificación"
+
+#: app/Hooks/Handlers/CountryNames.php:205
+msgid "Chile"
+msgstr "Chile"
+
+#: app/Hooks/Handlers/CountryNames.php:209
+msgid "China"
+msgstr "China"
+
+#: app/Hooks/Handlers/CountryNames.php:213
+msgid "Christmas Island"
+msgstr "Isla de Navidad"
+
+#: app/Models/Company.php:63 app/Models/Subscriber.php:727
+#: app/Services/Helper.php:169 app/Services/Helper.php:928
+#: app/Hooks/Handlers/PrefFormHandler.php:50
+#: app/Hooks/Handlers/PrefFormHandler.php:455
+#: app/Services/CrmMigrator/BaseMigrator.php:39
+#: app/Services/Funnel/FunnelHelper.php:164
+msgid "City"
+msgstr "Ciudad"
+
+#: app/Services/Helper.php:325
+msgid "Classic Editor"
+msgstr "Editor clásico"
+
+#: app/Models/CampaignUrlMetric.php:130
+msgid "Click Rate (%d)"
+msgstr ""
+
+#: app/Models/CampaignUrlMetric.php:141
+msgid "Click To Open Rate"
+msgstr "Tasa de apertura"
+
+#: app/Hooks/Handlers/CountryNames.php:217
+msgid "Cocos (Keeling) Islands"
+msgstr "Islas Cocos (Keeling)"
+
+#: app/Http/Controllers/DocsController.php:68
+msgid ""
+"Collect leads and build any type of forms, accept payments, connect with "
+"your CRM with the Fastest Contact Form Builder Plugin for WordPress"
+msgstr ""
+"Recoge clientes potenciales y construye cualquier tipo de formularios, "
+"acepta pagos, conéctate con tu CRM con el plugin Fastest Contact Form "
+"Builder para WordPress"
+
+#: app/Hooks/Handlers/CountryNames.php:221
+msgid "Colombia"
+msgstr "Colombia"
+
+#: app/Http/Controllers/CompanyController.php:288
+#: app/Http/Controllers/SubscriberController.php:176
+msgid "Column is not valid"
+msgstr "La columna no es válida"
+
+#: app/Services/AutoSubscribe.php:106
+msgid "Comment Form Subscription Settings"
+msgstr "Configuración de la suscripción al formulario de comentarios"
+
+#: app/Hooks/Handlers/CountryNames.php:225
+msgid "Comoros"
+msgstr "Comoros"
+
+#: app/Hooks/Handlers/AdminMenu.php:87 app/Hooks/Handlers/AdminMenu.php:88
+#: app/Hooks/Handlers/AdminMenu.php:316
+msgid "Companies"
+msgstr ""
+
+#: app/Http/Controllers/CompanyController.php:358
+msgid "Companies selection is required"
+msgstr ""
+
+#: app/Services/Helper.php:1125
+msgid "Company"
+msgstr ""
+
+#: app/Services/Helper.php:1135
+msgid "Company - Industry"
+msgstr ""
+
+#: app/Services/Helper.php:1145
+msgid "Company - Type"
+msgstr ""
+
+#: app/Services/Helper.php:182
+msgid "Company Address"
+msgstr ""
+
+#: app/Http/Controllers/CompanyController.php:436
+msgid "Company Category has been updated for the selected companies"
+msgstr ""
+
+#: app/Models/Company.php:55
+msgid "Company Description"
+msgstr ""
+
+#: app/Models/Company.php:58
+msgid "Company Email"
+msgstr ""
+
+#: app/Http/Controllers/CompanyController.php:232
+msgid "Company has been created successfully"
+msgstr ""
+
+#: app/Http/Controllers/CompanyController.php:345
+msgid "Company has been deleted successfully"
+msgstr ""
+
+#: app/Http/Controllers/CompanyController.php:162
+msgid "Company has been successfully detached"
+msgstr ""
+
+#: app/Http/Controllers/CompanyController.php:260
+msgid "Company has been updated"
+msgstr ""
+
+#: app/Services/Helper.php:181
+msgid "Company Industry"
+msgstr ""
+
+#: app/Models/Company.php:56
+msgid "Company Logo URL"
+msgstr ""
+
+#: app/Services/Helper.php:180
+msgid "Company Name"
+msgstr ""
+
+#: app/Models/Company.php:51
+msgid "Company Name *"
+msgstr ""
+
+#: app/Models/Company.php:59
+msgid "Company Phone"
+msgstr ""
+
+#: app/Http/Controllers/CompanyController.php:333
+msgid "Company successfully updated"
+msgstr ""
+
+#: app/Http/Controllers/CompanyController.php:416
+msgid "Company Type has been updated for the selected companies"
+msgstr ""
+
+#: app/Functions/helpers.php:503 app/Functions/helpers.php:550
+msgid "Complained"
+msgstr "Reclamado"
+
+#: app/Hooks/CLI/Commands.php:132
+msgid "Completed"
+msgstr "Completado"
+
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:217
+msgid "Conditional Logics"
+msgstr "Lógica condicional"
+
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:52
+msgid "Configuration required!"
+msgstr "¡Configuración obligatoria!"
+
+#: app/Services/Libs/Parser/ShortcodeParser.php:252
+msgid "Confirm Subscription"
+msgstr "Confirmar suscripción"
+
+#: app/Hooks/Handlers/ExternalPages.php:414
+msgid "Confirm your unsubscribe Request"
+msgstr ""
+
+#: app/Hooks/Handlers/CountryNames.php:229
+msgid "Congo (Brazzaville)"
+msgstr "Congo (Brazzaville)"
+
+#: app/Hooks/Handlers/CountryNames.php:233
+msgid "Congo (Kinshasa)"
+msgstr "Congo (Kinshasa)"
+
+#: app/Http/Controllers/DocsController.php:95
+msgid ""
+"Connect FluentCRM with ThriveCart and create, segment contact and run "
+"automation on ThriveCart purchase events."
+msgstr ""
+"Conecta FluentCRM con ThriveCart y crea, segmenta el contacto y ejecuta la "
+"automatización en los eventos de compra de ThriveCart."
+
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:36
+msgid ""
+"Connect FluentCRM with WP Fluent Forms and subscribe a contact when a form "
+"is submitted."
+msgstr ""
+"Conecte FluentCRM con WP Fluent Forms y suscriba un contacto cuando se envíe "
+"un formulario."
+
+#: app/Services/Helper.php:158 app/Services/Helper.php:896
+msgid "Contact"
+msgstr "Contacto"
+
+#: app/Services/Helper.php:1047
+msgid "Contact Activities"
+msgstr "Actividades de contacto"
+
+#: app/Services/Funnel/Benchmarks/ListAppliedBenchmark.php:69
+msgid "contact added in all of the selected lists"
+msgstr "contacto añadido en todas las listas seleccionadas"
+
+#: app/Services/Funnel/Benchmarks/TagAppliedBenchmark.php:69
+msgid "contact added in all of the selected Tags"
+msgstr "contacto añadido en todas las etiquetas seleccionadas"
+
+#: app/Services/Funnel/Benchmarks/ListAppliedBenchmark.php:65
+msgid "contact added in any of the selected Lists"
+msgstr "contacto añadido en cualquiera de las Listas seleccionadas"
+
+#: app/Services/Funnel/Benchmarks/TagAppliedBenchmark.php:65
+msgid "contact added in any of the selected Tags"
+msgstr "contacto añadido en cualquiera de las etiquetas seleccionadas"
+
+#: app/Http/Controllers/SubscriberController.php:765
+msgid "Contact Already Subscribed"
+msgstr "Contacto ya suscrito"
+
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:376
+msgid ""
+"Contact creation has been skipped because contact already exist in the "
+"database"
+msgstr ""
+"Se ha omitido la creación de un contacto porque ya existe en la base de datos"
+
+#: app/Services/Helper.php:164
+msgid "Contact Email"
+msgstr "Correo electrónico de contacto"
+
+#: app/Services/Funnel/Triggers/FluentFormSubmissionTrigger.php:85
+msgid "Contact Field (CRM)"
+msgstr "Campo de contacto (CRM)"
+
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:460
+msgid "Contact has been created in FluentCRM. Contact ID: "
+msgstr "El contacto ha sido creado en FluentCRM. ID del contacto: "
+
+#: app/Http/Controllers/SubscriberController.php:348
+msgid "contact has been successfully updated."
+msgstr "el contacto ha sido actualizado correctamente."
+
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:511
+msgid "Contact has been updated in FluentCRM. Contact ID: "
+msgstr "El contacto ha sido actualizado en FluentCRM. ID del contacto: "
+
+#: app/Services/Helper.php:165
+msgid "Contact ID"
+msgstr "ID del contacto"
+
+#: app/Services/Funnel/Benchmarks/RemoveFromListBenchmark.php:69
+msgid "contact removed from all of the selected lists"
+msgstr "contacto eliminado de todas las listas seleccionadas"
+
+#: app/Services/Funnel/Benchmarks/RemoveFromListBenchmark.php:65
+msgid "contact removed from any of the selected Lists"
+msgstr "contacto eliminado de cualquiera de las Listas seleccionadas"
+
+#: app/Services/Helper.php:997 app/Hooks/Handlers/EventTrackingHandler.php:256
+msgid "Contact Segment"
+msgstr "Segmento de contacto"
+
+#: app/Services/Stats.php:87
+msgid "Contact Segments"
+msgstr "Segmentos de contacto"
+
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:174
+msgid "Contact Tags"
+msgstr "Etiquetas de contacto"
+
+#: app/Services/PermissionManager.php:42
+msgid "Contact Tags/List/Companies/Segment Create or Update"
+msgstr ""
+
+#: app/Services/PermissionManager.php:49
+msgid "Contact Tags/List/Companies/Segment Delete"
+msgstr ""
+
+#: app/Http/Controllers/SubscriberController.php:1174
+msgid "Contact Type has been updated for the selected subscribers"
+msgstr "Se ha actualizado el tipo de contacto para los suscritos seleccionados"
+
+#: app/Services/Funnel/Actions/WaitTimeAction.php:68
+msgid "Contact's Next Date of Birth"
+msgstr ""
+
+#: app/Services/Helper.php:1817 app/Hooks/Handlers/AdminMenu.php:76
+#: app/Hooks/Handlers/AdminMenu.php:77 app/Hooks/Handlers/AdminMenu.php:298
+#: app/Hooks/Handlers/AdminMenu.php:1240 app/Hooks/Handlers/AdminMenu.php:1241
+msgid "Contacts"
+msgstr "Contactos"
+
+#: app/Services/PermissionManager.php:21
+msgid "Contacts Add/Update/Import"
+msgstr ""
+
+#: app/Services/Funnel/BaseBenchMark.php:89
+msgid ""
+"Contacts can enter directly to this sequence point. If you enable this then "
+"any contact meet with goal will enter in this goal point."
+msgstr ""
+"Los contactos pueden entrar directamente a este punto de secuencia. Si lo "
+"activas, cualquier contacto que se reúna con el objetivo entrará en este "
+"punto de objetivo."
+
+#: app/Services/PermissionManager.php:28
+msgid "Contacts Delete"
+msgstr "Borrar Contactos"
+
+#: app/Services/PermissionManager.php:35
+msgid "Contacts Export"
+msgstr "Exportación de contactos"
+
+#: app/Services/PermissionManager.php:16
+msgid "Contacts Read"
+msgstr "Contactos Leer"
+
+#: app/Services/CrmMigrator/ConvertKitMigrator.php:31
+msgid "ConvertKit API Key"
+msgstr "Clave API de ConvertKit"
+
+#: app/Services/CrmMigrator/ConvertKitMigrator.php:38
+msgid "ConvertKit API Secret"
+msgstr "Secreto de la API de ConvertKit"
+
+#: app/Hooks/Handlers/CountryNames.php:237
+msgid "Cook Islands"
+msgstr "Islas Cook"
+
+#: app/Hooks/Handlers/CountryNames.php:241
+msgid "Costa Rica"
+msgstr "Costa Rica"
+
+#: app/Models/Company.php:65 app/Models/Subscriber.php:730
+#: app/Services/Helper.php:172 app/Services/Helper.php:943
+#: app/Hooks/Handlers/PrefFormHandler.php:53
+#: app/Services/CrmMigrator/BaseMigrator.php:41
+msgid "Country"
+msgstr "País"
+
+#: app/Services/Funnel/FunnelHelper.php:172
+msgid "country"
+msgstr "país"
+
+#: app/Services/Stats.php:173
+msgid "Create a Campaign"
+msgstr "Crear una campaña"
+
+#: app/Services/Stats.php:187
+msgid "Create a Form"
+msgstr "Crear un formulario"
+
+#: app/Services/Stats.php:159
+msgid "Create a Tag"
+msgstr "Crear una etiqueta"
+
+#: app/Services/Stats.php:180
+msgid "Create an Automation"
+msgstr "Crear una automatización"
+
+#: app/Hooks/Handlers/AdminMenu.php:376
+msgid "Create email templates to use as a starting point in your emails"
+msgstr ""
+
+#: app/Hooks/Handlers/AdminMenu.php:370
+msgid "Create Multiple Emails and Send in order as a Drip Email Campaign"
+msgstr ""
+
+#: app/Services/Helper.php:984
+msgid "Created At"
+msgstr "Creado el"
+
+#: app/Services/Funnel/Triggers/FluentFormSubmissionTrigger.php:30
+#: app/Services/Funnel/Actions/ApplyCompanyAction.php:21
+#: app/Services/Funnel/Actions/DetachTagAction.php:21
+#: app/Services/Funnel/Actions/DetachListAction.php:21
+#: app/Services/Funnel/Actions/ApplyTagAction.php:21
+#: app/Services/Funnel/Actions/ApplyListAction.php:21
+#: app/Services/Funnel/Actions/WaitTimeAction.php:22
+#: app/Services/Funnel/Actions/DetachCompanyAction.php:21
+msgid "CRM"
+msgstr "CRM"
+
+#. Description of the plugin
+msgid "CRM and Email Newsletter Plugin for WordPress"
+msgstr "Plugin de CRM y boletín de correo electrónico para WordPress"
+
+#: app/Services/PermissionManager.php:11
+msgid "CRM Dashboard"
+msgstr "Escritorio CRM"
+
+#: app/Hooks/Handlers/CountryNames.php:245
+msgid "Croatia"
+msgstr "Croacia"
+
+#: app/Http/Controllers/ImporterController.php:25
+msgid "CSV File"
+msgstr "Archivo CSV"
+
+#: app/Hooks/Handlers/CountryNames.php:249
+msgid "Cuba"
+msgstr "Cuba"
+
+#: app/Hooks/Handlers/CountryNames.php:253
+msgid "Cura&ccedil;ao"
+msgstr "Curazao"
+
+#: app/Models/CustomCompanyField.php:29
+msgid "Custom Company Data"
+msgstr ""
+
+#: app/Services/Helper.php:210
+msgid "Custom Date Format (Any PHP Date Format)"
+msgstr ""
+
+#: app/Models/CustomEmailCampaign.php:26
+msgid "Custom Email"
+msgstr "Correo electrónico personalizado"
+
+#: app/Services/Funnel/Actions/SendEmailAction.php:75
+msgid "Custom Email Addresses"
+msgstr "Direcciones de correo electrónico personalizadas"
+
+#: app/Http/Controllers/SubscriberController.php:815
+msgid "Custom Email has been successfully sent"
+msgstr "El correo electrónico personalizado se ha enviado con éxito"
+
+#: app/Http/Controllers/SubscriberController.php:779
+msgid "Custom Email to Contact"
+msgstr "Correo electrónico personalizado para el contacto"
+
+#: app/Services/Helper.php:196 app/Services/Helper.php:1200
+msgid "Custom Fields"
+msgstr "Campos personalizados"
+
+#: app/Models/CustomContactField.php:191
+msgid "Custom Profile Data"
+msgstr "Datos de perfil personalizados"
+
+#: app/Functions/helpers.php:577
+#: app/Http/Controllers/CampaignAnalyticsController.php:155
+#: app/Http/Controllers/CampaignAnalyticsController.php:173
+msgid "Customer"
+msgstr "Cliente"
+
+#: app/Hooks/CLI/Commands.php:144
+msgid "Customer Counts"
+msgstr "El cliente cuenta"
+
+#: app/Hooks/Handlers/PurchaseHistory.php:43
+#: app/Hooks/Handlers/PurchaseHistory.php:76
+#: app/Hooks/Handlers/PurchaseHistory.php:478
+msgid "Customer Summary"
+msgstr "Resumen del cliente"
+
+#: app/Services/Helper.php:486
+msgid "Cyan bluish gray"
+msgstr "Gris azulado cian"
+
+#: app/Hooks/Handlers/CountryNames.php:257
+msgid "Cyprus"
+msgstr "Chipre"
+
+#: app/Hooks/Handlers/CountryNames.php:261
+msgid "Czechia (Czech Republic)"
+msgstr "República Checa"
+
+#: app/Hooks/Handlers/AdminMenu.php:67 app/Hooks/Handlers/AdminMenu.php:68
+#: app/Hooks/Handlers/AdminMenu.php:290 app/Hooks/Handlers/AdminMenu.php:1233
+#: app/Hooks/Handlers/AdminMenu.php:1234
+msgid "Dashboard"
+msgstr "Escritorio"
+
+#: app/Models/CustomContactField.php:75
+#: app/Http/Controllers/CampaignAnalyticsController.php:106
+#: app/Http/Controllers/CampaignAnalyticsController.php:157
+#: app/Http/Controllers/CampaignAnalyticsController.php:175
+#: app/Hooks/Handlers/PurchaseHistory.php:147
+#: app/Hooks/Handlers/PurchaseHistory.php:383
+msgid "Date"
+msgstr "Fecha"
+
+#: app/Models/CustomContactField.php:80
+msgid "Date and Time"
+msgstr "Fecha y hora"
+
+#: app/Services/Helper.php:175 app/Services/Helper.php:974
+#: app/Services/Helper.php:989 app/Hooks/Handlers/PrefFormHandler.php:47
+#: app/Hooks/Handlers/PrefFormHandler.php:396
+msgid "Date of Birth"
+msgstr "Fecha de nacimiento"
+
+#: app/Models/Subscriber.php:734
+msgid "Date of Birth (Y-m-d Format only)"
+msgstr "Fecha de nacimiento (sólo en formato Y-m-d)"
+
+#: app/Services/Helper.php:1872
+msgid "Date Time"
+msgstr ""
+
+#: app/Services/Funnel/Actions/WaitTimeAction.php:114
+msgid "Days"
+msgstr "Días"
+
+#: app/Services/AutoSubscribe.php:226
+msgid "Delete FluentCRM contact on WP User delete"
+msgstr "Eliminar el contacto de FluentCRM en WP User delete"
+
+#: app/Hooks/Handlers/CountryNames.php:265
+msgid "Denmark"
+msgstr "Dinamarca"
+
+#: app/Services/Helper.php:1887
+msgid "Description"
+msgstr "Descripción"
+
+#: app/Http/Controllers/SettingsController.php:127
+msgid "Design Template"
+msgstr "Plantilla de diseño"
+
+#: fluent-crm.php:46
+msgid "Developer Docs"
+msgstr ""
+
+#: app/Http/Controllers/SettingsController.php:260
+msgid ""
+"Development mode is not activated. So you can not use this feature. You can "
+"define \"FLUENTCRM_IS_DEV_FEATURES\" in your wp-config to enable this feature"
+msgstr ""
+"El modo de desarrollo no está activado. Por lo tanto, no puede utilizar esta "
+"función. Puede definir \"FLUENTCRM_IS_DEV_FEATURES\" en su wp-config para "
+"activar esta función"
+
+#: app/Hooks/Handlers/CountryNames.php:269
+msgid "Djibouti"
+msgstr "Yibuti"
+
+#: app/Services/AutoSubscribe.php:325
+msgid "Do not show the checkbox if current user already in subscribed state"
+msgstr "No mostrar la casilla si el usuario actual ya está suscrito"
+
+#: app/Services/AutoSubscribe.php:167
+msgid "Do not show the checkbox if current user already subscribed state"
+msgstr "No mostrar la casilla si el usuario actual ya está suscrito"
+
+#: fluent-crm.php:44
+msgid "Docs & FAQs"
+msgstr "Documentos y preguntas frecuentes"
+
+#: app/Services/Stats.php:117
+msgid "Documentations"
+msgstr "Documentación"
+
+#: app/Hooks/Handlers/CountryNames.php:273
+msgid "Dominica"
+msgstr "Dominica"
+
+#: app/Hooks/Handlers/CountryNames.php:277
+msgid "Dominican Republic"
+msgstr "República Dominicana"
+
+#: app/Services/AutoSubscribe.php:68 app/Services/AutoSubscribe.php:178
+#: app/Services/AutoSubscribe.php:336
+msgid "Double Opt-In"
+msgstr "Doble Opt-In"
+
+#: app/Http/Controllers/SettingsController.php:237
+msgid "Double Opt-in settings has been updated"
+msgstr "Configuración de Double Opt-in actualizada"
+
+#: app/Http/Controllers/SubscriberController.php:772
+msgid "Double OptIn email has been sent"
+msgstr "Se ha enviado el correo electrónico de Double OptIn"
+
+#: app/Http/Controllers/SubscriberController.php:940
+msgid "Double optin sent to selected contacts"
+msgstr "Envío de doble optin a los contactos seleccionados"
+
+#: app/Http/Controllers/SettingsController.php:120
+msgid "Double-Optin Email Body"
+msgstr "Cuerpo de correo electrónico de doble optina"
+
+#: app/Services/CrmMigrator/DripMigrator.php:37
+msgid "Drip Account ID"
+msgstr "ID de la cuenta de goteo"
+
+#: app/Services/CrmMigrator/DripMigrator.php:30
+msgid "Drip API Token"
+msgstr "Token de la API de goteo"
+
+#: app/Services/Helper.php:209
+msgid "Dynamic Date (ex: +2 days from now)"
+msgstr "Fecha dinámica (por ejemplo: +2 días a partir de ahora)"
+
+#: app/Services/Helper.php:1343
+msgid "Earnings (Pro Required)"
+msgstr "Ganancias (Pro Requerido)"
+
+#: app/Services/Helper.php:460
+msgid "Easy Digital Downloads"
+msgstr "Easy Digital Downloads"
+
+#: app/Hooks/Handlers/CountryNames.php:281
+msgid "Ecuador"
+msgstr "Ecuador"
+
+#: app/Services/Helper.php:1264
+msgid "EDD"
+msgstr "EDD"
+
+#: app/Services/Helper.php:459
+msgid "EDD Purchase History"
+msgstr "Historial de compra de EDD"
+
+#: app/Hooks/Handlers/CountryNames.php:285
+msgid "Egypt"
+msgstr "Egipto"
+
+#: app/Hooks/Handlers/CountryNames.php:289
+msgid "El Salvador"
+msgstr "El Salvador"
+
+#: app/Http/Controllers/SettingsController.php:363
+msgid "Elastic Email"
+msgstr ""
+
+#: app/Http/Controllers/SettingsController.php:366
+msgid "Elastic Email Bounce Handler Webhook URL"
+msgstr ""
+
+#: app/Models/Subscriber.php:723 app/Functions/helpers.php:613
+#: app/Services/Helper.php:914 app/Hooks/Handlers/PrefFormHandler.php:45
+#: app/Hooks/Handlers/PrefFormHandler.php:362
+#: app/Services/Funnel/FunnelHelper.php:138
+#: app/Services/Funnel/Actions/SendEmailAction.php:27
+msgid "Email"
+msgstr "Correo electrónico"
+
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:142
+msgid "Email Address"
+msgstr "Dirección de correo electrónico"
+
+#: app/Services/CrmMigrator/MailerLiteMigrator.php:22
+#: app/Services/CrmMigrator/ConvertKitMigrator.php:22
+msgid "Email Address and First name will be mapped automatically"
+msgstr ""
+"La dirección de correo electrónico y el nombre se asignarán automáticamente"
+
+#: app/Services/CrmMigrator/ActiveCampaignMigrator.php:27
+#: app/Services/CrmMigrator/DripMigrator.php:26
+msgid "Email and main contact fields will be mapped automatically"
+msgstr ""
+"Los campos de correo electrónico y contacto principal se asignarán "
+"automáticamente"
+
+#: app/Http/Controllers/SettingsController.php:121
+msgid "Email Body"
+msgstr "Cuerpo del correo electrónico"
+
+#: app/Http/Controllers/SettingsController.php:218
+msgid "Email Body is required"
+msgstr "El cuerpo del correo electrónico es obligatorio"
+
+#: app/Http/Controllers/SettingsController.php:230
+msgid "Email Body need to contains activation link"
+msgstr "El cuerpo del correo electrónico debe contener el enlace de activación"
+
+#: app/Services/Stats.php:92
+msgid "Email Campaigns"
+msgstr "Campañas de correo electrónico"
+
+#: app/Http/Controllers/SettingsController.php:555
+#: app/Http/Controllers/SettingsController.php:564
+msgid "Email clicks"
+msgstr "Clics de correo electrónico"
+
+#: app/views/external/confirmation.php:8
+msgid "Email Confirmation"
+msgstr "Confirmación de correo electrónico"
+
+#: app/Http/Controllers/SettingsController.php:128
+msgid "Email Design Template for this double-optin email"
+msgstr ""
+"Plantilla de diseño de correo electrónico para este correo de doble apertura"
+
+#: app/Http/Controllers/SettingsController.php:546
+msgid "Email History Logs"
+msgstr "Registros del historial de correo electrónico"
+
+#: app/Hooks/Handlers/ExternalPages.php:1021
+msgid "Email is not valid. Please provide a valid email"
+msgstr "La dirección de correo no es válida. Proporciona una que sea válida"
+
+#: app/views/external/manage_subscription_request_form.php:43
+#: app/views/external/unsubscribe_request_form.php:43
+msgid "Email me the link"
+msgstr ""
+
+#: app/Http/Controllers/SettingsController.php:115
+msgid "Email Pre Header"
+msgstr ""
+
+#: app/Services/Libs/Parser/ShortcodeParser.php:239
+msgid "Email Preference"
+msgstr "Preferencia de correo electrónico"
+
+#: app/Http/Controllers/CampaignController.php:522
+msgid "Email Sending will be started soon"
+msgstr "El envío de correos electrónicos se iniciará pronto"
+
+#: app/Models/FunnelCampaign.php:91
+msgid "Email Sent From Funnel"
+msgstr "Correo electrónico enviado desde el embudo"
+
+#: app/Services/Funnel/Actions/SendEmailAction.php:238
+msgid "Email Sent From Funnel: "
+msgstr "Correo electrónico enviado desde el embudo"
+
+#: app/Services/Helper.php:1103
+msgid "Email Sequence Activity -"
+msgstr "Actividad de la secuencia de correo electrónico -"
+
+#: app/Services/Stats.php:97 app/Hooks/Handlers/AdminMenu.php:136
+#: app/Hooks/Handlers/AdminMenu.php:137 app/Hooks/Handlers/AdminMenu.php:368
+msgid "Email Sequences"
+msgstr "Secuencias de correo electrónico"
+
+#: app/Http/Controllers/SettingsController.php:109
+msgid "Email Subject"
+msgstr "Asunto del correo electrónico"
+
+#: app/Http/Controllers/SettingsController.php:217
+msgid "Email Subject is required"
+msgstr "El asunto del correo electrónico es obligatorio"
+
+#: app/Services/Stats.php:46 app/Hooks/Handlers/AdminMenu.php:145
+#: app/Hooks/Handlers/AdminMenu.php:146 app/Hooks/Handlers/AdminMenu.php:374
+msgid "Email Templates"
+msgstr "Plantillas de correo electrónico"
+
+#: app/Services/PermissionManager.php:68
+msgid "Email Templates Manage"
+msgstr "Gestión de plantillas de correo electrónico"
+
+#: app/Services/Helper.php:110 app/Hooks/Handlers/AdminMenu.php:348
+#: app/Hooks/Handlers/AdminMenu.php:1247 app/Hooks/Handlers/AdminMenu.php:1248
+msgid "Emails"
+msgstr "Correos electrónicos"
+
+#: app/Services/PermissionManager.php:73
+msgid "Emails Delete"
+msgstr "Borrar Correos electrónicos"
+
+#: app/Services/PermissionManager.php:56
+msgid "Emails Read"
+msgstr "Correos electrónicos leídos"
+
+#: app/Services/Stats.php:32
+msgid "Emails Sent"
+msgstr "Correos electrónicos enviados"
+
+#: app/Services/PermissionManager.php:61
+msgid "Emails Write/Send"
+msgstr "Escribir/Enviar correos electrónicos"
+
+#: app/Models/Company.php:66
+msgid "Employees Number"
+msgstr ""
+
+#: app/Services/AutoSubscribe.php:313
+msgid "Enable auto checked status on checkout page checkbox"
+msgstr ""
+"Habilitar la casilla de verificación del estado de comprobación automática "
+"en la página de pago"
+
+#: app/Services/AutoSubscribe.php:155
+msgid "Enable auto checked status on Comment Form subscription"
+msgstr ""
+"Habilitar el estado de comprobación automática en la suscripción al "
+"formulario de comentarios"
+
+#: app/Services/AutoSubscribe.php:114
+msgid ""
+"Enable Create new contacts in FluentCRM when a visitor add a comment in your "
+"comment form"
+msgstr ""
+"Habilitar la creación de nuevos contactos en FluentCRM cuando un visitante "
+"añade un comentario en su formulario de comentarios"
+
+#: app/Services/AutoSubscribe.php:34
+msgid ""
+"Enable Create new contacts in FluentCRM when users register in WordPress"
+msgstr ""
+"Activar la creación de nuevos contactos en FluentCRM cuando los usuarios se "
+"registran en WordPress"
+
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:204
+#| msgid "Enable Double Option for new contacts"
+msgid "Enable Double opt-in for new contacts"
+msgstr "Activar la doble opción para los nuevos contactos"
+
+#: app/Services/AutoSubscribe.php:69 app/Services/AutoSubscribe.php:179
+#: app/Services/AutoSubscribe.php:337
+msgid "Enable Double-Optin Email Confirmation"
+msgstr "Activar la confirmación de correo electrónico de Double-Optin"
+
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:183
+msgid "Enable Dynamic Tag Selection"
+msgstr "Activar la selección dinámica de etiquetas"
+
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:210
+msgid ""
+"Enable Force Subscribe if contact is not in subscribed status (Existing "
+"contact only)"
+msgstr ""
+"Activar la suscripción forzada si el contacto no está suscrito (sólo para "
+"contactos existentes)"
+
+#: app/Services/RoleBasedTagging.php:51
+msgid "Enable Role Based Tag Mapping"
+msgstr "Activar la asignación de etiquetas basada en roles"
+
+#: app/Services/AutoSubscribe.php:272
+msgid "Enable Subscription Checkbox to WooCommerce Checkout Page"
+msgstr "Habilitar la casilla de suscripción a la página de pago de WooCommerce"
+
+#: app/Services/AutoSubscribe.php:219
+msgid "Enable Sync between WP User Data and Fluent CRM Contact Data"
+msgstr ""
+"Habilitar la sincronización entre los datos de usuario de WP y los datos de "
+"contacto de Fluent CRM"
+
+#: app/Http/Controllers/SettingsController.php:175
+msgid "Enable Tag based double optin redirect"
+msgstr ""
+
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:265
+msgid "Enable This feed"
+msgstr "Habilitar esta alimentación"
+
+#: app/Services/Helper.php:1406 app/Services/Helper.php:1462
+msgid "Enrollment Categories (Pro Required)"
+msgstr "Categorías de inscripción (Pro Required)"
+
+#: app/Services/Helper.php:1388 app/Services/Helper.php:1445
+msgid "Enrollment Courses (Pro Required)"
+msgstr "Cursos de inscripción (Pro Required)"
+
+#: app/Services/Helper.php:1396
+msgid "Enrollment Groups (Pro Required)"
+msgstr "Grupos de inscripción (Pro Required)"
+
+#: app/Services/Helper.php:1453
+msgid "Enrollment Memberships (Pro Required)"
+msgstr "Membresías de inscripción (Pro Required)"
+
+#: app/Services/Helper.php:1415 app/Services/Helper.php:1471
+msgid "Enrollment Tags (Pro Required)"
+msgstr "Etiquetas de inscripción (Pro Required)"
+
+#: app/Services/Reporting.php:138
+msgid "Entrance"
+msgstr "Entrada"
+
+#: app/Hooks/Handlers/CountryNames.php:293
+msgid "Equatorial Guinea"
+msgstr "Guinea Ecuatorial"
+
+#: app/Hooks/Handlers/CountryNames.php:297
+msgid "Eritrea"
+msgstr "Eritrea"
+
+#: app/Hooks/Handlers/CountryNames.php:301
+msgid "Estonia"
+msgstr "Estonia"
+
+#: app/Hooks/Handlers/CountryNames.php:305
+msgid "Ethiopia"
+msgstr "Etiopía"
+
+#: app/Http/Controllers/SubscriberController.php:1426
+msgid "Event has been tracked"
+msgstr ""
+
+#: app/Hooks/Handlers/EventTrackingHandler.php:293
+msgid "Event Key"
+msgstr ""
+
+#: app/Hooks/Handlers/EventTrackingHandler.php:308
+msgid "Event Occurrence Count"
+msgstr ""
+
+#: app/Hooks/Handlers/EventTrackingHandler.php:360
+msgid "Event Title"
+msgstr ""
+
+#: app/Http/Controllers/SubscriberController.php:1391
+msgid "Event Tracker is not enabled"
+msgstr ""
+
+#: app/Hooks/Handlers/EventTrackingHandler.php:30
+#: app/Hooks/Handlers/EventTrackingHandler.php:217
+#: app/Hooks/Handlers/EventTrackingHandler.php:235
+#: app/Hooks/Handlers/EventTrackingHandler.php:251
+msgid "Event Tracking"
+msgstr ""
+
+#: app/Hooks/Handlers/EventTrackingHandler.php:333
+msgid "Event Value"
+msgstr ""
+
+#: app/Functions/helpers.php:625
+msgid "Facebook Post"
+msgstr "Publicación en Facebook"
+
+#: app/Models/Company.php:68
+msgid "Facebook URL"
+msgstr ""
+
+#: app/Hooks/Handlers/ExternalPages.php:99
+msgid "failed"
+msgstr "fallido"
+
+#: app/Hooks/Handlers/CountryNames.php:309
+msgid "Falkland Islands"
+msgstr "Islas Malvinas"
+
+#: app/Hooks/Handlers/CountryNames.php:313
+msgid "Faroe Islands"
+msgstr "Islas Feroe"
+
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:117
+msgid "Feed Name"
+msgstr "Nombre de la alimentación"
+
+#: app/Functions/helpers.php:623
+msgid "Feedback"
+msgstr "Comentarios"
+
+#: app/Http/Controllers/CustomContactFieldsController.php:35
+#: app/Http/Controllers/CompanyController.php:730
+msgid "Fields saved successfully!"
+msgstr "¡Campos guardados correctamente!"
+
+#: app/Hooks/Handlers/CountryNames.php:317
+msgid "Fiji"
+msgstr "Fiyi"
+
+#: app/Hooks/Handlers/AdminMenu.php:382
+msgid "Find all the emails that are being sent or scheduled by FluentCRM"
+msgstr ""
+
+#: app/Hooks/Handlers/CountryNames.php:321
+msgid "Finland"
+msgstr "Finlandia"
+
+#: app/Services/Helper.php:1382 app/Services/Helper.php:1439
+msgid "First Enrollment Date (Pro Required)"
+msgstr "Primera fecha de inscripción (Pro Required)"
+
+#: app/Models/Subscriber.php:720 app/Services/Helper.php:162
+#: app/Services/Helper.php:904 app/Hooks/Handlers/PrefFormHandler.php:42
+#: app/Hooks/Handlers/PrefFormHandler.php:321
+#: app/views/external/manage_subscription_form.php:14
+#: app/views/external/manage_subscription_form.php:16
+#: app/Services/CrmMigrator/BaseMigrator.php:25
+#: app/Services/Funnel/FunnelHelper.php:130
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:148
+msgid "First Name"
+msgstr "Nombre"
+
+#: app/Services/Helper.php:1233 app/Services/Helper.php:1287
+msgid "First Order Date (Pro Required)"
+msgstr "Fecha del primer pedido (Pro Required)"
+
+#: app/Http/Controllers/SetupController.php:89
+#: app/Http/Controllers/DocsController.php:89
+msgid "Fluent Connect"
+msgstr "Conexión fluida"
+
+#: config/app.php:6
+msgid "Fluent Crm"
+msgstr "FluentCRM"
+
+#: app/Hooks/Handlers/Cleanup.php:192
+msgid "Fluent CRM Data"
+msgstr "Datos Fluent CRM"
+
+#: app/Http/Controllers/SetupController.php:159
+#: app/Http/Controllers/DocsController.php:62
+#: app/Hooks/Handlers/FormSubmissions.php:23
+msgid "Fluent Forms"
+msgstr "Fluent Forms"
+
+#: app/Http/Controllers/SetupController.php:57
+msgid "Fluent Forms has been installed and activated"
+msgstr "Fluent Forms Se ha instalado y activado"
+
+#: app/Http/Controllers/DocsController.php:71
+msgid "Fluent SMTP"
+msgstr "SMTP fluido"
+
+#: app/Http/Controllers/SetupController.php:112
+#: app/Http/Controllers/DocsController.php:80
+msgid "Fluent Support"
+msgstr "Soporte Fluent"
+
+#: app/Http/Controllers/SetupController.php:120
+msgid "Fluent Support plugin has been installed and activated successfully"
+msgstr "El plugin Fluent Support se ha instalado y activado correctamente"
+
+#: app/Http/Controllers/SetupController.php:97
+msgid "FluentConnect plugin has been installed and activated successfully"
+msgstr "El plugin FluentConnect se ha instalado y activado correctamente"
+
+#: app/Hooks/Handlers/AdminMenu.php:56 app/Hooks/Handlers/AdminMenu.php:57
+#: app/Services/ExternalIntegrations/BricksBuilderIntegration.php:21
+#: app/views/emails/plain/Template.php:95
+#: app/views/emails/classic/Template.php:93
+#: app/views/emails/raw_classic/Template.php:37
+#: app/views/emails/simple/Template.php:92
+#: app/views/emails/web_preview/Template.php:14
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:27
+msgid "FluentCRM"
+msgstr "FluentCRM"
+
+#. Name of the plugin
+msgid "FluentCRM - Marketing Automation For WordPress"
+msgstr "FluentCRM - Marketing Automation For WordPress"
+
+#: app/views/admin/setup_wizard.php:6
+msgid "FluentCRM - Setup Wizard"
+msgstr "FluentCRM - Asistente de configuración"
+
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:354
+msgid "FluentCRM API called skipped because no valid email available"
+msgstr ""
+"Se ha omitido la llamada a la API de FluentCRM porque no hay un correo "
+"electrónico válido disponible"
+
+#: app/Hooks/Handlers/Cleanup.php:168
+msgid "FluentCRM Data"
+msgstr "Datos de FluentCRM"
+
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:137
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:167
+msgid "FluentCRM Field"
+msgstr "Campo de FluentCRM"
+
+#: app/Http/Controllers/FormsController.php:196
+msgid "FluentCRM Integration Feed"
+msgstr "Feed de integración de FluentCRM"
+
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:54
+msgid ""
+"FluentCRM is not configured yet! Please configure your FluentCRM api first"
+msgstr ""
+"FluentCRM aún no está configurado Por favor, configure primero su api de "
+"FluentCRM"
+
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:124
+msgid "FluentCRM List"
+msgstr "Lista de FluentCRM"
+
+#: app/Services/ExternalIntegrations/BricksBuilderIntegration.php:67
+msgid "FluentCRM Lists"
+msgstr ""
+
+#: app/Services/ExternalIntegrations/FluentForm/FluentFormInit.php:53
+msgid "FluentCRM Profile"
+msgstr "Perfil de FluentCRM"
+
+#: app/Services/ExternalIntegrations/BricksBuilderIntegration.php:47
+msgid "FluentCRM Tags"
+msgstr ""
+
+#: app/Services/Stats.php:131 app/Http/Controllers/SetupController.php:170
+msgid "FluentSMTP"
+msgstr "FluentSMTP"
+
+#: app/Http/Controllers/SetupController.php:74
+msgid "FluentSMTP plugin has been installed and activated successfully"
+msgstr "El plugin FluentSMTP ha sido instalado y activado correctamente."
+
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:138
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:168
+#: app/Services/Funnel/Triggers/FluentFormSubmissionTrigger.php:86
+msgid "Form Field"
+msgstr "Campo del formulario"
+
+#: app/Http/Controllers/FormsController.php:236
+msgid "Form has been created"
+msgstr "El formulario ha sido creado"
+
+#: app/Services/Helper.php:126
+msgid "Form Submissions"
+msgstr "Presentación de formularios"
+
+#: app/Hooks/Handlers/FormSubmissions.php:22
+msgid "Form Submissions (Fluent Forms)"
+msgstr "Envíos de formularios (Fluent Forms)"
+
+#: app/Services/Stats.php:102 app/Hooks/Handlers/AdminMenu.php:156
+#: app/Hooks/Handlers/AdminMenu.php:157 app/Hooks/Handlers/AdminMenu.php:392
+#: app/Hooks/Handlers/AdminMenu.php:1280 app/Hooks/Handlers/AdminMenu.php:1281
+msgid "Forms"
+msgstr "Formularios"
+
+#: app/Hooks/Handlers/CountryNames.php:325
+msgid "France"
+msgstr "Francia"
+
+#: app/Hooks/Handlers/CountryNames.php:329
+msgid "French Guiana"
+msgstr "Guayana Francesa"
+
+#: app/Hooks/Handlers/CountryNames.php:333
+msgid "French Polynesia"
+msgstr "Polinesia Francesa"
+
+#: app/Hooks/Handlers/CountryNames.php:337
+msgid "French Southern Territories"
+msgstr "Territorios Australes Franceses"
+
+#: app/Models/Subscriber.php:722 app/Services/Helper.php:160
+#: app/Services/CrmMigrator/BaseMigrator.php:27
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:156
+msgid "Full Name"
+msgstr "Nombre completo"
+
+#: app/Http/Controllers/CampaignAnalyticsController.php:75
+#, php-format
+msgctxt "full name"
+msgid "%1$s %2$s"
+msgstr "%1$s %2$s"
+
+#: app/Hooks/Handlers/AdminMenu.php:813
+msgid "Full Size"
+msgstr "Tamaño completo"
+
+#: app/Http/Controllers/FunnelController.php:454
+msgid "Funnel already have the same status"
+msgstr ""
+
+#: app/Models/FunnelCampaign.php:30
+msgid "Funnel Campaign Holder"
+msgstr "Soporte de la campaña del embudo"
+
+#: app/Http/Controllers/FunnelController.php:968
+msgid "Funnel has been created from template"
+msgstr ""
+
+#: app/Http/Controllers/FunnelController.php:145
+msgid "Funnel has been created. Please configure now"
+msgstr "Se ha creado el embudo. Configúralo ahora"
+
+#: app/Http/Controllers/FunnelController.php:162
+msgid "Funnel has been deleted"
+msgstr "El embudo ha sido borrado"
+
+#: app/Http/Controllers/FunnelController.php:614
+msgid "Funnel has been successfully cloned"
+msgstr "El embudo ha sido clonado correctamente"
+
+#: app/Http/Controllers/FunnelController.php:627
+msgid "Funnel has been successfully imported"
+msgstr "El embudo ha sido importado con éxito"
+
+#: app/Http/Controllers/FunnelController.php:829
+msgid "Funnel status need to be published"
+msgstr ""
+
+#: app/Http/Controllers/FunnelController.php:200
+msgid "Funnel Trigger has been successfully updated"
+msgstr "El Funnel Trigger ha sido actualizado con éxito"
+
+#: app/Hooks/Handlers/CountryNames.php:341
+msgid "Gabon"
+msgstr "Gabón"
+
+#: app/Hooks/Handlers/CountryNames.php:345
+msgid "Gambia"
+msgstr "Gambia"
+
+#: app/Services/Helper.php:203
+msgid "General"
+msgstr "General"
+
+#: app/Services/Helper.php:900
+msgid "General Properties"
+msgstr "Propiedades generales"
+
+#: app/Hooks/Handlers/CountryNames.php:349
+msgid "Georgia"
+msgstr "Georgia"
+
+#: app/Hooks/Handlers/CountryNames.php:353
+msgid "Germany"
+msgstr "Alemania"
+
+#: app/views/external/manage_subscription_request_form.php:32
+msgid "Get Email Subscription Management Link"
+msgstr ""
+
+#: app/Hooks/Handlers/AdminMenu.php:425
+msgid "Get Pro"
+msgstr "Obtener Pro"
+
+#: fluent-crm.php:45
+msgid "Get Support"
+msgstr "Obtenga apoyo"
+
+#: app/views/external/unsubscribe_request_form.php:32
+msgid "Get Unsubscribe Link"
+msgstr ""
+
+#: app/Hooks/Handlers/CountryNames.php:357
+msgid "Ghana"
+msgstr "Ghana"
+
+#: app/Hooks/Handlers/CountryNames.php:361
+msgid "Gibraltar"
+msgstr "Gibraltar"
+
+#: app/Hooks/Handlers/CountryNames.php:365
+msgid "Greece"
+msgstr "Grecia"
+
+#: app/Hooks/Handlers/CountryNames.php:369
+msgid "Greenland"
+msgstr "Groenlandia"
+
+#: app/Hooks/Handlers/CountryNames.php:373
+msgid "Grenada"
+msgstr "Granada"
+
+#: app/Hooks/Handlers/CountryNames.php:377
+msgid "Guadeloupe"
+msgstr "Guadalupe"
+
+#: app/Hooks/Handlers/CountryNames.php:381
+msgid "Guam"
+msgstr "Guam"
+
+#: app/Hooks/Handlers/CountryNames.php:385
+msgid "Guatemala"
+msgstr "Guatemala"
+
+#: app/Hooks/Handlers/CountryNames.php:389
+msgid "Guernsey"
+msgstr "Guernsey"
+
+#: app/Hooks/Handlers/CountryNames.php:393
+msgid "Guinea"
+msgstr "Guinea"
+
+#: app/Hooks/Handlers/CountryNames.php:397
+msgid "Guinea-Bissau"
+msgstr "Guinea-Bisáu"
+
+#: app/Hooks/Handlers/CountryNames.php:401
+msgid "Guyana"
+msgstr "Guayana"
+
+#: app/Hooks/Handlers/CountryNames.php:405
+msgid "Haiti"
+msgstr "Haití"
+
+#: app/Http/Controllers/SubscriberController.php:840
+msgid "Handled could not be found."
+msgstr ""
+
+#: app/Hooks/Handlers/CountryNames.php:409
+msgid "Heard Island and McDonald Islands"
+msgstr "Islas Heard y McDonald"
+
+#: app/Hooks/Handlers/AdminMenu.php:221 app/Hooks/Handlers/AdminMenu.php:222
+#: app/Hooks/Handlers/AdminMenu.php:1315 app/Hooks/Handlers/AdminMenu.php:1316
+msgid "Help"
+msgstr "Ayuda"
+
+#: app/Hooks/Handlers/CountryNames.php:413
+msgid "Honduras"
+msgstr "Honduras"
+
+#: app/Hooks/Handlers/CountryNames.php:417
+msgid "Hong Kong"
+msgstr "Hong Kong"
+
+#: app/Services/Funnel/Actions/WaitTimeAction.php:118
+msgid "Hours"
+msgstr "Horas"
+
+#. URI of the plugin
+#. Author URI of the plugin
+msgid "https://fluentcrm.com"
+msgstr "https://fluentcrm.com"
+
+#: app/Hooks/Handlers/CountryNames.php:421
+msgid "Hungary"
+msgstr "Hungría"
+
+#: app/Hooks/Handlers/ExternalPages.php:488
+msgid "I never signed up for this email list"
+msgstr "Nunca me suscribí a esta lista de correo electrónico"
+
+#: app/Hooks/Handlers/ExternalPages.php:487
+msgid "I no longer want to receive these emails"
+msgstr "No quiero volver a recibir esos correos electrónicos"
+
+#: app/Hooks/Handlers/CountryNames.php:425
+msgid "Iceland"
+msgstr "Islandia"
+
+#: app/Http/Controllers/CampaignAnalyticsController.php:103
+#: app/Http/Controllers/SubscriberController.php:737
+msgid "ID"
+msgstr "ID"
+
+#: app/Services/Funnel/Triggers/UserRegistrationTrigger.php:75
+msgid "If Contact Already Exist?"
+msgstr "¿Si el contacto ya existe?"
+
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:157
+msgid ""
+"If First Name & Last Name is not available full name will be used to get "
+"first name and last name"
+msgstr ""
+"Si el nombre y los apellidos no están disponibles, se utilizará el nombre "
+"completo para obtener el nombre y los apellidos"
+
+#: app/Services/Funnel/Actions/WaitTimeAction.php:201
+msgid ""
+"If no value is found in the contact's custom field or past date then it will "
+"wait only 1 minute by default"
+msgstr ""
+
+#: app/Services/Funnel/Actions/SendEmailAction.php:108
+msgid ""
+"If schedule date is past in the runtime then email will be sent immediately"
+msgstr ""
+"Si la fecha de la programación está pasada en el tiempo de ejecución, el "
+"correo electrónico se enviará inmediatamente"
+
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:244
+msgid ""
+"If you check any of the events then this feed will only run to the selected "
+"events"
+msgstr ""
+"Si marca cualquiera de los eventos, este feed sólo se ejecutará para los "
+"eventos seleccionados"
+
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:212
+msgid ""
+"If you enable this then contact will forcefully subscribed no matter in "
+"which status that contact had"
+msgstr ""
+"Si habilita esta opción, el contacto se suscribirá forzosamente sin importar "
+"el estado en que se encuentre"
+
+#: app/Services/Funnel/Triggers/FluentFormSubmissionTrigger.php:181
+msgid ""
+"If you enable this then this will run only once per customer otherwise, It "
+"will delete the existing automation flow and start new"
+msgstr ""
+"Si lo habilita, sólo se ejecutará una vez por cliente; de lo contrario, se "
+"eliminará el flujo de automatización existente y se iniciará uno nuevo"
+
+#: app/Services/Funnel/BaseBenchMark.php:81
+msgid ""
+"If you select [Optional Point] it will work as an Optional Trigger otherwise,"
+" it will wait for full-fill this action"
+msgstr ""
+"Si selecciona [Punto opcional] funcionará como un disparador opcional, de lo "
+"contrario, esperará a que se llene por completo esta acción"
+
+#: app/Http/Controllers/ImporterController.php:300
+#, php-format
+msgid ""
+"Import %s members by member groups and member types then segment by "
+"associate tags. This is a pro feature. Please upgrade to activate this "
+"feature"
+msgstr ""
+"Importar %s miembros por grupos de miembros y tipos de miembros y luego "
+"segmentar por etiquetas asociadas. Esta es una función profesional. Por "
+"favor, actualice para activar esta función"
+
+#: app/Services/Stats.php:166
+msgid "Import Contacts"
+msgstr "Importar contactos"
+
+#: app/Http/Controllers/ImporterController.php:246
+msgid ""
+"Import LearnDash students by course and groups then segment by associate "
+"tags. This is a pro feature. Please upgrade to activate this feature"
+msgstr ""
+"Importar estudiantes de LearnDash por curso y grupos y luego segmentar por "
+"etiquetas asociadas. Esta es una característica pro. Por favor, actualice "
+"para activar esta función"
+
+#: app/Http/Controllers/ImporterController.php:309
+msgid ""
+"Import LearnPress students by course then segment by associate tags. This is "
+"a pro feature. Please upgrade to activate this feature"
+msgstr ""
+"Importar estudiantes de LearnPress por curso y luego segmentar por etiquetas "
+"asociadas. Esta es una característica pro. Por favor, actualice para activar "
+"esta función"
+
+#: app/Http/Controllers/ImporterController.php:237
+msgid ""
+"Import LifterLMS students by course and groups then segment by associate "
+"tags. This is a pro feature. Please upgrade to activate this feature"
+msgstr ""
+"Importar estudiantes de LifterLMS por curso y grupos y luego segmentar por "
+"etiquetas asociadas. Esta es una característica pro. Por favor, actualice "
+"para activar esta función"
+
+#: app/Http/Controllers/ImporterController.php:264
+msgid ""
+"Import Paid Membership Pro members by membership levels then segment by "
+"associate tags. This is a pro feature. Please upgrade to activate this "
+"feature"
+msgstr ""
+"Importar miembros de Paid Membership Pro por niveles de membresía y luego "
+"segmentar por etiquetas de asociados. Esta es una característica pro. Por "
+"favor, actualice para activar esta función"
+
+#: app/Http/Controllers/ImporterController.php:282
+msgid ""
+"Import Restrict Content Pro members by membership levels then segment by "
+"associate tags. This is a pro feature. Please upgrade to activate this "
+"feature"
+msgstr ""
+"Importar miembros de Restrict Content Pro por niveles de afiliación y luego "
+"segmentar por etiquetas asociadas. Esta es una característica pro. Por favor,"
+" actualice para activar esta función"
+
+#: app/Http/Controllers/ImporterController.php:255
+msgid ""
+"Import TutorLMS students by course then segment by associate tags. This is a "
+"pro feature. Please upgrade to activate this feature"
+msgstr ""
+"Importar estudiantes de TutorLMS por curso y luego segmentar por etiquetas "
+"asociadas. Esta es una característica pro. Por favor, actualice para activar "
+"esta función"
+
+#: app/Http/Controllers/ImporterController.php:158
+msgid "Import Users Now"
+msgstr "Importar usuarios ahora"
+
+#: app/Http/Controllers/ImporterController.php:273
+msgid ""
+"Import Wishlist members by membership levels then segment by associate tags. "
+"This is a pro feature. Please upgrade to activate this feature"
+msgstr ""
+"Importa los miembros de la lista de deseos por niveles de afiliación y luego "
+"segmenta por etiquetas asociadas. Esta es una función profesional. Por favor,"
+" actualice para activar esta función"
+
+#: app/Services/CrmMigrator/MailerLiteMigrator.php:271
+#: app/Services/CrmMigrator/ConvertKitMigrator.php:257
+msgid "Importer is running now. "
+msgstr "El importador está funcionando ahora"
+
+#: app/Services/Helper.php:1336
+msgid "Inactive"
+msgstr "Inactivo"
+
+#: app/Services/ExternalIntegrations/BricksBuilderIntegration.php:52
+#: app/Services/ExternalIntegrations/BricksBuilderIntegration.php:72
+msgid "includes in"
+msgstr "incluye en"
+
+#: app/Hooks/Handlers/CountryNames.php:429
+msgid "India"
+msgstr "India"
+
+#: app/Hooks/Handlers/CountryNames.php:433
+msgid "Indonesia"
+msgstr "Indonesia"
+
+#: app/Models/Company.php:54
+msgid "Industry"
+msgstr ""
+
+#: app/Http/Controllers/FormsController.php:251
+msgid "Inline Opt-in Form"
+msgstr "Formulario de inscripción en línea"
+
+#: app/Http/Controllers/DocsController.php:94
+msgid "Install Fluent Connect"
+msgstr "Instalar Fluent Connect"
+
+#: app/Http/Controllers/DocsController.php:67
+msgid "Install Fluent Forms"
+msgstr "Instalar Fluent Forms"
+
+#: app/Http/Controllers/DocsController.php:76
+msgid "Install Fluent SMTP"
+msgstr "Instalar Fluent SMTP"
+
+#: app/Http/Controllers/DocsController.php:85
+msgid "Install Fluent Support"
+msgstr "Instalar Fluent Support"
+
+#: app/Http/Controllers/SetupController.php:44
+msgid "Installation has been completed"
+msgstr "La instalación se ha completado"
+
+#: app/Http/Controllers/SubscriberController.php:866
+msgid "Invalid Advanced Filters"
+msgstr ""
+
+#: app/Http/Controllers/SubscriberController.php:1115
+msgid "Invalid Automation Funnel ID"
+msgstr "ID de embudo de automatización inválido"
+
+#: app/Http/Controllers/FunnelController.php:528
+#: app/Http/Controllers/TemplateController.php:309
+msgid "invalid bulk action"
+msgstr "acción masiva no válida"
+
+#: app/Http/Controllers/SubscriberController.php:991
+#: app/Http/Controllers/SubscriberController.php:1038
+msgid "Invalid Company ID"
+msgstr ""
+
+#: app/Hooks/Handlers/FunnelHandler.php:332
+msgid "Invalid Data"
+msgstr ""
+
+#: app/Http/Controllers/WebhookBounceController.php:67
+msgid "Invalid Data or Security Code"
+msgstr "Datos o código de seguridad no válidos"
+
+#: app/Http/Controllers/SubscriberController.php:953
+msgid "Invalid Email Sequence ID"
+msgstr "ID de secuencia de correo electrónico no válida"
+
+#: app/Http/Controllers/CampaignController.php:501
+msgid "Invalid schedule date"
+msgstr ""
+
+#: app/Hooks/Handlers/ExternalPages.php:770
+msgid "Invalid Webhook Hash"
+msgstr "Hash de Webhook inválido"
+
+#: app/Hooks/Handlers/ExternalPages.php:761
+msgid "Invalid Webhook URL"
+msgstr "URL de Webhook inválida"
+
+#: app/Functions/helpers.php:620
+msgid "Invoice: Paid"
+msgstr "Factura: Pagada"
+
+#: app/Functions/helpers.php:619
+msgid "Invoice: Part Paid"
+msgstr "Factura: Parcialmente pagada"
+
+#: app/Functions/helpers.php:621
+msgid "Invoice: Refunded"
+msgstr "Factura: Reembolsado"
+
+#: app/Functions/helpers.php:618
+msgid "Invoice: Sent"
+msgstr "Factura: Enviada"
+
+#: app/Models/Subscriber.php:731
+msgid "IP Address"
+msgstr "Dirección IP"
+
+#: app/Hooks/Handlers/CountryNames.php:437
+msgid "Iran"
+msgstr "Irán"
+
+#: app/Hooks/Handlers/CountryNames.php:441
+msgid "Iraq"
+msgstr "Irak"
+
+#: app/Hooks/Handlers/CountryNames.php:445
+msgid "Ireland"
+msgstr "Irlanda"
+
+#: app/Services/ExternalIntegrations/BricksBuilderIntegration.php:55
+#: app/Services/ExternalIntegrations/BricksBuilderIntegration.php:75
+msgid "is"
+msgstr ""
+
+#: app/Services/Helper.php:1310
+msgid "Is Affiliate (Pro Required)"
+msgstr "Es afiliado (se requiere Pro)"
+
+#: app/Hooks/Handlers/CountryNames.php:449
+msgid "Isle of Man"
+msgstr "Isla de Man"
+
+#: app/Hooks/Handlers/CountryNames.php:453
+msgid "Israel"
+msgstr "Israel"
+
+#: app/Hooks/Handlers/CountryNames.php:457
+msgid "Italy"
+msgstr "Italia"
+
+#: app/Hooks/Handlers/CountryNames.php:461
+msgid "Ivory Coast"
+msgstr "Costa de Marfil"
+
+#: app/Hooks/Handlers/CountryNames.php:465
+msgid "Jamaica"
+msgstr "Jamaica"
+
+#: app/Hooks/Handlers/CountryNames.php:469
+msgid "Japan"
+msgstr "Japón"
+
+#: app/Hooks/Handlers/CountryNames.php:473
+msgid "Jersey"
+msgstr "Jersey"
+
+#: app/Hooks/Handlers/CountryNames.php:477
+msgid "Jordan"
+msgstr "Jordania"
+
+#: app/Hooks/Handlers/CountryNames.php:481
+msgid "Kazakhstan"
+msgstr "Kazajistán"
+
+#: app/Services/Helper.php:1875
+msgid "keep blank for current time"
+msgstr ""
+
+#: app/Hooks/Handlers/CountryNames.php:485
+msgid "Kenya"
+msgstr "Kenia"
+
+#: app/Hooks/Handlers/CountryNames.php:489
+msgid "Kiribati"
+msgstr "Kiribati"
+
+#: app/Hooks/Handlers/CountryNames.php:497
+msgid "Kosovo"
+msgstr "Kosovo"
+
+#: app/Hooks/Handlers/CountryNames.php:493
+msgid "Kuwait"
+msgstr "Kuwait"
+
+#: app/Hooks/Handlers/CountryNames.php:501
+msgid "Kyrgyzstan"
+msgstr "Kirguistán"
+
+#: app/Hooks/Handlers/CountryNames.php:505
+msgid "Laos"
+msgstr "Laos"
+
+#: app/Services/Helper.php:551 app/Hooks/Handlers/AdminMenu.php:812
+msgid "Large"
+msgstr "Grande"
+
+#: app/Services/Helper.php:557
+msgid "Larger"
+msgstr "Más grande"
+
+#: app/Services/Helper.php:979
+msgid "Last Activity"
+msgstr "Última actividad"
+
+#: app/Services/Helper.php:1062
+msgid "Last Email Clicked"
+msgstr "Último correo electrónico pulsado"
+
+#: app/Services/Helper.php:1056
+msgid "Last Email Open"
+msgstr "Último correo electrónico abierto"
+
+#: app/Services/Helper.php:1051
+msgid "Last Email Sent"
+msgstr "Último correo electrónico enviado"
+
+#: app/Services/Helper.php:1376 app/Services/Helper.php:1433
+msgid "Last Enrollment Date (Pro Required)"
+msgstr "Última fecha de inscripción (Pro Required)"
+
+#: app/Models/Subscriber.php:721 app/Services/Helper.php:163
+#: app/Services/Helper.php:909 app/Hooks/Handlers/PrefFormHandler.php:43
+#: app/Hooks/Handlers/PrefFormHandler.php:336
+#: app/views/external/manage_subscription_form.php:20
+#: app/views/external/manage_subscription_form.php:21
+#: app/Services/CrmMigrator/BaseMigrator.php:26
+#: app/Services/Funnel/FunnelHelper.php:134
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:152
+msgid "Last Name"
+msgstr "Apellido(s)"
+
+#: app/Services/Helper.php:1227 app/Services/Helper.php:1281
+msgid "Last Order Date (Pro Required)"
+msgstr "Fecha del último pedido (Pro Required)"
+
+#: app/Services/Helper.php:1361
+msgid "Last Payout Date (Pro Required)"
+msgstr "Última fecha de pago (Pro Required)"
+
+#: app/Services/Helper.php:211
+msgid "Latest Post Title (Published)"
+msgstr ""
+
+#: app/Hooks/Handlers/CountryNames.php:509
+msgid "Latvia"
+msgstr "Letonia"
+
+#: app/Functions/helpers.php:576
+msgid "Lead"
+msgstr "Cliente potencial"
+
+#: app/Services/Helper.php:1371 app/Http/Controllers/ImporterController.php:243
+msgid "LearnDash"
+msgstr "LearnDash"
+
+#: app/Http/Controllers/ImporterController.php:306
+msgid "LearnPress"
+msgstr "LearnPress"
+
+#: app/Services/Funnel/Triggers/UserRegistrationTrigger.php:86
+msgid "Leave blank to run for all user roles"
+msgstr "Dejar en blanco para que se ejecute para todos los roles de usuario"
+
+#: app/Hooks/Handlers/CountryNames.php:513
+msgid "Lebanon"
+msgstr "Líbano"
+
+#: app/Hooks/Handlers/CountryNames.php:517
+msgid "Lesotho"
+msgstr "Lesoto"
+
+#: app/Hooks/Handlers/CountryNames.php:521
+msgid "Liberia"
+msgstr "Liberia"
+
+#: app/Hooks/Handlers/CountryNames.php:525
+msgid "Libya"
+msgstr "Libia"
+
+#: app/Hooks/Handlers/CountryNames.php:529
+msgid "Liechtenstein"
+msgstr "Liechtenstein"
+
+#: app/Functions/helpers.php:1030
+msgid "Lifetime Value"
+msgstr "Valor de la vida útil"
+
+#: app/Services/Helper.php:1428 app/Http/Controllers/ImporterController.php:234
+msgid "LifterLMS"
+msgstr "LifterLMS"
+
+#: app/Services/Helper.php:511
+msgid "Light green cyan"
+msgstr "Verde claro cian"
+
+#: app/Models/Company.php:67
+msgid "LinkedIn URL"
+msgstr ""
+
+#: app/Services/Funnel/Benchmarks/ListAppliedBenchmark.php:23
+#: app/Services/Funnel/Benchmarks/ListAppliedBenchmark.php:48
+msgid "List Applied"
+msgstr "Lista aplicada"
+
+#: app/Services/Funnel/Benchmarks/RemoveFromListBenchmark.php:23
+msgid "List Removed"
+msgstr "Lista eliminada"
+
+#: app/Services/Funnel/Benchmarks/RemoveFromListBenchmark.php:48
+msgid "List Removed From Contact"
+msgstr "Lista eliminada del contacto"
+
+#: app/Services/Helper.php:1027 app/Hooks/CLI/Commands.php:158
+#: app/Hooks/CLI/Commands.php:372 app/Hooks/CLI/Commands.php:580
+#: app/Hooks/Handlers/AdminMenu.php:97 app/Hooks/Handlers/AdminMenu.php:98
+#: app/Hooks/Handlers/AdminMenu.php:324
+#: app/Hooks/Handlers/EventTrackingHandler.php:277
+msgid "Lists"
+msgstr "Listas"
+
+#: app/Hooks/Handlers/CountryNames.php:533
+msgid "Lithuania"
+msgstr "Lituania"
+
+#: app/Hooks/Handlers/AdminBar.php:77
+msgid "Load More"
+msgstr "Cargar más"
+
+#: app/Http/Controllers/SettingsController.php:655
+msgid "Logs older than %d days have been deleted successfully"
+msgstr "Los registros de más de %d días han sido eliminados con éxito"
+
+#: app/views/external/unsubscribe_request_form.php:33
+msgid ""
+"Looks like we could not determine your info. Please fill up the form and get "
+"unsubscribe link via email."
+msgstr ""
+
+#: app/views/external/manage_subscription_request_form.php:33
+msgid ""
+"Looks like we could not determine your info. Please fill up the form and get "
+"your email subscription form link via email."
+msgstr ""
+
+#: app/Hooks/Handlers/ExternalPages.php:398
+msgid "Looks like you are already unsubscribed"
+msgstr ""
+
+#: app/Http/Controllers/CsvController.php:69
+msgid ""
+"Looks like your csv has same name header multiple times. Please fix your csv "
+"first and remove any duplicate header column"
+msgstr ""
+"Parece que su csv tiene el mismo nombre de cabecera varias veces. Por favor, "
+"arregle su csv primero y elimine cualquier columna de cabecera duplicada"
+
+#: app/Services/Helper.php:506
+msgid "Luminous vivid amber"
+msgstr "Ámbar vivo y luminoso"
+
+#: app/Services/Helper.php:501
+msgid "Luminous vivid orange"
+msgstr "Naranja vivo y luminoso"
+
+#: app/Hooks/Handlers/CountryNames.php:537
+msgid "Luxembourg"
+msgstr "Luxemburgo"
+
+#: app/Hooks/Handlers/CountryNames.php:541
+msgid "Macao"
+msgstr "Macao"
+
+#: app/Hooks/Handlers/CountryNames.php:549
+msgid "Madagascar"
+msgstr "Madagascar"
+
+#: app/Services/CrmMigrator/MailChimpMigrator.php:33
+msgid "MailChimp API Key"
+msgstr "Clave API de MailChimp"
+
+#: app/Services/CrmMigrator/MailerLiteMigrator.php:30
+msgid "MailerLite API Key"
+msgstr "Clave API de MailerLite"
+
+#: app/Http/Controllers/SettingsController.php:328
+msgid "Mailgun"
+msgstr "Mailgun"
+
+#: app/Http/Controllers/SettingsController.php:331
+msgid "Mailgun Bounce Handler Webhook URL"
+msgstr "URL del Webhook de Mailgun Bounce Handler"
+
+#: app/Hooks/Handlers/PrefFormHandler.php:56
+#: app/views/external/manage_subscription_form.php:26
+msgid "Mailing List Groups"
+msgstr "Grupos de la lista de correo"
+
+#: app/Hooks/Handlers/CountryNames.php:553
+msgid "Malawi"
+msgstr "Malaui"
+
+#: app/Hooks/Handlers/CountryNames.php:557
+msgid "Malaysia"
+msgstr "Malasia"
+
+#: app/Hooks/Handlers/CountryNames.php:561
+msgid "Maldives"
+msgstr "Maldivas"
+
+#: app/Hooks/Handlers/CountryNames.php:565
+msgid "Mali"
+msgstr "Mali"
+
+#: app/Hooks/Handlers/CountryNames.php:569
+msgid "Malta"
+msgstr "Malta"
+
+#: app/Services/PermissionManager.php:102
+msgid "Manage CRM Settings"
+msgstr "Gestionar la configuración del CRM"
+
+#: app/Services/PermissionManager.php:78
+msgid "Manage Forms"
+msgstr "Gestionar los formularios"
+
+#: app/Services/Helper.php:216
+msgid "Manage Subscription Hyperlink HTML"
+msgstr "Gestionar el hipervínculo de suscripción HTML"
+
+#: app/Services/Helper.php:213
+msgid "Manage Subscription URL"
+msgstr "Gestionar la URL de la suscripción"
+
+#: app/Hooks/Handlers/AdminMenu.php:338
+msgid "Manage your dynamic contact segments"
+msgstr ""
+
+#: app/Services/Funnel/Triggers/FluentFormSubmissionTrigger.php:90
+msgid "Map Other Data"
+msgstr "Mapa Otros datos"
+
+#: app/Services/Funnel/Triggers/FluentFormSubmissionTrigger.php:82
+msgid "Map Primary Data"
+msgstr "Mapa Datos primarios"
+
+#: app/Services/RoleBasedTagging.php:57
+msgid "Map Role and associate tags"
+msgstr "Asignar etiquetas de rol y asociarlas"
+
+#: app/Hooks/Handlers/CountryNames.php:573
+msgid "Marshall Islands"
+msgstr "Islas Marshall"
+
+#: app/Hooks/Handlers/CountryNames.php:577
+msgid "Martinique"
+msgstr "Martinica"
+
+#: app/Hooks/Handlers/CountryNames.php:581
+msgid "Mauritania"
+msgstr "Mauritania"
+
+#: app/Hooks/Handlers/CountryNames.php:585
+msgid "Mauritius"
+msgstr "Mauricio"
+
+#: app/Hooks/CLI/Commands.php:54
+msgid "Max Rune Time"
+msgstr ""
+
+#: app/Hooks/Handlers/CountryNames.php:589
+msgid "Mayotte"
+msgstr "Mayotte"
+
+#: app/Services/Helper.php:545 app/Hooks/Handlers/AdminMenu.php:811
+msgid "Medium"
+msgstr "Mediano"
+
+#: app/Functions/helpers.php:614
+msgid "Meeting"
+msgstr "Reunión"
+
+#: app/Hooks/Handlers/CountryNames.php:593
+msgid "Mexico"
+msgstr "México"
+
+#: app/Hooks/Handlers/CountryNames.php:597
+msgid "Micronesia"
+msgstr "Micronesia"
+
+#: app/Services/CrmMigrator/ConvertKitMigrator.php:14
+msgid "Migrate your ConvertKit contacts and associate to FluentCRM"
+msgstr "Migre sus contactos de ConvertKit y asocie a FluentCRM"
+
+#: app/Services/CrmMigrator/MailerLiteMigrator.php:14
+msgid "Migrate your MailerLite contacts and associate to FluentCRM"
+msgstr "Migre sus contactos y asociados de MailerLite a FluentCRM"
+
+#: app/Services/Funnel/Actions/WaitTimeAction.php:122
+msgid "Minutes"
+msgstr "Minutos"
+
+#: app/Hooks/Handlers/CountryNames.php:601
+msgid "Moldova"
+msgstr "Moldavia"
+
+#: app/Hooks/Handlers/CountryNames.php:605
+msgid "Monaco"
+msgstr "Mónaco"
+
+#: app/Hooks/Handlers/CountryNames.php:609
+msgid "Mongolia"
+msgstr "Mongolia"
+
+#: app/Hooks/Handlers/CountryNames.php:613
+msgid "Montenegro"
+msgstr "Montenegro"
+
+#: app/Hooks/Handlers/CountryNames.php:617
+msgid "Montserrat"
+msgstr "Montserrat"
+
+#: app/Hooks/Handlers/CountryNames.php:621
+msgid "Morocco"
+msgstr "Marruecos"
+
+#: app/Hooks/Handlers/CountryNames.php:625
+msgid "Mozambique"
+msgstr "Mozambique"
+
+#: app/Models/CustomContactField.php:45
+msgid "Multi Line Text"
+msgstr "Texto de varias líneas"
+
+#: app/Models/CustomContactField.php:60
+msgid "Multiple Select choice"
+msgstr "Selección múltiple"
+
+#: app/Hooks/Handlers/CountryNames.php:629
+msgid "Myanmar"
+msgstr "Birmania"
+
+#: app/Models/Subscriber.php:719 app/Services/Helper.php:161
+#: app/Services/CrmMigrator/BaseMigrator.php:24
+#: app/Services/Funnel/FunnelHelper.php:148
+msgid "Name Prefix"
+msgstr "Prefijo del nombre"
+
+#: app/Services/Helper.php:962
+msgid "Name Prefix (Title)"
+msgstr "Nombre Prefijo (Título)"
+
+#: app/Hooks/Handlers/CountryNames.php:633
+msgid "Namibia"
+msgstr "Namibia"
+
+#: app/Hooks/Handlers/CountryNames.php:637
+msgid "Nauru"
+msgstr "Nauru"
+
+#: app/Services/Funnel/Benchmarks/RemoveFromTagBenchmark.php:69
+msgid "Need all selected tags removed from the contact"
+msgstr ""
+"Necesito que se eliminen todas las etiquetas seleccionadas del contacto"
+
+#: app/Hooks/Handlers/CountryNames.php:641
+msgid "Nepal"
+msgstr "Nepal"
+
+#: app/Hooks/Handlers/CountryNames.php:645
+msgid "Netherlands"
+msgstr "Países Bajos"
+
+#: app/Hooks/Handlers/CountryNames.php:649
+msgid "New Caledonia"
+msgstr "Nueva Caledonia"
+
+#: app/Services/Funnel/Triggers/FluentFormSubmissionTrigger.php:73
+msgid "New Fluent Forms Submission Funnel"
+msgstr "Nuevo embudo de presentación de formularios fluidos"
+
+#: app/Services/Funnel/Triggers/FluentFormSubmissionTrigger.php:31
+msgid "New Form Submission (Fluent Forms)"
+msgstr "Presentación de nuevos formularios (Fluent Forms)"
+
+#: app/Services/Funnel/Triggers/UserRegistrationTrigger.php:23
+msgid "New User Sign Up"
+msgstr "Registro de nuevos usuarios"
+
+#: app/Services/Funnel/Triggers/UserRegistrationTrigger.php:39
+msgid "New User Sign Up Funnel"
+msgstr "Embudo de registro de nuevos usuarios"
+
+#: app/Hooks/Handlers/CountryNames.php:653
+msgid "New Zealand"
+msgstr "Nueva Zelanda"
+
+#: app/Http/Controllers/ImporterController.php:157
+msgid "Next [Review Data]"
+msgstr "Siguiente [Revisión de datos]"
+
+#: app/Hooks/Handlers/CountryNames.php:657
+msgid "Nicaragua"
+msgstr "Nicaragua"
+
+#: app/Hooks/Handlers/CountryNames.php:661
+msgid "Niger"
+msgstr "Níger"
+
+#: app/Hooks/Handlers/CountryNames.php:665
+msgid "Nigeria"
+msgstr "Nigeria"
+
+#: app/Hooks/Handlers/CountryNames.php:669
+msgid "Niue"
+msgstr "Niué"
+
+#: app/Services/Helper.php:1314
+msgid "No"
+msgstr "No"
+
+#: app/Hooks/Handlers/ExternalPages.php:1163
+msgid "No Action found"
+msgstr "No se ha encontrado ninguna acción"
+
+#: app/Http/Controllers/FunnelController.php:681
+msgid "No Corresponding report found"
+msgstr "No se ha encontrado el informe correspondiente"
+
+#: app/Http/Controllers/CampaignController.php:664
+msgid ""
+"No subscriber found to send test. Please add atleast one contact as "
+"subscribed status"
+msgstr ""
+
+#: app/Http/Controllers/SubscriberController.php:971
+#: app/Http/Controllers/SubscriberController.php:1009
+#: app/Http/Controllers/SubscriberController.php:1056
+#: app/Http/Controllers/SubscriberController.php:1133
+msgid "No valid active subscribers found for this chunk"
+msgstr ""
+
+#: app/Http/Controllers/SubscriberController.php:1014
+#: app/Http/Controllers/SubscriberController.php:1061
+msgid "No valid active subscribers found for this company"
+msgstr ""
+
+#: app/Http/Controllers/SubscriberController.php:1138
+msgid "No valid active subscribers found for this funnel"
+msgstr "No se han encontrado suscriptores activos válidos para este embudo"
+
+#: app/Http/Controllers/SubscriberController.php:975
+msgid "No valid active subscribers found for this sequence"
+msgstr "No se han encontrado abonados activos válidos para esta secuencia"
+
+#: app/Hooks/Handlers/CountryNames.php:673
+msgid "Norfolk Island"
+msgstr "Isla Norfolk"
+
+#: app/Hooks/Handlers/CountryNames.php:681
+msgid "North Korea"
+msgstr "Corea del Norte"
+
+#: app/Hooks/Handlers/CountryNames.php:545
+msgid "North Macedonia"
+msgstr "Macedonia del Norte"
+
+#: app/Hooks/Handlers/CountryNames.php:677
+msgid "Northern Mariana Islands"
+msgstr "Islas Marianas del Norte"
+
+#: app/Hooks/Handlers/CountryNames.php:685
+msgid "Norway"
+msgstr "Noruega"
+
+#: app/Services/ExternalIntegrations/BricksBuilderIntegration.php:53
+#: app/Services/ExternalIntegrations/BricksBuilderIntegration.php:73
+msgid "not includes"
+msgstr ""
+
+#: app/Functions/helpers.php:611
+msgid "Note"
+msgstr "Nota"
+
+#: app/Http/Controllers/CompanyController.php:651
+msgid "Note has been successfully added"
+msgstr ""
+
+#: app/Http/Controllers/SubscriberController.php:644
+msgid "Note successfully added"
+msgstr "Nota añadida correctamente"
+
+#: app/Http/Controllers/CompanyController.php:709
+#: app/Http/Controllers/SubscriberController.php:704
+msgid "Note successfully deleted"
+msgstr "Nota borrada correctamente"
+
+#: app/Http/Controllers/CompanyController.php:690
+#: app/Http/Controllers/SubscriberController.php:685
+msgid "Note successfully updated"
+msgstr "Nota actualizada correctamente"
+
+#: app/Services/Helper.php:142 app/Services/Helper.php:1822
+msgid "Notes & Activities"
+msgstr "Notas y actividades"
+
+#: app/Models/CustomContactField.php:50
+msgid "Numeric Field"
+msgstr "Campo numérico"
+
+#: app/Hooks/Handlers/CountryNames.php:689
+msgid "Oman"
+msgstr "Omán"
+
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:234
+msgid "On Payment Refund"
+msgstr "Sobre la devolución del pago"
+
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:232
+msgid "On Subscription Active"
+msgstr "En la suscripción activa"
+
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:233
+msgid "On Subscription Cancel"
+msgstr "Al cancelar la suscripción"
+
+#: app/Services/CrmMigrator/MailerLiteMigrator.php:23
+msgid "Only Selected Groups will be imported from MailerLite"
+msgstr "Sólo se importarán los grupos seleccionados desde MailerLite"
+
+#: app/Services/CrmMigrator/ConvertKitMigrator.php:23
+msgid "Only Selected tags will be imported from ConvertKit"
+msgstr "Sólo las etiquetas seleccionadas se importarán desde ConvertKit"
+
+#: app/Hooks/Handlers/WpQueryLogger.php:45
+msgid "Oops! You are not able to see query logs."
+msgstr "¡Oops! No puede ver los registros de consulta."
+
+#: app/Models/CampaignUrlMetric.php:120
+msgid "Open Rate (%d)"
+msgstr ""
+
+#: app/Http/Controllers/SettingsController.php:114
+msgid "Optin Email Pre Header"
+msgstr ""
+
+#: app/Http/Controllers/SettingsController.php:108
+msgid "Optin Email Subject"
+msgstr "Asunto del correo electrónico Optin"
+
+#: app/views/external/manage_subscription_form.php:39
+msgid "or"
+msgstr "o"
+
+#: app/Hooks/Handlers/PurchaseHistory.php:141
+#: app/Hooks/Handlers/PurchaseHistory.php:377
+msgid "Order"
+msgstr ""
+
+#: app/Hooks/Handlers/ExternalPages.php:491
+msgid "Other (fill in reason below)"
+msgstr "Otro (escribe una razón abajo)"
+
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:164
+msgid "Other Fields"
+msgstr "Otros campos"
+
+#: app/Services/Helper.php:105
+msgid "Overview"
+msgstr "Resumen"
+
+#: app/Models/Company.php:52
+msgid "Owner Email"
+msgstr ""
+
+#: app/Models/Company.php:53
+msgid "Owner Name"
+msgstr ""
+
+#: app/Http/Controllers/ImporterController.php:261
+msgid "Paid Membership Pro"
+msgstr "Afiliación de pago Pro"
+
+#: app/Hooks/Handlers/CountryNames.php:693
+msgid "Pakistan"
+msgstr "Pakistán"
+
+#: app/Services/Helper.php:521
+msgid "Pale cyan blue"
+msgstr "Azul cian pálido"
+
+#: app/Services/Helper.php:496
+msgid "Pale pink"
+msgstr "Rosa pálido"
+
+#: app/Hooks/Handlers/CountryNames.php:697
+msgid "Palestinian Territory"
+msgstr "Territorio Palestino"
+
+#: app/Hooks/Handlers/CountryNames.php:701
+msgid "Panama"
+msgstr "Panamá"
+
+#: app/Hooks/Handlers/CountryNames.php:705
+msgid "Papua New Guinea"
+msgstr "Papua Nueva Guinea"
+
+#: app/Hooks/Handlers/CountryNames.php:709
+msgid "Paraguay"
+msgstr "Paraguay"
+
+#: app/Services/Helper.php:467
+msgid "Paymattic"
+msgstr ""
+
+#: app/Services/Helper.php:466
+msgid "Paymattic Purchase History"
+msgstr ""
+
+#: app/Functions/helpers.php:499 app/Functions/helpers.php:546
+#: app/Services/Helper.php:1337
+msgid "Pending"
+msgstr "Pendiente"
+
+#: app/Services/Stats.php:65
+msgid "Pending Emails"
+msgstr "Correos electrónicos pendientes"
+
+#: app/Http/Controllers/SettingsController.php:335
+msgid "PepiPost"
+msgstr "PepiPost"
+
+#: app/Http/Controllers/SettingsController.php:338
+msgid "PepiPost Bounce Handler Webhook URL"
+msgstr "URL del Webhook de PepiPost Bounce Handler"
+
+#: app/Hooks/Handlers/CountryNames.php:713
+msgid "Peru"
+msgstr "Perú"
+
+#: app/Hooks/Handlers/CountryNames.php:717
+msgid "Philippines"
+msgstr "Filipinas"
+
+#: app/Models/Subscriber.php:732 app/Services/Helper.php:952
+#: app/Hooks/Handlers/PrefFormHandler.php:377
+#: app/Services/CrmMigrator/BaseMigrator.php:28
+#: app/Services/Funnel/FunnelHelper.php:176
+msgid "Phone"
+msgstr "Teléfono"
+
+#: app/Services/Helper.php:173
+msgid "Phone Number"
+msgstr "Número de teléfono"
+
+#: app/Hooks/Handlers/PrefFormHandler.php:46
+msgid "Phone/Mobile"
+msgstr "Teléfono/móvil"
+
+#: app/Hooks/Handlers/CountryNames.php:721
+msgid "Pitcairn"
+msgstr "Pitcairn"
+
+#: app/Services/Helper.php:311
+msgid "Plain Centered"
+msgstr "Llano Centrado"
+
+#: app/Services/Helper.php:318
+msgid "Plain Left"
+msgstr "Izquierda lisa"
+
+#: app/Http/Controllers/ImporterController.php:148
+msgid "Please check the user roles that you want to import as contact"
+msgstr ""
+"Por favor, compruebe los roles de usuario que desea importar como contacto"
+
+#: app/Http/Controllers/FormsController.php:184
+msgid "Please check your inbox to confirm your subscription"
+msgstr ""
+"Por favor, compruebe su bandeja de entrada para confirmar su suscripción"
+
+#: app/Hooks/Handlers/WpQueryLogger.php:37
+msgid ""
+"Please enable query logging by calling enableQueryLog() before queries ran."
+msgstr ""
+"Por favor, active el registro de consultas llamando a enableQueryLog() antes "
+"de ejecutar las consultas."
+
+#: app/Hooks/Handlers/PrefFormHandler.php:218
+msgid "Please fill up all required fields"
+msgstr "Rellene todos los campos obligatorios"
+
+#: app/Services/Funnel/Actions/WaitTimeAction.php:135
+msgid ""
+"Please input date and time and this step will be executed after that time "
+"(TimeZone will be as per your WordPress Date Time Zone)"
+msgstr ""
+"Por favor, introduzca la fecha y la hora y este paso se ejecutará después de "
+"ese momento (la zona horaria será la de su zona horaria de WordPress)"
+
+#: app/Hooks/Handlers/ExternalPages.php:324
+msgid "Please let us know a reason"
+msgstr "Haznos saber una razón"
+
+#: app/Http/Controllers/SettingsController.php:367
+msgid ""
+"Please paste this URL into your Elastic Email's Webhook settings to enable "
+"Bounce Handling with FluentCRM"
+msgstr ""
+
+#: app/Http/Controllers/SettingsController.php:332
+msgid ""
+"Please paste this URL into your Mailgun's Webhook settings to enable Bounce "
+"Handling with FluentCRM"
+msgstr ""
+"Por favor, pegue esta URL en la configuración de Webhook de su Mailgun para "
+"habilitar el manejo de rebotes con FluentCRM"
+
+#: app/Http/Controllers/SettingsController.php:339
+msgid ""
+"Please paste this URL into your PepiPost's Webhook settings to enable Bounce "
+"Handling with FluentCRM"
+msgstr ""
+"Por favor, pegue esta URL en la configuración del Webhook de su PepiPost "
+"para habilitar el manejo de rebotes con FluentCRM"
+
+#: app/Http/Controllers/SettingsController.php:374
+msgid ""
+"Please paste this URL into your Postal Server's Webhook settings to enable "
+"Bounce Handling with FluentCRM. Please select only MessageBounced & "
+"MessageDeliveryFailed event"
+msgstr ""
+
+#: app/Http/Controllers/SettingsController.php:346
+msgid ""
+"Please paste this URL into your PostMark's Webhook settings to enable Bounce "
+"Handling with FluentCRM"
+msgstr ""
+"Por favor, pegue esta URL en la configuración de su Webhook de PostMark para "
+"habilitar el manejo de rebotes con FluentCRM"
+
+#: app/Http/Controllers/SettingsController.php:353
+msgid ""
+"Please paste this URL into your SendGrid's Webhook settings to enable Bounce "
+"Handling with FluentCRM"
+msgstr ""
+"Por favor, pegue esta URL en la configuración de su Webhook de SendGrid para "
+"habilitar el manejo de rebotes con FluentCRM"
+
+#: app/Http/Controllers/SettingsController.php:360
+msgid ""
+"Please paste this URL into your SparkPost's Webhook settings to enable "
+"Bounce Handling with FluentCRM"
+msgstr ""
+"Por favor, pegue esta URL en la configuración de Webhook de su SparkPost "
+"para habilitar el manejo de rebotes con FluentCRM"
+
+#: app/Hooks/Handlers/ExternalPages.php:384
+#: app/Hooks/Handlers/ExternalPages.php:438
+msgid "Please provide a valid email address"
+msgstr ""
+
+#: app/Http/Controllers/SubscriberController.php:1210
+msgid "Please provide bulk options"
+msgstr "Por favor, facilite las opciones de volumen"
+
+#: app/Http/Controllers/CampaignController.php:868
+msgid "Please provide campaign IDs"
+msgstr "Por favor, proporcione las IDs de la campaña"
+
+#: app/Http/Controllers/SettingsController.php:134
+msgid "Please provide details after a contact confirm double option from email"
+msgstr ""
+"Por favor, proporcione los detalles después de un contacto confirmar la "
+"doble opción de correo electrónico"
+
+#: app/Services/Funnel/Actions/SendEmailAction.php:54
+msgid "Please provide email details that you want to send"
+msgstr "Indique los datos del correo electrónico que desea enviar"
+
+#: app/Http/Controllers/FunnelController.php:476
+msgid "Please provide funnel IDs"
+msgstr "Por favor, proporcione las IDs de los embudos"
+
+#: app/Http/Controllers/FunnelController.php:421
+msgid "Please provide funnel subscriber IDs"
+msgstr ""
+
+#: app/Http/Controllers/SettingsController.php:166
+msgid "Please provide redirect URL after confirmation"
+msgstr ""
+"Por favor, proporcione la URL de redirección después de la confirmación"
+
+#: app/Http/Controllers/FunnelController.php:484
+#: app/Http/Controllers/CompanyController.php:380
+#: app/Http/Controllers/TemplateController.php:279
+#: app/Http/Controllers/SubscriberController.php:1084
+msgid "Please select status"
+msgstr "Por favor, seleccione el estado"
+
+#: app/Http/Controllers/SettingsController.php:139
+msgid "Please select what will happen once a contact confirm double-optin "
+msgstr ""
+"Por favor, seleccione lo que sucederá una vez que un contacto confirme la "
+"doble apertura"
+
+#: app/views/external/unsubscribe.php:64
+msgid "Please specify"
+msgstr "Por favor, especifique"
+
+#: app/Services/Funnel/Triggers/UserRegistrationTrigger.php:76
+msgid ""
+"Please specify what will happen if the subscriber already exist in the "
+"database"
+msgstr ""
+"Por favor, especifique qué ocurrirá si el abonado ya existe en la base de "
+"datos"
+
+#: app/Hooks/actions.php:177
+msgid "Please update FluentCRM Pro to latest version"
+msgstr ""
+
+#: app/Http/Controllers/SettingsController.php:325
+msgid "Please use this bounce handler url in your Amazon SES + SNS settings"
+msgstr ""
+"Por favor, utilice esta url del gestor de rebotes en su configuración de "
+"Amazon SES + SNS"
+
+#: app/Hooks/Handlers/CountryNames.php:725
+msgid "Poland"
+msgstr "Polonia"
+
+#: app/Hooks/Handlers/CountryNames.php:729
+msgid "Portugal"
+msgstr "Portugal"
+
+#: app/Models/Company.php:62 app/Models/Subscriber.php:729
+#: app/Services/Helper.php:171 app/Services/Helper.php:938
+#: app/Services/CrmMigrator/BaseMigrator.php:38
+#: app/Services/Funnel/FunnelHelper.php:160
+msgid "Postal Code"
+msgstr "Código postal"
+
+#: app/Http/Controllers/SettingsController.php:370
+msgid "Postal Server"
+msgstr ""
+
+#: app/Http/Controllers/SettingsController.php:373
+msgid "Postal Server Bounce Handler Webhook URL"
+msgstr ""
+
+#: app/Http/Controllers/SettingsController.php:342
+msgid "PostMark"
+msgstr "PostMark"
+
+#: app/Http/Controllers/SettingsController.php:345
+msgid "PostMark Bounce Handler Webhook URL"
+msgstr "URL del Webhook de PostMark Bounce Handler"
+
+#: app/views/emails/plain/Template.php:95
+#: app/views/emails/classic/Template.php:93
+#: app/views/emails/raw_classic/Template.php:37
+#: app/views/emails/simple/Template.php:92
+#: app/views/emails/web_preview/Template.php:14
+msgid "Powered By"
+msgstr "Con tecnología"
+
+#: app/Models/Subscriber.php:738
+msgid "Primary Company"
+msgstr ""
+
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:134
+msgid "Primary Fields"
+msgstr "Campos principales"
+
+#: app/views/admin/menu_page.php:15
+msgid "Pro"
+msgstr "Pro"
+
+#: app/Http/Controllers/UsersController.php:79 app/Hooks/CLI/Commands.php:136
+msgid "Processing"
+msgstr "Procesamiento"
+
+#: app/Http/Controllers/SettingsController.php:122
+msgid "Provide Email Body for the double-optin"
+msgstr "Proporcionar cuerpo de correo electrónico para el doble-optin"
+
+#: app/Http/Controllers/SubscriberController.php:292
+#: app/Http/Controllers/SubscriberController.php:373
+msgid "Provided email already assigned to another subscriber."
+msgstr ""
+"El correo electrónico proporcionado ya se ha asignado a otro suscriptor."
+
+#: app/Http/Controllers/ListsController.php:199
+msgid "Provided Lists have been successfully created"
+msgstr "Siempre que las listas se hayan creado correctamente"
+
+#: app/Hooks/Handlers/CountryNames.php:733
+msgid "Puerto Rico"
+msgstr "Puerto Rico"
+
+#: app/Services/Helper.php:118
+msgid "Purchase History"
+msgstr "Historial de compras"
+
+#: app/Hooks/Handlers/PurchaseHistory.php:489
+msgid "Purchased Products"
+msgstr "Productos comprados"
+
+#: app/Services/Helper.php:1239 app/Services/Helper.php:1293
+msgid "Purchased Products (Pro Required)"
+msgstr "Productos comprados (se requiere Pro)"
+
+#: app/Hooks/Handlers/CountryNames.php:737
+msgid "Qatar"
+msgstr "Catar"
+
+#: app/Hooks/Handlers/AdminBar.php:75
+msgid "Quick Links"
+msgstr "Enlaces rápidos"
+
+#: app/Functions/helpers.php:616
+msgid "Quote: Accepted"
+msgstr "Presupuesto: Aceptado"
+
+#: app/Functions/helpers.php:617
+msgid "Quote: Refused"
+msgstr "Presupuesto: Rechazado"
+
+#: app/Functions/helpers.php:615
+msgid "Quote: Sent"
+msgstr "Presupuesto: Enviado"
+
+#: app/Models/CustomContactField.php:65
+msgid "Radio Choice"
+msgstr "Elección de radio"
+
+#: app/Services/Helper.php:334
+msgid "Raw HTML"
+msgstr "HTML sin procesar"
+
+#: app/Http/Controllers/CampaignController.php:275
+msgid "Recipient settings has been updated"
+msgstr "Se ha actualizado la configuración de los destinatarios"
+
+#: app/Hooks/Handlers/AdminMenu.php:127 app/Hooks/Handlers/AdminMenu.php:128
+#: app/Hooks/Handlers/AdminMenu.php:362
+msgid "Recurring Campaigns"
+msgstr ""
+
+#: app/Http/Controllers/SettingsController.php:147
+msgid "Redirect to an URL"
+msgstr "Redirigir a una URL"
+
+#: app/Http/Controllers/SettingsController.php:164
+#: app/Http/Controllers/SettingsController.php:165
+msgid "Redirect URL"
+msgstr "Redirigir la URL"
+
+#: app/Services/Helper.php:1355
+msgid "Registration Date (Pro Required)"
+msgstr "Fecha de inscripción (Pro Required)"
+
+#: app/Services/Funnel/Actions/DetachCompanyAction.php:34
+msgid "Remove Contact from the Selected Company"
+msgstr ""
+
+#: app/Services/Funnel/Actions/DetachListAction.php:34
+msgid "Remove Contact from the Selected Lists"
+msgstr "Eliminar el contacto de las listas seleccionadas"
+
+#: app/Services/Funnel/Actions/DetachTagAction.php:34
+msgid "Remove Contact from the Selected Tags"
+msgstr "Eliminar el contacto de las etiquetas seleccionadas"
+
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:251
+msgid "Remove Contact Tags"
+msgstr "Eliminar etiquetas de contacto"
+
+#: app/Services/Funnel/Actions/DetachCompanyAction.php:22
+msgid "Remove From Company"
+msgstr ""
+
+#: app/Services/Funnel/Actions/DetachListAction.php:22
+msgid "Remove From List"
+msgstr "Quitar de la lista"
+
+#: app/Services/Funnel/Actions/DetachTagAction.php:22
+msgid "Remove From Tag"
+msgstr "Eliminar de la etiqueta"
+
+#: app/Services/Funnel/Actions/DetachCompanyAction.php:23
+msgid "Remove this contact from the selected company"
+msgstr ""
+
+#: app/Services/Funnel/Actions/DetachListAction.php:23
+msgid "Remove this contact from the selected lists"
+msgstr "Quitar este contacto de las listas seleccionadas"
+
+#: app/Services/Funnel/Actions/DetachTagAction.php:23
+msgid "Remove this contact from the selected Tags"
+msgstr "Eliminar este contacto de las Etiquetas seleccionadas"
+
+#: app/Hooks/Handlers/AdminMenu.php:190 app/Hooks/Handlers/AdminMenu.php:191
+#: app/Hooks/Handlers/AdminMenu.php:411 app/Hooks/Handlers/AdminMenu.php:1294
+#: app/Hooks/Handlers/AdminMenu.php:1295
+msgid "Reports"
+msgstr "Informes"
+
+#: app/views/external/manage_subscription_request_form.php:13
+msgid "Request Manage Subscription"
+msgstr ""
+
+#: app/views/external/unsubscribe_request_form.php:13
+msgid "Request Unsubscribe"
+msgstr ""
+
+#: app/Http/Controllers/ImporterController.php:279
+msgid "Restrict Content Pro"
+msgstr "Restringir contenido Pro"
+
+#: app/Hooks/Handlers/CountryNames.php:741
+msgid "Reunion"
+msgstr "Reunión"
+
+#: app/Models/Campaign.php:658 app/Models/CampaignUrlMetric.php:164
+msgid "Revenue"
+msgstr "Ingresos"
+
+#: app/Hooks/Handlers/CountryNames.php:745
+msgid "Romania"
+msgstr "Rumania"
+
+#: app/Services/Funnel/Benchmarks/RemoveFromTagBenchmark.php:65
+msgid "Run if any selected tag removed from a contact"
+msgstr "Ejecutar si se elimina alguna etiqueta seleccionada de un contacto"
+
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:241
+msgid "Run only on events"
+msgstr "Ejecutar sólo en los eventos"
+
+#: app/Services/Funnel/BaseTrigger.php:56
+msgid ""
+"Run the automation actions even contact status is not in subscribed status"
+msgstr ""
+
+#: app/Services/Funnel/Triggers/FluentFormSubmissionTrigger.php:180
+msgid ""
+"Run this automation only once per contact. If unchecked then it will over-"
+"write existing flow"
+msgstr ""
+"Ejecute esta automatización sólo una vez por contacto. Si no está marcada, "
+"sobrescribirá el flujo existente"
+
+#: app/Services/Funnel/Benchmarks/RemoveFromTagBenchmark.php:60
+#: app/Services/Funnel/Benchmarks/RemoveFromListBenchmark.php:60
+#: app/Services/Funnel/Benchmarks/ListAppliedBenchmark.php:60
+#: app/Services/Funnel/Benchmarks/TagAppliedBenchmark.php:60
+msgid "Run When"
+msgstr "Ejecutar cuando"
+
+#: app/Hooks/Handlers/CountryNames.php:749
+msgid "Russia"
+msgstr "Rusia"
+
+#: app/Hooks/Handlers/CountryNames.php:753
+msgid "Rwanda"
+msgstr "Ruanda"
+
+#: app/Hooks/Handlers/CountryNames.php:793
+msgid "S&atilde;o Tom&eacute; and Pr&iacute;ncipe"
+msgstr "Santo Tomé y Príncipe"
+
+#: app/Hooks/Handlers/CountryNames.php:757
+msgid "Saint Barth&eacute;lemy"
+msgstr "San Bartolomé"
+
+#: app/Hooks/Handlers/CountryNames.php:761
+msgid "Saint Helena"
+msgstr "Santa Elena"
+
+#: app/Hooks/Handlers/CountryNames.php:765
+msgid "Saint Kitts and Nevis"
+msgstr "San Cristóbal y Nieves"
+
+#: app/Hooks/Handlers/CountryNames.php:769
+msgid "Saint Lucia"
+msgstr "Santa Lucía"
+
+#: app/Hooks/Handlers/CountryNames.php:777
+msgid "Saint Martin (Dutch part)"
+msgstr "San Martín​ (parte holandesa)"
+
+#: app/Hooks/Handlers/CountryNames.php:773
+msgid "Saint Martin (French part)"
+msgstr "San Martín (parte francesa)"
+
+#: app/Hooks/Handlers/CountryNames.php:781
+msgid "Saint Pierre and Miquelon"
+msgstr "San Pedro y Miquelón"
+
+#: app/Hooks/Handlers/CountryNames.php:785
+msgid "Saint Vincent and the Grenadines"
+msgstr "San Vicente y las Granadinas"
+
+#: app/Hooks/Handlers/CountryNames.php:1009
+msgid "Samoa"
+msgstr "Samoa"
+
+#: app/Hooks/Handlers/CountryNames.php:789
+msgid "San Marino"
+msgstr "San Marino"
+
+#: app/Hooks/Handlers/CountryNames.php:797
+msgid "Saudi Arabia"
+msgstr "Arabia Saudita"
+
+#: app/Services/Funnel/Actions/SendEmailAction.php:104
+msgid "Schedule Date and Time"
+msgstr "Programar la fecha y la hora"
+
+#: app/Services/Funnel/Actions/SendEmailAction.php:90
+msgid "Schedule this email to a specific date"
+msgstr "Programar este correo electrónico para una fecha específica"
+
+#: app/Http/Controllers/SettingsController.php:491
+#: app/Http/Controllers/SettingsController.php:513
+msgid "Scheduled Automation Tasks"
+msgstr "Tareas de automatización programadas"
+
+#: app/Http/Controllers/SettingsController.php:482
+#: app/Http/Controllers/SettingsController.php:514
+msgid "Scheduled Email Processing"
+msgstr "Procesamiento programado del correo electrónico"
+
+#: app/Http/Controllers/SettingsController.php:512
+msgid "Scheduled Email Sending"
+msgstr "Envío programado de correos electrónicos"
+
+#: app/Http/Controllers/SettingsController.php:473
+msgid "Scheduled Email Sending Tasks"
+msgstr ""
+
+#: app/Hooks/CLI/Commands.php:50
+msgid "Scheduled Emails"
+msgstr "Correos electrónicos programados"
+
+#: app/Hooks/Handlers/AdminBar.php:72 app/Hooks/Handlers/AdminBar.php:84
+msgid "Search Contacts"
+msgstr "Buscar contactos"
+
+#: app/Hooks/Handlers/AdminMenu.php:336
+msgid "Segments"
+msgstr "Segmentos"
+
+#: app/Services/Funnel/Benchmarks/RemoveFromTagBenchmark.php:56
+msgid "Select a Tag"
+msgstr "Seleccionar una etiqueta"
+
+#: app/Services/AutoSubscribe.php:44 app/Services/AutoSubscribe.php:131
+#: app/Services/AutoSubscribe.php:289
+msgid "Select Assign List"
+msgstr "Seleccione Asignar Lista"
+
+#: app/Services/AutoSubscribe.php:58 app/Services/AutoSubscribe.php:144
+#: app/Services/AutoSubscribe.php:302
+msgid "Select Assign Tag"
+msgstr "Seleccione Asignar etiqueta"
+
+#: app/Models/CustomContactField.php:55
+msgid "Select choice"
+msgstr "Seleccione la opción"
+
+#: app/Services/Funnel/Actions/ApplyCompanyAction.php:40
+#: app/Services/Funnel/Actions/ApplyCompanyAction.php:41
+#: app/Services/Funnel/Actions/DetachCompanyAction.php:40
+#: app/Services/Funnel/Actions/DetachCompanyAction.php:41
+msgid "Select Company"
+msgstr ""
+
+#: app/Services/Funnel/Actions/DetachCompanyAction.php:35
+msgid "Select Company that you want to remove from targeted Contact"
+msgstr ""
+
+#: app/Services/Funnel/Triggers/FluentFormSubmissionTrigger.php:93
+#: app/Services/Funnel/Triggers/FluentFormSubmissionTrigger.php:95
+msgid "Select Contact Property"
+msgstr "Seleccione la propiedad de contacto"
+
+#: app/Services/Funnel/Actions/WaitTimeAction.php:199
+msgid "Select Contact's Custom Field"
+msgstr ""
+
+#: app/Hooks/Handlers/PrefFormHandler.php:486
+msgid "Select Country"
+msgstr "Seleccione el país"
+
+#: app/Services/Funnel/Actions/WaitTimeAction.php:134
+msgid "Select Date & Time"
+msgstr "Seleccione la fecha y la hora"
+
+#: app/Services/Funnel/Actions/SendEmailAction.php:107
+msgid "Select Date and Time"
+msgstr "Seleccione la fecha y la hora"
+
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:125
+msgid "Select FluentCRM List"
+msgstr "Seleccione la lista de FluentCRM"
+
+#: app/Services/Funnel/Triggers/FluentFormSubmissionTrigger.php:94
+msgid "Select Form Field"
+msgstr "Seleccione el campo del formulario"
+
+#: app/Services/Funnel/Triggers/FluentFormSubmissionTrigger.php:96
+msgid "Select Form Property"
+msgstr "Seleccione la propiedad del formulario"
+
+#: app/Services/Funnel/Benchmarks/RemoveFromListBenchmark.php:56
+#: app/Services/Funnel/Benchmarks/ListAppliedBenchmark.php:56
+#: app/Services/Funnel/Actions/DetachListAction.php:42
+#: app/Services/Funnel/Actions/ApplyListAction.php:42
+msgid "Select List"
+msgstr "Seleccionar la lista"
+
+#: app/Services/ExternalIntegrations/BricksBuilderIntegration.php:81
+#: app/Services/Funnel/Benchmarks/RemoveFromListBenchmark.php:55
+#: app/Services/Funnel/Benchmarks/ListAppliedBenchmark.php:55
+#: app/Services/Funnel/Actions/DetachListAction.php:41
+#: app/Services/Funnel/Actions/ApplyListAction.php:41
+msgid "Select Lists"
+msgstr "Seleccionar las listas"
+
+#: app/Services/Funnel/Actions/DetachListAction.php:35
+msgid "Select Lists that you want to remove from targeted Contact"
+msgstr "Seleccione las listas que desea eliminar de los contactos específicos"
+
+#: app/Services/Funnel/Triggers/UserRegistrationTrigger.php:84
+msgid "Select Roles"
+msgstr "Seleccionar los perfiles"
+
+#: app/Services/Funnel/Triggers/FluentFormSubmissionTrigger.php:113
+#: app/Services/Funnel/Triggers/UserRegistrationTrigger.php:47
+msgid "Select Status"
+msgstr "Seleccione el estado"
+
+#: app/Services/Funnel/Actions/DetachTagAction.php:42
+#: app/Services/Funnel/Actions/ApplyTagAction.php:43
+msgid "Select Tag"
+msgstr "Seleccione la etiqueta"
+
+#: app/Services/ExternalIntegrations/BricksBuilderIntegration.php:61
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:175
+#: app/Services/Funnel/Benchmarks/RemoveFromTagBenchmark.php:55
+#: app/Services/Funnel/Benchmarks/TagAppliedBenchmark.php:56
+#: app/Services/Funnel/Benchmarks/TagAppliedBenchmark.php:57
+#: app/Services/Funnel/Actions/DetachTagAction.php:41
+#: app/Services/Funnel/Actions/ApplyTagAction.php:42
+msgid "Select Tags"
+msgstr "Seleccionar las etiquetas"
+
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:252
+msgid "Select Tags (remove from contact)"
+msgstr "Seleccionar etiquetas (eliminar del contacto)"
+
+#: app/Services/Funnel/Actions/DetachTagAction.php:35
+msgid "Select Tags that you want to remove from targeted Contact"
+msgstr "Seleccione las etiquetas que desea eliminar del contacto objetivo"
+
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:126
+msgid "Select the FluentCRM List you would like to add your contacts to."
+msgstr "Seleccione la lista de FluentCRM a la que desea añadir sus contactos."
+
+#: app/Services/AutoSubscribe.php:132
+msgid ""
+"Select the list that will be assigned for comment will be made in comment "
+"forms"
+msgstr ""
+"Seleccione la lista que se asignará para el comentario se hará en los "
+"formularios de comentarios"
+
+#: app/Services/AutoSubscribe.php:45
+msgid ""
+"Select the list that will be assigned for new user registration in your site"
+msgstr ""
+"Seleccione la lista que se asignará para el registro de nuevos usuarios en "
+"su sitio"
+
+#: app/Services/AutoSubscribe.php:290
+msgid "Select the list that will be assigned when checkbox checked"
+msgstr ""
+"Seleccione la lista que se asignará cuando se marque la casilla de "
+"verificación"
+
+#: app/Services/AutoSubscribe.php:145
+msgid ""
+"Select the tags that will be assigned for new comment will be made in "
+"comment forms"
+msgstr ""
+"Seleccione las etiquetas que se asignarán para los nuevos comentarios que se "
+"realicen en los formularios de comentarios"
+
+#: app/Services/AutoSubscribe.php:59
+msgid ""
+"Select the tags that will be assigned for new user registration in your site"
+msgstr ""
+"Seleccione las etiquetas que se asignarán para el registro de nuevos "
+"usuarios en su sitio"
+
+#: app/Services/AutoSubscribe.php:303
+msgid "Select the tags that will be assigned when checkbox checked"
+msgstr "Seleccione las etiquetas que se asignarán cuando se marque la casilla"
+
+#: app/Http/Controllers/ImporterController.php:147
+msgid "Select User Roles"
+msgstr "Seleccione los roles de los usuarios"
+
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:165
+msgid ""
+"Select which Fluent Form fields pair with their<br /> respective FlunentCRM "
+"fields."
+msgstr ""
+"Seleccione qué campos de Fluent Form se emparejan con sus<br /> respectivos "
+"campos de FlunentCRM."
+
+#: app/Services/Funnel/Actions/ApplyCompanyAction.php:35
+#: app/Services/Funnel/Actions/ApplyListAction.php:35
+msgid "Select which list will be added to the contact"
+msgstr "Selecciona qué lista será añadida al contacto"
+
+#: app/Services/Funnel/Triggers/UserRegistrationTrigger.php:83
+msgid "Select which roles registration will run this automation Funnel"
+msgstr ""
+"Seleccione el registro de roles que ejecutará este embudo de automatización"
+
+#: app/Services/Funnel/Actions/ApplyTagAction.php:35
+msgid "Select which tag will be added to the contact"
+msgstr "Seleccione la etiqueta que se añadirá al contacto"
+
+#: app/Services/Funnel/Triggers/FluentFormSubmissionTrigger.php:78
+msgid "Select your form"
+msgstr "Seleccione su formulario"
+
+#: app/Http/Controllers/SubscriberController.php:1187
+msgid "Selected Action is not valid"
+msgstr "La acción seleccionada no es válida"
+
+#: app/Http/Controllers/CompanyController.php:441
+#: app/Http/Controllers/SubscriberController.php:1225
+msgid "Selected bulk action has been successfully completed"
+msgstr "La acción masiva seleccionada se ha completado con éxito"
+
+#: app/Http/Controllers/CampaignController.php:881
+msgid "Selected Campaigns has been deleted permanently"
+msgstr "Las campañas seleccionadas han sido eliminadas definitivamente"
+
+#: app/Http/Controllers/CompanyController.php:147
+msgid "Selected Companies has been attached successfully"
+msgstr ""
+
+#: app/Http/Controllers/CompanyController.php:374
+msgid "Selected Companies has been deleted permanently"
+msgstr ""
+
+#: app/Http/Controllers/SubscriberController.php:933
+msgid "Selected Contacts has been deleted permanently"
+msgstr "Los contactos seleccionados se han borrado definitivamente"
+
+#: app/Http/Controllers/SettingsController.php:526
+msgid "Selected CRON Event successfully ran"
+msgstr "El evento CRON seleccionado se ha ejecutado con éxito"
+
+#: app/Http/Controllers/CampaignController.php:434
+msgid "Selected emails are deleted"
+msgstr "Los correos electrónicos seleccionados han sido eliminados."
+
+#: app/Http/Controllers/ReportingController.php:90
+#: app/Http/Controllers/SubscriberController.php:579
+msgid "Selected emails has been deleted"
+msgstr "Los correos electrónicos seleccionados han sido borrados"
+
+#: app/Http/Controllers/FunnelController.php:522
+msgid "Selected Funnels has been deleted permanently"
+msgstr "Los embudos seleccionados han sido eliminados definitivamente"
+
+#: app/Http/Controllers/ListsController.php:234
+msgid "Selected Lists has been removed permanently"
+msgstr "Las listas seleccionadas se han eliminado de forma permanente"
+
+#: app/Http/Controllers/SubscriberController.php:220
+msgid "Selected Subscriber has been deleted successfully"
+msgstr "El suscriptor seleccionado ha sido eliminado con éxito"
+
+#: app/Http/Controllers/SubscriberController.php:236
+msgid "Selected Subscribers has been deleted"
+msgstr "Se han eliminado los suscriptores seleccionados"
+
+#: app/Http/Controllers/FunnelController.php:436
+msgid "Selected subscribers has been removed from this automation funnels"
+msgstr ""
+
+#: app/Http/Controllers/TagsController.php:244
+msgid "Selected Tags has been removed permanently"
+msgstr "Las etiquetas seleccionadas se han eliminado de forma permanente"
+
+#: app/Http/Controllers/TemplateController.php:304
+msgid "Selected Templates has been deleted permanently"
+msgstr "Las plantillas seleccionadas se han borrado definitivamente"
+
+#: app/Services/Funnel/Actions/SendEmailAction.php:29
+msgid "Send a custom Email to your subscriber or custom email address"
+msgstr ""
+"Envíe un correo electrónico personalizado a su abonado o dirección de correo "
+"electrónico personalizada"
+
+#: app/Hooks/Handlers/AdminMenu.php:364
+msgid ""
+"Send automated daily or weekly emails of your dynamic data like new blog "
+"posts"
+msgstr ""
+
+#: app/Services/Funnel/Actions/SendEmailAction.php:28
+#: app/Services/Funnel/Actions/SendEmailAction.php:53
+msgid "Send Custom Email"
+msgstr "Enviar correo electrónico personalizado"
+
+#: app/Hooks/Handlers/AdminMenu.php:358
+msgid ""
+"Send Email Broadcast to your selected subscribers by tags, lists or segment"
+msgstr ""
+
+#: app/Services/Funnel/Actions/SendEmailAction.php:59
+msgid "Send Email to"
+msgstr "Enviar correo electrónico a"
+
+#: app/Hooks/CLI/Commands.php:46
+msgid "Send Emails"
+msgstr "Enviar correos electrónicos"
+
+#: app/Services/Funnel/Actions/SendEmailAction.php:67
+msgid "Send to Custom Email Address"
+msgstr "Enviar a una dirección de correo electrónico personalizada"
+
+#: app/Services/Funnel/Actions/SendEmailAction.php:74
+msgid "Send To Email Addresses (If Custom)"
+msgstr "Enviar a direcciones de correo electrónico (si es personalizado)"
+
+#: app/Services/Funnel/Actions/SendEmailAction.php:63
+msgid "Send To the contact"
+msgstr "Enviar al contacto"
+
+#: app/Http/Controllers/SettingsController.php:349
+msgid "SendGrid"
+msgstr "SendGrid"
+
+#: app/Http/Controllers/SettingsController.php:352
+msgid "SendGrid Bounce Handler Webhook URL"
+msgstr "URL del Webhook de SendGrid Bounce Handler"
+
+#: app/Hooks/Handlers/CountryNames.php:801
+msgid "Senegal"
+msgstr "Senegal"
+
+#: app/Http/Controllers/FunnelController.php:278
+#: app/Hooks/Handlers/FunnelHandler.php:231
+msgid "Sequence successfully updated"
+msgstr "Secuencia actualizada correctamente."
+
+#: app/Hooks/Handlers/CountryNames.php:805
+msgid "Serbia"
+msgstr "Serbia"
+
+#: app/Hooks/Handlers/AdminMenu.php:265
+#, php-format
+msgid "Server-Side Cron Job is not enabled %1sView Documentation%2s."
+msgstr ""
+
+#: app/Services/Funnel/Actions/SendEmailAction.php:117
+msgid "Set Custom From Name and Email"
+msgstr ""
+"Establecer el nombre y el correo electrónico personalizados del remitente"
+
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:55
+msgid "Set FluentCRM"
+msgstr "Establecer FluentCRM"
+
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:185
+msgid "Set Tag"
+msgstr "Establecer la etiqueta"
+
+#: app/Services/Stats.php:112 app/Hooks/Handlers/AdminMenu.php:181
+#: app/Hooks/Handlers/AdminMenu.php:182 app/Hooks/Handlers/AdminMenu.php:417
+#: app/Hooks/Handlers/AdminMenu.php:1301 app/Hooks/Handlers/AdminMenu.php:1302
+msgid "Settings"
+msgstr "Ajustes"
+
+#: app/Http/Controllers/SettingsController.php:460
+#: app/Http/Controllers/SettingsController.php:938
+msgid "Settings has been updated"
+msgstr "Los ajustes se han actualizado"
+
+#: app/Http/Controllers/SettingsController.php:79
+msgid "Settings Updated"
+msgstr "Ajustes actualizados"
+
+#: app/Hooks/Handlers/CountryNames.php:809
+msgid "Seychelles"
+msgstr "Seychelles"
+
+#: app/Http/Controllers/SettingsController.php:143
+msgid "Show Message"
+msgstr "Mostrar mensaje"
+
+#: app/Hooks/Handlers/CountryNames.php:813
+msgid "Sierra Leone"
+msgstr "Sierra Leona"
+
+#: app/Services/AutoSubscribe.php:237
+msgid "Sign me up for the newsletter!"
+msgstr "¡Suscríbeme al boletín!"
+
+#: app/Services/Helper.php:304
+msgid "Simple Boxed"
+msgstr "Caja simple"
+
+#: app/Http/Controllers/FormsController.php:261
+msgid "Simple Opt-in Form"
+msgstr "Formulario de inscripción simple"
+
+#: app/Hooks/Handlers/CountryNames.php:817
+msgid "Singapore"
+msgstr "Singapur"
+
+#: app/Models/CustomContactField.php:40
+msgid "Single Line Text"
+msgstr "Texto de una sola línea"
+
+#: app/Services/Helper.php:208
+msgid "Site URL"
+msgstr "URL del sitio"
+
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:192
+msgid "Skip if contact already exist in FluentCRM"
+msgstr "Omitir si el contacto ya existe en FluentCRM"
+
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:198
+msgid "Skip name update if existing contact have old data (per primary field)"
+msgstr ""
+"Omitir la actualización del nombre si el contacto existente tiene datos "
+"antiguos (por campo primario)"
+
+#: app/Services/Funnel/Actions/SendEmailAction.php:96
+msgid "Skip sending email if date is overdued"
+msgstr "Omitir el envío de un correo electrónico si la fecha está sobrepasada"
+
+#: app/Services/Funnel/FunnelHelper.php:35
+msgid "Skip this automation if contact already exist"
+msgstr "Omita esta automatización si el contacto ya existe"
+
+#: app/Hooks/Handlers/CountryNames.php:821
+msgid "Slovakia"
+msgstr "Eslovaquia"
+
+#: app/Hooks/Handlers/CountryNames.php:825
+msgid "Slovenia"
+msgstr "Eslovenia"
+
+#: app/Services/Helper.php:539
+msgid "Small"
+msgstr "Pequeño"
+
+#: app/Hooks/Handlers/AdminMenu.php:210 app/Hooks/Handlers/AdminMenu.php:211
+msgid "SMTP"
+msgstr "SMTP"
+
+#: app/Hooks/Handlers/CountryNames.php:829
+msgid "Solomon Islands"
+msgstr "Islas Salomón"
+
+#: app/Hooks/Handlers/CountryNames.php:833
+msgid "Somalia"
+msgstr "Somalia"
+
+#: app/Http/Controllers/SettingsController.php:699
+msgid "Something is wrong"
+msgstr ""
+
+#: app/Http/Controllers/SubscriberController.php:355
+msgid "Sorry contact already exist"
+msgstr "Lo siento, el contacto ya existe"
+
+#: app/Hooks/Handlers/AdminBar.php:76
+msgid "Sorry no contact found"
+msgstr "Lo siento no se encontraron contactos"
+
+#: app/Http/Controllers/MigratorController.php:38
+#: app/Http/Controllers/MigratorController.php:67
+#: app/Http/Controllers/MigratorController.php:93
+#: app/Http/Controllers/MigratorController.php:125
+msgid "Sorry no driver found for the selected CRM"
+msgstr ""
+"Lo sentimos, no se ha encontrado ningún controlador para el CRM seleccionado"
+
+#: app/Http/Controllers/ImporterController.php:54
+#: app/Http/Controllers/ImporterController.php:78
+msgid "Sorry no driver found for this import"
+msgstr ""
+"Lo sentimos, no se ha encontrado ningún controlador para esta importación"
+
+#: app/Hooks/Handlers/ExternalPages.php:996
+msgid "Sorry! No subscriber found in the database"
+msgstr "¡Lo siento! No se encontró ningún suscriptor en la base de datos"
+
+#: app/Http/Controllers/CampaignController.php:229
+msgid "Sorry! No subscribers found based on your selection"
+msgstr "¡Lo siento! No se encontraron suscriptores según tu selección"
+
+#: app/Hooks/Handlers/ExternalPages.php:392
+#: app/Hooks/Handlers/ExternalPages.php:446
+msgid "Sorry! We could not verify your email address"
+msgstr ""
+
+#: app/Http/Controllers/SetupController.php:65
+#: app/Http/Controllers/SetupController.php:83
+#: app/Http/Controllers/SetupController.php:106
+msgid "Sorry! you do not have permission to install plugin"
+msgstr "Lo siento, no tienes permisos para instalar plugins"
+
+#: app/Hooks/Handlers/ExternalPages.php:663
+msgid "Sorry! Your confirmation url is not valid"
+msgstr "¡Lo sentimos! Su url de confirmación no es válida"
+
+#: app/Hooks/Handlers/ExternalPages.php:508
+msgid "Sorry, No email found based on your data"
+msgstr ""
+"Lo sentimos, no se ha encontrado ningún correo electrónico basado en sus "
+"datos"
+
+#: app/Http/Controllers/CampaignController.php:353
+#: app/Http/Controllers/CampaignController.php:381
+msgid "Sorry, No subscribers found based on your filters"
+msgstr "Lo sentimos, no se han encontrado suscriptores según sus filtros"
+
+#: app/Http/Controllers/SettingsController.php:882
+msgid "Sorry, the provided provider does not exist"
+msgstr "Lo sentimos, el proveedor proporcionado no existe"
+
+#: app/Http/Controllers/SettingsController.php:673
+#: app/Http/Controllers/SettingsController.php:793
+#: app/Http/Controllers/SettingsController.php:807
+msgid "Sorry, the provided user does not have FluentCRM access"
+msgstr "Lo sentimos, el usuario proporcionado no tiene acceso a FluentCRM"
+
+#: app/Http/Controllers/CompanyController.php:318
+msgid "Sorry, we could not find the logo from website. Please upload manually"
+msgstr ""
+
+#: app/Http/Controllers/SettingsController.php:254
+msgid "Sorry, You do not have admin permission to reset database"
+msgstr ""
+"Lo sentimos, no tiene permiso de administrador para restablecer la base de "
+"datos"
+
+#: app/Http/Controllers/SettingsController.php:799
+msgid "Sorry, You do not have permission to create REST API"
+msgstr "Lo sentimos, no tiene permiso para crear la API REST"
+
+#: app/Http/Controllers/SettingsController.php:679
+msgid "Sorry, You do not have permission to delete REST API"
+msgstr ""
+
+#: app/Hooks/Handlers/FunnelHandler.php:218
+#: app/Hooks/Handlers/FunnelHandler.php:263
+#: app/Hooks/Handlers/FunnelHandler.php:321
+msgid "Sorry, You do not have permission to do this action"
+msgstr "Lo sentimos, no tiene permiso para realizar esta acción"
+
+#: app/Models/Subscriber.php:733 app/Services/Helper.php:970
+msgid "Source"
+msgstr "Fuente"
+
+#: app/Hooks/Handlers/CountryNames.php:837
+msgid "South Africa"
+msgstr "Sudáfrica"
+
+#: app/Hooks/Handlers/CountryNames.php:841
+msgid "South Georgia/Sandwich Islands"
+msgstr "Islas Georgias y Sandwich del Sur"
+
+#: app/Hooks/Handlers/CountryNames.php:845
+msgid "South Korea"
+msgstr "Corea del Sur"
+
+#: app/Hooks/Handlers/CountryNames.php:849
+msgid "South Sudan"
+msgstr "Sudán del Sur"
+
+#: app/Hooks/Handlers/CountryNames.php:853
+msgid "Spain"
+msgstr "España"
+
+#: app/Http/Controllers/SettingsController.php:356
+msgid "SparkPost"
+msgstr "SparkPost"
+
+#: app/Http/Controllers/SettingsController.php:359
+msgid "SparkPost Bounce Handler Webhook URL"
+msgstr "URL del Webhook de SparkPost Bounce Handler"
+
+#: app/Services/Funnel/Actions/WaitTimeAction.php:132
+msgid "Specify Date and Time"
+msgstr "Especifique la fecha y la hora"
+
+#: app/Hooks/Handlers/CountryNames.php:857
+msgid "Sri Lanka"
+msgstr "Sri Lanka"
+
+#: app/Models/Company.php:64 app/Models/Subscriber.php:728
+#: app/Services/Helper.php:170 app/Services/Helper.php:933
+#: app/Hooks/Handlers/PrefFormHandler.php:51
+#: app/Hooks/Handlers/PrefFormHandler.php:466
+#: app/Services/CrmMigrator/BaseMigrator.php:40
+#: app/Services/Funnel/FunnelHelper.php:168
+msgid "State"
+msgstr "Provincia"
+
+#: app/Services/Helper.php:174 app/Services/Helper.php:1001
+#: app/Http/Controllers/CampaignAnalyticsController.php:105
+#: app/Http/Controllers/CampaignAnalyticsController.php:156
+#: app/Http/Controllers/CampaignAnalyticsController.php:174
+#: app/Hooks/CLI/Commands.php:162 app/Hooks/CLI/Commands.php:376
+#: app/Hooks/CLI/Commands.php:584 app/Hooks/Handlers/PurchaseHistory.php:152
+#: app/Hooks/Handlers/PurchaseHistory.php:388
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:263
+msgid "Status"
+msgstr "Estado"
+
+#: app/Services/Helper.php:1332
+msgid "Status (Pro Required)"
+msgstr "Estado (Pro requerido)"
+
+#: app/Http/Controllers/CompanyController.php:396
+msgid "Status has been changed for the selected companies"
+msgstr ""
+
+#: app/Http/Controllers/FunnelController.php:501
+msgid "Status has been changed for the selected funnels"
+msgstr "Se ha modificado el estado de los embudos seleccionados"
+
+#: app/Http/Controllers/SubscriberController.php:1102
+msgid "Status has been changed for the selected subscribers"
+msgstr "Se ha modificado el estado de los abonados seleccionados"
+
+#: app/Http/Controllers/TemplateController.php:294
+msgid "Status has been changed for the selected templates"
+msgstr "Se ha modificado el estado de las plantillas seleccionadas"
+
+#: app/Http/Controllers/FunnelController.php:695
+#, php-format
+msgid "Status has been updated to %s"
+msgstr "El estado ha sido actualizado a %s"
+
+#: app/Http/Controllers/CampaignController.php:216
+msgid "step saved"
+msgstr "paso guardado"
+
+#: app/Services/AutoSubscribe.php:86
+#: app/Hooks/Handlers/AutoSubscribeHandler.php:107
+msgid "Subscribe to newsletter"
+msgstr "Suscríbete al boletín"
+
+#: app/Functions/helpers.php:498 app/Functions/helpers.php:545
+msgid "Subscribed"
+msgstr "Suscrito"
+
+#: app/Http/Controllers/FunnelController.php:646
+msgid "Subscribed has been removed from this automation funnel"
+msgstr "Suscrito ha sido eliminado de este embudo de automatización"
+
+#: app/Hooks/Handlers/ExternalPages.php:696
+msgid "Subscriber confirmed double opt-in from IP Address:"
+msgstr "Suscriptor confirmado de doble opt-in desde la dirección IP:"
+
+#: app/Hooks/Handlers/ExternalPages.php:695
+msgid "Subscriber double opt-in confirmed"
+msgstr "Confirmación del doble opt-in del suscriptor"
+
+#: app/Http/Controllers/SubscriberController.php:107
+msgid "Subscriber not found"
+msgstr "Abonado no encontrado"
+
+#: app/Http/Controllers/SubscriberController.php:455
+msgid "Subscriber successfully updated"
+msgstr "Suscriptor actualizado correctamente"
+
+#: app/Hooks/Handlers/ExternalPages.php:575
+#, php-format
+msgid "Subscriber unsubscribed from IP Address: %1s <br />Reason: %2s"
+msgstr ""
+
+#: app/Http/Controllers/SubscriberController.php:790
+msgid "Subscriber's status need to be subscribed."
+msgstr "Es necesario que el estado del abonado esté suscrito."
+
+#: app/Http/Controllers/FunnelController.php:639
+msgid "subscriber_ids parameter is required"
+msgstr "el parámetro subscriber_ids es obligatorio"
+
+#: app/Hooks/CLI/Commands.php:30
+msgid "Subscribers"
+msgstr "Suscriptores"
+
+#: app/Http/Controllers/SubscriberController.php:924
+msgid "Subscribers selection is required"
+msgstr "Se requiere la selección de suscriptores"
+
+#: app/Http/Controllers/SubscriberController.php:209
+msgid "Subscribers successfully updated"
+msgstr "Suscriptores actualizados con éxito"
+
+#: app/Http/Controllers/FormsController.php:271
+msgid "Subscription Form"
+msgstr "Formulario de suscripción"
+
+#: app/Hooks/CLI/Commands.php:140
+msgid "Subscription Payments"
+msgstr "Pagos de suscripción"
+
+#: app/Services/Funnel/Triggers/FluentFormSubmissionTrigger.php:112
+#: app/Services/Funnel/Triggers/UserRegistrationTrigger.php:46
+msgid "Subscription Status"
+msgstr "Estado de la suscripción"
+
+#: app/Http/Controllers/FunnelController.php:671
+msgid "Subscription status is required"
+msgstr "Se requiere el estado de la suscripción"
+
+#: app/Hooks/Handlers/ExternalPages.php:115
+#: app/Hooks/Handlers/ExternalPages.php:170
+msgid "success"
+msgstr "éxito"
+
+#: app/Http/Controllers/SubscriberController.php:335
+msgid "Successfully added the subscriber."
+msgstr "Se ha añadido el abonado con éxito."
+
+#: app/Http/Controllers/WebhookController.php:76
+msgid "Successfully created the WebHook"
+msgstr "Creado con éxito el WebHook"
+
+#: app/Http/Controllers/WebhookController.php:96
+msgid "Successfully deleted the webhook"
+msgstr "Eliminado con éxito el webhook"
+
+#: app/Http/Controllers/ListsController.php:218
+msgid "Successfully removed the list."
+msgstr "Se ha eliminado la lista con éxito."
+
+#: app/Http/Controllers/TagsController.php:223
+msgid "Successfully removed the tag."
+msgstr "Etiqueta eliminada correctamente."
+
+#: app/Http/Controllers/ListsController.php:98
+#: app/Http/Controllers/ListsController.php:155
+msgid "Successfully saved the list."
+msgstr "Se ha guardado la lista con éxito."
+
+#: app/Http/Controllers/TagsController.php:105
+#: app/Http/Controllers/TagsController.php:159
+msgid "Successfully saved the tag."
+msgstr "Se ha guardado la etiqueta con éxito."
+
+#: app/Http/Controllers/TagsController.php:203
+msgid "Successfully saved the tags."
+msgstr "Se han guardado las etiquetas con éxito."
+
+#: app/Http/Controllers/SubscriberController.php:273
+msgid "Successfully updated the "
+msgstr "Se ha actualizado con éxito el"
+
+#: app/Http/Controllers/WebhookController.php:86
+msgid "Successfully updated the webhook"
+msgstr "Se ha actualizado con éxito el webhook"
+
+#: app/Hooks/Handlers/CountryNames.php:861
+msgid "Sudan"
+msgstr "Sudán"
+
+#: fluent-crm.php:45
+msgid "Support"
+msgstr "Soporte"
+
+#: app/Services/Helper.php:135
+msgid "Support Tickets"
+msgstr "Entradas de apoyo"
+
+#: app/Hooks/Handlers/CountryNames.php:865
+msgid "Suriname"
+msgstr "Surinam"
+
+#: app/Hooks/Handlers/CountryNames.php:869
+msgid "Svalbard and Jan Mayen"
+msgstr "Svalbard y Jan Mayen"
+
+#: app/Hooks/Handlers/CountryNames.php:873
+msgid "Swaziland"
+msgstr "Swazilandia"
+
+#: app/Hooks/Handlers/CountryNames.php:877
+msgid "Sweden"
+msgstr "Suecia"
+
+#: app/Hooks/Handlers/CountryNames.php:881
+msgid "Switzerland"
+msgstr "Suiza"
+
+#: app/Http/Controllers/FunnelController.php:854
+msgid "Synced successfully"
+msgstr ""
+
+#: app/Hooks/Handlers/CountryNames.php:885
+msgid "Syria"
+msgstr "Siria"
+
+#: app/Services/Funnel/Benchmarks/TagAppliedBenchmark.php:23
+#: app/Services/Funnel/Benchmarks/TagAppliedBenchmark.php:48
+msgid "Tag Applied"
+msgstr "Etiqueta aplicada"
+
+#: app/Services/Funnel/Benchmarks/RemoveFromTagBenchmark.php:23
+msgid "Tag Removed"
+msgstr "Etiqueta eliminada"
+
+#: app/Services/Funnel/Benchmarks/RemoveFromTagBenchmark.php:48
+msgid "Tag Removed From Contact"
+msgstr "Etiqueta eliminada del contacto"
+
+#: app/Services/Stats.php:39 app/Services/Helper.php:1019
+#: app/Hooks/CLI/Commands.php:154 app/Hooks/CLI/Commands.php:368
+#: app/Hooks/CLI/Commands.php:576 app/Hooks/Handlers/AdminMenu.php:106
+#: app/Hooks/Handlers/AdminMenu.php:107 app/Hooks/Handlers/AdminMenu.php:330
+#: app/Hooks/Handlers/EventTrackingHandler.php:269
+msgid "Tags"
+msgstr "Etiquetas"
+
+#: app/Services/RoleBasedTagging.php:59
+msgid "Tags to be added"
+msgstr "Etiquetas a añadir"
+
+#: app/Services/RoleBasedTagging.php:60
+msgid "Tags to be removed"
+msgstr "Etiquetas a eliminar"
+
+#: app/Hooks/Handlers/CountryNames.php:889
+msgid "Taiwan"
+msgstr "Taiwán"
+
+#: app/Hooks/Handlers/CountryNames.php:893
+msgid "Tajikistan"
+msgstr "Tayikistán"
+
+#: app/Hooks/Handlers/CountryNames.php:897
+msgid "Tanzania"
+msgstr "Tanzania"
+
+#: app/Services/RoleBasedTagging.php:58
+msgid "Target User Role"
+msgstr "Perfil de usuario objetivo"
+
+#: app/Services/Funnel/Triggers/UserRegistrationTrigger.php:82
+msgid "Targeted User Roles"
+msgstr "Roles de los usuarios objetivo"
+
+#: app/Http/Controllers/TemplateController.php:165
+msgid "Template successfully created"
+msgstr "Plantilla creada con éxito"
+
+#: app/Http/Controllers/TemplateController.php:202
+msgid "Template successfully duplicated"
+msgstr "Plantilla duplicada con éxito"
+
+#: app/Http/Controllers/TemplateController.php:263
+msgid "Template successfully updated"
+msgstr "Plantilla actualizada correctamente."
+
+#: app/Http/Controllers/CampaignController.php:727
+msgid "Test email successfully sent to "
+msgstr "Correo electrónico de prueba enviado con éxito a"
+
+#: app/Hooks/Handlers/CountryNames.php:901
+msgid "Thailand"
+msgstr "Tailandia"
+
+#: app/Hooks/Handlers/AdminMenu.php:268
+#, fuzzy, php-format
+#| msgid "Thank you for using <a href=\"%s\">FluentCRM</a>"
+msgid "Thank you for using <a href=\"%s\">FluentCRM</a>."
+msgstr "Gracias por usar <a href=\"%s\">FluentCRM</a>"
+
+#: app/Services/Funnel/BaseTrigger.php:63
+msgid ""
+"The actions will run even the contact's status is not in subscribed status."
+msgstr ""
+
+#: app/Hooks/Handlers/CampaignGuard.php:45
+msgid ""
+"The campaign has been locked and not deletable due to it's current status"
+msgstr ""
+"La campaña ha sido bloqueada y no se puede borrar debido a su estado actual"
+
+#: app/Hooks/Handlers/CampaignGuard.php:28
+msgid ""
+"The campaign has been locked and not modifiable due to it's current status"
+msgstr ""
+"La campaña ha sido bloqueada y no se puede modificar debido a su estado "
+"actual"
+
+#: app/Hooks/Handlers/ExternalPages.php:489
+msgid "The emails are inappropriate"
+msgstr "No tengo interés en la información que me ofrecen"
+
+#: app/Hooks/Handlers/ExternalPages.php:490
+msgid "The emails are spam"
+msgstr "Recibo demasiados emails promocionales de esta página"
+
+#: app/Http/Controllers/CsvController.php:44
+msgid "The file must be a valid CSV."
+msgstr "El archivo debe ser un CSV válido."
+
+#: app/Hooks/Handlers/ExternalPages.php:1029
+msgid ""
+"The new email has been used to another account. Please use a new email "
+"address"
+msgstr ""
+"El nuevo correo electrónico se ha utilizado para otra cuenta. Utilice una "
+"nueva dirección de correo electrónico"
+
+#: app/Http/Controllers/SettingsController.php:519
+msgid "The provided hook name is not valid"
+msgstr "El nombre del gancho proporcionado no es válido"
+
+#: app/Http/Controllers/FunnelController.php:687
+msgid "The status already completed state"
+msgstr "El estado ya completado"
+
+#: app/Http/Controllers/TemplateController.php:320
+msgid "The template has been deleted successfully."
+msgstr "La plantilla ha sido eliminada con éxito."
+
+#: app/Http/Controllers/DocsController.php:77
+msgid ""
+"The Ultimate SMTP and SES Plugin for WordPress. Connect with any SMTP, "
+"SendGrid, Mailgun, SES, Sendinblue, PepiPost, Google, Microsoft and more."
+msgstr ""
+"El último plugin de SMTP y SES para WordPress. Conecta con cualquier SMTP, "
+"SendGrid, Mailgun, SES, Sendinblue, PepiPost, Google, Microsoft y más."
+
+#: app/Http/Controllers/SubscriberController.php:945
+#: app/Http/Controllers/SubscriberController.php:1107
+msgid "This action requires FluentCRM Pro"
+msgstr "Esta acción requiere FluentCRM Pro"
+
+#: app/Http/Controllers/FunnelController.php:835
+#: app/Http/Controllers/FunnelController.php:843
+msgid "This feature require latest version of FluentCRM Pro version"
+msgstr ""
+
+#: app/Services/Funnel/Triggers/FluentFormSubmissionTrigger.php:32
+msgid ""
+"This Funnel will be initiated when a new form submission has been submitted"
+msgstr "Este embudo se iniciará cuando se envíe un nuevo formulario"
+
+#: app/Services/Funnel/Triggers/FluentFormSubmissionTrigger.php:62
+msgid ""
+"This Funnel will be initiated when a new form submission has been submitted."
+msgstr "Este embudo se iniciará cuando se envíe un nuevo formulario."
+
+#: app/Services/Funnel/Triggers/UserRegistrationTrigger.php:24
+#: app/Services/Funnel/Triggers/UserRegistrationTrigger.php:40
+msgid ""
+"This Funnel will be initiated when a new user has been registered in your "
+"site"
+msgstr ""
+"Este embudo se iniciará cuando un nuevo usuario se haya registrado en su "
+"sitio"
+
+#: app/Http/Controllers/SettingsController.php:155
+msgid "This message will be shown after a subscriber confirm subscription"
+msgstr ""
+"Este mensaje se mostrará después de que el abonado confirme la suscripción"
+
+#: app/Services/Funnel/Benchmarks/ListAppliedBenchmark.php:24
+#: app/Services/Funnel/Benchmarks/ListAppliedBenchmark.php:49
+msgid "This will run when selected lists have been applied to a contact"
+msgstr ""
+"Se ejecutará cuando las listas seleccionadas se hayan aplicado a un contacto"
+
+#: app/Services/Funnel/Benchmarks/RemoveFromListBenchmark.php:24
+#: app/Services/Funnel/Benchmarks/RemoveFromListBenchmark.php:49
+msgid "This will run when selected lists have been removed from a contact"
+msgstr ""
+"Se ejecutará cuando las listas seleccionadas hayan sido eliminadas de un "
+"contacto"
+
+#: app/Services/Funnel/Benchmarks/TagAppliedBenchmark.php:24
+#: app/Services/Funnel/Benchmarks/TagAppliedBenchmark.php:49
+msgid "This will run when selected Tags have been applied to a contact"
+msgstr ""
+"Se ejecutará cuando se hayan aplicado las etiquetas seleccionadas a un "
+"contacto"
+
+#: app/Services/Funnel/Benchmarks/RemoveFromTagBenchmark.php:24
+#: app/Services/Funnel/Benchmarks/RemoveFromTagBenchmark.php:49
+msgid "This will run when selected Tags have been removed from a contact"
+msgstr ""
+"Esto se ejecutará cuando las Etiquetas seleccionadas hayan sido eliminadas "
+"de un contacto"
+
+#: app/Hooks/Handlers/AdminMenu.php:810
+msgid "Thumbnail"
+msgstr "Miniatura"
+
+#: app/Models/Subscriber.php:724
+msgid "Timezone"
+msgstr "Zona horaria"
+
+#: app/Hooks/Handlers/CountryNames.php:905
+msgid "Timor-Leste"
+msgstr "Timor Oriental"
+
+#: app/Services/Helper.php:1880
+#: app/Http/Controllers/CampaignAnalyticsController.php:104
+#: app/Hooks/Handlers/PrefFormHandler.php:44
+msgid "Title"
+msgstr "Título"
+
+#: app/Hooks/Handlers/CountryNames.php:909
+msgid "Togo"
+msgstr "Togo"
+
+#: app/Hooks/Handlers/CountryNames.php:913
+msgid "Tokelau"
+msgstr "Tokelau"
+
+#: app/Hooks/Handlers/CountryNames.php:917
+msgid "Tonga"
+msgstr "Tonga"
+
+#: app/Http/Controllers/CampaignAnalyticsController.php:107
+#: app/Http/Controllers/CampaignAnalyticsController.php:158
+#: app/Http/Controllers/CampaignAnalyticsController.php:176
+#: app/Hooks/Handlers/PurchaseHistory.php:156
+#: app/Hooks/Handlers/PurchaseHistory.php:393
+msgid "Total"
+msgstr "Total"
+
+#: app/Services/Helper.php:1215 app/Services/Helper.php:1269
+msgid "Total Order Count (Pro Required)"
+msgstr "Recuento total de pedidos (Pro Required)"
+
+#: app/Services/Helper.php:1275
+msgid "Total Order Value (Pro Required)"
+msgstr "Valor total del pedido (Pro Required)"
+
+#: app/Services/Helper.php:1221
+msgid "Total Order value (Pro Required)"
+msgstr "Valor total del pedido (Pro Required)"
+
+#: app/Services/Helper.php:1326
+msgid "Total Referrals (Pro Required)"
+msgstr "Total de referencias (Pro requerido)"
+
+#: app/Hooks/CLI/Commands.php:572
+msgid "Total Students"
+msgstr ""
+
+#: app/Functions/helpers.php:622
+msgid "Transaction"
+msgstr "Transacción"
+
+#: app/Functions/helpers.php:501 app/Functions/helpers.php:548
+msgid "Transactional"
+msgstr ""
+
+#: app/Services/CrmMigrator/ActiveCampaignMigrator.php:14
+msgid "Transfer your ActiveCampaign tags and contacts to FluentCRM"
+msgstr "Transfiera sus etiquetas y contactos de ActiveCampaign a FluentCRM"
+
+#: app/Services/CrmMigrator/DripMigrator.php:14
+msgid "Transfer your Drip tags and contacts to FluentCRM"
+msgstr "Transfiera sus etiquetas y contactos de Drip a FluentCRM"
+
+#: app/Services/CrmMigrator/MailChimpMigrator.php:18
+msgid ""
+"Transfer your mailchimp lists, tags and contacts from MailChimp to FluentCRM"
+msgstr "Transfiera sus listas, etiquetas y contactos de MailChimp a FluentCRM"
+
+#: app/Http/Controllers/FunnelController.php:186
+msgid "Trigger name is same"
+msgstr "El nombre del disparador es el mismo"
+
+#: app/Hooks/Handlers/CountryNames.php:921
+msgid "Trinidad and Tobago"
+msgstr "Trinidad y Tobago"
+
+#: app/Hooks/Handlers/CountryNames.php:925
+msgid "Tunisia"
+msgstr "Túnez"
+
+#: app/Hooks/Handlers/CountryNames.php:929
+msgid "Turkey"
+msgstr "Turquía"
+
+#: app/Hooks/Handlers/CountryNames.php:933
+msgid "Turkmenistan"
+msgstr "Turkmenistán"
+
+#: app/Hooks/Handlers/CountryNames.php:937
+msgid "Turks and Caicos Islands"
+msgstr "Islas Turcas y Caicos"
+
+#: app/Http/Controllers/ImporterController.php:252
+msgid "TutorLMS"
+msgstr "TutorLMS"
+
+#: app/Hooks/Handlers/CountryNames.php:941
+msgid "Tuvalu"
+msgstr "Tuvalu"
+
+#: app/Functions/helpers.php:624
+msgid "Tweet"
+msgstr "Tweet"
+
+#: app/Models/Company.php:69
+msgid "Twitter URL"
+msgstr ""
+
+#: app/Models/Company.php:57 app/Services/Helper.php:1010
+#: app/Services/Helper.php:1863 app/Hooks/Handlers/EventTrackingHandler.php:260
+msgid "Type"
+msgstr "Tipo"
+
+#: app/Hooks/Handlers/AdminBar.php:73
+msgid "Type and press enter"
+msgstr "Escriba y pulse enter"
+
+#: app/Hooks/Handlers/AdminBar.php:74
+msgid "Type to search contacts"
+msgstr "Tipo para buscar contactos"
+
+#: app/Hooks/Handlers/CountryNames.php:945
+msgid "Uganda"
+msgstr "Uganda"
+
+#: app/Hooks/Handlers/CountryNames.php:949
+msgid "Ukraine"
+msgstr "Ucrania"
+
+#: app/Hooks/Handlers/CountryNames.php:953
+msgid "United Arab Emirates"
+msgstr "Emiratos Árabes Unidos"
+
+#: app/Hooks/Handlers/CountryNames.php:957
+msgid "United Kingdom (UK)"
+msgstr "Reino Unido (UK)"
+
+#: app/Hooks/Handlers/CountryNames.php:961
+msgid "United States (US)"
+msgstr "Estados Unidos (EE.UU.)"
+
+#: app/Hooks/Handlers/CountryNames.php:965
+msgid "United States (US) Minor Outlying Islands"
+msgstr "Islas Ultramarinas Menores de los Estados Unidos"
+
+#: app/Services/Helper.php:1349
+msgid "Unpaid Earnings (Pro Required)"
+msgstr "Ganancias no pagadas (Pro Required)"
+
+#: app/Hooks/Handlers/ExternalPages.php:321
+#: app/Hooks/Handlers/ExternalPages.php:325
+#: app/views/external/manage_subscription_form.php:39
+#: app/views/external/unsubscribe.php:19
+#: app/Services/Libs/Parser/ShortcodeParser.php:226
+msgid "Unsubscribe"
+msgstr "Cancelar la suscripción"
+
+#: app/Models/CampaignUrlMetric.php:150
+msgid "Unsubscribe (%d)"
+msgstr ""
+
+#: app/Services/Helper.php:215
+msgid "Unsubscribe Hyperlink HTML"
+msgstr "Hipervínculo de cancelación de suscripción HTML"
+
+#: app/Services/Helper.php:212
+msgid "Unsubscribe URL"
+msgstr "URL de cancelación de la suscripción"
+
+#: app/Functions/helpers.php:500 app/Functions/helpers.php:547
+#: app/Hooks/Handlers/ExternalPages.php:574
+msgid "Unsubscribed"
+msgstr "No suscrito"
+
+#: app/Services/Funnel/FunnelHelper.php:31
+msgid "Update if Exist"
+msgstr "Actualizar si existe"
+
+#: app/Hooks/Handlers/PrefFormHandler.php:54
+#: app/Hooks/Handlers/PrefFormHandler.php:124
+msgid "Update info"
+msgstr "Actualizar información"
+
+#: app/views/external/manage_subscription_form.php:35
+msgid "Update Profile"
+msgstr "Actualizar el perfil"
+
+#: app/views/external/manage_subscription.php:8
+#: app/views/external/manage_subscription.php:27
+msgid "Update your preferences"
+msgstr "Actualiza tus preferencias."
+
+#: fluent-crm.php:50
+msgid "Upgrade to Pro"
+msgstr ""
+
+#: app/Hooks/Handlers/CountryNames.php:969
+msgid "Uruguay"
+msgstr "Uruguay"
+
+#: app/Services/Funnel/Actions/SendEmailAction.php:76
+msgid "Use comma separated values for multiple"
+msgstr "Utilice valores separados por comas para múltiples"
+
+#: app/Services/Helper.php:166
+msgid "User ID"
+msgstr "ID del usuario"
+
+#: app/Services/AutoSubscribe.php:28
+msgid "User Signup Optin Settings"
+msgstr "Configuración del registro de usuarios Optin"
+
+#: app/Hooks/Handlers/CountryNames.php:973
+msgid "Uzbekistan"
+msgstr "Uzbekistán"
+
+#: app/Http/Controllers/SettingsController.php:245
+msgid "Valid"
+msgstr "Válido"
+
+#: app/Hooks/Handlers/ExternalPages.php:792
+msgid "Validation failed."
+msgstr "Validación fallida."
+
+#: app/Http/Controllers/CompanyController.php:294
+#: app/Http/Controllers/CompanyController.php:298
+#: app/Http/Controllers/SubscriberController.php:182
+#: app/Http/Controllers/SubscriberController.php:186
+msgid "Value is not valid"
+msgstr "El valor no es válido"
+
+#: app/Hooks/Handlers/CountryNames.php:977
+msgid "Vanuatu"
+msgstr "Vanuatu"
+
+#: app/Hooks/Handlers/CountryNames.php:981
+msgid "Vatican"
+msgstr "Ciudad del Vaticano"
+
+#: app/Hooks/Handlers/CountryNames.php:985
+msgid "Venezuela"
+msgstr "Venezuela"
+
+#: app/Hooks/Handlers/ExternalPages.php:89
+msgid "verify_key verification failed"
+msgstr "verify_key verificación fallida"
+
+#: app/Services/Stats.php:122
+msgid "Video Tutorials (Free)"
+msgstr "Video tutoriales (gratis)"
+
+#: app/Hooks/Handlers/CountryNames.php:989
+msgid "Vietnam"
+msgstr "Vietnam"
+
+#: app/Http/Controllers/CampaignAnalyticsController.php:159
+msgid "View"
+msgstr "Ver"
+
+#: app/Services/Stats.php:82
+msgid "View Contacts"
+msgstr "Ver los contactos"
+
+#: app/Hooks/Handlers/PurchaseHistory.php:373
+msgid "View Customer Profile"
+msgstr ""
+
+#: fluent-crm.php:44
+msgid "View FluentCRM Documentation"
+msgstr "Ver documentación de FluentCRM"
+
+#: app/Services/Helper.php:214
+msgid "View On Browser URL"
+msgstr "Ver en la URL del navegador"
+
+#: app/Hooks/Handlers/PurchaseHistory.php:122
+#: app/Hooks/Handlers/PurchaseHistory.php:307
+#: app/Hooks/Handlers/PurchaseHistory.php:340
+msgid "View Order"
+msgstr ""
+
+#: app/Http/Controllers/CampaignAnalyticsController.php:128
+msgid "View Order Details"
+msgstr "Ver detalles del pedido"
+
+#: app/Hooks/Handlers/CountryNames.php:993
+msgid "Virgin Islands (British)"
+msgstr "Islas Vírgenes (británicas)"
+
+#: app/Hooks/Handlers/CountryNames.php:997
+msgid "Virgin Islands (US)"
+msgstr "Islas Vírgenes (EEUU)"
+
+#: app/Services/Helper.php:346
+msgid "Visual Builder"
+msgstr ""
+
+#: app/Services/Helper.php:526
+msgid "Vivid cyan blue"
+msgstr "Azul cian intenso"
+
+#: app/Services/Helper.php:516
+msgid "Vivid green cyan"
+msgstr "Verde intenso cian"
+
+#: app/Services/Helper.php:531
+msgid "Vivid purple"
+msgstr "Morado vivo"
+
+#: app/Services/Funnel/Actions/WaitTimeAction.php:93
+msgid "Wait by Custom Field"
+msgstr ""
+
+#: app/Services/Funnel/Actions/WaitTimeAction.php:81
+msgid "Wait by period"
+msgstr ""
+
+#: app/Services/Funnel/Actions/WaitTimeAction.php:89
+msgid "Wait by Weekday"
+msgstr ""
+
+#: app/Services/Funnel/Actions/WaitTimeAction.php:24
+#: app/Services/Funnel/Actions/WaitTimeAction.php:73
+msgid "Wait defined timespan before execute the next action"
+msgstr "Esperar un tiempo definido antes de ejecutar la siguiente acción"
+
+#: app/Services/Funnel/Actions/WaitTimeAction.php:98
+msgid "Wait Time"
+msgstr "Tiempo de espera"
+
+#: app/Services/Funnel/Actions/WaitTimeAction.php:108
+msgid "Wait Time Unit"
+msgstr "Unidad de tiempo de espera"
+
+#: app/Services/Funnel/Actions/WaitTimeAction.php:85
+msgid "Wait Until Date"
+msgstr ""
+
+#: app/Services/Funnel/Actions/WaitTimeAction.php:23
+#: app/Services/Funnel/Actions/WaitTimeAction.php:72
+msgid "Wait X Days/Hours"
+msgstr "Esperar X días/horas"
+
+#: app/Hooks/Handlers/CountryNames.php:1001
+msgid "Wallis and Futuna"
+msgstr "Islas Wallis y Futuna"
+
+#: app/Hooks/Handlers/ExternalPages.php:322
+msgid "We're sorry to see you go!"
+msgstr "¡Sentimos que te vayas!"
+
+#: app/Hooks/Handlers/ExternalPages.php:476
+msgid ""
+"We've sent an email to your inbox that contains a link to email management "
+"from. Please check your email address to get the link."
+msgstr ""
+
+#: app/Hooks/Handlers/ExternalPages.php:427
+msgid ""
+"We've sent an email to your inbox that contains a link to unsubscribe from "
+"our mailing list. Please check your email address and unsubscribe."
+msgstr ""
+
+#: app/Hooks/Handlers/ExternalPages.php:748
+msgid "Webhook must need to be as POST Method"
+msgstr "El webhook debe ser como método POST"
+
+#: app/Models/Company.php:70
+msgid "Website URL"
+msgstr ""
+
+#: app/Hooks/Handlers/CountryNames.php:1005
+msgid "Western Sahara"
+msgstr "Sáhara Occidental"
+
+#: app/Services/Helper.php:491
+msgid "White"
+msgstr "Blanco"
+
+#: app/Http/Controllers/ImporterController.php:270
+msgid "Wishlist member"
+msgstr "Miembro de la lista de deseos"
+
+#: app/Services/Helper.php:453 app/Services/Helper.php:1210
+msgid "WooCommerce"
+msgstr "WooCommerce"
+
+#: app/Services/AutoSubscribe.php:257
+msgid "Woocommerce Checkout Subscription Field"
+msgstr "Campo de suscripción de Woocommerce Checkout"
+
+#: app/Services/Helper.php:452
+msgid "Woocommerce Purchase History"
+msgstr "Historial de compras de Woocommerce"
+
+#: app/Http/Controllers/DocsController.php:86
+msgid ""
+"WordPress Helpdesk and Customer Support Ticket Plugin. Provide awesome "
+"support and manage customer queries right from your WordPress dashboard."
+msgstr ""
+"Plugin para el servicio de asistencia y tickets de atención al cliente de "
+"WordPress. Ofrezca un soporte impresionante y gestione las consultas de los "
+"clientes directamente desde su panel de control de WordPress."
+
+#: app/Services/Funnel/Triggers/UserRegistrationTrigger.php:22
+msgid "WordPress Triggers"
+msgstr "Activadores de WordPress"
+
+#: app/Http/Controllers/ImporterController.php:30
+msgid "WordPress Users"
+msgstr "Usuarios de WordPress"
+
+#. Author of the plugin
+msgid "WP Email Newsletter Team - FluentCRM"
+msgstr ""
+
+#: app/Services/Helper.php:957
+msgid "WP User ID"
+msgstr "ID de usuario de WP"
+
+#: app/Services/Helper.php:1035
+msgid "WP User Role"
+msgstr ""
+
+#: app/Services/RoleBasedTagging.php:45
+msgid "WP User Role Based Tag Mapping"
+msgstr "Mapeo de etiquetas basado en los roles de los usuarios de WP"
+
+#: app/Hooks/Handlers/CountryNames.php:1013
+msgid "Yemen"
+msgstr "Yemen"
+
+#: app/Services/Helper.php:1313
+msgid "Yes"
+msgstr "Sí"
+
+#: app/Http/Controllers/FormsController.php:186
+msgid "You are successfully subscribed to our email list"
+msgstr "Se ha suscrito correctamente a nuestra lista de correo electrónico"
+
+#: app/Hooks/Handlers/ExternalPages.php:288
+#: app/Hooks/Handlers/ExternalPages.php:578
+msgid "You are successfully unsubscribed from the email list"
+msgstr "Te has dado de baja correctamente de la lista de correo electrónico"
+
+#: app/Services/CrmMigrator/ActiveCampaignMigrator.php:41
+msgid "You can find Account ID Settings -> Developer -> API Access"
+msgstr ""
+"Puede encontrar el ID de la cuenta Configuración -> Desarrollador -> Acceso "
+"a la API"
+
+#: app/Services/CrmMigrator/DripMigrator.php:40
+msgid "You can find Account ID Settings -> General Info -> Account ID"
+msgstr ""
+"Puede encontrar la configuración del ID de la cuenta -> Información general -"
+"> ID de la cuenta"
+
+#: app/Services/CrmMigrator/ActiveCampaignMigrator.php:34
+msgid "You can find your API key at ActiveCampaign Settings -> Developer"
+msgstr ""
+"Puede encontrar su clave de API en Configuración de ActiveCampaign -> "
+"Desarrollador"
+
+#: app/Services/CrmMigrator/ConvertKitMigrator.php:34
+msgid "You can find your API key at ConvertKit "
+msgstr "Puedes encontrar tu clave API en ConvertKit"
+
+#: app/Services/CrmMigrator/DripMigrator.php:33
+msgid "You can find your API key at Drip Profile -> User Info -> API Token"
+msgstr ""
+"Puede encontrar su clave de API en Drip Profile -> User Info -> API Token"
+
+#: app/Services/CrmMigrator/MailChimpMigrator.php:36
+msgid "You can find your API key at MailChimp Account -> Extras -> API keys"
+msgstr ""
+"Puedes encontrar tu clave API en Cuenta de MailChimp -> Extras -> Claves API"
+
+#: app/Services/CrmMigrator/MailerLiteMigrator.php:33
+msgid "You can find your API key at MailerLite"
+msgstr "Puede encontrar su clave API en MailerLite"
+
+#: app/Services/CrmMigrator/ConvertKitMigrator.php:41
+msgid ""
+"You can find your API Secret key at ConvertKit Account -> Settings -> "
+"Advanced"
+msgstr ""
+"Puedes encontrar tu clave secreta de la API en ConvertKit Account -> "
+"Settings -> Advanced"
+
+#: app/Http/Controllers/CampaignController.php:1094
+msgid ""
+"You can only pause a campaign if it is on \"Working\" state, Please reload "
+"this page"
+msgstr ""
+"Sólo se puede poner en pausa una campaña si está en estado de \"Trabajo\", "
+"Por favor, recargue esta página"
+
+#: app/Http/Controllers/CampaignController.php:1121
+msgid ""
+"You can only resume a campaign if it is on \"paused\" state, Please reload "
+"this page"
+msgstr ""
+"Sólo puede reanudar una campaña si está en estado de \"pausa\", por favor "
+"recargue esta página"
+
+#: app/Http/Controllers/CampaignController.php:1216
+#: app/Http/Controllers/CampaignController.php:1222
+msgid ""
+"You can only un-schedule a campaign if it is on \"scheduled\" state, Please "
+"reload this page"
+msgstr ""
+"Sólo puede desprogramar una campaña si está en estado \"programado\", por "
+"favor recargue esta página"
+
+#: app/Http/Controllers/CampaignController.php:517
+msgid "Your campaign email has been scheduled"
+msgstr "Tu campaña de correo electrónico ha sido programada"
+
+#: app/Http/Controllers/SettingsController.php:116
+msgid "Your double-optin email pre header"
+msgstr ""
+
+#: app/Http/Controllers/SettingsController.php:110
+msgid "Your double-optin email subject"
+msgstr "El asunto de su correo electrónico de doble apertura"
+
+#: app/Hooks/Handlers/ExternalPages.php:323
+#: app/views/external/manage_subscription_form.php:9
+#: app/views/external/manage_subscription_request_form.php:38
+#: app/views/external/unsubscribe_request_form.php:38
+msgid "Your Email Address"
+msgstr "Tu dirección de correo electrónico"
+
+#: app/Hooks/Handlers/ExternalPages.php:463
+msgid "Your Email preferences URL"
+msgstr ""
+
+#: app/Services/ExternalIntegrations/FluentForm/Bootstrap.php:119
+msgid "Your Feed Name"
+msgstr "Su nombre de alimentación"
+
+#: app/Hooks/Handlers/PrefFormHandler.php:285
+msgid "Your information has been updated"
+msgstr "Su información ha sido actualizada"
+
+#: app/Services/Helper.php:1882
+msgid "Your Note Title"
+msgstr "Título de tu nota"
+
+#: app/Http/Controllers/MigratorController.php:55
+msgid "Your provided API key is valid"
+msgstr "La clave de API proporcionada es válida"
+
+#: app/Hooks/Handlers/ExternalPages.php:1074
+msgid "Your provided information has been successfully updated"
+msgstr "La información que nos has facilitado se ha actualizado correctamente"
+
+#: app/Hooks/Handlers/CountryNames.php:1017
+msgid "Zambia"
+msgstr "Zambia"
+
+#: app/Hooks/Handlers/CountryNames.php:1021
+msgid "Zimbabwe"
+msgstr "Zimbabwe"
+
+#: app/Hooks/Handlers/PrefFormHandler.php:52
+msgid "ZIP Code"
+msgstr "Código postal"
+
+#: app/Hooks/Handlers/PrefFormHandler.php:477
+msgid "Zip Code"
+msgstr "Código postal"
+
+#: app/Hooks/Handlers/CountryNames.php:29
+msgid "Åland Islands"
+msgstr "Islas Åland"
