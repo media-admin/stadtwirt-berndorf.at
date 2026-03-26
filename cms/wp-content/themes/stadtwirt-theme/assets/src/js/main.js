@@ -6,6 +6,7 @@
 // CSS (inkl. Swiper)
 import '../scss/style.scss';
 import 'swiper/css/bundle';
+import sloganUrl from '../images/slogan_tradition-trifft-kultur.svg?url';
 
 // Sentry (nur in Production)
 if (import.meta.env.PROD) {
@@ -111,8 +112,8 @@ const initApp = async () => {
   }
 
   if (has('.faq-accordion')) {
-      const { default: FaqAccordion } = await import('./components/faq-accordion');
-      safeInit('FaqAccordion', () => new FaqAccordion());
+    const { default: FaqAccordion } = await import('./components/faq-accordion');
+    safeInit('FaqAccordion', () => new FaqAccordion());
   }
 
   if (has('.video-player, [data-video]')) {
@@ -120,7 +121,7 @@ const initApp = async () => {
     safeInit('VideoPlayer', () => new VideoPlayer());
   }
 
-  if (has('[data-animate], [data-scroll-animation], .animate-on-scroll')) {
+  if (has('[data-scroll-animation], .animate-on-scroll')) {
     const { default: ScrollAnimations } = await import('./components/scroll-animations');
     safeInit('ScrollAnimations', () => new ScrollAnimations());
   }
@@ -143,12 +144,33 @@ const initApp = async () => {
     safeInit('AjaxFilters', () => new AjaxFilters());
   }
 
-  if (has('.google-map, [data-map]')) {
-    const { default: GoogleMapConsent } = await import('./components/google-maps');
-    safeInit('GoogleMapConsent', () => GoogleMapConsent.init());
+  if (has('.google-map-wrapper, .google-map, [data-map]')) {
+    await import('./components/google-maps');
   }
 };
 
+// DOM Ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initApp);
+} else {
+  initApp();
+}
+
+// Slogan in zweite Spalte des ersten columns-flush Blocks injizieren
+document.addEventListener('DOMContentLoaded', () => {
+  const firstBlock = document.querySelector('.entry-content .wp-block-columns.columns-flush');
+  if (!firstBlock) return;
+  const secondCol = firstBlock.querySelectorAll(':scope > .wp-block-column')[1];
+  if (!secondCol) return;
+  secondCol.style.position = 'relative';
+  const img = document.createElement('img');
+  img.src = sloganUrl;
+  img.alt = 'Tradition trifft Kultur';
+  img.className = 'columns-flush__slogan';
+  img.setAttribute('aria-hidden', 'true');
+  img.setAttribute('loading', 'eager');
+  secondCol.appendChild(img);
+});
 
 // Carousel Grid: data-columns -> CSS Variable
 document.addEventListener('DOMContentLoaded', () => {
@@ -157,11 +179,3 @@ document.addEventListener('DOMContentLoaded', () => {
     if (cols) grid.style.setProperty('--carousel-cols', cols);
   });
 });
-
-
-// DOM Ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initApp);
-} else {
-  initApp();
-}
