@@ -1,197 +1,190 @@
 @use '../abstracts' as *;
 
-// ============================================
-// EVENTS
-// ============================================
+// =============================================================================
+// Events
+// Version: 1.2.0 – Fluid Responsive System
+//
+// Änderungen:
+//   - @media (max-width: 768px/640px/480px) → @include respond-below()
+//   - @media (max-width: 1024px/1200px)     → @include respond-below('lg'/'xl')
+//   - gap: 2rem → var(--space-xl) | margin: 2rem → var(--space-2xl)
+//   - $font-size-* → var(--text-*)
+//   - Mobile-First: Basis 1fr, Breakpoints aufbauend
+// =============================================================================
+
+// ── Grid ──────────────────────────────────────────────────────────────────────
 
 .events-grid {
-  display: grid;
-  gap: 2rem;
-  margin: 2rem 0;
+  display:               grid;
+  gap:                   var(--space-xl);    // war: 2rem fix
+  margin:                var(--space-2xl) 0; // war: 2rem fix
+  grid-template-columns: 1fr;               // Mobile Base
 
   &--columns-1 { grid-template-columns: 1fr; }
 
   &--columns-2 {
-    grid-template-columns: repeat(2, 1fr);
-    @media (max-width: 768px) { grid-template-columns: 1fr; }
+    grid-template-columns: 1fr;
+    @include respond-to('md') { grid-template-columns: repeat(2, 1fr); }
   }
 
   &--columns-3 {
-    grid-template-columns: repeat(3, 1fr);
-    @media (max-width: 1024px) { grid-template-columns: repeat(2, 1fr); }
-    @media (max-width: 640px)  { grid-template-columns: 1fr; }
+    grid-template-columns: 1fr;
+    @include respond-to('sm') { grid-template-columns: repeat(2, 1fr); }
+    @include respond-to('lg') { grid-template-columns: repeat(3, 1fr); }
   }
 
   &--columns-4 {
-    grid-template-columns: repeat(4, 1fr);
-    @media (max-width: 1200px) { grid-template-columns: repeat(3, 1fr); }
-    @media (max-width: 768px)  { grid-template-columns: repeat(2, 1fr); }
-    @media (max-width: 480px)  { grid-template-columns: 1fr; }
+    grid-template-columns: 1fr;
+    @include respond-to('sm') { grid-template-columns: repeat(2, 1fr); }
+    @include respond-to('lg') { grid-template-columns: repeat(3, 1fr); }
+    @include respond-to('xl') { grid-template-columns: repeat(4, 1fr); }
   }
 }
 
-// Event Card
+
+// ── Event Card ────────────────────────────────────────────────────────────────
+
 .event-card {
-  background: $color-white;
-  border-radius: $radius-lg;
-  overflow: hidden;
-  box-shadow: $shadow-sm;
-  transition: $transition-base;
-  display: flex;
+  background:     $color-white;
+  border-radius:  $radius-lg;
+  overflow:       hidden;
+  box-shadow:     $shadow-sm;
+  transition:     $transition-base;
+  display:        flex;
   flex-direction: column;
 
-  &:hover {
-    box-shadow: $shadow-lg;
-    transform: translateY(-4px);
-  }
+  &:hover { box-shadow: $shadow-lg; transform: translateY(-4px); }
 
-  // Thumbnail
   &__thumbnail {
-    position: relative;
-    overflow: hidden;
+    position:     relative;
+    overflow:     hidden;
     aspect-ratio: 16 / 9;
-    background: $color-gray-100;
+    background:   $color-gray-100;
 
     img {
-      width: 100%;
-      height: 100%;
+      width:      100%;
+      height:     100%;
       object-fit: cover;
       transition: transform 0.3s ease;
     }
 
-    &:hover img {
-      transform: scale(1.05);
-    }
+    &:hover img { transform: scale(1.05); }
   }
 
-  // Price Badge
   &__price {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    background: $color-primary;
-    color: white;
-    padding: 0.35rem 0.85rem;
+    position:     absolute;
+    top:          var(--space-sm);
+    right:        var(--space-sm);
+    background:   $color-primary;
+    color:        white;
+    padding:      0.35rem 0.85rem;
     border-radius: $radius-full;
-    font-size: $font-size-sm;
-    font-weight: $font-weight-bold;
+    font-size:    var(--text-sm);   // war: $font-size-sm
+    font-weight:  $font-weight-bold;
   }
 
-  // Content
   &__content {
-    padding: 1.5rem;
-    display: flex;
+    padding:        var(--space-lg);  // war: 1.5rem fix
+    display:        flex;
     flex-direction: column;
-    gap: 0.75rem;
-    flex-grow: 1;
+    gap:            var(--space-sm);  // war: 0.75rem fix
+    flex-grow:      1;
   }
 
-  // Categories
-  &__categories {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-  }
+  &__categories { display: flex; flex-wrap: wrap; gap: 0.4rem; }
 
   &__category {
-    font-size: 12px;
-    padding: 0.2rem 0.6rem;
-    background: rgba($color-primary, 0.1);
-    color: $color-primary;
-    border-radius: $radius-full;
-    font-weight: $font-weight-semibold;
+    font-size:      var(--text-xs);   // war: 12px fix
+    padding:        0.2rem 0.6rem;
+    background:     rgba($color-primary, 0.1);
+    color:          $color-primary;
+    border-radius:  $radius-full;
+    font-weight:    $font-weight-semibold;
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
 
-  // Title
   &__title {
-    font-size: $font-size-lg;
+    font-size:   var(--text-lg);     // war: $font-size-lg
     font-weight: $font-weight-bold;
-    margin: 0;
+    margin:      0;
     line-height: $line-height-tight;
 
     a {
-      color: $color-text;
+      color:           $color-text;
       text-decoration: none;
-      transition: color 0.2s ease;
+      transition:      color 0.2s ease;
       &:hover { color: $color-primary; }
     }
   }
 
-  // Meta (date, location)
-  &__meta {
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-  }
+  &__meta { display: flex; flex-direction: column; gap: 0.4rem; }
 
   &__date,
   &__location {
-    display: flex;
+    display:     flex;
     align-items: center;
-    gap: 0.5rem;
-    font-size: $font-size-sm;
-    color: $color-text-muted;
+    gap:         var(--space-xs);
+    font-size:   var(--text-sm);     // war: $font-size-sm
+    color:       $color-text-muted;
   }
 
-  // Excerpt
   &__excerpt {
-    font-size: $font-size-sm;
-    color: $color-text-muted;
+    font-size:   var(--text-sm);     // war: $font-size-sm
+    color:       $color-text-muted;
     line-height: $line-height-base;
-    flex-grow: 1;
+    flex-grow:   1;
 
     p { margin: 0; }
   }
 
-  // Link
   &__link {
-    display: inline-flex;
+    display:     inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    color: $color-primary;
+    gap:         var(--space-xs);
+    color:       $color-primary;
     text-decoration: none;
     font-weight: $font-weight-semibold;
-    font-size: $font-size-sm;
-    margin-top: auto;
-    transition: gap 0.2s ease;
+    font-size:   var(--text-sm);     // war: $font-size-sm
+    margin-top:  auto;
+    transition:  gap 0.2s ease;
 
-    &:hover { gap: 0.75rem; }
+    &:hover { gap: var(--space-sm); }
   }
 }
 
-// Event Detail (Single)
+
+// ── Event Detail (Single) ─────────────────────────────────────────────────────
+
 .event-detail {
   &__meta {
-    display: flex;
+    display:        flex;
     flex-direction: column;
-    gap: 0.75rem;
-    padding: 1.5rem;
-    background: $color-white;
-    border-radius: $radius-lg;
-    box-shadow: $shadow-sm;
-    margin-bottom: 2rem;
+    gap:            var(--space-sm);
+    padding:        var(--space-lg);
+    background:     $color-white;
+    border-radius:  $radius-lg;
+    box-shadow:     $shadow-sm;
+    margin-bottom:  var(--space-2xl);
   }
 
   &__meta-item {
-    display: flex;
+    display:     flex;
     align-items: center;
-    gap: 0.5rem;
-    font-size: $font-size-base;
-    color: $color-text;
+    gap:         var(--space-xs);
+    font-size:   var(--text-base);   // war: $font-size-base
+    color:       $color-text;
 
-    strong {
-      color: $color-text;
-      min-width: 80px;
-    }
+    strong { color: $color-text; min-width: 80px; }
   }
 }
 
-// No results
+
+// ── No Results ────────────────────────────────────────────────────────────────
+
 .events-no-results {
   text-align: center;
-  padding: 3rem;
-  color: $color-text-muted;
-  font-size: $font-size-lg;
+  padding:    var(--space-2xl);
+  color:      $color-text-muted;
+  font-size:  var(--text-lg);        // war: $font-size-lg
 }

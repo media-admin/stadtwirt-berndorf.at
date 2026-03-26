@@ -2,12 +2,24 @@
 /**
  * Testimonial Block – ACF Render Template
  *
- * WCAG-Patches:
- *   ✅ 1.4.1 Use of Color: Sterne nutzen gefülltes (★) vs. leeres (☆) Symbol
- *            statt nur Farbe als Unterscheidungsmerkmal
+ * Layout: Avatar links (90×90), Body rechts (Name + Rolle + Sterne oben, Zitat unten).
+ *
+ * WCAG-Fixes:
+ *   ✅ 1.4.1  Use of Color: Sterne nutzen ★ (gefüllt) vs. ☆ (leer) –
+ *             nicht nur Farbe als Unterscheidungsmerkmal
+ *   ✅ ARIA:  role="img" + aria-label mit i18n-String auf dem Rating-Container
+ *
+ * ACF-Felder:
+ *   testimonial_quote   Textarea  Zitat-Text (Pflichtfeld)
+ *   testimonial_name    Text      Name der Person
+ *   testimonial_role    Text      Rolle / Unternehmen (optional)
+ *   testimonial_image   Image     Porträtfoto (optional)
+ *   testimonial_rating  Number    Sterne 1–5 (0 / leer = ausblenden)
+ *   testimonial_style   Select    card | minimal | centered (Standard: card)
  *
  * @package MediaLabAgencyCore
- * @since   1.6.0 / WCAG-Patch
+ * @since   1.6.0
+ * @updated 1.7.0 – horizontales Layout, WCAG-Sterne-Fix (Backport aus Stadtwirt)
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
@@ -30,43 +42,48 @@ $block_id  = ! empty( $block['anchor'] ) ? ' id="' . esc_attr( $block['anchor'] 
 ?>
 <blockquote class="<?php echo esc_attr( $block_classes ); ?>"<?php echo $block_id; ?>>
 
-    <?php if ( $rating > 0 ) : ?>
-    <div class="ml-testimonial__stars"
-         role="img"
-         aria-label="<?php printf( esc_attr__( 'Bewertung: %d von 5 Sternen', 'media-lab-agency-core' ), $rating ); ?>">
-        <?php for ( $i = 1; $i <= 5; $i++ ) :
-            // ✅ WCAG 1.4.1: gefüllter (★) vs. leerer Stern (☆) – nicht nur Farbe
-            $filled = $i <= $rating;
-        ?>
-        <span class="ml-testimonial__star<?php echo $filled ? ' ml-testimonial__star--filled' : ''; ?>"
-              aria-hidden="true"><?php echo $filled ? '★' : '☆'; ?></span>
-        <?php endfor; ?>
+    <?php if ( $image_url ) : ?>
+    <div class="ml-testimonial__image">
+        <img src="<?php echo esc_url( $image_url ); ?>"
+             alt="<?php echo esc_attr( $name ); ?>"
+             class="ml-testimonial__avatar-img"
+             width="90" height="90"
+             loading="lazy">
     </div>
     <?php endif; ?>
 
-    <p class="ml-testimonial__quote">
-        <span class="ml-testimonial__quote-mark" aria-hidden="true">"</span>
-        <?php echo wp_kses_post( $quote ); ?>
-        <span class="ml-testimonial__quote-mark ml-testimonial__quote-mark--close" aria-hidden="true">"</span>
-    </p>
+    <div class="ml-testimonial__body">
 
-    <footer class="ml-testimonial__author">
-        <?php if ( $image_url ) : ?>
-        <img src="<?php echo esc_url( $image_url ); ?>"
-             alt="<?php echo esc_attr( $name ); ?>"
-             class="ml-testimonial__avatar"
-             width="48" height="48"
-             loading="lazy">
-        <?php endif; ?>
+        <div class="ml-testimonial__header">
 
-        <div class="ml-testimonial__meta">
-            <?php if ( $name ) : ?>
-            <cite class="ml-testimonial__name"><?php echo esc_html( $name ); ?></cite>
+            <div class="ml-testimonial__meta">
+                <?php if ( $name ) : ?>
+                <cite class="ml-testimonial__name"><?php echo esc_html( $name ); ?></cite>
+                <?php endif; ?>
+                <?php if ( $role ) : ?>
+                <span class="ml-testimonial__role"><?php echo esc_html( $role ); ?></span>
+                <?php endif; ?>
+            </div>
+
+            <?php if ( $rating > 0 ) : ?>
+            <div class="ml-testimonial__rating"
+                 role="img"
+                 aria-label="<?php printf( esc_attr__( 'Bewertung: %d von 5 Sternen', 'media-lab-agency-core' ), $rating ); ?>">
+                <?php for ( $i = 1; $i <= 5; $i++ ) :
+                    $filled = $i <= $rating;
+                ?>
+                <span class="ml-testimonial__star<?php echo $filled ? ' ml-testimonial__star--filled' : ' ml-testimonial__star--empty'; ?>"
+                      aria-hidden="true"><?php echo $filled ? '★' : '☆'; ?></span>
+                <?php endfor; ?>
+            </div>
             <?php endif; ?>
-            <?php if ( $role ) : ?>
-            <span class="ml-testimonial__role"><?php echo esc_html( $role ); ?></span>
-            <?php endif; ?>
+
         </div>
-    </footer>
+
+        <div class="ml-testimonial__quote">
+            <?php echo wp_kses_post( $quote ); ?>
+        </div>
+
+    </div>
 
 </blockquote>

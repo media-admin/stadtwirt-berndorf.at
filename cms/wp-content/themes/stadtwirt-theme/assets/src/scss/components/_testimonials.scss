@@ -1,21 +1,34 @@
 @use '../abstracts' as *;
 
-// Testimonials Grid
+// =============================================================================
+// Testimonials – Stadtwirt
+// Version: 1.2.0 – Fluid Responsive System
+//
+// Änderungen ggü. Original:
+//   - gap: $spacing-6 → var(--space-xl) | margin: $spacing-8 → var(--space-2xl)
+//   - $font-size-sm/base → var(--text-sm/base)
+// =============================================================================
+
+// ── Grid ──────────────────────────────────────────────────────────────────────
+
 .testimonials {
   display: grid;
-  gap: $spacing-6;
-  margin: $spacing-8 0;
+  gap:     var(--space-xl);    // war: $spacing-6
+  margin:  var(--space-2xl) 0; // war: $spacing-8 0
 
   &[data-columns="1"] { grid-template-columns: 1fr; }
+
   &[data-columns="2"] {
     grid-template-columns: 1fr;
     @include respond-to('md') { grid-template-columns: repeat(2, 1fr); }
   }
+
   &[data-columns="3"] {
     grid-template-columns: 1fr;
     @include respond-to('md') { grid-template-columns: repeat(2, 1fr); }
     @include respond-to('lg') { grid-template-columns: repeat(3, 1fr); }
   }
+
   &[data-columns="4"] {
     grid-template-columns: 1fr;
     @include respond-to('sm') { grid-template-columns: repeat(2, 1fr); }
@@ -23,68 +36,71 @@
   }
 }
 
-// Single Testimonial — horizontales Layout
+
+// ── Single Testimonial — horizontales Layout ──────────────────────────────────
+
 .testimonial {
-  display: flex;
+  display:        flex;
   flex-direction: row;
-  align-items: center;
-  gap: $spacing-6;
-  padding: $spacing-6 $spacing-8;
+  align-items:    center;
+  gap:            var(--space-xl);     // war: $spacing-6
+  padding:        var(--space-xl) var(--space-2xl); // war: $spacing-6 $spacing-8
 
   // Avatar links
   &__image {
-    flex-shrink: 0;
-    width: 90px;
-    height: 90px;
+    flex-shrink:   0;
+    width:         90px;
+    height:        90px;
     border-radius: $radius-full;
-    overflow: hidden;
+    overflow:      hidden;
 
-    img, .testimonial__avatar-img {
-      width: 100%;
-      height: 100%;
+    img,
+    .testimonial__avatar-img {
+      width:      100%;
+      height:     100%;
       object-fit: cover;
-      display: block;
+      display:    block;
     }
   }
 
   // Body: Name+Stars oben, Quote unten
   &__body {
-    flex: 1;
-    display: flex;
+    flex:           1;
+    display:        flex;
     flex-direction: column;
-    gap: $spacing-2;
+    gap:            $spacing-2;
   }
 
   // Header: Name links, Sterne rechts
   &__header {
-    display: flex;
-    align-items: flex-start;
+    display:         flex;
+    align-items:     flex-start;
     justify-content: space-between;
-    gap: $spacing-4;
+    gap:             $spacing-4;
   }
 
   &__meta {
-    display: flex;
+    display:        flex;
     flex-direction: column;
-    gap: 2px;
+    gap:            2px;
   }
 
   &__name {
-    font-weight: 700;
-    font-size: $font-size-sm;
+    font-weight:    700;
+    font-size:      var(--text-sm);    // war: $font-size-sm
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--color-text);
+    color:          var(--color-text);
   }
 
   &__role {
-    font-size: $font-size-sm;
-    color: var(--color-text-secondary);
+    font-size: var(--text-sm);         // war: $font-size-sm
+    color:     var(--color-text-secondary);
   }
 
   &__rating {
-    display: flex;
-    gap: 2px;
+    display:     flex;
+    gap:         2px;
     flex-shrink: 0;
 
     .star {
@@ -95,93 +111,102 @@
   }
 
   &__quote {
-    color: var(--color-text-secondary);
-    font-size: $font-size-base;
+    color:      var(--color-text-secondary);
+    font-size:  var(--text-base);      // war: $font-size-base
     line-height: 1.7;
     font-style: italic;
 
-    p { margin: 0; }
+    p         { margin: 0; }
     &::before { display: none; }
   }
 }
 
-// Slider Mode
+
+// ── Slider Mode ───────────────────────────────────────────────────────────────
+
 .testimonials--slider {
   position: relative;
-  padding: 0 $spacing-10;
+  padding:  0 $spacing-10;
 
   @include respond-to('md') { padding: 0 $spacing-12; }
 
   .swiper-slide { height: auto; }
 
   .testimonial {
-    height: 100%;
-    // background: var(--color-card-bg);
-    border-radius: $radius-lg;
-    padding: $spacing-6;
-    display: flex;
+    height:         100%;
+    border-radius:  $radius-lg;
+    padding:        var(--space-xl);
+    display:        flex;
     flex-direction: row;
-    align-items: center;
-    gap: $spacing-6;
+    align-items:    center;
+    gap:            var(--space-xl);
   }
 }
 
-// Navigation seitlich, vertikal zentriert
+
+// ── Navigation seitlich, vertikal zentriert ───────────────────────────────────
+
 .testimonials__navigation {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  transform: translateY(-50%);
-  display: flex;
+  position:        absolute;
+  top:             50%;
+  left:            0;
+  right:           0;
+  transform:       translateY(-50%);
+  display:         flex;
   justify-content: space-between;
-  pointer-events: none;
-  z-index: 10;
+  pointer-events:  none;
+  z-index:         10;
 }
 
 .testimonials__button {
-  pointer-events: all;
-  width: 40px;
-  height: 40px;
-  background: transparent;
-  border: none;
-  display: flex;
-  align-items: center;
+  pointer-events:  all;
+  // WCAG 2.5.5: 44×44px Touch Target
+  width:           44px;
+  height:          44px;
+  background:      transparent;
+  border:          none;
+  display:         flex;
+  align-items:     center;
   justify-content: center;
-  cursor: pointer;
-  transition: color $transition-base;
-  color: var(--color-text);
+  cursor:          pointer;
+  transition:      color $transition-base;
+  color:           var(--color-text);
 
-  &:hover { color: $color-primary; }
+  &:hover   { color: $color-primary; }
   &:disabled { opacity: 0.3; cursor: not-allowed; }
 }
 
+
+// ── Pagination ────────────────────────────────────────────────────────────────
+
 .testimonials__pagination {
-  display: flex;
+  display:         flex;
   justify-content: center;
-  gap: $spacing-2;
-  margin-top: $spacing-4;
+  gap:             $spacing-2;
+  margin-top:      $spacing-4;
 
   .swiper-pagination-bullet {
-    width: 10px;
-    height: 10px;
+    width:      10px;
+    height:     10px;
     background: var(--color-border);
-    opacity: 1;
+    opacity:    1;
     transition: all $transition-base;
 
     &-active {
-      background: $color-primary;
-      width: 24px;
+      background:    $color-primary;
+      width:         24px;
       border-radius: 5px;
     }
   }
 }
 
-// Varianten
+
+// ── Varianten ─────────────────────────────────────────────────────────────────
+
 .testimonials--minimal {
   .testimonial {
-    background: transparent;
-    border-left: 4px solid $color-primary;
-    padding-left: $spacing-4;
+    background:   transparent;
+    border-left:  4px solid $color-primary;
+    padding-left: var(--space-md);
   }
 }

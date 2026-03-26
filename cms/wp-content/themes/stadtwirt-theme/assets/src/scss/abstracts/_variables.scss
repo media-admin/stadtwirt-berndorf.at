@@ -1,31 +1,32 @@
 // =============================================================================
 // DESIGN TOKENS
-// Media Lab Starter Kit – Single Source of Truth
-// Version: 1.1.0 – 2026-03-04 (bereinigt und vereinheitlicht)
+// Stadtwirt Berndorf – Single Source of Truth
+// Version: 1.2.0 – Fluid Responsive System
 //
 // REGELN:
 //  - Jede Variable NUR EINMAL definieren
 //  - Hardcodierte Werte in Components → immer Token verwenden
 //  - CSS Custom Properties und SCSS-Variablen sind synchron gehalten
+//  - Fluid Tokens (clamp) in :root → keine px-Breakpoints für Type/Spacing nötig
 // =============================================================================
 
 
 // ─────────────────────────────────────────────────────────────────
 // 1. BRAND COLORS
-//    Primärfarben – direkt aus Figma
+//    Primärfarben – direkt aus Figma (Stadtwirt)
 // ─────────────────────────────────────────────────────────────────
 
-$color-primary:   #7F1612;  // Figma: "Primary" 
-$color-secondary: #2D2A26;  // Figma: "Secondary"
+$color-primary:   #7F1612;  // Figma: "Primary" – Stadtwirt Weinrot
+$color-secondary: #2D2A26;  // Figma: "Secondary" – Stadtwirt Dunkelbraun
 $color-accent:    #A30C03;  // Figma: "Accent"
 
-// Hero-Slider Gradient (ersetzt hardcodiertes #667eea)
+// Hero-Slider Gradient (Stadtwirt: Primary statt #667eea)
 $color-hero-gradient: $color-primary;
 
 
 // ─────────────────────────────────────────────────────────────────
 // 2. NEUTRAL PALETTE
-//    Grau-Skala – keine Duplikatevalet valet 
+//    Grau-Skala – keine Duplikate
 // ─────────────────────────────────────────────────────────────────
 
 $color-black:      #000000;
@@ -39,19 +40,18 @@ $color-white:      #ffffff;
 // Aliase für Konsistenz (verweisen auf obige Tokens)
 $color-gray-900: $color-dark;
 $color-gray-700: $color-grey-dark;
-$color-gray-600: $color-grey-dark;
+$color-gray-600: $color-grey-dark;  // Stadtwirt-spezifisch (Footer Agency Bar)
 $color-gray-400: $color-grey;
 $color-gray-200: $color-grey-light;
-$color-gray-100: #f0f0f0;  // Zwischen $color-grey-light und $color-light
+$color-gray-100: #f0f0f0;
 $color-gray-50:  $color-light;
 
 
 // ─────────────────────────────────────────────────────────────────
 // 3. SEMANTIC / STATUS COLORS
-//    Je Farbe: Basis + Light-Variante
 // ─────────────────────────────────────────────────────────────────
 
-$color-success:       #10b981; 
+$color-success:       #10b981;
 $color-success-light: #d1fae5;
 
 $color-warning:       #f59e0b;
@@ -68,52 +68,49 @@ $color-danger: $color-error; // Alias
 $color-woo-danger: #cc0000;  // WooCommerce Sale/Error Badge
 
 // Extended Status – hellere Dark-Mode-Varianten
-$color-info-dark:    #1e40af;   // Info Text (Light Mode)
-$color-info-dim:     #93c5fd;   // Info Text (Dark Mode)
-$color-success-dim:  #86efac;   // Success Text (Dark Mode)
-$color-warning-dark: #92400e;   // Warning Text (Light Mode)
-$color-warning-dim:  #fcd34d;   // Warning Text (Dark Mode)
-$color-error-dark:   #991b1b;   // Error Text (Light Mode)
-$color-error-dim:    #fca5a5;   // Error Text (Dark Mode)
+$color-info-dark:    #1e40af;
+$color-info-dim:     #93c5fd;
+$color-success-dim:  #86efac;
+$color-warning-dark: #92400e;
+$color-warning-dim:  #fcd34d;
+$color-error-dark:   #991b1b;
+$color-error-dim:    #fca5a5;
 
 // Accent Farben (für Highlights, Badges, etc.)
-$color-gold:   #fbbf24;   // Sterne, Ratings
-$color-purple: #8b5cf6;   // Highlights, Badges
+$color-gold:   #fbbf24;
+$color-purple: #8b5cf6;
+
 
 // ─────────────────────────────────────────────────────────────────
 // 3b. VORKOMPILIERTE FARBVARIANTEN
-//     Ersatz für deprecated darken()/lighten() Funktionen.
-//     Berechnet via color.adjust($color, $lightness: ±n%).
-//     NICHT in Components verwenden – nur über diese Tokens!
 // ─────────────────────────────────────────────────────────────────
 
-$color-primary-dark:        #cc0000;  // darken($color-primary, 10%)
-$color-primary-darker:      #b20000;  // darken($color-primary, 15%)
+$color-primary-dark:        #6a1210;  // darken($color-primary, 10%)
+$color-primary-darker:      #561009;  // darken($color-primary, 15%)
 
-$color-success-dark:        #075b3f;  // darken($color-success, 20%)
-$color-success-light-bg:    #b5f8e2;  // lighten($color-success, 45%)
+$color-success-dark:        #075b3f;
+$color-success-light-bg:    #b5f8e2;
 
-$color-warning-dark:        #c47e08;  // darken($color-warning, 10%)
-$color-warning-darker:      #935f06;  // darken($color-warning, 20%)
-$color-warning-light-bg:    #fdebce;  // lighten($color-warning, 40%)
-$color-warning-light-bg2:   #fef5e7;  // lighten($color-warning, 45%)
+$color-warning-dark:        #c47e08;
+$color-warning-darker:      #935f06;
+$color-warning-light-bg:    #fdebce;
+$color-warning-light-bg2:   #fef5e7;
 
-$color-error-light-bg:      #fce4e4;  // lighten($color-error, 38%) – lesbar
+$color-error-light-bg:      #fce4e4;
+$color-info-light-bg:       #dbeafe;
 
-$color-info-light-bg:       #dbeafe;  // entspricht $color-info-light
-
-$color-hero-gradient-dark:  #3958e3;  // darken($color-hero-gradient, 10%)
+$color-hero-gradient-dark:  #6a1210;  // darken($color-hero-gradient, 10%)
 
 
 // ─────────────────────────────────────────────────────────────────
 // 4. SEMANTIC USAGE TOKENS
-//    Light Mode defaults – überschrieben durch CSS Custom Properties
+//    Stadtwirt: heller Text auf dunklem Hintergrund
 // ─────────────────────────────────────────────────────────────────
 
-$color-text:       $color-light;
+$color-text:       $color-light;      // Stadtwirt: heller Text
 $color-text-muted: $color-grey-dark;
 $color-text-light: $color-grey-light;
-$color-background: $color-secondary;
+$color-background: $color-secondary;  // Stadtwirt: dunkler Hintergrund
 $color-border:     $color-grey-light;
 $color-surface:    $color-white;
 $color-card-bg:    $color-white;
@@ -121,9 +118,7 @@ $color-input-bg:   $color-white;
 
 
 // ─────────────────────────────────────────────────────────────────
-// 5. CSS CUSTOM PROPERTIES (Dark Mode Support)
-//    SCSS-Variablen oben werden hier als CSS-Vars gespiegelt.
-//    Alle genutzten --color-* müssen hier definiert sein.
+// 5. CSS CUSTOM PROPERTIES
 // ─────────────────────────────────────────────────────────────────
 
 :root {
@@ -144,7 +139,7 @@ $color-input-bg:   $color-white;
   --color-text:           #{$color-text};
   --color-text-muted:     #{$color-grey-dark};
   --color-text-light:     #{$color-grey-light};
-  --color-text-secondary: #{$color-grey-dark};   // Alias für --color-text-muted
+  --color-text-secondary: #{$color-grey-dark};
 
   // Rahmen
   --color-border:         #{$color-grey-light};
@@ -155,11 +150,11 @@ $color-input-bg:   $color-white;
   --color-error:          #{$color-error};
   --color-info:           #{$color-info};
 
-  // Notification variants (Light Mode)
-  --notification-info-bg:      #{$color-info-light};
-  --notification-info-border:  #{$color-info};
-  --notification-info-text:    #{$color-info-dark};
-  --notification-info-dim:     #{$color-info};
+  // Notification variants
+  --notification-info-bg:         #{$color-info-light};
+  --notification-info-border:     #{$color-info};
+  --notification-info-text:       #{$color-info-dark};
+  --notification-info-dim:        #{$color-info};
 
   --notification-success-bg:      #{$color-success-light};
   --notification-success-border:  #{$color-success};
@@ -171,14 +166,46 @@ $color-input-bg:   $color-white;
   --notification-warning-text:    #{$color-warning-dark};
   --notification-warning-dim:     #{$color-warning};
 
-  --notification-error-bg:      #{$color-error-light};
-  --notification-error-border:  #{$color-error};
-  --notification-error-text:    #{$color-error-dark};
-  --notification-error-dim:     #{$color-error};
+  --notification-error-bg:        #{$color-error-light};
+  --notification-error-border:    #{$color-error};
+  --notification-error-text:      #{$color-error-dark};
+  --notification-error-dim:       #{$color-error};
 
   // Accent
   --color-gold:   #{$color-gold};
   --color-purple: #{$color-purple};
+
+
+  // ═══════════════════════════════════════════════════════════════
+  // FLUID TYPOGRAPHY (v1.2.0)
+  // ═══════════════════════════════════════════════════════════════
+
+  --text-xs:   clamp(0.75rem,   1vw,    0.8125rem);
+  --text-sm:   clamp(0.8125rem, 1.2vw,  0.875rem);
+  --text-base: clamp(0.9375rem, 1.5vw,  1rem);
+  --text-lg:   clamp(1rem,      1.8vw,  1.125rem);
+  --text-xl:   clamp(1.125rem,  2vw,    1.25rem);
+  --text-2xl:  clamp(1.25rem,   2.5vw,  1.5rem);
+  --text-3xl:  clamp(1.375rem,  3vw,    1.75rem);
+  --text-4xl:  clamp(1.75rem,   4vw,    2rem);
+  --text-5xl:  clamp(2rem,      5vw,    2.5rem);
+  --text-h1:   clamp(2rem,      6vw,    3rem);
+  --text-hero: clamp(2.25rem,   7vw,    3.5rem);
+
+
+  // ═══════════════════════════════════════════════════════════════
+  // FLUID SPACING (v1.2.0)
+  // ═══════════════════════════════════════════════════════════════
+
+  --space-xs:      clamp(0.5rem,   1vw,   0.75rem);
+  --space-sm:      clamp(0.75rem,  2vw,   1rem);
+  --space-md:      clamp(1rem,     2.5vw, 1.5rem);
+  --space-lg:      clamp(1.5rem,   4vw,   2rem);
+  --space-xl:      clamp(2rem,     5vw,   3rem);
+  --space-2xl:     clamp(3rem,     7vw,   5rem);
+  --space-section: clamp(3rem,     8vw,   6rem);
+
+  --container-padding: clamp(1rem, 4vw, 2rem);
 }
 
 [data-theme="dark"] {
@@ -186,8 +213,8 @@ $color-input-bg:   $color-white;
   --color-surface:        #242424;
   --color-card-bg:        #2a2a2a;
   --color-input-bg:       #2a2a2a;
-  --color-dark:           #f5f5f5;   // Invertiert: dark → hell
-  --color-light:          #1a1a1a;   // Invertiert: light → dunkel
+  --color-dark:           #f5f5f5;
+  --color-light:          #1a1a1a;
 
   --color-text:           #f5f5f5;
   --color-text-muted:     #a0a0a0;
@@ -197,41 +224,41 @@ $color-input-bg:   $color-white;
   --color-border:         #333333;
 }
 
-// SCSS-Variablen auf CSS Custom Properties umschalten (Dark-Mode-fähig)
-$color-background:     var(--color-background);
-$color-surface:        var(--color-surface);
-$color-card-bg:        var(--color-card-bg);
-$color-input-bg:       var(--color-input-bg);
-$color-text:           var(--color-text);
-$color-text-muted:     var(--color-text-muted);
-$color-text-light:     var(--color-text-light);
-$color-border:         var(--color-border);
+// SCSS-Variablen auf CSS Custom Properties umschalten
+$color-background: var(--color-background);
+$color-surface:    var(--color-surface);
+$color-card-bg:    var(--color-card-bg);
+$color-input-bg:   var(--color-input-bg);
+$color-text:       var(--color-text);
+$color-text-muted: var(--color-text-muted);
+$color-text-light: var(--color-text-light);
+$color-border:     var(--color-border);
 
 
 // ─────────────────────────────────────────────────────────────────
-// 6. TYPOGRAPHY
+// 6. TYPOGRAPHY (Stadtwirt Schriften)
 // ─────────────────────────────────────────────────────────────────
 
 $font-primary:   'Work Sans', -apple-system, BlinkMacSystemFont, sans-serif;
 $font-secondary: 'Blenda Script', 'Lobster', serif;
 
-// Fluid Font Scale (px)
-$font-size-xs:   12px;  // Figma: Text/XSmall
-$font-size-sm:   14px;  // Figma: Text/Small
-$font-size-base: 16px;  // Figma: Text/Base
-$font-size-lg:   18px;  // Figma: Text/Large
-$font-size-xl:   20px;  // Figma: Text/XLarge
-$font-size-2xl:  24px;  // Figma: Text/2XLarge
-$font-size-3xl:  28px;  // Figma: Text/3XLarge
+// Statische Skala (Fallback / Icons / Badges)
+$font-size-xs:   12px;
+$font-size-sm:   14px;
+$font-size-base: 16px;
+$font-size-lg:   18px;
+$font-size-xl:   20px;
+$font-size-2xl:  24px;
+$font-size-3xl:  28px;
 $font-size-4xl:  32px;
 $font-size-5xl:  40px;
 $font-size-6xl:  48px;
 $font-size-7xl:  56px;
 
-// Heading Aliases
+// Heading Aliases (Stadtwirt)
 $font-size-h1: $font-size-6xl;  // 48px
-$font-size-h2: $font-size-4xl;
-$font-size-h3: $font-size-xl;  // 28px
+$font-size-h2: $font-size-4xl;  // 32px
+$font-size-h3: $font-size-xl;   // 20px
 $font-size-h4: $font-size-2xl;  // 24px
 $font-size-h5: $font-size-xl;   // 20px
 $font-size-h6: $font-size-lg;   // 18px
@@ -256,43 +283,41 @@ $line-height-relaxed: 1.8;
 $spacing-unit: 8px;
 
 $spacing-0:  0;
-$spacing-1:  $spacing-unit;         //  8px
-$spacing-2:  $spacing-unit * 2;     // 16px
-$spacing-3:  $spacing-unit * 3;     // 24px
-$spacing-4:  $spacing-unit * 4;     // 32px
-$spacing-5:  $spacing-unit * 5;     // 40px
-$spacing-6:  $spacing-unit * 6;     // 48px
-$spacing-7:  $spacing-unit * 7;     // 56px
-$spacing-8:  $spacing-unit * 8;     // 64px
-$spacing-10: $spacing-unit * 10;    // 80px
-$spacing-12: $spacing-unit * 12;    // 96px
-$spacing-16: $spacing-unit * 16;    // 128px
+$spacing-1:  $spacing-unit;
+$spacing-2:  $spacing-unit * 2;
+$spacing-3:  $spacing-unit * 3;
+$spacing-4:  $spacing-unit * 4;
+$spacing-5:  $spacing-unit * 5;
+$spacing-6:  $spacing-unit * 6;
+$spacing-7:  $spacing-unit * 7;
+$spacing-8:  $spacing-unit * 8;
+$spacing-10: $spacing-unit * 10;
+$spacing-12: $spacing-unit * 12;
+$spacing-16: $spacing-unit * 16;
 
 // Semantische Aliases
-$spacing-xs:  $spacing-1;   //  8px
-$spacing-sm:  $spacing-2;   // 16px
-$spacing-md:  $spacing-3;   // 24px
-$spacing-lg:  $spacing-4;   // 32px
-$spacing-xl:  $spacing-6;   // 48px
-$spacing-2xl: $spacing-8;   // 64px
+$spacing-xs:  $spacing-1;
+$spacing-sm:  $spacing-2;
+$spacing-md:  $spacing-3;
+$spacing-lg:  $spacing-4;
+$spacing-xl:  $spacing-6;
+$spacing-2xl: $spacing-8;
 
 
 // ─────────────────────────────────────────────────────────────────
 // 8. LAYOUT & BREAKPOINTS
-//    Breakpoints sind EINMALIG hier definiert.
-//    _mixins.scss respond-to() referenziert diese Werte.
 // ─────────────────────────────────────────────────────────────────
 
 $container-width:     1200px;
-$container-max-width: $container-width;  // Alias
-$container-padding:   $spacing-md;
+$container-max-width: $container-width;
+$container-padding:   $spacing-md;  // Statischer Fallback
 
-$breakpoint-xs:  375px;   // Mobile
-$breakpoint-sm:  576px;   // Mobile Landscape
-$breakpoint-md:  768px;   // Tablet
-$breakpoint-lg:  992px;   // Tablet Landscape
-$breakpoint-xl:  1200px;  // Desktop
-$breakpoint-2xl: 1440px;  // Large Desktop
+$breakpoint-xs:  375px;
+$breakpoint-sm:  576px;
+$breakpoint-md:  768px;
+$breakpoint-lg:  992px;
+$breakpoint-xl:  1200px;
+$breakpoint-2xl: 1440px;
 
 $grid-columns: 12;
 $grid-gap:     $spacing-3;
@@ -300,13 +325,12 @@ $grid-gap:     $spacing-3;
 
 // ─────────────────────────────────────────────────────────────────
 // 9. BORDER RADIUS
-//    Einmalig definiert – keine Überschreibungen
 // ─────────────────────────────────────────────────────────────────
 
 $radius-none: 0;
 $radius-sm:   4px;
-$radius-base: 8px;   // Standard
-$radius-md:   8px;   // Alias für $radius-base
+$radius-base: 8px;
+$radius-md:   8px;
 $radius-lg:   16px;
 $radius-xl:   24px;
 $radius-full: 9999px;
@@ -314,19 +338,17 @@ $radius-full: 9999px;
 
 // ─────────────────────────────────────────────────────────────────
 // 10. SHADOWS
-//     Einmalig definiert
 // ─────────────────────────────────────────────────────────────────
 
 $shadow-sm:   0 1px 3px rgba(0, 0, 0, 0.1);
 $shadow-base: 0 4px 6px rgba(0, 0, 0, 0.1);
-$shadow-md:   $shadow-base;                   // Alias
+$shadow-md:   $shadow-base;
 $shadow-lg:   0 10px 15px rgba(0, 0, 0, 0.1);
 $shadow-xl:   0 20px 25px rgba(0, 0, 0, 0.15);
 
 
 // ─────────────────────────────────────────────────────────────────
 // 11. TRANSITIONS
-//     Einmalig definiert – alle mit `all` Prefix für Konsistenz
 // ─────────────────────────────────────────────────────────────────
 
 $transition-fast:  all 0.15s ease;
@@ -342,3 +364,36 @@ $z-header:   100;
 $z-dropdown: 1000;
 $z-modal:    2000;
 $z-tooltip:  3000;
+
+
+// ─────────────────────────────────────────────────────────────────
+// 13. SWIPER DEFAULTS
+// ─────────────────────────────────────────────────────────────────
+
+:root {
+  --swiper-theme-color:                        #{$color-primary};
+  --swiper-navigation-color:                   #{$color-primary};
+  --swiper-navigation-size:                    44px;
+  --swiper-pagination-color:                   #{$color-primary};
+  --swiper-pagination-bullet-size:             10px;
+  --swiper-pagination-bullet-horizontal-gap:   6px;
+  --swiper-pagination-bullet-inactive-color:   #{$color-primary};
+  --swiper-pagination-bullet-inactive-opacity: 0.3;
+  --swiper-pagination-bullet-opacity:          1;
+}
+
+.swiper {
+  --swiper-theme-color:                        #{$color-primary};
+  --swiper-navigation-color:                   #{$color-primary};
+  --swiper-pagination-color:                   #{$color-primary};
+  --swiper-pagination-bullet-inactive-color:   #{$color-primary};
+  --swiper-pagination-bullet-inactive-opacity: 0.3;
+  --swiper-pagination-bullet-opacity:          1;
+  --swiper-pagination-bullet-size:             10px;
+  --swiper-pagination-bullet-horizontal-gap:   6px;
+}
+
+.swiper-pagination-bullet        { background: $color-primary !important; opacity: 0.3 !important; }
+.swiper-pagination-bullet-active { background: $color-primary !important; opacity: 1 !important; }
+.swiper-button-prev,
+.swiper-button-next               { color: $color-primary !important; }

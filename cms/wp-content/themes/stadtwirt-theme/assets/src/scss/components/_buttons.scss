@@ -1,9 +1,17 @@
 @use '../abstracts' as *;
 
 // =============================================================================
-// Buttons – globale Basis-Klassen
-// Verwendung: class="btn btn--primary" / "btn btn--outline" / "btn btn--ghost"
-// Größen:     btn--sm / btn--lg (optional, default = medium)
+// Buttons – Stadtwirt
+// Version: 1.2.0 – Fluid Responsive System
+//
+// Stadtwirt-spezifisch:
+//   - border-radius: $radius-none (eckige Buttons, kein $radius-full)
+//   - color: $color-white !important auf &--primary (dunkler Hintergrund)
+//   - .wp-block-button__link (Gutenberg Block Buttons)
+//   - .btn-primary (Gutenberg Wrapper-Klasse)
+//
+// v1.2.0 Ergänzung:
+//   - min-height: 44px (WCAG 2.5.5 Touch Target)
 // =============================================================================
 
 .btn {
@@ -12,8 +20,10 @@
     justify-content: center;
     gap:             $spacing-2;
     padding:         $spacing-2 $spacing-4;
+    // WCAG 2.5.5: Touch Target 44×44px minimum ✅
+    min-height:      44px;
     border:          2px solid transparent;
-    border-radius:   $radius-none; // vorher: $radius-full;
+    border-radius:   $radius-none;  // Stadtwirt: eckige Buttons
     font-size:       $font-size-base;
     font-weight:     $font-weight-semibold;
     line-height:     1.25;
@@ -30,17 +40,17 @@
 
     &:disabled,
     &[disabled] {
-        opacity: 0.5;
-        cursor:  not-allowed;
+        opacity:        0.5;
+        cursor:         not-allowed;
         pointer-events: none;
     }
 
     // ── Varianten ─────────────────────────────────────────────────────────────
 
     &--primary {
-        background: $color-primary;
+        background:   $color-primary;
         border-color: $color-primary;
-        color: $color-white !important;
+        color:        $color-white !important;  // Stadtwirt: !important wegen dunklem BG
 
         &:hover {
             background:   $color-primary-dark;
@@ -66,9 +76,7 @@
             transform:  translateY(-1px);
         }
 
-        &:active {
-            transform: translateY(0);
-        }
+        &:active { transform: translateY(0); }
     }
 
     &--ghost {
@@ -96,23 +104,27 @@
     // ── Größen ────────────────────────────────────────────────────────────────
 
     &--sm {
-        padding:   ($spacing-1 + 2px) $spacing-3;
-        font-size: $font-size-sm;
-        gap:       $spacing-1;
+        padding:    ($spacing-1 + 2px) $spacing-3;
+        min-height: 36px;
+        font-size:  $font-size-sm;
+        gap:        $spacing-1;
     }
 
     &--lg {
-        padding:   $spacing-3 $spacing-6;
-        font-size: $font-size-xl;
+        padding:    $spacing-3 $spacing-6;
+        min-height: 52px;
+        font-size:  $font-size-xl;
     }
 
     // ── Full-Width ─────────────────────────────────────────────────────────────
 
-    &--full {
-        width: 100%;
-    }
+    &--full { width: 100%; }
 }
 
+
+// =============================================================================
+// Gutenberg Block Button (.wp-block-button__link)
+// =============================================================================
 
 .wp-block-button__link {
     display:         inline-flex;
@@ -120,13 +132,14 @@
     justify-content: center;
     gap:             $spacing-2;
     padding:         $spacing-2 $spacing-4;
+    min-height:      44px;
     border:          2px solid $color-primary;
     border-radius:   $radius-none;
     font-size:       $font-size-lg;
     font-weight:     $font-weight-semibold;
     line-height:     1.25;
     text-decoration: none;
-    color: $color-primary;
+    color:           $color-primary;
     background-color: transparent;
     white-space:     nowrap;
     cursor:          pointer;
@@ -134,28 +147,30 @@
                      color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
 
     &:hover {
-        color: $color-light;        
+        color:            $color-light;
         background-color: $color-primary;
-        // outline:        2px solid $color-primary;
-        // outline-offset: 3px;
     }
 
-    
-
+    &:focus-visible {
+        outline:        2px solid $color-primary;
+        outline-offset: 3px;
+    }
 }
 
-.btn-primary {
-    
 
-    & .wp-block-button__link  {
-        background: $color-primary;
+// =============================================================================
+// Gutenberg Wrapper-Klasse .btn-primary
+// =============================================================================
+
+.btn-primary {
+    .wp-block-button__link {
+        background:   $color-primary;
         border-color: $color-secondary;
-        color: $color-white !important;
+        color:        $color-white !important;
     }
 
     &:hover .wp-block-button__link {
         background:   $color-secondary;
         border-color: $color-primary-dark;
     }
-
 }

@@ -1,115 +1,107 @@
 @use '../abstracts' as *;
 
-// Prevent horizontal overflow
+// =============================================================================
+// Hero Slider – Stadtwirt
+// Version: 1.2.0 – Fluid Responsive System
+//
+// Änderungen:
+//   - @media (min-width: 768px) → @include respond-to('md')
+//   - @media (max-width: 767px) → @include respond-below('md')
+//   - $font-size-4xl/7xl/3xl → clamp() fluid
+//   - $font-size-xl → var(--text-xl)
+// =============================================================================
+
 html, body {
   overflow-x: hidden;
-  max-width: 100vw;
+  max-width:  100vw;
 }
 
-// Hero Slider
 .hero-slider {
-  position: relative;
-  width: 100%;
-  max-width: 100vw; // Verhindere Overflow
-  height: 600px;
-  overflow: hidden;
-  
-  @media (min-width: 768px) {
-    height: 700px;
-  }
+  position:  relative;
+  width:     100%;
+  max-width: 100vw;
+  height:    600px;
+  overflow:  hidden;
+
+  @include respond-to('md') { height: 700px; }    // war: @media (min-width: 768px)
+
+  @include respond-below('md') { height: 500px; } // war: @media (max-width: 767px)
 }
 
 .hero-slide {
-  position: relative;
-  display: flex;
-  align-items: center;
+  position:        relative;
+  display:         flex;
+  align-items:     center;
   justify-content: center;
 }
 
-// Background Container
 .hero-slide__background {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset:    0;
   overflow: hidden;
-  z-index: 0;
-  
-  picture {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
+  z-index:  0;
+
+  picture { display: block; width: 100%; height: 100%; }
 }
 
-// Background Image
 .hero-slide__image {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  position:        absolute;
+  inset:           0;
+  width:           100%;
+  height:          100%;
+  object-fit:      cover;
   object-position: center;
 }
 
-// Overlay
 .hero-slide__overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  position:   absolute;
+  inset:      0;
   background: rgba(0, 0, 0, 0.4);
-  z-index: 1;
+  z-index:    1;
 }
 
-// Content
 .hero-slide__content {
-  position: relative;
-  z-index: 2;
+  position:   relative;
+  z-index:    2;
   text-align: center;
-  color: white;
-  max-width: 800px;
-  padding: 2rem;
+  color:      white !important;
+  max-width:  800px;
+  padding:    var(--space-xl);  // war: 2rem fix
+
+  * { color: white !important; }
 }
 
 .hero-slide__subtitle {
-  font-size: 1rem;
-  margin-bottom: 0.75rem;
+  font-size:      var(--text-base);   // war: 1rem fix
+  margin-bottom:  var(--space-sm);
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  font-weight: 600;
+  font-weight:    600;
 }
 
 .hero-slide__title {
-  font-size: $font-size-4xl;
+  // Fluid: 32px Mobile → 56px Desktop (war: $font-size-4xl fix + $font-size-7xl @md)
+  font-size:   clamp(2rem, 5vw, 3.5rem);
   font-weight: 700;
-  margin-bottom: 1rem;
-  line-height: 1.2;
-  
-  @media (min-width: 768px) {
-    font-size: $font-size-7xl;
-  }
+  margin-bottom: var(--space-md);
+  line-height:   1.2;
+  color:         white !important;
+  text-shadow:   0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .hero-slide__text {
-  font-size: 1rem;
-  margin-bottom: 1.5rem;
-  line-height: 1.6;
-  
-  @media (min-width: 768px) {
-    font-size: 1.125rem;
+  font-size:     var(--text-base);    // war: 1rem fix
+  margin-bottom: var(--space-lg);
+  line-height:   1.6;
+
+  @include respond-to('md') {
+    font-size: var(--text-lg);        // war: 1.125rem fix
   }
-  
-  p {
-    margin: 0;
-  }
+
+  p { margin: 0; }
 }
 
 .hero-slide__button {
-  // Basis-Styles aus globalem Mixin, Hero-Farbe überschreibt Primary
   @include btn-base;
   background:   $color-hero-gradient;
   border-color: $color-hero-gradient;
@@ -124,85 +116,48 @@ html, body {
   &:active { transform: translateY(0); }
 }
 
-// Navigation - Swiper Standard Klassen
+
+// ── Swiper Navigation ─────────────────────────────────────────────────────────
+
 .swiper-button-prev,
 .swiper-button-next {
-  width: 50px !important;
-  height: 50px !important;
+  width:      50px !important;
+  height:     50px !important;
   background: rgba($color-white, 0.2) !important;
   border-radius: 50% !important;
-  color: white !important;
-  
+  color:      white !important;
+
   &::after {
-    font-size: $font-size-xl !important;
+    font-size: var(--text-xl) !important;  // war: $font-size-xl
   }
-  
-  &:hover {
-    background: rgba($color-white, 0.3) !important;
-  }
+
+  &:hover { background: rgba($color-white, 0.3) !important; }
 }
 
-// Pagination - Swiper Standard Klasse
-.swiper-pagination {
-  bottom: 20px !important;
-}
+.swiper-pagination         { bottom: 20px !important; }
 
 .swiper-pagination-bullet {
-  width: 12px !important;
-  height: 12px !important;
+  width:      12px !important;
+  height:     12px !important;
   background: rgba($color-white, 0.5) !important;
-  opacity: 1 !important;
-  
-  &:hover {
-    background: rgba($color-white, 0.7) !important;
-  }
+  opacity:    1 !important;
+
+  &:hover { background: rgba($color-white, 0.7) !important; }
 }
 
 .swiper-pagination-bullet-active {
-  background: $color-hero-gradient !important;
-  width: 32px !important;
+  background:    $color-hero-gradient !important;
+  width:         32px !important;
   border-radius: 6px !important;
 }
 
-// Mobile
-@media (max-width: 767px) {
-  .hero-slider {
-    height: 500px;
-  }
-  
-  .hero-slide__title {
-    font-size: $font-size-3xl;
-  }
-  
+
+// ── Mobile ────────────────────────────────────────────────────────────────────
+
+@include respond-below('md') {
   .hero-slider__button--prev,
   .hero-slider__button--next {
-    width: 40px;
+    width:  40px;
     height: 40px;
-  }
-}
-
-.hero-slide__content {
-  position: relative;
-  z-index: 2;
-  text-align: center;
-  color: white !important;
-  max-width: 800px;
-  padding: 2rem;
-  
-  * {
-    color: white !important;
-  }
-}
-
-.hero-slide__title {
-  font-size: $font-size-4xl;
-  font-weight: 700;
-  margin-bottom: 1rem;
-  line-height: 1.2;
-  color: white !important;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-  
-  @media (min-width: 768px) {
-    font-size: $font-size-7xl;
   }
 }

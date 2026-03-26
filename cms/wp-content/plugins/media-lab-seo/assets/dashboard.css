@@ -1,0 +1,104 @@
+/* ============================================================
+   Media Lab SEO Toolkit – Dashboard & Redirects Styles
+   ============================================================ */
+
+/* ── KPI-Kacheln ──────────────────────────────────────────── */
+
+.mlt-kpi-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 20px 0 24px;
+}
+
+.mlt-kpi {
+    flex: 1 1 140px;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 16px 20px;
+    min-width: 120px;
+}
+
+.mlt-kpi__value {
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: #1a1a2e;
+}
+
+.mlt-kpi__label {
+    font-size: 12px;
+    color: #9ca3af;
+    margin-top: 4px;
+}
+
+.mlt-kpi--blue   .mlt-kpi__value { color: #2563eb; }
+.mlt-kpi--purple .mlt-kpi__value { color: #7c3aed; }
+.mlt-kpi--green  .mlt-kpi__value { color: #16a34a; }
+.mlt-kpi--orange .mlt-kpi__value { color: #d97706; }
+.mlt-kpi--teal   .mlt-kpi__value { color: #0891b2; }
+.mlt-kpi--pink   .mlt-kpi__value { color: #db2777; }
+
+/* ── Tabellen ─────────────────────────────────────────────── */
+
+.mlt-table {
+    font-size: 13px;
+}
+
+.mlt-table th,
+.mlt-table td {
+    padding: 8px 12px !important;
+}
+
+/* ── Positions-Badge ──────────────────────────────────────── */
+
+.mlt-pos {
+    display: inline-block;
+    border-radius: 4px;
+    padding: 2px 7px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.mlt-pos--top { background: #d1fae5; color: #065f46; }
+.mlt-pos--mid { background: #fef3c7; color: #92400e; }
+.mlt-pos--low { background: #fee2e2; color: #991b1b; }
+
+/* ── Redirect-Tabelle ─────────────────────────────────────── */
+
+.mlt-redirect-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.mlt-redirect-form input,
+.mlt-redirect-form select {
+    flex: 1 1 180px;
+}
+
+.mlt-row-inactive {
+    opacity: 0.5;
+}
+
+.mlt-badge {
+    display: inline-block;
+    border-radius: 4px;
+    padding: 2px 7px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.mlt-badge--301 { background: #dbeafe; color: #1e40af; }
+.mlt-badge--302 { background: #fef3c7; color: #92400e; }
+.mlt-badge--307 { background: #f3e8ff; color: #6b21a8; }
+
+.mlt-inline-result {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.mlt-inline-result.success { color: #16a34a; }
+.mlt-inline-result.error   { color: #dc2626; }

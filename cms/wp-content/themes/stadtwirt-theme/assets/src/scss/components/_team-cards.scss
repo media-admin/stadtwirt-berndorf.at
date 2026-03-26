@@ -1,263 +1,209 @@
 @use '../abstracts' as *;
 
-// ============================================
-// TEAM CARDS GRID - FIXED
-// ============================================
+// =============================================================================
+// Team Cards
+// Version: 1.2.0 – Fluid Responsive System
+//
+// Änderungen:
+//   - @media (min-width: 640px)  → @include respond-to('sm')
+//   - @media (min-width: 1024px) → @include respond-to('lg')
+//   - $font-size-xl/lg/base/sm/xs → var(--text-*)
+//   - gap: $spacing-6 → var(--space-xl) | margin: $spacing-8 → var(--space-2xl)
+// =============================================================================
+
+// ── Grid ──────────────────────────────────────────────────────────────────────
 
 .team-cards {
-  display: grid !important;
-  gap: $spacing-6 !important;
-  margin: $spacing-8 0 !important;
-  width: 100% !important;
-}
-
-// Mobile: 1 Spalte
-.team-cards {
+  display:               grid !important;
+  gap:                   var(--space-xl) !important;    // war: $spacing-6
+  margin:                var(--space-2xl) 0 !important; // war: $spacing-8
+  width:                 100% !important;
   grid-template-columns: 1fr !important;
-}
 
-// Tablet: 2 Spalten für 3-4 columns
-@media (min-width: 640px) {
-  .team-cards[data-columns="2"] {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-  
-  .team-cards[data-columns="3"],
-  .team-cards[data-columns="4"] {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-}
-
-// Desktop: Volle Spaltenanzahl
-@media (min-width: 1024px) {
-  .team-cards[data-columns="2"] {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-  
-  .team-cards[data-columns="3"] {
-    grid-template-columns: repeat(3, 1fr) !important;
-  }
-  
-  .team-cards[data-columns="4"] {
-    grid-template-columns: repeat(4, 1fr) !important;
-  }
-}
-
-// Single Team Member
-.team-member {
-  text-align: center;
-  
-  // Image Wrapper
-  &__image-wrapper {
-    position: relative;
-    margin-bottom: $spacing-4;
-    border-radius: $radius-lg;
-    overflow: hidden;
-    
-    &::before {
-      content: '';
-      display: block;
-      padding-bottom: 100%; // 1:1 aspect ratio
+  @include respond-to('sm') {
+    &[data-columns="2"],
+    &[data-columns="3"],
+    &[data-columns="4"] {
+      grid-template-columns: repeat(2, 1fr) !important;
     }
   }
-  
-  // Image
+
+  @include respond-to('lg') {
+    &[data-columns="2"] { grid-template-columns: repeat(2, 1fr) !important; }
+    &[data-columns="3"] { grid-template-columns: repeat(3, 1fr) !important; }
+    &[data-columns="4"] { grid-template-columns: repeat(4, 1fr) !important; }
+  }
+}
+
+
+// ── Single Team Member ────────────────────────────────────────────────────────
+
+.team-member {
+  text-align: center;
+
+  &__image-wrapper {
+    position:      relative;
+    margin-bottom: var(--space-md);   // war: $spacing-4
+    border-radius: $radius-lg;
+    overflow:      hidden;
+
+    &::before {
+      content:      '';
+      display:      block;
+      padding-bottom: 100%;
+    }
+  }
+
   &__image {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    position:   absolute;
+    top: 0; left: 0;
+    width:      100%;
+    height:     100%;
     object-fit: cover;
     transition: transform $transition-base;
   }
-  
-  // Overlay (Social Icons)
+
   &__overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba($color-primary, 0.9);
-    display: flex;
-    align-items: center;
+    position:        absolute;
+    top: 0; left: 0;
+    width:           100%;
+    height:          100%;
+    background:      rgba($color-primary, 0.9);
+    display:         flex;
+    align-items:     center;
     justify-content: center;
-    opacity: 0;
-    transition: opacity $transition-base;
+    opacity:         0;
+    transition:      opacity $transition-base;
   }
-  
+
   &__image-wrapper:hover {
-    .team-member__image {
-      transform: scale(1.05);
-    }
-    
-    .team-member__overlay {
-      opacity: 1;
-    }
+    .team-member__image   { transform: scale(1.05); }
+    .team-member__overlay { opacity: 1; }
   }
-  
-  // Social Links
+
   &__social {
-    display: flex;
-    gap: $spacing-2;
-    flex-wrap: wrap;
+    display:         flex;
+    gap:             $spacing-2;
+    flex-wrap:       wrap;
     justify-content: center;
   }
-  
+
   &__social-link {
-    width: 44px;
-    height: 44px;
-    border-radius: $radius-full;
-    background: $color-white;
-    display: flex;
-    align-items: center;
+    // WCAG 2.5.5: 44×44px Touch Target ✅
+    width:           44px;
+    height:          44px;
+    border-radius:   $radius-full;
+    background:      $color-white;
+    display:         flex;
+    align-items:     center;
     justify-content: center;
-    color: $color-primary;
-    transition: all $transition-base;
+    color:           $color-primary;
+    transition:      all $transition-base;
     text-decoration: none;
-    
-    .dashicons {
-      font-size: 20px;
-      width: 20px;
-      height: 20px;
-    }
-    
+
+    .dashicons { font-size: 20px; width: 20px; height: 20px; }
+
     &:hover {
       background: $color-primary;
-      color: $color-white;
-      transform: translateY(-4px) scale(1.1);
+      color:      $color-white;
+      transform:  translateY(-4px) scale(1.1);
       box-shadow: $shadow-lg;
     }
+
+    &:focus-visible {
+      outline:        2px solid $color-primary;
+      outline-offset: 3px;
+    }
   }
-  
-  // Content
-  &__content {
-    padding: 0 $spacing-2;
-  }
-  
-  // Name
+
+  &__content { padding: 0 $spacing-2; }
+
   &__name {
-    margin: 0 0 $spacing-1 0;
-    font-size: $font-size-xl;
+    margin:      0 0 $spacing-1;
+    font-size:   var(--text-xl);   // war: $font-size-xl
     font-weight: 700;
-    color: var(--color-text);
+    color:       var(--color-text);
   }
-  
-  // Role
+
   &__role {
-    color: $color-primary;
-    font-size: $font-size-base;
-    font-weight: 600;
-    margin-bottom: $spacing-3;
+    color:          $color-primary;
+    font-size:      var(--text-sm);  // war: $font-size-sm (doppelt definiert)
+    font-weight:    600;
+    margin-bottom:  $spacing-3;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    font-size: $font-size-sm;
   }
-  
-  // Bio
+
   &__bio {
-    color: var(--color-text-secondary);
-    font-size: $font-size-sm;
+    color:       var(--color-text-secondary);
+    font-size:   var(--text-sm);   // war: $font-size-sm
     line-height: 1.6;
-    margin: $spacing-3 0;
-    
-    p {
-      margin: 0;
-    }
+    margin:      $spacing-3 0;
+
+    p { margin: 0; }
   }
-  
-  // Phone
+
   &__phone {
-    display: inline-flex;
+    display:     inline-flex;
     align-items: center;
-    gap: $spacing-1;
-    color: var(--color-text-secondary);
-    font-size: $font-size-sm;
-    margin-top: $spacing-2;
-    
-    .dashicons {
-      font-size: 16px;
-      width: 16px;
-      height: 16px;
-    }
+    gap:         $spacing-1;
+    color:       var(--color-text-secondary);
+    font-size:   var(--text-sm);   // war: $font-size-sm
+    margin-top:  $spacing-2;
+
+    .dashicons { font-size: 16px; width: 16px; height: 16px; }
   }
 }
 
-// ============================================
-// STYLE VARIANTS
-// ============================================
 
-// Card Style
+// ── Style Variants ────────────────────────────────────────────────────────────
+
 .team-cards--card {
   .team-member {
-    background: var(--color-card-bg);
+    background:    var(--color-card-bg);
     border-radius: $radius-lg;
-    padding: $spacing-4;
-    box-shadow: $shadow-sm;
-    transition: all $transition-base;
-    height: 100%;
-    
-    &:hover {
-      transform: translateY(-8px);
-      box-shadow: $shadow-xl;
-    }
-    
-    .team-member__image-wrapper {
-      margin-bottom: $spacing-4;
-    }
+    padding:       var(--space-md);   // war: $spacing-4
+    box-shadow:    $shadow-sm;
+    transition:    all $transition-base;
+    height:        100%;
+
+    &:hover { transform: translateY(-8px); box-shadow: $shadow-xl; }
+
+    .team-member__image-wrapper { margin-bottom: var(--space-md); }
   }
 }
 
-// Minimal Style
 .team-cards--minimal {
   .team-member {
     &__image-wrapper {
       border-radius: $radius-full;
-      max-width: 200px;
-      margin-left: auto;
-      margin-right: auto;
-      
-      &::before {
-        padding-bottom: 100%;
-      }
+      max-width:     200px;
+      margin-left:   auto;
+      margin-right:  auto;
+
+      &::before { padding-bottom: 100%; }
     }
-    
-    .team-member__overlay {
-      border-radius: $radius-full;
-    }
-    
-    .team-member__name {
-      font-size: $font-size-lg;
-    }
-    
-    .team-member__role {
-      font-size: $font-size-xs;
-    }
-    
-    .team-member__bio {
-      display: none;
-    }
+
+    .team-member__overlay { border-radius: $radius-full; }
+    .team-member__name    { font-size: var(--text-lg); }  // war: $font-size-lg
+    .team-member__role    { font-size: var(--text-xs); }  // war: $font-size-xs
+    .team-member__bio     { display: none; }
   }
 }
 
-// ============================================
-// RESPONSIVE
-// ============================================
+
+// ── Responsive ────────────────────────────────────────────────────────────────
 
 @include respond-to('sm') {
-  .team-member {
-    &__name {
-      font-size: $font-size-xl;
-    }
+  .team-member__name {
+    font-size: var(--text-xl);   // war: $font-size-xl
   }
 }
+
 
 // Dark Mode
 @media (prefers-color-scheme: dark) {
-  .team-member {
-    &__overlay {
-      background: rgba($color-primary, 0.95);
-    }
+  .team-member__overlay {
+    background: rgba($color-primary, 0.95);
   }
 }

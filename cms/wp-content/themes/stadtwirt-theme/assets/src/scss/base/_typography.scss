@@ -1,77 +1,64 @@
 @use '../abstracts' as *;
 
 // Typography (aus Figma Text Styles)
+// Version: 1.2.0 – Fluid Responsive System
+//
+// Änderungen:
+//   - h1: font-size 56px @media('md') → var(--text-h1) fluid (kein @media mehr)
+//   - body font-size: $font-size-base → var(--text-base) fluid
 
 body {
   font-family: $font-primary;
-  font-size: $font-size-base;
+  font-size:   var(--text-base);   // war: $font-size-base – jetzt fluid
   font-weight: $font-weight-normal;
-  color: $color-text;
+  color:       $color-text;
   line-height: $line-height-base;
 }
 
 // Headings
 h1, h2, h3, h4, h5, h6 {
-  font-weight: $font-weight-bold;
-  line-height: $line-height-tight;
+  font-weight:   $font-weight-bold;
+  line-height:   $line-height-tight;
   margin-bottom: $spacing-3;
 }
 
 h1 {
-  font-size: $font-size-h1;
-  
-  @include respond-to('md') {
-    font-size: 56px;
-  }
+  // Fluid: 32px (Mobile) → 48px (Desktop) – kein @media mehr nötig
+  font-size: var(--text-h1);
 }
 
 h2 {
-  width: fit-content;
-  position: relative;
-  font-family: $font-secondary;
-  font-size: $font-size-h2;
-  // text-decoration: underline;
-  // text-decoration-color: $color-primary;
-  // text-decoration-thickness: 3px;
-  // text-underline-offset: 12px;
+  width:        fit-content;
+  position:     relative;
+  font-family:  $font-secondary;
+  font-size:    $font-size-h2;   // statisch – Stadtwirt Designentscheidung
 }
-
 
 h2::after {
-  display: block;
-  content: '';
-  width: 100%;
-  height: 3px;
+  display:   block;
+  content:   '';
+  width:     100%;
+  height:    3px;
   background: $color-primary;
-  position: absolute;
-  bottom: -4px;
-  left: 4px;
+  position:  absolute;
+  bottom:    -4px;
+  left:      4px;
 }
-
 
 .columns-flush:first-of-type h2::after {
   height: 0;
 }
 
-
 h3 {
-  font-size: $font-size-h3;
-  font-weight: $font-weight-semibold;
+  font-size:      $font-size-h3;
+  font-weight:    $font-weight-semibold;
   text-transform: uppercase;
   letter-spacing: 7%;
 }
 
-h4 {
-  font-size: $font-size-h4;
-}
-
-h5 {
-  font-size: $font-size-h5;
-}
-
-h6 {
-  font-size: $font-size-h6;
-}
+h4 { font-size: $font-size-h4; }
+h5 { font-size: $font-size-h5; }
+h6 { font-size: $font-size-h6; }
 
 // Paragraphs
 p {
@@ -80,20 +67,14 @@ p {
 
 // Links
 a {
-  color: $color-primary;
+  color:      $color-primary;
   transition: color $transition-fast;
-  
+
   &:hover {
     color: $color-primary-darker;
-    
   }
 }
 
 // Strong & Em
-strong {
-  font-weight: $font-weight-bold;
-}
-
-em {
-  font-style: italic;
-}
+strong { font-weight: $font-weight-bold; }
+em     { font-style: italic; }

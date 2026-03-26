@@ -1,0 +1,342 @@
+/* ==========================================================================
+   Media Lab Bookings – Buchungsformular
+   Nutzt CSS Custom Properties für einfache Integration in beliebige Themes.
+   ========================================================================== */
+
+.mlb-booking-form {
+    --mlb-color-primary:     #d40000;
+    --mlb-color-primary-dk:  #b30000;
+    --mlb-color-text:        #1a1a1a;
+    --mlb-color-label:       #444;
+    --mlb-color-border:      #d0d5dd;
+    --mlb-color-border-focus:#0073aa;
+    --mlb-color-bg:          #fff;
+    --mlb-color-bg-input:    #fff;
+    --mlb-color-success-bg:  #f0faf0;
+    --mlb-color-success:     #155724;
+    --mlb-color-error-bg:    #fff5f5;
+    --mlb-color-error:       #c00;
+    --mlb-color-disabled:    #f5f5f5;
+    --mlb-color-disabled-txt:#999;
+    --mlb-radius:            6px;
+    --mlb-font:              inherit;
+    --mlb-shadow-focus:      0 0 0 3px rgba(0, 115, 170, .25);
+
+    font-family: var(--mlb-font);
+    color: var(--mlb-color-text);
+    max-width: 720px;
+}
+
+/* ── Titel ───────────────────────────────────────────────────────────────── */
+
+.mlb-booking-form__title {
+    margin: 0 0 24px;
+    font-size: 1.5rem;
+}
+
+/* ── Steps / Sections ────────────────────────────────────────────────────── */
+
+.mlb-form__step {
+    margin-bottom: 24px;
+}
+
+.mlb-form__step--hidden {
+    display: none;
+}
+
+/* ── Rows ────────────────────────────────────────────────────────────────── */
+
+.mlb-form__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.mlb-form__row--3 {
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+@media ( max-width: 600px ) {
+    .mlb-form__row,
+    .mlb-form__row--3 {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ── Fields ──────────────────────────────────────────────────────────────── */
+
+.mlb-form__field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* ── Labels ──────────────────────────────────────────────────────────────── */
+
+.mlb-form__label {
+    font-size: .875rem;
+    font-weight: 600;
+    color: var(--mlb-color-label);
+}
+
+.mlb-form__label--required::after {
+    content: ' *';
+    color: var(--mlb-color-primary);
+}
+
+/* ── Inputs ──────────────────────────────────────────────────────────────── */
+
+.mlb-form__input,
+.mlb-form__select,
+.mlb-form__textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 14px;
+    border: 1.5px solid var(--mlb-color-border);
+    border-radius: var(--mlb-radius);
+    background: var(--mlb-color-bg-input);
+    color: var(--mlb-color-text);
+    font-size: 1rem;
+    font-family: var(--mlb-font);
+    transition: border-color .15s, box-shadow .15s;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.mlb-form__input:focus,
+.mlb-form__select:focus,
+.mlb-form__textarea:focus {
+    outline: none;
+    border-color: var(--mlb-color-border-focus);
+    box-shadow: var(--mlb-shadow-focus);
+}
+
+.mlb-form__input[readonly] {
+    cursor: pointer;
+    background: var(--mlb-color-bg-input);
+}
+
+.mlb-form__select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 38px;
+}
+
+.mlb-form__select:disabled {
+    background-color: var(--mlb-color-disabled);
+    color: var(--mlb-color-disabled-txt);
+    cursor: not-allowed;
+}
+
+.mlb-form__textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* ── Slot-Info ────────────────────────────────────────────────────────────── */
+
+.mlb-slots-info {
+    font-size: .8rem;
+    color: var(--mlb-color-label);
+    min-height: 1.2em;
+}
+
+/* ── Submit ───────────────────────────────────────────────────────────────── */
+
+.mlb-form__submit {
+    margin-top: 8px;
+}
+
+.mlb-form__button {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 28px;
+    background: var(--mlb-color-primary);
+    color: #fff;
+    border: none;
+    border-radius: var(--mlb-radius);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .15s;
+}
+
+.mlb-form__button:hover:not(:disabled) {
+    background: var(--mlb-color-primary-dk);
+}
+
+.mlb-form__button:disabled {
+    opacity: .65;
+    cursor: not-allowed;
+}
+
+/* Spinner */
+.mlb-form__button-spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255,255,255,.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    display: none;
+    animation: mlb-spin .7s linear infinite;
+}
+
+.mlb-form__button--loading .mlb-form__button-spinner {
+    display: block;
+}
+
+@keyframes mlb-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Datenschutz */
+.mlb-form__privacy {
+    margin: 10px 0 0;
+    font-size: .8rem;
+    color: #666;
+}
+
+.mlb-form__privacy a {
+    color: var(--mlb-color-primary);
+}
+
+/* ── Erfolgsmeldung ───────────────────────────────────────────────────────── */
+
+.mlb-form__success {
+    background: var(--mlb-color-success-bg);
+    border: 1.5px solid #a3d9a5;
+    border-radius: var(--mlb-radius);
+    padding: 32px;
+    text-align: center;
+}
+
+.mlb-form__success-icon {
+    width: 56px;
+    height: 56px;
+    background: var(--mlb-color-success);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin: 0 auto 16px;
+}
+
+.mlb-form__success-title {
+    margin: 0 0 8px;
+    color: var(--mlb-color-success);
+}
+
+.mlb-form__success-message {
+    color: #333;
+    margin: 0;
+}
+
+/* ── Fehlermeldung ────────────────────────────────────────────────────────── */
+
+.mlb-form__error-global {
+    background: var(--mlb-color-error-bg);
+    border: 1.5px solid #f5c6cb;
+    border-radius: var(--mlb-radius);
+    padding: 14px 18px;
+    margin-top: 16px;
+}
+
+.mlb-form__error-message {
+    margin: 0;
+    color: var(--mlb-color-error);
+    font-size: .925rem;
+}
+
+/* ── Flatpickr Override ───────────────────────────────────────────────────── */
+
+.flatpickr-day.disabled,
+.flatpickr-day.disabled:hover {
+    background: #f9f9f9;
+    color: #ccc;
+    cursor: not-allowed;
+    text-decoration: line-through;
+}
+
+.flatpickr-day.selected,
+.flatpickr-day.selected:hover {
+    background: var(--mlb-color-primary);
+    border-color: var(--mlb-color-primary);
+}
+
+.flatpickr-day.today {
+    border-color: var(--mlb-color-primary);
+}
+
+/* ── DSGVO-Checkbox ───────────────────────────────────────────────────────── */
+
+.mlb-form__field--checkbox {
+    margin-top: 8px;
+}
+
+.mlb-form__checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+    font-size: .925rem;
+    line-height: 1.5;
+}
+
+.mlb-form__checkbox {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    border: 1.5px solid var(--mlb-color-border);
+    border-radius: 4px;
+    background: var(--mlb-color-bg-input);
+    cursor: pointer;
+    accent-color: var(--mlb-color-primary);
+    appearance: auto;
+    -webkit-appearance: auto;
+}
+
+.mlb-form__checkbox:focus {
+    outline: 2px solid var(--mlb-color-border-focus);
+    outline-offset: 2px;
+}
+
+.mlb-form__checkbox-text {
+    color: var(--mlb-color-text);
+}
+
+.mlb-form__checkbox-text a {
+    color: var(--mlb-color-primary);
+    text-decoration: underline;
+}
+
+.mlb-form__required-mark {
+    color: var(--mlb-color-primary);
+    font-weight: 700;
+}
+
+.mlb-form__field-error {
+    margin-top: 6px;
+    font-size: .825rem;
+    color: var(--mlb-color-error);
+    padding: 6px 10px;
+    background: var(--mlb-color-error-bg);
+    border-radius: 4px;
+    border-left: 3px solid var(--mlb-color-error);
+}
+
+.mlb-form__privacy-note {
+    margin: 10px 0 0;
+    font-size: .8rem;
+    color: #666;
+}
+
+/* ── Hidden-Utility ───────────────────────────────────────────────────────── */
+
+[hidden] {
+    display: none !important;
+}

@@ -257,6 +257,10 @@ function medialab_register_acf_block_fields(): void {
             'param'    => 'block',
             'operator' => '==',
             'value'    => 'medialab/testimonial',
+        ] ], [ [
+            'param'    => 'post_type',
+            'operator' => '==',
+            'value'    => 'testimonial',
         ] ] ],
         'menu_order' => 0,
         'position'   => 'normal',

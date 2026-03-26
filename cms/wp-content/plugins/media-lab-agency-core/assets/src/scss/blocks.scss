@@ -1,33 +1,64 @@
 // =============================================================================
 // Media Lab – Block Styles (Frontend)
 // Kompiliert nach: assets/dist/css/blocks.css
+// Version: 1.2.0 – Fluid Responsive System + WCAG 2.1 AA
+//
+// ÄNDERUNGEN v1.2.0:
+//   - Fluid Spacing Tokens (--ml-space-*) eingeführt
+//   - WCAG-Patch integriert (kein separater Anhang mehr)
+//   - #ff0000 → #d40000 an der Quelle korrigiert
+//   - Hardcodierte Section-Paddings auf fluid Vars umgestellt
+//   - Logo-Grid !important-Hacks entfernt, saubere Breakpoints
+//   - prefers-reduced-motion integriert
+//   - Touch-Targets 44×44px für Social-Links
+//   - Focus-Visible Styles für alle interaktiven Block-Elemente
 // =============================================================================
 
-// ── Variablen (Fallbacks für Standalone-Nutzung ohne Theme) ──────────────────
+
+// ─────────────────────────────────────────────────────────────────
+// CSS CUSTOM PROPERTIES
+// Fallbacks für Standalone-Nutzung ohne Theme.
+// Wenn das Theme geladen ist, überschreiben dessen :root-Werte
+// die --color-* Vars; die --ml-* Vars bleiben plugin-spezifisch.
+// ─────────────────────────────────────────────────────────────────
+
 :root {
-    --ml-color-primary:    #ff0000;
+    // ── Farben ────────────────────────────────────────────────────
+    --ml-color-primary:    #d40000;  // WCAG AA: 5.1:1 auf weiß ✅ (war: #ff0000 = 4.0:1 ❌)
     --ml-color-dark:       #1a1a1a;
     --ml-color-light:      #f5f5f5;
     --ml-color-white:      #ffffff;
     --ml-color-text:       #1a1a1a;
-    --ml-color-text-muted: #9b9b9b;
+    --ml-color-text-muted: #4a4a4a;  // WCAG AA: 9.7:1 auf weiß ✅ (war: #9b9b9b = 2.9:1 ❌)
     --ml-color-border:     #e0e0e0;
     --ml-radius:           8px;
-    --ml-spacing:          1rem;
+
+    // ── Fluid Spacing ─────────────────────────────────────────────
+    // Spiegelt das Theme-System (--space-*), plugin-prefixed für Isolation.
+    // Skaliert automatisch zwischen Mobile (375px) und Desktop (1440px).
+    --ml-space-xs:      clamp(0.5rem,   1vw,   0.75rem);   //  8–12px
+    --ml-space-sm:      clamp(0.75rem,  2vw,   1rem);       // 12–16px
+    --ml-space-md:      clamp(1rem,     2.5vw, 1.5rem);     // 16–24px
+    --ml-space-lg:      clamp(1.5rem,   4vw,   2rem);       // 24–32px
+    --ml-space-xl:      clamp(2rem,     5vw,   3rem);       // 32–48px
+    --ml-space-2xl:     clamp(3rem,     7vw,   5rem);       // 48–80px
+    --ml-space-section: clamp(3rem,     8vw,   5rem);       // 48–80px – für Block-Outer-Padding
+    --ml-space-inner:   clamp(1rem,     4vw,   1.5rem);     // 16–24px – für horizontales Padding
 }
+
 
 // =============================================================================
 // HERO
 // =============================================================================
 
 .ml-block-hero {
-    position:        relative;
-    display:         flex;
-    align-items:     center;
-    background-size:    cover;
+    position:            relative;
+    display:             flex;
+    align-items:         center;
+    background-size:     cover;
     background-position: center;
     background-repeat:   no-repeat;
-    overflow:        hidden;
+    overflow:            hidden;
 
     // Höhen-Varianten
     &.ml-hero--full   { min-height: 100vh; }
@@ -36,34 +67,35 @@
 }
 
 .ml-hero__overlay {
-    position: absolute;
-    inset:    0;
-    background-color: #000;
-    pointer-events:   none;
+    position:      absolute;
+    inset:         0;
+    background:    #000;
+    pointer-events: none;
 }
 
 .ml-hero__inner {
-    position:   relative;
-    z-index:    1;
-    padding:    5rem 1.5rem;
-    width:      100%;
+    position: relative;
+    z-index:  1;
+    // Fluid: 48px vertical → 80px / 16px horizontal → 24px
+    padding:  var(--ml-space-2xl) var(--ml-space-inner);
+    width:    100%;
 }
 
 .ml-hero__content {
     max-width: 800px;
 
     .ml-hero--center & { margin: 0 auto; text-align: center; }
-    .ml-hero--right  & { margin-left: auto;  text-align: right; }
+    .ml-hero--right  & { margin-left: auto; text-align: right; }
 }
 
 .ml-hero__kicker {
-    font-size:      .85rem;
+    font-size:      clamp(0.75rem, 1.2vw, 0.875rem);
     font-weight:    600;
-    letter-spacing: .1em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     color:          #fff;
-    opacity:        .8;
-    margin-bottom:  .75rem;
+    opacity:        0.8;
+    margin-bottom:  var(--ml-space-sm);
 }
 
 .ml-hero__title {
@@ -71,26 +103,27 @@
     font-weight:   700;
     color:         #fff;
     line-height:   1.15;
-    margin-bottom: 1.25rem;
+    margin-bottom: var(--ml-space-md);
 }
 
 .ml-hero__subtitle {
     font-size:     clamp(1rem, 2vw, 1.25rem);
-    color:         rgba(255,255,255,.85);
-    margin-bottom: 2rem;
+    color:         rgba(255, 255, 255, 0.85);
+    margin-bottom: var(--ml-space-lg);
     max-width:     600px;
 
     .ml-hero--center & { margin-left: auto; margin-right: auto; }
 }
 
 .ml-hero__actions {
-    display:         flex;
-    gap:             1rem;
-    flex-wrap:       wrap;
+    display:   flex;
+    gap:       var(--ml-space-sm);
+    flex-wrap: wrap;
 
     .ml-hero--center & { justify-content: center; }
     .ml-hero--right  & { justify-content: flex-end; }
 }
+
 
 // =============================================================================
 // TESTIMONIAL
@@ -104,45 +137,52 @@
         background:    var(--ml-color-white);
         border:        1px solid var(--ml-color-border);
         border-radius: var(--ml-radius);
-        padding:       2rem;
+        padding:       var(--ml-space-lg);
     }
 
     &.ml-testimonial--minimal {
-        border-left: 4px solid var(--ml-color-primary);
-        padding-left: 1.5rem;
+        border-left:  4px solid var(--ml-color-primary);
+        padding-left: var(--ml-space-md);
     }
 
     &.ml-testimonial--centered {
         text-align: center;
-        padding:    2rem;
+        padding:    var(--ml-space-lg);
     }
 }
 
-.ml-testimonial__stars { margin-bottom: 1rem; }
-.ml-testimonial__star  { font-size: 1.1rem; color: var(--ml-color-border); }
-.ml-testimonial__star--filled { color: #f59e0b; }
+.ml-testimonial__stars { margin-bottom: var(--ml-space-sm); }
+
+.ml-testimonial__star {
+    font-size: 1.2rem;
+    color:     #767676;  // WCAG 1.4.3: 4.54:1 auf weiß ✅
+}
+
+.ml-testimonial__star--filled {
+    color: #b45309;  // Dunkleres Gold: 4.6:1 auf weiß ✅ (war: #f59e0b = 1.87:1 ❌)
+}
 
 .ml-testimonial__quote {
-    font-size:     1.1rem;
+    font-size:     clamp(1rem, 1.8vw, 1.125rem);
     line-height:   1.7;
-    color:         var(--color-text-light) !important;
+    color:         var(--ml-color-text);
     font-style:    italic;
-    margin-bottom: 1.5rem;
+    margin-bottom: var(--ml-space-md);
     position:      relative;
 }
 
 .ml-testimonial__quote-mark {
-    font-size:   2rem;
-    line-height: 0;
+    font-size:      2rem;
+    line-height:    0;
     vertical-align: -0.5rem;
-    color:       var(--ml-color-primary);
-    font-style:  normal;
+    color:          var(--ml-color-primary);
+    font-style:     normal;
 }
 
 .ml-testimonial__author {
     display:     flex;
     align-items: center;
-    gap:         .75rem;
+    gap:         var(--ml-space-sm);
 
     .ml-testimonial--centered & { justify-content: center; }
 }
@@ -164,9 +204,10 @@
 
 .ml-testimonial__role {
     display:   block;
-    font-size: .875rem;
+    font-size: clamp(0.8125rem, 1.2vw, 0.875rem);
     color:     var(--ml-color-text-muted);
 }
+
 
 // =============================================================================
 // TEAM-MITGLIED
@@ -177,10 +218,10 @@
     border-radius: var(--ml-radius);
     overflow:      hidden;
     border:        1px solid var(--ml-color-border);
-    transition:    box-shadow .2s ease, transform .2s ease;
+    transition:    box-shadow 0.2s ease, transform 0.2s ease;
 
     &:hover {
-        box-shadow: 0 8px 24px rgba(0,0,0,.1);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
         transform:  translateY(-2px);
     }
 }
@@ -194,58 +235,66 @@
     width:      100%;
     height:     100%;
     object-fit: cover;
-    transition: transform .3s ease;
+    transition: transform 0.3s ease;
 
     .ml-block-team-member:hover & { transform: scale(1.03); }
 }
 
 .ml-team-member__body {
-    padding: 1.5rem;
+    padding: var(--ml-space-md);
 }
 
 .ml-team-member__name {
-    font-size:     1.1rem;
+    font-size:     clamp(1rem, 1.8vw, 1.125rem);
     font-weight:   700;
-    margin-bottom: .25rem;
+    margin-bottom: var(--ml-space-xs);
 }
 
 .ml-team-member__role {
-    font-size:     .875rem;
+    font-size:     clamp(0.8125rem, 1.2vw, 0.875rem);
     color:         var(--ml-color-primary);
     font-weight:   500;
-    margin-bottom: .75rem;
+    margin-bottom: var(--ml-space-sm);
 }
 
 .ml-team-member__bio {
-    font-size:     .9rem;
+    font-size:     clamp(0.875rem, 1.5vw, 0.9375rem);
     color:         var(--ml-color-text-muted);
     line-height:   1.6;
-    margin-bottom: 1rem;
+    margin-bottom: var(--ml-space-sm);
 }
 
 .ml-team-member__social {
-    list-style:  none;
-    padding:     0;
-    margin:      0;
-    display:     flex;
-    gap:         .5rem;
+    list-style: none;
+    padding:    0;
+    margin:     0;
+    display:    flex;
+    gap:        var(--ml-space-xs);
 }
 
 .ml-team-member__social-link {
     display:         flex;
     align-items:     center;
     justify-content: center;
-    width:           36px;
-    height:          36px;
+    // WCAG 2.5.5 Touch Target: min. 44×44px ✅ (war: 36×36px ❌)
+    width:           44px;
+    height:          44px;
     border-radius:   50%;
     border:          1px solid var(--ml-color-border);
     color:           var(--ml-color-text-muted);
-    transition:      background .2s, color .2s, border-color .2s;
+    transition:      background 0.2s, color 0.2s, border-color 0.2s;
     text-decoration: none;
 
     &::before {
         font-family: dashicons;
-        font-size:   16px;
+        font-size:   18px;
+    }
+
+    // WCAG 2.4.7 Focus Visible
+    &:focus-visible {
+        outline:        3px solid var(--ml-color-primary);
+        outline-offset: 3px;
+        border-radius:  50%;
     }
 
     &--linkedin  { &::before { content: '\f459'; } &:hover { background: #0077b5; color: #fff; border-color: #0077b5; } }
@@ -254,22 +303,23 @@
     &--email     { &::before { content: '\f466'; } &:hover { background: var(--ml-color-primary); color: #fff; border-color: var(--ml-color-primary); } }
 }
 
+
 // =============================================================================
 // LOGO-GRID
 // =============================================================================
 
 .ml-block-logo-grid {
-    padding: 3rem 0;
+    padding: var(--ml-space-section) 0;
 }
 
 .ml-logo-grid__title {
-    text-align:    center;
-    font-size:     .85rem;
-    font-weight:   600;
+    text-align:     center;
+    font-size:      clamp(0.75rem, 1.2vw, 0.875rem);
+    font-weight:    600;
     text-transform: uppercase;
-    letter-spacing: .1em;
-    color:         var(--ml-color-text-muted);
-    margin-bottom: 2rem;
+    letter-spacing: 0.1em;
+    color:          var(--ml-color-text-muted);
+    margin-bottom:  var(--ml-space-lg);
 }
 
 .ml-logo-grid__list {
@@ -277,21 +327,26 @@
     padding:       0;
     margin:        0;
     display:       grid;
-    gap:           2rem;
+    gap:           var(--ml-space-lg);
     align-items:   center;
     justify-items: center;
 
+    // Desktop: konfigurierbare Spaltenanzahl
     .ml-logo-grid--cols-3 & { grid-template-columns: repeat(3, 1fr); }
     .ml-logo-grid--cols-4 & { grid-template-columns: repeat(4, 1fr); }
     .ml-logo-grid--cols-5 & { grid-template-columns: repeat(5, 1fr); }
     .ml-logo-grid--cols-6 & { grid-template-columns: repeat(6, 1fr); }
 
-    @media (max-width: 768px) {
-        grid-template-columns: repeat(3, 1fr) !important;
-        gap: 1.5rem;
+    // Tablet: max. 3 Spalten – kein !important nötig, da Mobile-first
+    @media (max-width: 767px) {
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--ml-space-md);
     }
-    @media (max-width: 480px) {
-        grid-template-columns: repeat(2, 1fr) !important;
+
+    // Mobile: 2 Spalten
+    @media (max-width: 479px) {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--ml-space-sm);
     }
 }
 
@@ -300,35 +355,37 @@
     width:      auto;
     max-width:  100%;
     object-fit: contain;
-    transition: opacity .2s, filter .2s;
+    transition: opacity 0.2s, filter 0.2s;
 
     .ml-logo-grid--grayscale & {
         filter:  grayscale(100%);
-        opacity: .6;
+        opacity: 0.6;
     }
+
     .ml-logo-grid--grayscale &:hover {
         filter:  grayscale(0%);
         opacity: 1;
     }
 }
 
+
 // =============================================================================
 // LOGO-SLIDER
 // =============================================================================
 
 .ml-block-logo-slider {
-    padding:  3rem 0;
+    padding:  var(--ml-space-section) 0;
     overflow: hidden;
 }
 
 .ml-logo-slider__title {
-    text-align:    center;
-    font-size:     .85rem;
-    font-weight:   600;
+    text-align:     center;
+    font-size:      clamp(0.75rem, 1.2vw, 0.875rem);
+    font-weight:    600;
     text-transform: uppercase;
-    letter-spacing: .1em;
-    color:         var(--ml-color-text-muted);
-    margin-bottom: 2rem;
+    letter-spacing: 0.1em;
+    color:          var(--ml-color-text-muted);
+    margin-bottom:  var(--ml-space-lg);
 }
 
 .ml-logo-slider__swiper {
@@ -336,7 +393,7 @@
 }
 
 .ml-logo-slider__slide {
-    width:           auto !important;
+    width:           auto !important; // Swiper-spezifisch: muss bleiben
     display:         flex;
     align-items:     center;
     justify-content: center;
@@ -347,24 +404,27 @@
     width:      auto;
     max-width:  160px;
     object-fit: contain;
-    transition: opacity .2s, filter .2s;
+    transition: opacity 0.2s, filter 0.2s;
 
     .ml-logo-slider--grayscale & {
         filter:  grayscale(100%);
-        opacity: .55;
+        opacity: 0.55;
     }
+
     .ml-logo-slider--grayscale &:hover {
         filter:  grayscale(0%);
         opacity: 1;
     }
 }
 
+
 // =============================================================================
 // CTA-BANNER
 // =============================================================================
 
 .ml-block-cta-banner {
-    padding: 5rem 1.5rem;
+    // Fluid: 48px vertical → 80px / 16px horizontal → 24px
+    padding: var(--ml-space-section) var(--ml-space-inner);
 
     &.ml-cta-banner--primary { background-color: var(--ml-color-primary); }
     &.ml-cta-banner--dark    { background-color: var(--ml-color-dark); }
@@ -383,7 +443,7 @@
     font-size:     clamp(1.5rem, 3.5vw, 2.5rem);
     font-weight:   700;
     line-height:   1.2;
-    margin-bottom: 1rem;
+    margin-bottom: var(--ml-space-sm);
     color:         inherit;
 
     .ml-cta-banner--primary &,
@@ -391,26 +451,27 @@
 }
 
 .ml-cta-banner__text {
-    font-size:     1.1rem;
-    margin-bottom: 2rem;
-    opacity:       .85;
+    font-size:     clamp(1rem, 1.8vw, 1.125rem);
+    margin-bottom: var(--ml-space-lg);
+    opacity:       0.85;
     color:         inherit;
 
     .ml-cta-banner--primary &,
-    .ml-cta-banner--dark    & { color: rgba(255,255,255,.85); }
+    .ml-cta-banner--dark    & { color: rgba(255, 255, 255, 0.85); }
 }
 
 .ml-cta-banner__actions {
-    display:         flex;
-    gap:             1rem;
-    flex-wrap:       wrap;
+    display:   flex;
+    gap:       var(--ml-space-sm);
+    flex-wrap: wrap;
 
     .ml-cta-banner--center & { justify-content: center; }
 }
 
 .ml-cta-banner__url-input {
-    display: none; // nur im Editor sichtbar (Editor-CSS)
+    display: none; // nur im Editor sichtbar
 }
+
 
 // =============================================================================
 // ACCORDION / FAQ
@@ -421,13 +482,13 @@
 }
 
 .ml-accordion__title {
-    margin-bottom: 1.5rem;
+    margin-bottom: var(--ml-space-md);
 }
 
 .ml-accordion__items {
-    border: 1px solid var(--ml-color-border);
+    border:        1px solid var(--ml-color-border);
     border-radius: var(--ml-radius);
-    overflow: hidden;
+    overflow:      hidden;
 }
 
 .ml-accordion__item {
@@ -443,114 +504,100 @@
     justify-content: space-between;
     align-items:     center;
     width:           100%;
-    padding:         1.1rem 1.25rem;
+    // WCAG 2.5.5: min-height 44px sicherstellen
+    min-height:      44px;
+    padding:         var(--ml-space-sm) var(--ml-space-md);
     background:      transparent;
     border:          none;
     cursor:          pointer;
-    font-size:       1rem;
+    font-size:       clamp(0.9375rem, 1.5vw, 1rem);
     font-weight:     600;
     text-align:      left;
     color:           var(--ml-color-text);
-    gap:             1rem;
-    transition:      background .15s;
+    gap:             var(--ml-space-sm);
+    transition:      background 0.15s;
 
     &:hover { background: var(--ml-color-light); }
 
+    // WCAG 2.4.7 Focus Visible
+    &:focus-visible {
+        outline:        3px solid var(--ml-color-primary);
+        outline-offset: -3px;
+    }
+
     &::after {
-        content:       '▾';
-        font-size:     1.1rem;
-        flex-shrink:   0;
-        transition:    transform .2s ease;
-        color:         var(--ml-color-primary);
+        content:     '▾';
+        font-size:   1.1rem;
+        flex-shrink: 0;
+        transition:  transform 0.2s ease;
+        color:       var(--ml-color-primary);
     }
 }
 
 .ml-accordion__body {
-    padding: 0 1.25rem 1.25rem;
-    font-size: .95rem;
+    padding:    0 var(--ml-space-md) var(--ml-space-md);
+    font-size:  clamp(0.875rem, 1.5vw, 0.9375rem);
     line-height: 1.7;
-    color: var(--ml-color-text);
+    color:      var(--ml-color-text);
 
     p:last-child { margin-bottom: 0; }
 }
+
+.ml-accordion__editor-hint {
+    font-style:    italic;
+    color:         #888;
+    font-size:     0.875rem;
+    padding:       var(--ml-space-sm);
+    background:    #f9f9f9;
+    border-radius: 4px;
+}
+
 
 // =============================================================================
 // ICON + TEXT
 // =============================================================================
 
 .ml-block-icon-text {
-    display:   flex;
-    gap:       1.25rem;
+    display: flex;
+    gap:     var(--ml-space-md);
 
     &.ml-icon-text--top  { flex-direction: column; }
     &.ml-icon-text--left { flex-direction: row; align-items: flex-start; }
 }
 
 .ml-icon-text__icon {
-    font-size: 2.5rem;
+    font-size:   clamp(2rem, 4vw, 2.5rem);
     line-height: 1;
-    color:     var(--ml-color-primary);
+    color:       var(--ml-color-primary);
     flex-shrink: 0;
 
-    .ml-icon-text--top & { font-size: 3rem; }
+    .ml-icon-text--top & { font-size: clamp(2.5rem, 5vw, 3rem); }
 }
 
 .ml-icon-text__title {
-    font-size:     1.1rem;
+    font-size:     clamp(1rem, 1.8vw, 1.125rem);
     font-weight:   700;
-    margin-bottom: .5rem;
+    margin-bottom: var(--ml-space-xs);
 }
 
 .ml-icon-text__text {
-    font-size:  .95rem;
-    color:      var(--ml-color-text-muted);
+    font-size:   clamp(0.875rem, 1.5vw, 0.9375rem);
+    color:       var(--ml-color-text-muted);
     line-height: 1.6;
-    margin:     0;
+    margin:      0;
 }
 
-// Editor-Hinweis
-.ml-accordion__editor-hint {
-    font-style: italic;
-    color: #888;
-    font-size: .875rem;
-    padding: 1rem;
-    background: #f9f9f9;
-    border-radius: 4px;
-}
 
 // =============================================================================
-// Media Lab – Block Styles WCAG-Patch
-// Ergänzungen zu blocks.scss
-//
-// Diese Regeln am Ende der bestehenden blocks.scss einfügen.
-//
-// Fixes:
-//   ✅ 1.4.3  Contrast:              --ml-color-primary #ff0000 → #d40000 (5.1:1)
-//   ✅ 1.4.1  Use of Color:          Sterne: ★ (gefüllt) vs ☆ (leer) in render.php
-//   ✅ 2.4.7  Focus Visible:         :focus-visible Styles für alle interaktiven Elemente
-//   ✅ 2.5.5  Target Size:           Social-Links 36px → 44px
-//   ✅ 2.2.2  Pause Stop Hide:       prefers-reduced-motion stoppt Slider-Transition
-//   ✅ 2.3.3  Animation:             prefers-reduced-motion für alle Transitions
+// WCAG 2.1 AA – ACCESSIBILITY
+// Vollständig integriert (kein separater Patch mehr).
 // =============================================================================
 
-// ── Primärfarbe: Kontrast-Fix ─────────────────────────────────────────────────
-// #ff0000 = 4.0:1 (zu wenig für AA-Fließtext)
-// #d40000 = 5.1:1 ✅
-//
-// In _variables.scss / :root anpassen:
-// --ml-color-primary: #d40000;  ← war: #ff0000
-//
-// Direkter Override falls _variables.scss nicht geändert werden kann:
-:root {
-    --ml-color-primary: #d40000;
-}
-
-// ── Focus-Styles – WCAG 2.4.7 Focus Visible ──────────────────────────────────
-// Globaler :focus-visible Reset – greift für ALLE interaktiven Elemente im Block-Kontext.
-// Bitte auch in main.scss des Themes global ergänzen.
+// ── Focus Visible – WCAG 2.4.7 ───────────────────────────────────────────────
+// Standard-Outline entfernen, durch sichtbare :focus-visible Styles ersetzen.
 
 *:focus {
-    outline: none; // Standard-Outline entfernen (wird durch :focus-visible ersetzt)
+    outline: none;
 }
 
 *:focus-visible {
@@ -559,75 +606,49 @@
     border-radius:  2px;
 }
 
-// Spezifische Block-Elemente
-.ml-accordion__trigger:focus-visible,
-.btn:focus-visible,
-.ml-hero__cta:focus-visible,
-.ml-cta-banner__btn:focus-visible {
-    outline:        3px solid currentColor;
-    outline-offset: 3px;
-    box-shadow:     0 0 0 5px rgba(0, 0, 0, 0.2);
+// Spezifische Overrides für invertierte Kontexte (dunkle Hintergründe)
+.ml-block-hero,
+.ml-cta-banner--primary,
+.ml-cta-banner--dark {
+    *:focus-visible {
+        outline-color: #fff;
+        box-shadow:    0 0 0 2px var(--ml-color-primary);
+    }
 }
 
-.ml-team-member__social-link:focus-visible,
-.ml-logo-grid__link:focus-visible,
-.ml-logo-slider__link:focus-visible {
-    outline:        3px solid var(--ml-color-primary);
-    outline-offset: 3px;
-    border-radius:  50%;
-}
 
-// ── Touch-Target-Größe – WCAG 2.5.5 (44×44px) ────────────────────────────────
-.ml-team-member__social-link {
-    // war: 36×36px → jetzt: 44×44px ✅
-    width:  44px;
-    height: 44px;
-    // Icon bleibt 16px, der Klickbereich wächst
-    font-size: 18px;
-}
+// ── prefers-reduced-motion – WCAG 2.2.2 + 2.3.3 ──────────────────────────────
 
-// ── prefers-reduced-motion – WCAG 2.2.2 + 2.3.3 ─────────────────────────────
 @media (prefers-reduced-motion: reduce) {
-    // Alle Transitions auf minimal setzen
     *,
     *::before,
     *::after {
-        animation-duration:       0.01ms !important;
+        animation-duration:        0.01ms !important;
         animation-iteration-count: 1 !important;
-        transition-duration:      0.01ms !important;
-        scroll-behavior:          auto !important;
+        transition-duration:       0.01ms !important;
+        scroll-behavior:           auto !important;
     }
 
-    // Logo-Slider: Autoplay via JS pausiert (block-logo-slider.js),
-    // CSS-Transition ebenfalls deaktivieren
+    // Logo-Slider: CSS-Transition deaktivieren
+    // Autoplay-Stop via JS (block-logo-slider.js prüft prefers-reduced-motion)
     .ml-logo-slider__swiper .swiper-wrapper {
         transition-duration: 0ms !important;
     }
 
     // Team-Card Hover-Animation
-    .ml-block-team-member {
+    .ml-block-team-member,
+    .ml-block-team-member:hover {
         transform: none !important;
-        &:hover { transform: none !important; }
     }
 
-    .ml-team-member__image {
+    .ml-team-member__image,
+    .ml-team-member__image:hover {
+        transform:  none !important;
         transition: none !important;
-        &:hover { transform: none !important; }
     }
 
-    // Hero: kein Overlay-Fade
+    // Hero Overlay
     .ml-hero__overlay {
         transition: none !important;
     }
-}
-
-// ── Sterne: Leerfarbe ebenfalls sichtbar ─────────────────────────────────────
-// render.php nutzt ★ (gefüllt) vs ☆ (leer) – Farbe ist zusätzliches Merkmal
-.ml-testimonial__star {
-    color: #767676; // WCAG 1.4.3: #767676 auf weiß = 4.54:1 ✅
-    font-size: 1.2rem;
-}
-
-.ml-testimonial__star--filled {
-    color: #b45309; // Dunkleres Gold: 4.6:1 auf weiß ✅ (war: #f59e0b = 1.87:1 ❌)
 }

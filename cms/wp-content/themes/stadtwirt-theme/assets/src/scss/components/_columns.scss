@@ -1,7 +1,17 @@
 @use '../abstracts' as *;
 
+// =============================================================================
+// Columns – Stadtwirt-spezifische Komponenten
+// Version: 1.2.0 – Fluid Responsive System
+//
+// Änderungen:
+//   - @media (max-width: #{$breakpoint-md - 1px}) → @include respond-below('md')
+//   - $font-size-base/sm → var(--text-base/sm)
+// =============================================================================
 
-// Slogan – „Tradition trifft Kultur"
+
+// ── Slogan – „Tradition trifft Kultur" ───────────────────────────────────────
+
 .columns-flush__slogan {
   position:       absolute;
   bottom:         -12px;
@@ -11,17 +21,17 @@
   pointer-events: none;
   z-index:        2;
 
-  @media (max-width: #{$breakpoint-md - 1px}) {
+  @include respond-below('md') {   // war: @media (max-width: #{$breakpoint-md - 1px})
     display: none;
   }
 }
 
-// ============================================
-// Carousel Grid
-// ============================================
+
+// ── Carousel Grid ─────────────────────────────────────────────────────────────
+
 .carousel-grid {
-    display: grid;
-    gap: $spacing-4;
+    display:               grid;
+    gap:                   var(--space-md);  // war: $spacing-4
     grid-template-columns: 1fr;
 
     @include respond-to('md') {
@@ -34,64 +44,64 @@
 }
 
 .carousel-grid__item {
-    position: relative;
-    overflow: hidden;
+    position:      relative;
+    overflow:      hidden;
     border-radius: $radius-md;
 }
 
 .carousel-grid__link {
-    display: block;
+    display:         block;
     text-decoration: none;
-    color: inherit;
+    color:           inherit;
 
-    &:hover .carousel-grid__image img {
-        transform: scale(1.05);
-    }
+    &:hover .carousel-grid__image img { transform: scale(1.05); }
 }
 
 .carousel-grid__image {
-    position: relative;
-    overflow: hidden;
+    position:     relative;
+    overflow:     hidden;
     aspect-ratio: 4 / 3;
 
     img {
-        width: 100%;
-        height: 100%;
+        width:      100%;
+        height:     100%;
         object-fit: cover;
         transition: transform $transition-base;
-        display: block;
+        display:    block;
     }
 }
 
 .carousel-grid__overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%);
-    display: flex;
-    flex-direction: column;
+    position:        absolute;
+    inset:           0;
+    background:      linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%);
+    display:         flex;
+    flex-direction:  column;
     justify-content: flex-end;
-    padding: $spacing-4;
+    padding:         var(--space-md);  // war: $spacing-4
 }
 
 .carousel-grid__title {
-    font-size: $font-size-base;
+    font-size:   var(--text-base);    // war: $font-size-base
     font-weight: 700;
-    color: $color-white;
-    margin: 0 0 $spacing-1;
+    color:       $color-white;
+    margin:      0 0 $spacing-1;
 }
 
 .carousel-grid__subtitle {
-    font-size: $font-size-sm;
-    color: rgba(255,255,255,0.8);
-    margin: 0;
+    font-size: var(--text-sm);        // war: $font-size-sm
+    color:     rgba(255,255,255,0.8);
+    margin:    0;
 }
 
 .carousel-grid__caption {
     padding: $spacing-3 0;
 }
 
-// Google Map fullwidth
+
+// ── Google Map fullwidth ──────────────────────────────────────────────────────
+
 .google-map-wrapper--fullwidth {
-    width: 100vw;
+    width:       100vw;
     margin-left: calc(50% - 50vw);
 }

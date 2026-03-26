@@ -1,167 +1,166 @@
 @use '../abstracts' as *;
 
-// Header (aus Figma Header Component)
+// Header – Stadtwirt
+// Version: 1.2.0 – Fluid Responsive System
+//
+// Änderungen ggü. Original:
+//   - @media (max-width: $breakpoint-md - 1) → @include respond-below('md')
+//   - @media (max-width: 767px) → @include respond-below('md')
+//   - font-size: $font-size-xl → var(--text-xl)
+//   - .site-logo__img--mobile: width: auto + object-fit: contain (Bugfix)
+//
+// WICHTIG – z-index: inherit beibehalten (wie Original):
+//   Der Header hat position: relative + z-index: inherit damit
+//   nachfolgende Elemente (.columns-flush) den Header überlagern können.
+//   NICHT auf z-index: $z-header ändern!
+
+:root {
+  --header-height: 64px;
+}
 
 .site-header {
-  position: relative;
-  height: 550px;
+  position:   relative;
+  height:     550px;
   background: $color-secondary;
-  z-index: inherit;  
-
-  box-shadow: $shadow-sm;
-  position: relative;
-  top: 0;
-  // z-index: $z-header;
-  box-shadow: 0 2px 4px var(--color-shadow);
-  padding: 0 0 $spacing-2 0;
+  z-index:    inherit;  // Absichtlich inherit – columns-flush soll überlagern
+  box-shadow: 0 2px 4px var(--color-shadow, rgba(0,0,0,0.1));
+  padding:    0 0 $spacing-2 0;
   transition: all 0.3s ease;
 
-  // Mobile
-  @media (max-width: $breakpoint-md - 1) {
-    height: initial;
+  @include respond-below('md') {
+    height:         initial;
+    padding-top:    $spacing-2;
+    padding-bottom: $spacing-2;
   }
 
   .container {
     @include flex-between;
-    
   }
-
-  // Mobile
-  @media (max-width: $breakpoint-md - 1) {
-    padding-top: $spacing-2;
-    padding-bottom: $spacing-2;
-  }
-
-  
 }
-
 
 .site-header::after {
-  background-image: url('/cms/wp-content/themes/stadtwirt-theme/assets/src/images/site-header-bg--desktop.jpg');
-  background-size: cover;
-  background-position: center;
+  background-image:      url('/cms/wp-content/themes/stadtwirt-theme/assets/src/images/site-header-bg--desktop.jpg');
+  background-size:       cover;
+  background-position:   center;
   background-attachment: fixed;
-  content: "";
+  content:  "";
   position: absolute;
-  top: 0;
+  top:  0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width:   100%;
+  height:  100%;
   z-index: 0;
-  filter: invert(0%);
+  filter:  invert(0%);
 }
 
-
 .site-header__inner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  display:         flex;
+  flex-direction:  column;
+  align-items:     center;
   justify-content: space-between;
-  max-width: $container-max-width;
-  width: 100%;
-  margin: 0 auto;
-  padding: 0 $spacing-6;
+  max-width:       $container-max-width;
+  width:           100%;
+  margin:          0 auto;
+  padding:         0 $spacing-6;
 }
 
 .site-branding {
   position: relative;
-  z-index: 1;
-
+  z-index:  1;
 
   a {
-    font-size: $font-size-xl; 
-    font-weight: $font-weight-bold;
-    color: $color-dark;
+    font-size:       var(--text-xl);
+    font-weight:     $font-weight-bold;
+    color:           $color-dark;
     text-decoration: none;
   }
 }
 
 .main-navigation {
   ul {
-    display: flex;
-    gap: $spacing-4;
+    display:    flex;
+    gap:        $spacing-4;
     list-style: none;
   }
-  
+
   a {
-    font-size: $font-size-xl;
-    font-weight: $font-weight-bold;
-    color: var(--color-text);
+    font-size:       var(--text-xl);
+    font-weight:     $font-weight-bold;
+    color:           var(--color-text);
     text-decoration: none;
-    transition: color $transition-fast;
-    
-    &:hover {
-      color: $color-primary;
-    }
+    transition:      color $transition-fast;
+
+    &:hover { color: $color-primary; }
   }
-  
-  // Mobile
-  @media (max-width: $breakpoint-md - 1) {
+
+  @include respond-below('md') {
     display: none;
-    
+
     &.active {
-      display: block;
-      position: fixed;
-      top: 60px;
-      left: 0;
-      right: 0;
+      display:    block;
+      position:   fixed;
+      top:        60px;
+      left:       0;
+      right:      0;
       background: $color-white;
-      padding: $spacing-4;
+      padding:    $spacing-4;
       box-shadow: $shadow-lg;
-      
-      ul {
-        flex-direction: column;
-      }
+
+      ul { flex-direction: column; }
     }
   }
 }
 
 .mobile-menu-toggle {
   display: none;
-  
-  @media (max-width: $breakpoint-md - 1) {
-    display: block;
+
+  @include respond-below('md') {
+    display:    block;
     background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
+    border:     none;
+    font-size:  24px;
+    cursor:     pointer;
   }
 }
+
+
 // ==========================================================================
 // Logo – Desktop / Mobile Variante
 // ==========================================================================
+
 .site-logo {
-    display: inline-flex;
-    align-items: center;
-    text-decoration: none;
-    background-color: rgba($color-secondary, 0.85);
-    padding: $spacing-4;
+  display:          inline-flex;
+  align-items:      center;
+  text-decoration:  none;
+  background-color: rgba($color-secondary, 0.85);
+  padding:          $spacing-4;
 
+  &__img {
+    display:    block;
+    height:     auto;
+    max-height: 175px;
+  }
 
-    &__img {
-        display: block;
-        height: auto;
-        max-height: 175px; // Sicherheits-Cap, damit das Logo den Header nicht sprengt
-    }
+  // Mobile-Logo standardmäßig ausblenden
+  &__img--mobile { display: none; }
 
-    // Mobile-Logo standardmäßig ausblenden
+  // Auf Mobile: Desktop-Logo ausblenden, Mobile-Logo einblenden
+  @include respond-below('md') {
+    &__img--desktop { display: none; }
+
     &__img--mobile {
-        display: none;
+      display:    block;
+      width:      auto;        // Bugfix: kein Strecken
+      height:     auto;
+      max-height: 80px;
+      max-width:  160px;
+      object-fit: contain;
     }
+  }
 
-    // Auf Mobile: Desktop-Logo ausblenden, Mobile-Logo einblenden
-    @media (max-width: 767px) {
-        &__img--desktop {
-            display: none;
-        }
-        &__img--mobile {
-            display: block;
-        }
-    }
-
-    &__text {
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: inherit;
-    }
+  &__text {
+    font-size:   var(--text-xl);
+    font-weight: $font-weight-bold;
+    color:       inherit;
+  }
 }

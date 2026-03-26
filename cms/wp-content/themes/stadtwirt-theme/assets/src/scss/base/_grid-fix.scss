@@ -1,65 +1,52 @@
 // ============================================
 // UNIVERSAL GRID FIX
 // Zentraler Fix für alle Grid-Layouts
+// Version: 1.2.0 – Fluid Responsive System
+//
+// Änderungen:
+//   - @media (min-width: 640px)  → @include respond-to('sm')
+//   - @media (min-width: 1024px) → @include respond-to('lg')
 // ============================================
+
+@use '../abstracts' as *;
 
 // Alle Grid-Container mit data-columns
 [data-columns] {
-  display: grid !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  box-sizing: border-box !important;
-}
-
-// Mobile: Immer 1 Spalte
-[data-columns] {
+  display:     grid !important;
+  width:       100% !important;
+  max-width:   100% !important;
+  box-sizing:  border-box !important;
+  // Mobile: immer 1 Spalte
   grid-template-columns: 1fr !important;
 }
 
-// Tablet (640px+): 2 Spalten für 3-4 column layouts
-@media (min-width: 640px) {
-  [data-columns="2"] {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-  
+// Tablet (sm+): 2 Spalten für 2–4 column layouts
+@include respond-to('sm') {
+  [data-columns="2"],
   [data-columns="3"],
   [data-columns="4"] {
     grid-template-columns: repeat(2, 1fr) !important;
   }
 }
 
-// Desktop (1024px+): Volle Spaltenanzahl
-@media (min-width: 1024px) {
-  [data-columns="2"] {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-  
-  [data-columns="3"] {
-    grid-template-columns: repeat(3, 1fr) !important;
-  }
-  
-  [data-columns="4"] {
-    grid-template-columns: repeat(4, 1fr) !important;
-  }
-  
-  [data-columns="5"] {
-    grid-template-columns: repeat(5, 1fr) !important;
-  }
-  
-  [data-columns="6"] {
-    grid-template-columns: repeat(6, 1fr) !important;
-  }
+// Desktop (lg+): volle Spaltenanzahl
+@include respond-to('lg') {
+  [data-columns="2"] { grid-template-columns: repeat(2, 1fr) !important; }
+  [data-columns="3"] { grid-template-columns: repeat(3, 1fr) !important; }
+  [data-columns="4"] { grid-template-columns: repeat(4, 1fr) !important; }
+  [data-columns="5"] { grid-template-columns: repeat(5, 1fr) !important; }
+  [data-columns="6"] { grid-template-columns: repeat(6, 1fr) !important; }
 }
 
 // Alle Grid Items
 [data-columns] > * {
-  width: 100% !important;
-  max-width: 100% !important;
-  min-width: 0 !important;
+  width:      100% !important;
+  max-width:  100% !important;
+  min-width:  0 !important;
   box-sizing: border-box !important;
 }
 
-// Spezifische Container
+// Spezifische Container mit fluid spacing
 .pricing-tables,
 .team-cards,
 .team-grid,
@@ -67,6 +54,6 @@
 .stats-grid,
 .testimonials-grid {
   display: grid !important;
-  gap: 2rem !important;
-  margin: 2rem 0 !important;
+  gap:     var(--space-xl) !important;    // war: 2rem fix
+  margin:  var(--space-2xl) 0 !important; // war: 2rem fix
 }

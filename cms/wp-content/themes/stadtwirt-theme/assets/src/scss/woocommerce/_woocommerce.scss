@@ -1,114 +1,122 @@
 @use '../abstracts' as *;
 
-/**
- * WooCommerce Styles
- */
+// =============================================================================
+// WooCommerce Styles – Stadtwirt
+// Version: 1.2.0 – Fluid Responsive System
+//
+// Änderungen:
+//   - @media (max-width: 1024px) → @include respond-below('lg')
+//   - @media (max-width: 640px)  → @include respond-below('sm')
+//   - gap: 2rem → var(--space-xl) | margin: 2rem → var(--space-2xl)
+//   - color: red → $color-primary (WCAG: #d40000 statt #ff0000)
+//   - background: red → $color-primary
+// =============================================================================
 
-// Shop Grid
+// ── Shop Grid ─────────────────────────────────────────────────────────────────
+
 .woocommerce ul.products {
-  display: grid !important;
+  display:               grid !important;
   grid-template-columns: repeat(3, 1fr) !important;
-  gap: 2rem !important;
-  list-style: none !important;
-  padding: 0 !important;
-  margin: 2rem 0 !important;
+  gap:                   var(--space-xl) !important;    // war: 2rem fix
+  list-style:            none !important;
+  padding:               0 !important;
+  margin:                var(--space-2xl) 0 !important; // war: 2rem fix
 
-  @media (max-width: 1024px) {
+  @include respond-below('lg') {   // war: @media (max-width: 1024px)
     grid-template-columns: repeat(2, 1fr) !important;
   }
 
-  @media (max-width: 640px) {
+  @include respond-below('sm') {   // war: @media (max-width: 640px)
     grid-template-columns: 1fr !important;
   }
 
   li.product {
-    background: $color-white !important;
-    border-radius: 12px !important;
-    overflow: hidden !important;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
-    transition: all 0.2s ease !important;
-    display: flex !important;
+    background:     $color-white !important;
+    border-radius:  $radius-lg !important;
+    overflow:       hidden !important;
+    box-shadow:     $shadow-base !important;
+    transition:     all 0.2s ease !important;
+    display:        flex !important;
     flex-direction: column !important;
-    position: relative !important;
+    position:       relative !important;
 
     &:hover {
-      box-shadow: 0 20px 25px rgba(0, 0, 0, 0.1) !important;
-      transform: translateY(-4px) !important;
+      box-shadow: $shadow-xl !important;
+      transform:  translateY(-4px) !important;
     }
 
     .woocommerce-loop-product__link {
-      display: block !important;
+      display:  block !important;
       position: relative !important;
-      
+
       img {
-        position: relative !important;
-        top: auto !important;
-        left: auto !important;
-        width: 100% !important;
-        height: auto !important;
+        width:        100% !important;
+        height:       auto !important;
         aspect-ratio: 1 / 1 !important;
-        object-fit: cover !important;
-        display: block !important;
+        object-fit:   cover !important;
+        display:      block !important;
       }
     }
 
     .woocommerce-loop-product__title {
-      font-size: 18px !important;
-      font-weight: 600 !important;
-      margin: 1rem !important;
-      color: var(--color-text) !important;
-      min-height: 2.5em !important;
-      display: -webkit-box !important;
-      -webkit-line-clamp: 2 !important;
-      -webkit-box-orient: vertical !important;
-      overflow: hidden !important;
+      font-size:              var(--text-lg) !important;  // war: 18px fix
+      font-weight:            600 !important;
+      margin:                 var(--space-sm) !important; // war: 1rem fix
+      color:                  var(--color-text) !important;
+      min-height:             2.5em !important;
+      display:                -webkit-box !important;
+      -webkit-line-clamp:     2 !important;
+      -webkit-box-orient:     vertical !important;
+      overflow:               hidden !important;
     }
 
     .price {
-      display: flex !important;
+      display:     flex !important;
       align-items: center !important;
-      gap: 0.5rem !important;
-      margin: 0 1rem 1rem !important;
-      font-size: 20px !important;
+      gap:         var(--space-xs) !important;
+      margin:      0 var(--space-sm) var(--space-sm) !important;
+      font-size:   var(--text-xl) !important;  // war: 20px fix
       font-weight: 700 !important;
-      color: red !important;
+      color:       $color-primary !important;  // war: red – WCAG AA fix
 
       del {
-        font-size: 16px !important;
-        color: var(--color-text-muted) !important;
+        font-size: var(--text-base) !important;  // war: 16px fix
+        color:     var(--color-text-muted) !important;
       }
     }
 
     .button {
-      display: block !important;
-      width: calc(100% - 2rem) !important;
-      margin: 0 1rem 1rem !important;
-      padding: 0.75rem 1.5rem !important;
-      background: red !important;
-      color: $color-white !important;
-      text-align: center !important;
-      border-radius: 8px !important;
-      font-weight: 600 !important;
-      transition: all 0.2s ease !important;
-      margin-top: auto !important;
+      display:       block !important;
+      width:         calc(100% - #{$spacing-4}) !important;
+      margin:        0 $spacing-2 $spacing-2 !important;
+      padding:       $spacing-2 $spacing-5 !important;
+      background:    $color-primary !important;  // war: red – WCAG AA fix
+      color:         $color-white !important;
+      text-align:    center !important;
+      border-radius: $radius-md !important;
+      font-weight:   600 !important;
+      transition:    all 0.2s ease !important;
+      margin-top:    auto !important;
+      // WCAG 2.5.5: min-height 44px
+      min-height:    44px !important;
 
-      &:hover {
-        background: $color-woo-danger !important;
-      }
+      &:hover { background: $color-primary-dark !important; }
     }
   }
 }
 
-// Leerer Warenkorb
+
+// ── Leerer Warenkorb ──────────────────────────────────────────────────────────
+
 .woocommerce-cart,
 .cart-empty {
   .cart-empty {
     text-align: center !important;
-    padding: 4rem 2rem !important;
+    padding:    var(--space-2xl) var(--space-xl) !important;
   }
-  
+
   .return-to-shop {
     text-align: center !important;
-    margin: 2rem 0 !important;
+    margin:     var(--space-xl) 0 !important;
   }
 }

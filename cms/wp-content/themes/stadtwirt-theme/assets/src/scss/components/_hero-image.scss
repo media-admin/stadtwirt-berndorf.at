@@ -1,29 +1,24 @@
 @use '../abstracts' as *;
 
 // =============================================================================
-// Hero Image
-// =============================================================================
+// Hero Image – Stadtwirt
+// Version: 1.2.0 – Fluid Responsive System
 //
-// Höhenvarianten:  .hero-image--sm | --md (default) | --lg | --xl
-// Ausrichtung:     .hero-image--align-left | --align-center | --align-right
-// Vertikalpos.:   .hero-image--vpos-bottom (default) | --vpos-middle | --vpos-top
-//
-// Buttons im Hero verwenden die --light-Modifier aus _buttons.scss.
+// Änderungen:
+//   - @media (max-width: 768px) → @include respond-below('md')
+//   - @media (max-width: 480px) → @include respond-below('sm')
+//   - $font-size-base/$font-size-xl in clamp() bleiben (projektspezifisch)
 // =============================================================================
 
-// ── Höhentokens ───────────────────────────────────────────────────────────────
+$hero-sm-min: 200px;  $hero-sm-vw: 35vw;  $hero-sm-max: 400px;
+$hero-md-min: 300px;  $hero-md-vw: 40vw;  $hero-md-max: 600px;
+$hero-lg-min: 400px;  $hero-lg-vw: 50vw;  $hero-lg-max: 700px;
+$hero-xl-min: 500px;  $hero-xl-vw: 60vw;  $hero-xl-max: 800px;
 
-$hero-sm-min:    200px;   $hero-sm-vw:  35vw;   $hero-sm-max:  400px;
-$hero-md-min:    300px;   $hero-md-vw:  40vw;   $hero-md-max:  600px;
-$hero-lg-min:    400px;   $hero-lg-vw:  50vw;   $hero-lg-max:  700px;
-$hero-xl-min:    500px;   $hero-xl-vw:  60vw;   $hero-xl-max:  800px;
-
-$hero-sm-mob:    250px;
-$hero-md-mob:    300px;
-$hero-lg-mob:    360px;
-$hero-xl-mob:    420px;
-
-// ── Basis ─────────────────────────────────────────────────────────────────────
+$hero-sm-mob: 250px;
+$hero-md-mob: 300px;
+$hero-lg-mob: 360px;
+$hero-xl-mob: 420px;
 
 .hero-image {
     position: relative;
@@ -31,27 +26,22 @@ $hero-xl-mob:    420px;
     overflow: hidden;
     display:  flex;
 
-    // ── Höhenvarianten ────────────────────────────────────────────────────────
-
     &--sm { height: clamp(#{$hero-sm-min}, #{$hero-sm-vw}, #{$hero-sm-max}); }
     &--md { height: clamp(#{$hero-md-min}, #{$hero-md-vw}, #{$hero-md-max}); }
     &--lg { height: clamp(#{$hero-lg-min}, #{$hero-lg-vw}, #{$hero-lg-max}); }
     &--xl { height: clamp(#{$hero-xl-min}, #{$hero-xl-vw}, #{$hero-xl-max}); }
 
-    @media (max-width: 768px) {
+    // Auf sehr kleinen Screens: feste Mindesthöhen
+    @include respond-below('md') {          // war: @media (max-width: 768px)
         &--sm { height: $hero-sm-mob; }
         &--md { height: $hero-md-mob; }
         &--lg { height: $hero-lg-mob; }
         &--xl { height: $hero-xl-mob; }
     }
 
-    // ── Vertikalausrichtung ───────────────────────────────────────────────────
-
     &--vpos-bottom { align-items: flex-end; }
     &--vpos-middle { align-items: center; }
     &--vpos-top    { align-items: flex-start; }
-
-    // ── Bild ──────────────────────────────────────────────────────────────────
 
     &__img,
     picture {
@@ -75,60 +65,39 @@ $hero-xl-mob:    420px;
         object-position: center;
     }
 
-    // ── Overlay ───────────────────────────────────────────────────────────────
-
     &__overlay {
         position:   absolute;
         inset:      0;
         background: rgba(0, 0, 0, var(--hero-opacity, 0.4));
     }
 
-    // ── Content-Wrapper ───────────────────────────────────────────────────────
-
     &__content {
         position: relative;
         z-index:  1;
         width:    100%;
-        padding:  $spacing-6 $spacing-4;
+        padding:  $spacing-6 var(--container-padding);   // war: $spacing-4 fix
 
         @include respond-to('md') {
-            padding: $spacing-8 $spacing-6;
+            padding: $spacing-8 var(--container-padding);
         }
     }
 
-    // Padding je nach Vertikalposition
     &--vpos-bottom &__content { padding-bottom: $spacing-8; }
-    &--vpos-top    &__content { padding-top: $spacing-8; }
+    &--vpos-top    &__content { padding-top:    $spacing-8; }
 
-    // ── Inner (steuert Text-Breite + Ausrichtung) ─────────────────────────────
+    &__inner { max-width: 720px; }
 
-    &__inner {
-        max-width: 720px;
-    }
-
-    // Ausrichtung: left (Standard)
-    &--align-left &__inner {
-        margin-right: auto;
-        text-align:   left;
-    }
-
-    // Ausrichtung: center
+    &--align-left &__inner  { margin-right: auto; text-align: left; }
     &--align-center &__inner {
         margin:     0 auto;
         text-align: center;
-
         .hero-image__buttons { justify-content: center; }
     }
-
-    // Ausrichtung: right
-    &--align-right &__inner {
+    &--align-right &__inner  {
         margin-left: auto;
         text-align:  right;
-
         .hero-image__buttons { justify-content: flex-end; }
     }
-
-    // ── Titel ─────────────────────────────────────────────────────────────────
 
     &__title {
         color:       $color-white;
@@ -143,8 +112,6 @@ $hero-xl-mob:    420px;
         }
     }
 
-    // ── Untertitel ────────────────────────────────────────────────────────────
-
     &__subtitle {
         color:       rgba(255, 255, 255, 0.88);
         font-size:   clamp($font-size-base, 2vw, $font-size-xl);
@@ -153,11 +120,8 @@ $hero-xl-mob:    420px;
         text-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
         max-width:   640px;
 
-        // Zentriert: max-width aufheben damit es vollbreite ist
         .hero-image--align-center & { max-width: none; }
     }
-
-    // ── Buttons ───────────────────────────────────────────────────────────────
 
     &__buttons {
         display:     flex;
@@ -166,7 +130,7 @@ $hero-xl-mob:    420px;
         margin-top:  $spacing-5;
         align-items: center;
 
-        @media (max-width: 480px) {
+        @include respond-below('sm') {           // war: @media (max-width: 480px)
             flex-direction: column;
             align-items:    flex-start;
 
@@ -177,11 +141,8 @@ $hero-xl-mob:    420px;
         }
     }
 
-    // ── btn--light Modifier: weiße Buttons auf dunklem Hero ───────────────────
-    // Ergänzt die bestehenden Button-Stile aus _buttons.scss
-
+    // btn--light: weiße Buttons auf dunklem Hero
     .btn--light {
-        // Primary auf Hero → weiß gefüllt, Primary-Farbe als Text
         &.btn--primary {
             background:   $color-white;
             color:        $color-primary;
@@ -194,7 +155,6 @@ $hero-xl-mob:    420px;
             }
         }
 
-        // Outline auf Hero → weißer Rahmen + Text, transparent fill
         &.btn--outline {
             background:   transparent;
             color:        $color-white;
@@ -202,12 +162,11 @@ $hero-xl-mob:    420px;
 
             &:hover,
             &:focus-visible {
-                background:   $color-white;
-                color:        $color-primary;
+                background: $color-white;
+                color:      $color-primary;
             }
         }
 
-        // Ghost auf Hero → nur weißer Text
         &.btn--ghost {
             background:   transparent;
             color:        $color-white;

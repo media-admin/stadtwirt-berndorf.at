@@ -2,29 +2,38 @@
 
 // =============================================================================
 // Archive – Header, Post-Grid, Pagination
+// Version: 1.2.0 – Fluid Responsive System
+//
+// Änderungen:
+//   - @media (max-width: 768px)  → @include respond-below('md')
+//   - @media (max-width: 1024px) → @include respond-below('lg')
+//   - @media (max-width: 600px)  → @include respond-below('sm')
+//   - @media (max-width: 640px)  → @include respond-below('sm')
+//   - $font-size-* → var(--text-*)
+//   - padding-top/bottom: $spacing-8/12 → var(--space-2xl/section)
 // =============================================================================
 
 // ── Wrapper ───────────────────────────────────────────────────────────────────
 
 .archive-layout {
-    padding-top:    $spacing-8;
-    padding-bottom: $spacing-12;
+    padding-top:    var(--space-2xl);     // war: $spacing-8
+    padding-bottom: var(--space-section); // war: $spacing-12
 
-    @media (max-width: 768px) {
-        padding-top:    $spacing-6;
-        padding-bottom: $spacing-8;
+    @include respond-below('md') {        // war: @media (max-width: 768px)
+        padding-top:    var(--space-xl);
+        padding-bottom: var(--space-2xl);
     }
 }
 
 // ── Archive-Header ────────────────────────────────────────────────────────────
 
 .archive-header {
-    margin-bottom: $spacing-8;
-    padding-bottom: $spacing-6;
+    margin-bottom:  var(--space-2xl);
+    padding-bottom: var(--space-xl);
     border-bottom:  2px solid var(--color-border);
 
-    @media (max-width: 768px) {
-        margin-bottom: $spacing-6;
+    @include respond-below('md') {
+        margin-bottom: var(--space-xl);
     }
 }
 
@@ -34,7 +43,7 @@
     background:     rgba($color-primary, 0.1);
     color:          $color-primary;
     border-radius:  $radius-full;
-    font-size:      $font-size-sm;
+    font-size:      var(--text-sm);       // war: $font-size-sm
     font-weight:    $font-weight-semibold;
     margin-bottom:  $spacing-3;
     text-transform: uppercase;
@@ -50,19 +59,19 @@
 }
 
 .archive-header__description {
-    font-size:   $font-size-lg;
-    color:       $color-text-muted;
-    line-height: 1.6;
-    max-width:   640px;
+    font-size:     var(--text-lg);        // war: $font-size-lg
+    color:         $color-text-muted;
+    line-height:   1.6;
+    max-width:     640px;
     margin-bottom: $spacing-3;
 
     p { margin: 0; }
 }
 
 .archive-header__count {
-    font-size:  $font-size-sm;
-    color:      $color-text-muted;
-    margin:     0;
+    font-size: var(--text-sm);            // war: $font-size-sm
+    color:     $color-text-muted;
+    margin:    0;
 }
 
 // ── Post-Grid ─────────────────────────────────────────────────────────────────
@@ -70,42 +79,37 @@
 .post-grid {
     display:               grid;
     grid-template-columns: repeat(3, 1fr);
-    gap:                   $spacing-6;
+    gap:                   var(--space-xl); // war: $spacing-6
 
-    @media (max-width: 1024px) {
+    @include respond-below('lg') {          // war: @media (max-width: 1024px)
         grid-template-columns: repeat(2, 1fr);
     }
 
-    @media (max-width: 600px) {
+    @include respond-below('sm') {          // war: @media (max-width: 600px)
         grid-template-columns: 1fr;
-        gap: $spacing-4;
+        gap: var(--space-md);
     }
 }
 
-// ── Post-Card (überarbeitete Version mit Custom Properties) ───────────────────
+// ── Post Card ─────────────────────────────────────────────────────────────────
 
 .post-card {
-    background:    var(--color-card-bg);
-    border:        1px solid var(--color-border);
-    border-radius: $radius-lg;
-    overflow:      hidden;
-    display:       flex;
+    background:     var(--color-card-bg);
+    border:         1px solid var(--color-border);
+    border-radius:  $radius-lg;
+    overflow:       hidden;
+    display:        flex;
     flex-direction: column;
-    height:        100%;
-    transition:    box-shadow $transition-base, transform $transition-base;
+    height:         100%;
+    transition:     box-shadow $transition-base, transform $transition-base;
 
-    &:hover {
-        box-shadow: $shadow-lg;
-        transform:  translateY(-4px);
-    }
-
-    // ── Thumbnail ─────────────────────────────────────────────────────────────
+    &:hover { box-shadow: $shadow-lg; transform: translateY(-4px); }
 
     &__thumbnail {
-        display:        block;
-        overflow:       hidden;
-        aspect-ratio:   16 / 9;
-        background:     var(--color-hover-bg);
+        display:         block;
+        overflow:        hidden;
+        aspect-ratio:    16 / 9;
+        background:      var(--color-hover-bg);
         text-decoration: none;
     }
 
@@ -119,42 +123,35 @@
         .post-card:hover & { transform: scale(1.04); }
     }
 
-    // ── Content ───────────────────────────────────────────────────────────────
-
     &__content {
-        padding:        $spacing-5;
+        padding:        var(--space-lg);  // war: $spacing-5
         display:        flex;
         flex-direction: column;
-        gap:            $spacing-2;
+        gap:            var(--space-sm);
         flex-grow:      1;
     }
 
-    // Kategorie
-    &__category { }
-
     &__category-link {
-        display:        inline-block;
-        padding:        2px $spacing-2;
-        background:     rgba($color-primary, 0.08);
-        color:          $color-primary;
-        border-radius:  $radius-sm;
-        font-size:      12px;
-        font-weight:    $font-weight-semibold;
+        display:         inline-block;
+        padding:         2px $spacing-2;
+        background:      rgba($color-primary, 0.08);
+        color:           $color-primary;
+        border-radius:   $radius-sm;
+        font-size:       var(--text-xs);  // war: 12px
+        font-weight:     $font-weight-semibold;
         text-decoration: none;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
+        text-transform:  uppercase;
+        letter-spacing:  0.5px;
 
         &:hover { background: rgba($color-primary, 0.18); }
     }
 
-    // Titel
     &__title {
-        font-size:   $font-size-lg;
+        font-size:   var(--text-lg);      // war: $font-size-lg
         font-weight: $font-weight-bold;
         line-height: $line-height-tight;
         margin:      0;
 
-        // Max 3 Zeilen
         display:            -webkit-box;
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 3;
@@ -165,25 +162,21 @@
         color:           $color-text;
         text-decoration: none;
         transition:      color $transition-base;
-
         &:hover { color: $color-primary; }
     }
 
-    // Excerpt
     &__excerpt {
-        font-size:   $font-size-sm;
+        font-size:   var(--text-sm);      // war: $font-size-sm
         color:       $color-text-muted;
         line-height: 1.6;
         flex-grow:   1;
 
-        // Max 3 Zeilen
         display:            -webkit-box;
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 3;
         overflow:           hidden;
     }
 
-    // Footer: Meta + Link
     &__footer {
         display:         flex;
         align-items:     center;
@@ -202,15 +195,11 @@
     }
 
     &__date,
-    &__author {
-        font-size: 12px;
-        color:     $color-text-muted;
-    }
-
-    &__meta-sep { color: var(--color-border); font-size: 12px; }
+    &__author,
+    &__meta-sep { font-size: var(--text-xs); color: $color-text-muted; } // war: 12px
 
     &__link {
-        font-size:       $font-size-sm;
+        font-size:       var(--text-sm);  // war: $font-size-sm
         font-weight:     $font-weight-semibold;
         color:           $color-primary;
         text-decoration: none;
@@ -221,18 +210,13 @@
         &:hover { text-decoration: underline; }
     }
 
-    // ── Horizontal-Variante ───────────────────────────────────────────────────
-
+    // Horizontal-Variante
     &--horizontal {
         flex-direction: row;
 
-        .post-card__thumbnail {
-            width:        280px;
-            flex-shrink:  0;
-            aspect-ratio: unset;
-        }
+        .post-card__thumbnail { width: 280px; flex-shrink: 0; aspect-ratio: unset; }
 
-        @media (max-width: 640px) {
+        @include respond-below('sm') {    // war: @media (max-width: 640px)
             flex-direction: column;
             .post-card__thumbnail { width: 100%; aspect-ratio: 16 / 9; }
         }
@@ -242,47 +226,45 @@
 // ── Keine Treffer ─────────────────────────────────────────────────────────────
 
 .archive-empty {
-    text-align:  center;
-    padding:     $spacing-12 $spacing-6;
-    color:       $color-text-muted;
+    text-align: center;
+    padding:    $spacing-12 $spacing-6;
+    color:      $color-text-muted;
 }
 
-.archive-empty__text {
-    font-size:     $font-size-lg;
-    margin-bottom: $spacing-5;
-}
+.archive-empty__text { font-size: var(--text-lg); margin-bottom: $spacing-5; }
 
 // ── Pagination ────────────────────────────────────────────────────────────────
 
 .archive-pagination {
-    margin-top: $spacing-10;
-    display:    flex;
+    margin-top:      var(--space-2xl);
+    display:         flex;
     justify-content: center;
 }
 
 .archive-pagination__list {
-    display:    flex;
-    flex-wrap:  wrap;
-    gap:        $spacing-1;
-    list-style: none;
-    padding:    0;
-    margin:     0;
+    display:     flex;
+    flex-wrap:   wrap;
+    gap:         $spacing-1;
+    list-style:  none;
+    padding:     0;
+    margin:      0;
     align-items: center;
 }
 
 .archive-pagination__item {
     a, span {
-        display:        flex;
-        align-items:    center;
+        display:         flex;
+        align-items:     center;
         justify-content: center;
-        min-width:      40px;
-        height:         40px;
-        padding:        0 $spacing-2;
-        border-radius:  $radius-md;
-        font-size:      $font-size-sm;
-        font-weight:    $font-weight-semibold;
+        // WCAG 2.5.5: min Touch Target
+        min-width:       44px;
+        height:          44px;
+        padding:         0 $spacing-2;
+        border-radius:   $radius-md;
+        font-size:       var(--text-sm);  // war: $font-size-sm
+        font-weight:     $font-weight-semibold;
         text-decoration: none;
-        transition:     background $transition-base, color $transition-base;
+        transition:      background $transition-base, color $transition-base;
     }
 
     a {
@@ -290,25 +272,9 @@
         background: var(--color-card-bg);
         border:     1px solid var(--color-border);
 
-        &:hover {
-            background:  rgba($color-primary, 0.08);
-            border-color: $color-primary;
-            color:        $color-primary;
-        }
+        &:hover { background: rgba($color-primary, 0.08); border-color: $color-primary; color: $color-primary; }
     }
 
-    // Aktuelle Seite
-    .current {
-        background:  $color-primary;
-        color:       $color-white;
-        border:      1px solid $color-primary;
-    }
-
-    // Dots (…)
-    .dots {
-        background:  transparent;
-        border:      none;
-        color:       $color-text-muted;
-        cursor:      default;
-    }
+    .current { background: $color-primary; color: $color-white; border: 1px solid $color-primary; }
+    .dots    { background: transparent; border: none; color: $color-text-muted; cursor: default; }
 }

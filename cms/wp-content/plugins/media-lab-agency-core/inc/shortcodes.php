@@ -558,7 +558,7 @@ function testimonials_shortcode($atts, $content = null) {
                     </svg>
                 </button>
             </div>
-            <div class="testimonials__pagination"></div>
+            <div class="testimonials__pagination swiper-pagination"></div>
         </div>';
     } else {
         return '
@@ -747,18 +747,10 @@ function stats_shortcode($atts, $content = null) {
     $columns = intval($atts['columns']);
     $style = esc_attr($atts['style']);
     
-    // INLINE STYLES
-    $inline_style = 'display:grid!important;gap:2rem!important;margin:2rem 0!important;width:100%!important;';
-    
-    if ($columns == 2) {
-        $inline_style .= 'grid-template-columns:repeat(2,1fr)!important;';
-    } elseif ($columns == 3) {
-        $inline_style .= 'grid-template-columns:repeat(3,1fr)!important;';
-    } elseif ($columns == 4) {
-        $inline_style .= 'grid-template-columns:repeat(4,1fr)!important;';
-    } else {
-        $inline_style .= 'grid-template-columns:repeat(' . $columns . ',1fr)!important;';
-    }
+    // grid-template-columns wird NICHT mehr inline gesetzt –
+    // das CSS (_stats.scss) übernimmt das responsiv via data-columns.
+    // Inline !important würde die mobilen Breakpoints überschreiben.
+    $inline_style = 'width:100%!important;';
     
     return '<div class="stats stats--' . $style . '" data-columns="' . $columns . '" style="' . $inline_style . '">' . do_shortcode($content) . '</div>';
 }
@@ -1598,15 +1590,7 @@ function testimonials_query_shortcode($atts) {
         'style' => 'card',
         'featured_only' => 'false',
         'slider' => 'false',
-        'layout' => '',
     ), $atts);
-
-    // layout-Parameter überschreibt slider
-    if ($atts['layout'] === 'carousel') {
-        $atts['slider'] = 'true';
-    } elseif ($atts['layout'] === 'grid') {
-        $atts['slider'] = 'false';
-    }
     
     $number = intval($atts['number']);
     $columns = esc_attr($atts['columns']);
@@ -1617,8 +1601,8 @@ function testimonials_query_shortcode($atts) {
     $args = array(
         'post_type' => 'testimonial',
         'posts_per_page' => $number,
-        'order' => 'ASC',
-        'orderby' => 'menu_order',
+        'order' => 'DESC',
+        'orderby' => 'date',
         'post_status' => 'publish',
     );
     
@@ -1645,57 +1629,54 @@ function testimonials_query_shortcode($atts) {
     ob_start();
     ?>
     <div class="<?php echo $wrapper_class; ?>" data-columns="<?php echo $columns; ?>" <?php if ($slider) echo 'data-autoplay="true"'; ?>>
-        <div class="<?php echo $slider ? 'swiper-wrapper' : ''; ?>">
+        <?php if ($slider) : ?><div class="swiper-wrapper"><?php endif; ?>
             <?php while ($testimonials_query->have_posts()) : $testimonials_query->the_post(); ?>
                 <?php
                 $company = get_field('company');
                 $role = get_field('role');
                 $rating = get_field('rating');
-                $author_image_field = get_field('author_image');
-                $thumbnail_img = '';
-                if ($author_image_field) {
-                    $img_url = is_array($author_image_field) ? $author_image_field['url'] : $author_image_field;
-                    $thumbnail_img = '<img src="' . esc_url($img_url) . '" alt="' . get_the_title() . '" class="testimonial__avatar-img">';
-                }
+                $thumbnail_img = has_post_thumbnail()
+                    ? medialab_get_thumbnail(get_the_ID(), 'thumbnail', ['class' => 'testimonial__avatar-img'])
+                    : '';
                 ?>
                 
-                <div class="<?php echo $item_class; ?>">
-                    <?php if ($thumbnail_img) : ?>
-                        <div class="testimonial__image">
-                            <?php echo $thumbnail_img; ?>
+                <div class="<?php echo $item_class; ?>" data-animate="fade-in-up">
+                    <?php if ($rating) : ?>
+                        <div class="testimonial__rating">
+                            <?php for ($i = 1; $i <= 5; $i++) : ?>
+                                <span class="star <?php echo $i <= $rating ? 'star--filled' : 'star--empty'; ?>">
+                                    <?php echo $i <= $rating ? '★' : '☆'; ?>
+                                </span>
+                            <?php endfor; ?>
                         </div>
                     <?php endif; ?>
                     
-                    <div class="testimonial__body">
-                        <div class="testimonial__header">
-                            <div class="testimonial__meta">
-                                <div class="testimonial__name"><?php the_title(); ?></div>
-                                <?php if ($role || $company) : ?>
-                                    <div class="testimonial__role">
-                                        <?php 
-                                        $meta_parts = array_filter(array($role, $company));
-                                        echo implode(' · ', $meta_parts);
-                                        ?>
-                                    </div>
-                                <?php endif; ?>
+                    <div class="testimonial__quote">
+                        <?php the_content(); ?>
+                    </div>
+                    
+                    <div class="testimonial__footer">
+                        <?php if ($thumbnail_img) : ?>
+                            <div class="testimonial__image">
+                               <?php echo $thumbnail_img; ?>
                             </div>
-                            <?php if ($rating) : ?>
-                                <div class="testimonial__rating">
-                                    <?php for ($i = 1; $i <= 5; $i++) : ?>
-                                        <span class="star <?php echo $i <= $rating ? 'star--filled' : 'star--empty'; ?>">
-                                            <?php echo $i <= $rating ? '★' : '☆'; ?>
-                                        </span>
-                                    <?php endfor; ?>
+                        <?php endif; ?>
+                        
+                        <div class="testimonial__meta">
+                            <div class="testimonial__name"><?php the_title(); ?></div>
+                            <?php if ($role || $company) : ?>
+                                <div class="testimonial__role">
+                                    <?php 
+                                    $meta_parts = array_filter(array($role, $company));
+                                    echo implode(' · ', $meta_parts);
+                                    ?>
                                 </div>
                             <?php endif; ?>
-                        </div>
-                        <div class="testimonial__quote">
-                            <?php the_content(); ?>
                         </div>
                     </div>
                 </div>
             <?php endwhile; ?>
-        </div>
+        <?php if ($slider) : ?></div><?php endif; ?>
         
         <?php if ($slider) : ?>
             <div class="testimonials__navigation">
@@ -1710,7 +1691,7 @@ function testimonials_query_shortcode($atts) {
                     </svg>
                 </button>
             </div>
-            <div class="testimonials__pagination"></div>
+            <div class="testimonials__pagination swiper-pagination"></div>
         <?php endif; ?>
     </div>
     <?php
@@ -1725,74 +1706,112 @@ add_shortcode('testimonials_query', 'testimonials_query_shortcode');
 
 function services_query_shortcode($atts) {
     $atts = shortcode_atts(array(
-        'number' => -1,
-        'columns' => 3,
-        'order' => 'ASC',
-        'orderby' => 'menu_order',
+        'number'   => -1,
+        'columns'  => 3,
+        'order'    => 'ASC',
+        'orderby'  => 'menu_order',
+        'category' => '',   // Slug(s) der service_category Taxonomie, kommagetrennt
     ), $atts);
-    
-    $number = intval($atts['number']);
-    $columns = esc_attr($atts['columns']);
-    $order = esc_attr($atts['order']);
-    $orderby = esc_attr($atts['orderby']);
-    
+
+    $number   = intval( $atts['number'] );
+    $columns  = esc_attr( $atts['columns'] );
+    $order    = esc_attr( $atts['order'] );
+    $orderby  = esc_attr( $atts['orderby'] );
+    $category = sanitize_text_field( $atts['category'] );
+
     $args = array(
-        'post_type' => 'services',
+        'post_type'      => 'service',
         'posts_per_page' => $number,
-        'order' => $order,
-        'orderby' => $orderby,
-        'post_status' => 'publish',
+        'order'          => $order,
+        'orderby'        => $orderby,
+        'post_status'    => 'publish',
     );
-    
-    $services_query = new WP_Query($args);
-    
-    if (!$services_query->have_posts()) {
+
+    // Kategorie-Filtering
+    if ( ! empty( $category ) ) {
+        $args['tax_query'] = array(
+            array(
+                'taxonomy' => 'service_category',
+                'field'    => 'slug',
+                'terms'    => array_map( 'trim', explode( ',', $category ) ),
+            ),
+        );
+    }
+
+    $services_query = new WP_Query( $args );
+
+    if ( ! $services_query->have_posts() ) {
         return '<p>Keine Services gefunden.</p>';
     }
-    
+
     ob_start();
     ?>
     <div class="services-grid" data-columns="<?php echo $columns; ?>">
-        <?php while ($services_query->have_posts()) : $services_query->the_post(); ?>
+        <?php while ( $services_query->have_posts() ) : $services_query->the_post(); ?>
             <?php
-            $icon = get_field('icon');
-            $price = get_field('price');
-            $features = get_field('features');
-            $cta = get_field('cta');
+            $icon          = get_field('icon');
+            $price         = get_field('price');
+            $features      = get_field('features');
+            $cta           = get_field('cta');
             $thumbnail_img = medialab_get_thumbnail(get_the_ID(), 'medium', ['class' => 'service-card__img']);
             ?>
-            
+
             <div class="service-card" data-animate="fade-in-up">
-                <?php if ($icon) : ?>
+                <?php if ( $icon ) : ?>
                     <div class="service-card__icon">
                         <span class="dashicons <?php echo esc_attr($icon); ?>"></span>
                     </div>
                 <?php endif; ?>
-                
+
                 <h3 class="service-card__title"><?php the_title(); ?></h3>
-                
-                <?php if ($price) : ?>
+
+                <?php if ( $price ) : ?>
                     <div class="service-card__price"><?php echo esc_html($price); ?></div>
                 <?php endif; ?>
-                
-                <?php if (has_excerpt()) : ?>
+
+                <?php if ( has_excerpt() ) : ?>
                     <div class="service-card__excerpt">
                         <?php the_excerpt(); ?>
                     </div>
                 <?php endif; ?>
-                
-                <?php if ($features) : ?>
+
+                <?php if ( $features ) : ?>
                     <ul class="service-card__features">
-                        <?php foreach ($features as $feature) : ?>
-                            <li><?php echo esc_html($feature['text']); ?></li>
-                        <?php endforeach; ?>
+                        <?php
+                        // ACF kann String (Textarea) oder Repeater-Array liefern
+                        if ( is_array( $features ) ) {
+                            foreach ( $features as $feature ) :
+                                $feature_text = is_array( $feature ) ? ( $feature['text'] ?? $feature['feature'] ?? '' ) : $feature;
+                                if ( $feature_text ) : ?>
+                                <li><?php echo esc_html( $feature_text ); ?></li>
+                        <?php   endif;
+                            endforeach;
+                        } elseif ( is_string( $features ) && str_starts_with( trim($features), '[' ) ) {
+                            // JSON-String (ACF Repeater als JSON gespeichert)
+                            $decoded = json_decode( $features, true );
+                            if ( is_array( $decoded ) ) {
+                                foreach ( $decoded as $feature ) :
+                                    $feature_text = $feature['feature_text'] ?? $feature['text'] ?? $feature['feature'] ?? '';
+                                    if ( $feature_text ) : ?>
+                                    <li><?php echo esc_html( $feature_text ); ?></li>
+                        <?php       endif;
+                                endforeach;
+                            }
+                        } else {
+                            // Einfacher Textarea-String: eine Zeile = ein Feature
+                            $lines = array_filter( array_map( 'trim', explode( "
+", $features ) ) );
+                            foreach ( $lines as $line ) : ?>
+                                <li><?php echo esc_html( $line ); ?></li>
+                        <?php   endforeach;
+                        } ?>
                     </ul>
                 <?php endif; ?>
-                
-                <?php if ($cta && !empty($cta['link'])) : ?>
-                    <a href="<?php echo esc_url($cta['link']['url']); ?>" 
+
+                <?php if ( $cta && ! empty($cta['link']) ) : ?>
+                    <a href="<?php echo esc_url($cta['link']['url']); ?>"
                        class="service-card__cta button button--primary"
-                       <?php echo !empty($cta['link']['target']) ? 'target="' . esc_attr($cta['link']['target']) . '"' : ''; ?>>
+                       <?php echo ! empty($cta['link']['target']) ? 'target="' . esc_attr($cta['link']['target']) . '"' : ''; ?>>
                         <?php echo esc_html($cta['text']); ?>
                     </a>
                 <?php else : ?>
@@ -1809,51 +1828,57 @@ function services_query_shortcode($atts) {
 }
 add_shortcode('services_query', 'services_query_shortcode');
 
+
 // ============================================
 // SPOILER/READ-MORE SHORTCODE
 // ============================================
 
 function spoiler_shortcode($atts, $content = null) {
     $atts = shortcode_atts(array(
-        'open_text' => 'Mehr anzeigen',
+        'open_text'  => 'Mehr anzeigen',
         'close_text' => 'Weniger anzeigen',
-        'open' => 'false',
-        'style' => 'default',
-        'icon' => 'true',
+        'open'       => 'false',
+        'style'      => 'default',
+        'icon'       => 'true',
+        'show_on'    => 'all',
     ), $atts);
-    
-    $open_text = esc_html($atts['open_text']);
+
+    $open_text  = esc_html($atts['open_text']);
     $close_text = esc_html($atts['close_text']);
-    $is_open = $atts['open'] === 'true';
-    $style = esc_attr($atts['style']);
-    $show_icon = $atts['icon'] === 'true';
-    
-    $unique_id = 'spoiler-' . uniqid();
+    $is_open    = $atts['open'] === 'true';
+    $style      = esc_attr($atts['style']);
+    $show_icon  = $atts['icon'] === 'true';
+    $show_on    = in_array($atts['show_on'], ['all', 'desktop', 'mobile'], true)
+                    ? $atts['show_on'] : 'all';
+
+    $unique_id  = 'spoiler-' . uniqid();
     $open_class = $is_open ? ' is-open' : '';
-    $display = $is_open ? 'block' : 'none';
-    $button_text = $is_open ? $close_text : $open_text;
-    
-    $output = '<div class="spoiler spoiler--' . $style . $open_class . '" id="' . $unique_id . '">';
+
+    $output  = '<div class="spoiler spoiler--' . $style . $open_class . '" ';
+    $output .= 'id="' . $unique_id . '" ';
+    $output .= 'data-show-on="' . esc_attr($show_on) . '">';
+
+    $output .= '<div class="spoiler__content">';
+    $output .= wpautop(do_shortcode($content));
+    $output .= '</div>';
+
     $output .= '<button class="spoiler__toggle" ';
-    $output .= 'data-open-text="' . esc_attr($open_text) . '" ';
+    $output .= 'data-open-text="'  . esc_attr($open_text)  . '" ';
     $output .= 'data-close-text="' . esc_attr($close_text) . '" ';
-    $output .= 'aria-expanded="' . ($is_open ? 'true' : 'false') . '">';
-    $output .= '<span class="spoiler__button-text">' . $button_text . '</span>';
-    
+    $output .= 'aria-expanded="' . ($is_open ? 'true' : 'false') . '" ';
+    $output .= 'aria-label="' . esc_attr($open_text) . '">';
+
     if ($show_icon) {
         $output .= '<span class="spoiler__icon">';
-        $output .= '<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">';
-        $output .= '<path d="M8 4l4 4-4 4V4z"/>';
+        $output .= '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">';
+        $output .= '<polyline points="4 7 10 13 16 7"/>';
         $output .= '</svg>';
         $output .= '</span>';
     }
-    
+
     $output .= '</button>';
-    $output .= '<div class="spoiler__content" style="display: ' . $display . ';">';
-    $output .= wpautop(do_shortcode($content));
     $output .= '</div>';
-    $output .= '</div>';
-    
+
     return $output;
 }
 add_shortcode('spoiler', 'spoiler_shortcode');
@@ -1886,18 +1911,10 @@ function pricing_tables_shortcode($atts, $content = null) {
     $columns = intval($atts['columns']);
     $style = esc_attr($atts['style']);
     
-    // INLINE STYLES
-    $inline_style = 'display:grid!important;gap:2rem!important;margin:4rem 0!important;width:100%!important;align-items:stretch!important;';
-    
-    if ($columns == 2) {
-        $inline_style .= 'grid-template-columns:repeat(2,1fr)!important;';
-    } elseif ($columns == 3) {
-        $inline_style .= 'grid-template-columns:repeat(3,1fr)!important;';
-    } elseif ($columns == 4) {
-        $inline_style .= 'grid-template-columns:repeat(4,1fr)!important;';
-    } else {
-        $inline_style .= 'grid-template-columns:repeat(' . $columns . ',1fr)!important;';
-    }
+    // grid-template-columns wird NICHT mehr inline gesetzt –
+    // das CSS (_pricing-tables.scss) übernimmt das responsiv via data-columns.
+    // Inline !important würde die mobilen Breakpoints überschreiben.
+    $inline_style = 'width:100%!important;';
     
     return '<div class="pricing-tables pricing-tables--' . $style . '" data-columns="' . $columns . '" style="' . $inline_style . '">' . do_shortcode($content) . '</div>';
 }
@@ -1905,63 +1922,83 @@ add_shortcode('pricing_tables', 'pricing_tables_shortcode');
 
 function pricing_table_shortcode($atts, $content = null) {
     $atts = shortcode_atts(array(
-        'title' => '',
-        'price' => '',
-        'currency' => '€',
-        'period' => 'pro Monat',
-        'featured' => 'false',
-        'button_text' => 'Jetzt starten',
-        'button_link' => '#',
+        'title'         => '',
+        'price'         => '',
+        'currency'      => '€',
+        'period'        => 'pro Monat',
+        'featured'      => 'false',
+        'button_text'   => 'Jetzt starten',
+        'button_link'   => '#',
+        'button_url'    => '',   // Alias für button_link
         'button_target' => '_self',
-        'badge' => '', // e.g. "Beliebt", "Empfohlen"
-        'description' => '',
+        'badge'         => '',
+        'description'   => '',
+        'features'      => '',   // Komma-separierte Feature-Liste
     ), $atts);
-    
-    $title = esc_html($atts['title']);
-    $price = esc_html($atts['price']);
-    $currency = esc_html($atts['currency']);
-    $period = esc_html($atts['period']);
-    $featured = $atts['featured'] === 'true';
-    $button_text = esc_html($atts['button_text']);
-    $button_link = esc_url($atts['button_link']);
-    $button_target = esc_attr($atts['button_target']);
-    $badge = esc_html($atts['badge']);
-    $description = esc_html($atts['description']);
-    
+
+    // button_url als Alias für button_link
+    if ( ! empty( $atts['button_url'] ) ) {
+        $atts['button_link'] = $atts['button_url'];
+    }
+
+    $title       = esc_html( $atts['title'] );
+    $price       = esc_html( $atts['price'] );
+    $currency    = esc_html( $atts['currency'] );
+    $period      = esc_html( $atts['period'] );
+    $featured    = $atts['featured'] === 'true';
+    $button_text = esc_html( $atts['button_text'] );
+    $button_link = esc_url( $atts['button_link'] );
+    $button_target = esc_attr( $atts['button_target'] );
+    $badge       = esc_html( $atts['badge'] );
+    $description = esc_html( $atts['description'] );
+    $features    = array_filter( array_map( 'trim', explode( ',', $atts['features'] ) ) );
+
     $featured_class = $featured ? ' pricing-table--featured' : '';
-    
+
     ob_start();
     ?>
     <div class="pricing-table<?php echo $featured_class; ?>" data-animate="fade-in-up">
-        <?php if ($badge) : ?>
+        <?php if ( $badge ) : ?>
             <div class="pricing-table__badge"><?php echo $badge; ?></div>
         <?php endif; ?>
-        
+
         <div class="pricing-table__header">
-            <?php if ($title) : ?>
+            <?php if ( $title ) : ?>
                 <h3 class="pricing-table__title"><?php echo $title; ?></h3>
             <?php endif; ?>
-            
-            <?php if ($description) : ?>
+            <?php if ( $description ) : ?>
                 <p class="pricing-table__description"><?php echo $description; ?></p>
             <?php endif; ?>
         </div>
-        
+
         <div class="pricing-table__price">
             <span class="pricing-table__currency"><?php echo $currency; ?></span>
             <span class="pricing-table__amount"><?php echo $price; ?></span>
-            <?php if ($period) : ?>
+            <?php if ( $period ) : ?>
                 <span class="pricing-table__period"><?php echo $period; ?></span>
             <?php endif; ?>
         </div>
-        
+
         <div class="pricing-table__features">
-            <?php echo wpautop(do_shortcode($content)); ?>
+            <?php if ( $features ) : ?>
+            <ul class="pricing-table__features-list">
+                <?php foreach ( $features as $feature ) : ?>
+                <li class="pricing-table__feature">
+                    <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    <?php echo esc_html( $feature ); ?>
+                </li>
+                <?php endforeach; ?>
+            </ul>
+            <?php endif; ?>
+            <?php echo wpautop( do_shortcode( $content ) ); ?>
         </div>
-        
+
         <div class="pricing-table__footer">
-            <a href="<?php echo $button_link; ?>" 
-               class="pricing-table__button button button--primary" 
+            <a href="<?php echo $button_link; ?>"
+               class="pricing-table__button button button--primary"
                target="<?php echo $button_target; ?>">
                 <?php echo $button_text; ?>
             </a>
@@ -1971,6 +2008,7 @@ function pricing_table_shortcode($atts, $content = null) {
     return ob_get_clean();
 }
 add_shortcode('pricing_table', 'pricing_table_shortcode');
+
 
 // Helper shortcode for feature lists
 function pricing_feature_shortcode($atts, $content = null) {
@@ -2366,115 +2404,178 @@ function posts_load_more_template_list() {
 }
 
 // ============================================
-// GOOGLE MAPS SHORTCODE (DSGVO)
+// GOOGLE MAPS SHORTCODE (Cookie Consent + Fullwidth + ACF)
 // ============================================
 
 /**
- * DSGVO-konforme Google Maps
- * 
- * Usage: [google_map id="123" height="400px"]
- * Usage: [google_map address="Stephansplatz 1, 1010 Wien" lat="48.2082" lng="16.3738"]
+ * DSGVO-konforme Google Maps Embed mit Cookie Consent Integration.
+ *
+ * Unterstützt zwei Verwendungsarten:
+ *
+ * A) Direkt via src-Parameter:
+ *    [google_map src="https://www.google.com/maps/embed?pb=..."]
+ *
+ * B) Via CPT-ID (liest embed_src aus ACF-Feldern):
+ *    [google_map id="42"]
+ *    [google_map id="42" fullwidth="true"]
+ *
+ * Alle Parameter:
+ *   id        (int,    optional) – Post-ID des Google Maps CPT
+ *   src       (string, optional) – Google Maps Embed-URL (direkt)
+ *   height    (int,    optional) – Höhe in px, Standard: 450
+ *   title     (string, optional) – title-Attribut des iframes
+ *   fullwidth (bool,   optional) – "true" → 100vw breites Layout
+ *   class     (string, optional) – Zusätzliche CSS-Klassen
  */
-function google_map_shortcode($atts) {
-    static $map_counter = 0;
-    $map_counter++;
-    
-    $atts = shortcode_atts(array(
-        'id' => '',
-        'address' => '',
-        'lat' => '',
-        'lng' => '',
-        'zoom' => '15',
-        'height'    => '400px',
-        'fullwidth'  => 'false',
-        'maps_link'  => '',
-        'marker_title' => '',
-        'style' => 'default',
-    ), $atts);
-    
-    // Load from CPT if ID provided
-    if (!empty($atts['id'])) {
-        $post_id = intval($atts['id']);
-        $atts['address'] = get_field('address', $post_id);
-        $atts['lat'] = get_field('latitude', $post_id);
-        $atts['lng'] = get_field('longitude', $post_id);
-        $atts['zoom'] = get_field('zoom', $post_id) ?: '15';
-        $atts['marker_title'] = get_field('marker_title', $post_id) ?: get_the_title($post_id);
-        $atts['style']     = get_field('map_style', $post_id) ?: 'default';
-        $atts['maps_link'] = get_field('maps_link', $post_id) ?: '';
+function medialab_shortcode_google_map( array $atts ): string {
+
+    $atts = shortcode_atts( array(
+        'id'        => '',
+        'src'       => '',
+        'height'    => 450,
+        'title'     => __( 'Google Maps', 'media-lab-agency-core' ),
+        'fullwidth' => 'false',
+        'class'     => '',
+    ), $atts, 'google_map' );
+
+    // ── Wenn ID angegeben: Daten aus ACF laden ────────────────────────────────
+    if ( ! empty( $atts['id'] ) ) {
+        $post_id = intval( $atts['id'] );
+
+        // embed_src aus ACF (Pflichtfeld)
+        $embed_src = get_field( 'embed_src', $post_id );
+        if ( empty( $embed_src ) ) {
+            // Fallback: altes Feld falls noch vorhanden
+            $embed_src = get_field( 'maps_embed_url', $post_id );
+        }
+
+        if ( ! empty( $embed_src ) ) {
+            $atts['src'] = $embed_src;
+        }
+
+        // Optionale Overrides aus ACF (nur wenn nicht im Shortcode gesetzt)
+        if ( empty( $atts['title'] ) || $atts['title'] === __( 'Google Maps', 'media-lab-agency-core' ) ) {
+            $marker_title = get_field( 'marker_title', $post_id ) ?: get_the_title( $post_id );
+            if ( $marker_title ) {
+                $atts['title'] = $marker_title;
+            }
+        }
+
+        // Höhe aus ACF falls vorhanden
+        $acf_height = get_field( 'map_height', $post_id );
+        if ( $acf_height && $atts['height'] === 450 ) {
+            $atts['height'] = $acf_height;
+        }
     }
-    
-    // Validate required fields
-    if (empty($atts['lat']) || empty($atts['lng'])) {
-        return '<p>⚠️ Google Maps: Lat/Lng fehlt</p>';
+
+    // ── Pflichtfeld prüfen ────────────────────────────────────────────────────
+    if ( empty( $atts['src'] ) ) {
+        if ( current_user_can( 'edit_posts' ) ) {
+            return '<p style="color:red;border:1px solid red;padding:.5rem;">'
+                 . __( '[google_map] Fehler: Kein src oder embed_src gefunden. Bitte Embed-URL im CPT eintragen.', 'media-lab-agency-core' )
+                 . '</p>';
+        }
+        return '';
     }
-    
-    $map_id = 'gmap-' . $map_counter;
-    
+
+    $src       = esc_url( $atts['src'] );
+    $height    = absint( $atts['height'] ) ?: 450;
+    $title     = esc_attr( $atts['title'] );
+    $fullwidth = filter_var( $atts['fullwidth'], FILTER_VALIDATE_BOOLEAN );
+    $extra_cls = sanitize_html_class( $atts['class'] );
+
+    // ── CSS-Klassen ───────────────────────────────────────────────────────────
+    $wrapper_classes = array( 'google-map' );
+    if ( $fullwidth )  $wrapper_classes[] = 'google-map--fullwidth';
+    if ( $extra_cls )  $wrapper_classes[] = $extra_cls;
+    $wrapper_class_str = implode( ' ', $wrapper_classes );
+
+    // ── Placeholder-Texte ─────────────────────────────────────────────────────
+    $placeholder_title  = apply_filters( 'medialab_map_placeholder_title',  __( 'Karte kann nicht geladen werden', 'media-lab-agency-core' ) );
+    $placeholder_text   = apply_filters( 'medialab_map_placeholder_text',   __( 'Um die Google Maps Karte anzuzeigen, musst du Komfort-Cookies akzeptieren. Diese Cookies ermöglichen eingebettete Inhalte von Drittanbietern.', 'media-lab-agency-core' ) );
+    $placeholder_button = apply_filters( 'medialab_map_placeholder_button', __( 'Karte anzeigen & Cookies akzeptieren', 'media-lab-agency-core' ) );
+    $placeholder_hint   = apply_filters( 'medialab_map_placeholder_hint',   __( 'Oder passe deine Cookie-Einstellungen an.', 'media-lab-agency-core' ) );
+
+    // ── HTML ──────────────────────────────────────────────────────────────────
     ob_start();
     ?>
-    <div class="google-map-wrapper<?php echo ($atts['fullwidth'] === 'true') ? ' google-map-wrapper--fullwidth' : ''; ?>" 
-         data-map-id="<?php echo esc_attr($map_id); ?>"
-         data-lat="<?php echo esc_attr($atts['lat']); ?>"
-         data-lng="<?php echo esc_attr($atts['lng']); ?>"
-         data-zoom="<?php echo esc_attr($atts['zoom']); ?>"
-         data-marker-title="<?php echo esc_attr($atts['marker_title']); ?>"
-         data-style="<?php echo esc_attr($atts['style']); ?>"
-         style="height: <?php echo esc_attr($atts['height']); ?>;">
-        
-        <!-- DSGVO Overlay (before consent) -->
-        <div class="google-map-overlay">
-            <div class="google-map-overlay__content">
-                <div class="google-map-overlay__icon">
-                    <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
-                        <path d="M32 4C20.96 4 12 12.96 12 24c0 13.5 20 36 20 36s20-22.5 20-36c0-11.04-8.96-20-20-20zm0 27c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z" fill="currentColor"/>
-                    </svg>
-                </div>
-                
-                <h3 class="google-map-overlay__title">Google Maps</h3>
-                
-                <p class="google-map-overlay__text">
-                    Um die Karte anzuzeigen, benötigen wir Ihre Zustimmung. 
-                    Durch das Laden der Karte akzeptieren Sie die 
-                    <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Datenschutzerklärung von Google</a>.
+    <div
+        class="<?php echo esc_attr( $wrapper_class_str ); ?>"
+        style="--map-height: <?php echo $height; ?>px;"
+        data-map-src="<?php echo $src; ?>"
+        aria-label="<?php echo $title; ?>"
+    >
+        <!-- Placeholder: sichtbar solange kein Komfort-Consent -->
+        <div class="google-map__placeholder" aria-live="polite" role="region">
+            <div class="google-map__placeholder-inner">
+
+                <svg class="google-map__placeholder-icon" xmlns="http://www.w3.org/2000/svg"
+                     width="40" height="40" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                     stroke-linejoin="round" aria-hidden="true">
+                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                    <circle cx="12" cy="10" r="3"/>
+                    <line x1="1" y1="1" x2="23" y2="23" stroke-dasharray="3 2"/>
+                </svg>
+
+                <h3 class="google-map__placeholder-title">
+                    <?php echo esc_html( $placeholder_title ); ?>
+                </h3>
+
+                <p class="google-map__placeholder-text">
+                    <?php echo esc_html( $placeholder_text ); ?>
                 </p>
-                
-                <?php if (!empty($atts['address'])) : ?>
-                    <p class="google-map-overlay__address">
-                        <strong>Adresse:</strong><br>
-                        <?php echo nl2br(esc_html($atts['address'])); ?>
-                    </p>
-                <?php endif; ?>
-                
-                <button class="google-map-overlay__button" data-action="load-map">
-                    Karte laden
+
+                <button
+                    type="button"
+                    class="google-map__placeholder-btn btn btn--primary btn--sm"
+                    data-map-accept-comfort
+                    aria-label="<?php echo esc_attr( $placeholder_button ); ?>"
+                >
+                    <?php echo esc_html( $placeholder_button ); ?>
                 </button>
-                
-                <?php if (!empty($atts['maps_link'])) : ?>
-                <a href="<?php echo esc_url($atts['maps_link']); ?>" 
-                   class="google-map-overlay__route-btn btn btn--outline btn--sm"
-                   target="_blank" 
-                   rel="noopener noreferrer">
-                    Route berechnen
-                </a>
-                <?php endif; ?>
-                <p class="google-map-overlay__privacy">
-                    <small>
-                        Es werden Cookies von Google gesetzt. 
-                        <a href="/datenschutz">Mehr erfahren</a>
-                    </small>
+
+                <p class="google-map__placeholder-hint">
+                    <button
+                        type="button"
+                        class="google-map__placeholder-settings-link"
+                        data-map-open-settings
+                    >
+                        <?php echo esc_html( $placeholder_hint ); ?>
+                    </button>
                 </p>
+
             </div>
         </div>
-        
-        <!-- Map Container (loaded after consent) -->
-        <div id="<?php echo esc_attr($map_id); ?>" class="google-map-canvas"></div>
+
+        <!-- iframe: wird vom JS eingeblendet sobald Consent vorliegt -->
+        <iframe
+            class="google-map__iframe"
+            src=""
+            data-src="<?php echo $src; ?>"
+            width="100%"
+            height="<?php echo $height; ?>"
+            title="<?php echo $title; ?>"
+            style="border:0;"
+            allowfullscreen
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            aria-label="<?php echo $title; ?>"
+            hidden
+        ></iframe>
+
     </div>
     <?php
-    
     return ob_get_clean();
 }
-add_shortcode('google_map', 'google_map_shortcode');
+add_shortcode( 'google_map', 'medialab_shortcode_google_map' );
+
+
+
+
+
+
+
 
 // ============================================
 // JOBS QUERY SHORTCODE
@@ -2979,74 +3080,6 @@ function filter_search_shortcode($atts) {
 }
 add_shortcode('filter_search', 'filter_search_shortcode');
 
-// ============================================
-// MODAL SHORTCODES
-// ============================================
-
-/**
- * Modal Button
- * Usage: [modal_button target="mein-modal" label="Öffnen" class="btn--primary"]
- */
-function modal_button_shortcode($atts) {
-    $atts = shortcode_atts([
-        'target' => '',
-        'label'  => 'Öffnen',
-        'class'  => '',
-    ], $atts);
-
-    if (empty($atts['target'])) return '';
-
-    $classes = trim('btn ' . esc_attr($atts['class']));
-
-    return sprintf(
-        '<button class="%s" data-modal-trigger="%s">%s</button>',
-        $classes,
-        esc_attr($atts['target']),
-        esc_html($atts['label'])
-    );
-}
-add_shortcode('modal_button', 'modal_button_shortcode');
-
-/**
- * Modal Content
- * Usage: [modal_content id="mein-modal" title="Titel"]...[/modal_content]
- */
-function modal_content_shortcode($atts, $content = null) {
-    $atts = shortcode_atts([
-        'id'    => '',
-        'title' => '',
-    ], $atts);
-
-    if (empty($atts['id'])) return '';
-
-    $title_html = '';
-    if ($atts['title']) {
-        $title_html = sprintf(
-            '<div class="modal__header">
-                <h3 class="modal__title">%s</h3>
-                <button class="modal__close" data-modal-close aria-label="Schließen">&times;</button>
-            </div>',
-            esc_html($atts['title'])
-        );
-    } else {
-        $title_html = '<div class="modal__header modal__header--no-title">
-                <button class="modal__close" data-modal-close aria-label="Schließen">&times;</button>
-            </div>';
-    }
-
-    return sprintf(
-        '<div class="modal" id="%s" aria-hidden="true">
-            <div class="modal__dialog">
-                %s
-                <div class="modal__body">%s</div>
-            </div>
-        </div>',
-        esc_attr($atts['id']),
-        $title_html,
-        do_shortcode($content)
-    );
-}
-add_shortcode('modal_content', 'modal_content_shortcode');
 
 
 // ============================================
@@ -3102,23 +3135,27 @@ function carousel_query_shortcode($atts) {
         $show_overlay = get_field('show_overlay');
         $img_url      = is_array($image) ? ($image['sizes']['large'] ?? $image['url']) : $image;
 
+        // Fallback: Featured Image
+        if (empty($img_url) && has_post_thumbnail()) {
+            $img_url = get_the_post_thumbnail_url(get_the_ID(), 'large');
+        }
+
         echo '<div class="carousel-grid__item">';
 
         if ($link_url) {
             echo '<a href="' . esc_url($link_url) . '" target="' . esc_attr($link_target) . '" class="carousel-grid__link">';
         }
-
+        echo '<div class="carousel-grid__image' . (!$img_url ? ' carousel-grid__image--empty' : '') . '">';
         if ($img_url) {
-            echo '<div class="carousel-grid__image">';
             echo '<img src="' . esc_url($img_url) . '" alt="' . esc_attr(get_the_title()) . '" loading="lazy">';
-            if ($show_overlay) {
-                echo '<div class="carousel-grid__overlay">';
-                echo '<h3 class="carousel-grid__title">' . get_the_title() . '</h3>';
-                if ($subtitle) echo '<p class="carousel-grid__subtitle">' . esc_html($subtitle) . '</p>';
-                echo '</div>';
-            }
+        }
+        if ($show_overlay) {
+            echo '<div class="carousel-grid__overlay">';
+            echo '<h3 class="carousel-grid__title">' . get_the_title() . '</h3>';
+            if ($subtitle) echo '<p class="carousel-grid__subtitle">' . esc_html($subtitle) . '</p>';
             echo '</div>';
         }
+        echo '</div>';
 
         if (!$show_overlay) {
             echo '<div class="carousel-grid__caption">';
