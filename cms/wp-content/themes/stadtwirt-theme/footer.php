@@ -114,16 +114,20 @@ $logo    = function_exists('get_field') ? get_field('logo_desktop',       'optio
                     </div>
                 <?php endif; ?>
 
-                <?php if (has_nav_menu('footer')) : ?>
-                    <?php wp_nav_menu([
-                        'theme_location' => 'footer',
-                        'menu_class'     => 'site-footer__legal-list',
-                        'container'      => 'nav',
-                        'container_class'=> 'site-footer__legal',
-                        'depth'          => 1,
-                        'fallback_cb'    => false,
-                    ]); ?>
-                <?php endif; ?>
+                 <?php
+                // ── Footer Legal Navigation ───────────────────────────────────────────
+                if ( has_nav_menu('footer-legal') ) :
+                    wp_nav_menu([
+                        'theme_location'       => 'footer-legal',
+                        'menu_class'           => 'footer-legal__list',
+                        'container'            => 'nav',
+                        'container_class'      => 'footer-legal',
+                        'container_aria_label' => __('Rechtliche Links', 'custom-theme'),
+                        'depth'                => 1,       // Nur eine Ebene – keine Submenüs
+                        'fallback_cb'          => false,
+                    ]);
+                endif;
+                ?>
             </div>
 
         </div><!-- .site-footer__inner -->
@@ -135,21 +139,6 @@ $logo    = function_exists('get_field') ? get_field('logo_desktop',       'optio
                 &copy; <?php echo date('Y'); ?> <?php bloginfo('name'); ?>.
                 <?php esc_html_e('Alle Rechte vorbehalten.', 'custom-theme'); ?>
             </p>
-
-            <?php
-            // ── Footer Legal Navigation ───────────────────────────────────────────
-            if ( has_nav_menu('footer-legal') ) :
-                wp_nav_menu([
-                    'theme_location'       => 'footer-legal',
-                    'menu_class'           => 'footer-legal__list',
-                    'container'            => 'nav',
-                    'container_class'      => 'footer-legal',
-                    'container_aria_label' => __('Rechtliche Links', 'custom-theme'),
-                    'depth'                => 1,       // Nur eine Ebene – keine Submenüs
-                    'fallback_cb'          => false,
-                ]);
-            endif;
-            ?>
 
         </div><!-- .site-footer__bottom -->
 

@@ -17,6 +17,8 @@
 .site-footer {
     background: var(--color-secondary);
     margin-top: auto;
+    padding-bottom: var(--space-lg);
+    border-bottom: 15px solid var(--color-primary);
 
     // ── Ornament oben ─────────────────────────────────────────────────────────
     &__ornament {
@@ -167,40 +169,11 @@
         }
     }
 
-    &__legal {
-        text-align:  right;
-        padding-top: $spacing-1;
-    }
-
-    &__legal-list {
-        list-style:     none;
-        margin:         0;
-        padding:        0;
-        display:        flex;
-        flex-direction: column;
-        gap:            $spacing-1;
-        align-items:    flex-end;
-
-        li { margin: 0; }
-
-        a {
-            font-size:       var(--text-sm);    // war: $font-size-sm
-            font-weight:     700;
-            letter-spacing:  0.06em;
-            text-transform:  uppercase;
-            color:           var(--color-text);
-            text-decoration: none;
-            transition:      color $transition-base;
-
-            &:hover { color: $color-primary; }
-        }
-    }
-
     // ── Copyright ─────────────────────────────────────────────────────────────
     &__bottom {
         display:         flex;
         justify-content: center;
-        padding:         $spacing-5 0;
+        padding:         $spacing-xs 0;
     }
 
     &__copyright {
@@ -209,17 +182,9 @@
         letter-spacing: 0.06em;
         text-transform: uppercase;
         color:          var(--color-text-light);
-        margin:         0;
+        margin:         0 auto;
     }
-
-    // ── Agency Bar ────────────────────────────────────────────────────────────
-    &__agency {
-        background: $color-gray-400;
-        text-align: center;
-        padding:    $spacing-3 0;
-        font-size:  var(--text-sm);         // war: $font-size-sm
-        color:      $color-grey;
-    }
+    
 }
 
 
@@ -243,14 +208,17 @@
 }
 
 .footer-legal {
+    text-align:  right;
+    padding-top: $spacing-1;
+
     &__list {
-        list-style:  none;
-        margin:      0;
-        padding:     0;
-        display:     flex;
-        flex-wrap:   wrap;
-        gap:         $spacing-1 $spacing-4;
-        align-items: center;
+        list-style:     none;
+        margin:         0;
+        padding:        0;
+        display:        flex;
+        flex-direction: column;
+        gap:            $spacing-1;
+        align-items:    flex-end;
 
         @include respond-below('md') {      // war: @media (max-width: 767px)
             gap: $spacing-1 $spacing-3;
@@ -260,27 +228,30 @@
     li {
         margin: 0;
 
-        &:not(:last-child) > a::after {
-            content:        '·';
-            margin-left:    $spacing-4;
-            color:          var(--color-text-muted);
-            pointer-events: none;
+        @include respond-below('md') {      // war: @media (max-width: 767px)
+            gap: $spacing-1 $spacing-3;
         }
+        
     }
 
     a {
-        font-size:       var(--text-xs);    // war: $font-size-xs
-        color:           var(--color-text-muted);
-        text-decoration: none;
+        font-size:       var(--text-sm);    // war: $font-size-sm
+        text-transform:  uppercase;
+        color:           var(--color-text);
+        font-weight:     700;
+        letter-spacing:  0.06em;
+         text-decoration: none;
         transition:      color 0.2s ease;
-        white-space:     nowrap;
+        transition:      color $transition-base;
+        white-space:     nowrap; 
+        
 
         &:hover,
         &:focus-visible {
             color:           var(--color-primary);
-            text-decoration: underline;
         }
     }
+    
 }
 
 
@@ -296,7 +267,7 @@
 
     p {
         font-size:  var(--text-xs);         // war: $font-size-xs
-        color:      var(--color-text-muted);
+        color:      var(--color-text-light);
         opacity:    0.6;
         margin:     0;
         transition: opacity 0.2s ease;

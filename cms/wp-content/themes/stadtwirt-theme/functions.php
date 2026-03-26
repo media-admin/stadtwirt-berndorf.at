@@ -79,6 +79,7 @@ add_action('after_setup_theme', 'customtheme_setup');
  */
 require_once get_template_directory() . '/inc/enqueue.php';
 require_once get_template_directory() . '/inc/performance.php';
+require_once get_template_directory() . '/inc/shortcode-overrides.php';
 
 // Optional components (only if files exist)
 $optional_components = array(
