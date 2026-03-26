@@ -1,0 +1,75 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/theme.json",
+    "version": 2,
+    "settings": {
+        "appearanceTools": false,
+        "color": {
+            "background":       false,
+            "button":           false,
+            "caption":          false,
+            "custom":           false,
+            "customDuotone":    false,
+            "customGradient":   false,
+            "defaultDuotone":   false,
+            "defaultGradients": false,
+            "defaultPalette":   false,
+            "gradient":         false,
+            "heading":          false,
+            "link":             false,
+            "text":             false
+        },
+        "typography": {
+            "customFontSize":   false,
+            "dropCap":          false,
+            "fontStyle":        false,
+            "fontWeight":       false,
+            "letterSpacing":    false,
+            "lineHeight":       false,
+            "textColumns":      false,
+            "textDecoration":   false,
+            "textTransform":    false,
+            "writingMode":      false
+        },
+        "spacing": {
+            "blockGap":         false,
+            "margin":           false,
+            "padding":          false
+        },
+        "layout": {
+            "contentSize":      "1200px",
+            "wideSize":         "1400px"
+        },
+        "blocks": {
+            "core/separator": {
+                "color": {
+                    "background": false,
+                    "text":       false
+                }
+            },
+            "core/column": {
+                "spacing": {
+                    "padding": false,
+                    "margin":  false
+                }
+            },
+            "core/columns": {
+                "spacing": {
+                    "padding": false,
+                    "margin":  false
+                }
+            }
+        }
+    },
+    "styles": {
+        "blocks": {
+            "core/separator": {
+                "border": {
+                    "top": {
+                        "width": "0px",
+                        "style": "none"
+                    }
+                }
+            }
+        }
+    }
+}

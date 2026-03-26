@@ -6,10 +6,8 @@
  */
 
 get_header();
-get_template_part( 'template-parts/components/breadcrumbs' );
 ?>
 
-<main id="primary" class="site-main">
 <div class="container">
 <div class="single-post-layout">
 

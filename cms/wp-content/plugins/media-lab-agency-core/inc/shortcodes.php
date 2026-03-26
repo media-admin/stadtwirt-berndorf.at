@@ -1598,7 +1598,15 @@ function testimonials_query_shortcode($atts) {
         'style' => 'card',
         'featured_only' => 'false',
         'slider' => 'false',
+        'layout' => '',
     ), $atts);
+
+    // layout-Parameter überschreibt slider
+    if ($atts['layout'] === 'carousel') {
+        $atts['slider'] = 'true';
+    } elseif ($atts['layout'] === 'grid') {
+        $atts['slider'] = 'false';
+    }
     
     $number = intval($atts['number']);
     $columns = esc_attr($atts['columns']);
@@ -1607,10 +1615,10 @@ function testimonials_query_shortcode($atts) {
     $slider = $atts['slider'] === 'true';
     
     $args = array(
-        'post_type' => 'testimonials',
+        'post_type' => 'testimonial',
         'posts_per_page' => $number,
-        'order' => 'DESC',
-        'orderby' => 'date',
+        'order' => 'ASC',
+        'orderby' => 'menu_order',
         'post_status' => 'publish',
     );
     
@@ -1643,41 +1651,46 @@ function testimonials_query_shortcode($atts) {
                 $company = get_field('company');
                 $role = get_field('role');
                 $rating = get_field('rating');
-                $thumbnail_img = medialab_get_thumbnail(get_the_ID(), 'thumbnail', ['class' => 'testimonial__avatar-img']);
+                $author_image_field = get_field('author_image');
+                $thumbnail_img = '';
+                if ($author_image_field) {
+                    $img_url = is_array($author_image_field) ? $author_image_field['url'] : $author_image_field;
+                    $thumbnail_img = '<img src="' . esc_url($img_url) . '" alt="' . get_the_title() . '" class="testimonial__avatar-img">';
+                }
                 ?>
                 
-                <div class="<?php echo $item_class; ?>" data-animate="fade-in-up">
-                    <?php if ($rating) : ?>
-                        <div class="testimonial__rating">
-                            <?php for ($i = 1; $i <= 5; $i++) : ?>
-                                <span class="star <?php echo $i <= $rating ? 'star--filled' : 'star--empty'; ?>">
-                                    <?php echo $i <= $rating ? '★' : '☆'; ?>
-                                </span>
-                            <?php endfor; ?>
+                <div class="<?php echo $item_class; ?>">
+                    <?php if ($thumbnail_img) : ?>
+                        <div class="testimonial__image">
+                            <?php echo $thumbnail_img; ?>
                         </div>
                     <?php endif; ?>
                     
-                    <div class="testimonial__quote">
-                        <?php the_content(); ?>
-                    </div>
-                    
-                    <div class="testimonial__footer">
-                        <?php if ($thumbnail) : ?>
-                            <div class="testimonial__image">
-                                <img src="<?php echo esc_url($thumbnail); ?>" alt="<?php the_title(); ?>">
+                    <div class="testimonial__body">
+                        <div class="testimonial__header">
+                            <div class="testimonial__meta">
+                                <div class="testimonial__name"><?php the_title(); ?></div>
+                                <?php if ($role || $company) : ?>
+                                    <div class="testimonial__role">
+                                        <?php 
+                                        $meta_parts = array_filter(array($role, $company));
+                                        echo implode(' · ', $meta_parts);
+                                        ?>
+                                    </div>
+                                <?php endif; ?>
                             </div>
-                        <?php endif; ?>
-                        
-                        <div class="testimonial__meta">
-                            <div class="testimonial__name"><?php the_title(); ?></div>
-                            <?php if ($role || $company) : ?>
-                                <div class="testimonial__role">
-                                    <?php 
-                                    $meta_parts = array_filter(array($role, $company));
-                                    echo implode(' · ', $meta_parts);
-                                    ?>
+                            <?php if ($rating) : ?>
+                                <div class="testimonial__rating">
+                                    <?php for ($i = 1; $i <= 5; $i++) : ?>
+                                        <span class="star <?php echo $i <= $rating ? 'star--filled' : 'star--empty'; ?>">
+                                            <?php echo $i <= $rating ? '★' : '☆'; ?>
+                                        </span>
+                                    <?php endfor; ?>
                                 </div>
                             <?php endif; ?>
+                        </div>
+                        <div class="testimonial__quote">
+                            <?php the_content(); ?>
                         </div>
                     </div>
                 </div>
@@ -2372,7 +2385,9 @@ function google_map_shortcode($atts) {
         'lat' => '',
         'lng' => '',
         'zoom' => '15',
-        'height' => '400px',
+        'height'    => '400px',
+        'fullwidth'  => 'false',
+        'maps_link'  => '',
         'marker_title' => '',
         'style' => 'default',
     ), $atts);
@@ -2385,7 +2400,8 @@ function google_map_shortcode($atts) {
         $atts['lng'] = get_field('longitude', $post_id);
         $atts['zoom'] = get_field('zoom', $post_id) ?: '15';
         $atts['marker_title'] = get_field('marker_title', $post_id) ?: get_the_title($post_id);
-        $atts['style'] = get_field('map_style', $post_id) ?: 'default';
+        $atts['style']     = get_field('map_style', $post_id) ?: 'default';
+        $atts['maps_link'] = get_field('maps_link', $post_id) ?: '';
     }
     
     // Validate required fields
@@ -2397,7 +2413,7 @@ function google_map_shortcode($atts) {
     
     ob_start();
     ?>
-    <div class="google-map-wrapper" 
+    <div class="google-map-wrapper<?php echo ($atts['fullwidth'] === 'true') ? ' google-map-wrapper--fullwidth' : ''; ?>" 
          data-map-id="<?php echo esc_attr($map_id); ?>"
          data-lat="<?php echo esc_attr($atts['lat']); ?>"
          data-lng="<?php echo esc_attr($atts['lng']); ?>"
@@ -2434,6 +2450,14 @@ function google_map_shortcode($atts) {
                     Karte laden
                 </button>
                 
+                <?php if (!empty($atts['maps_link'])) : ?>
+                <a href="<?php echo esc_url($atts['maps_link']); ?>" 
+                   class="google-map-overlay__route-btn btn btn--outline btn--sm"
+                   target="_blank" 
+                   rel="noopener noreferrer">
+                    Route berechnen
+                </a>
+                <?php endif; ?>
                 <p class="google-map-overlay__privacy">
                     <small>
                         Es werden Cookies von Google gesetzt. 
@@ -2954,3 +2978,164 @@ function filter_search_shortcode($atts) {
     return ob_get_clean();
 }
 add_shortcode('filter_search', 'filter_search_shortcode');
+
+// ============================================
+// MODAL SHORTCODES
+// ============================================
+
+/**
+ * Modal Button
+ * Usage: [modal_button target="mein-modal" label="Öffnen" class="btn--primary"]
+ */
+function modal_button_shortcode($atts) {
+    $atts = shortcode_atts([
+        'target' => '',
+        'label'  => 'Öffnen',
+        'class'  => '',
+    ], $atts);
+
+    if (empty($atts['target'])) return '';
+
+    $classes = trim('btn ' . esc_attr($atts['class']));
+
+    return sprintf(
+        '<button class="%s" data-modal-trigger="%s">%s</button>',
+        $classes,
+        esc_attr($atts['target']),
+        esc_html($atts['label'])
+    );
+}
+add_shortcode('modal_button', 'modal_button_shortcode');
+
+/**
+ * Modal Content
+ * Usage: [modal_content id="mein-modal" title="Titel"]...[/modal_content]
+ */
+function modal_content_shortcode($atts, $content = null) {
+    $atts = shortcode_atts([
+        'id'    => '',
+        'title' => '',
+    ], $atts);
+
+    if (empty($atts['id'])) return '';
+
+    $title_html = '';
+    if ($atts['title']) {
+        $title_html = sprintf(
+            '<div class="modal__header">
+                <h3 class="modal__title">%s</h3>
+                <button class="modal__close" data-modal-close aria-label="Schließen">&times;</button>
+            </div>',
+            esc_html($atts['title'])
+        );
+    } else {
+        $title_html = '<div class="modal__header modal__header--no-title">
+                <button class="modal__close" data-modal-close aria-label="Schließen">&times;</button>
+            </div>';
+    }
+
+    return sprintf(
+        '<div class="modal" id="%s" aria-hidden="true">
+            <div class="modal__dialog">
+                %s
+                <div class="modal__body">%s</div>
+            </div>
+        </div>',
+        esc_attr($atts['id']),
+        $title_html,
+        do_shortcode($content)
+    );
+}
+add_shortcode('modal_content', 'modal_content_shortcode');
+
+
+// ============================================
+// CAROUSEL QUERY SHORTCODE
+// ============================================
+
+/**
+ * Carousel Query Shortcode
+ * Usage: [carousel_query category="catering" columns="3" number="12"]
+ */
+function carousel_query_shortcode($atts) {
+    $atts = shortcode_atts([
+        'category' => '',
+        'columns'  => 3,
+        'number'   => -1,
+        'orderby'  => 'menu_order',
+        'order'    => 'ASC',
+    ], $atts);
+
+    $args = [
+        'post_type'      => 'carousel',
+        'posts_per_page' => intval($atts['number']),
+        'post_status'    => 'publish',
+        'orderby'        => $atts['orderby'],
+        'order'          => $atts['order'],
+    ];
+
+    if (!empty($atts['category'])) {
+        $args['tax_query'] = [[
+            'taxonomy' => 'carousel_category',
+            'field'    => 'slug',
+            'terms'    => explode(',', $atts['category']),
+        ]];
+    }
+
+    $query = new WP_Query($args);
+
+    if (!$query->have_posts()) {
+        return '';
+    }
+
+    $columns = intval($atts['columns']);
+
+    ob_start();
+    echo '<div class="carousel-grid" data-columns="' . esc_attr($columns) . '">';
+
+    while ($query->have_posts()) {
+        $query->the_post();
+        $subtitle     = get_field('subtitle');
+        $link_url     = get_field('link_url');
+        $link_target  = get_field('link_target') ?: '_self';
+        $image        = get_field('image');
+        $show_overlay = get_field('show_overlay');
+        $img_url      = is_array($image) ? ($image['sizes']['large'] ?? $image['url']) : $image;
+
+        echo '<div class="carousel-grid__item">';
+
+        if ($link_url) {
+            echo '<a href="' . esc_url($link_url) . '" target="' . esc_attr($link_target) . '" class="carousel-grid__link">';
+        }
+
+        if ($img_url) {
+            echo '<div class="carousel-grid__image">';
+            echo '<img src="' . esc_url($img_url) . '" alt="' . esc_attr(get_the_title()) . '" loading="lazy">';
+            if ($show_overlay) {
+                echo '<div class="carousel-grid__overlay">';
+                echo '<h3 class="carousel-grid__title">' . get_the_title() . '</h3>';
+                if ($subtitle) echo '<p class="carousel-grid__subtitle">' . esc_html($subtitle) . '</p>';
+                echo '</div>';
+            }
+            echo '</div>';
+        }
+
+        if (!$show_overlay) {
+            echo '<div class="carousel-grid__caption">';
+            echo '<h3 class="carousel-grid__title">' . get_the_title() . '</h3>';
+            if ($subtitle) echo '<p class="carousel-grid__subtitle">' . esc_html($subtitle) . '</p>';
+            echo '</div>';
+        }
+
+        if ($link_url) {
+            echo '</a>';
+        }
+
+        echo '</div>';
+    }
+
+    echo '</div>';
+    wp_reset_postdata();
+    return ob_get_clean();
+}
+add_shortcode('carousel_query', 'carousel_query_shortcode');

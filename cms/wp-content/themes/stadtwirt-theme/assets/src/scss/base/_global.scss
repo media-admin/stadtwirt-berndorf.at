@@ -2,24 +2,41 @@
 
 // Global Styles
 body {
-  background: var(--color-background);
+  // background: $color-background;
   color: var(--color-text);
   transition: background-color 0.3s ease, color 0.3s ease;
+
+  // background-image: url('/cms/wp-content/themes/stadtwirt-theme/assets/src/images/bg-png.webp');
+  background-image: url('/cms/wp-content/themes/stadtwirt-theme/assets/src/images/ChalkTexture2.webp') !important;
+  background-size: contain;
+  background-position: top;
+  background-repeat: repeat-y;
+
 }
 
 .site {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+
+
 }
 
 .site-main {
   flex: 1;
+  position: relative;
+  top: -240px;
+
+  & .container {
+    @include container;
+    // background-color: $color-background;
+  }
 }
 
 .container {
   @include container;
 }
+
 
 // Cards anpassen für Dark Mode
 .card {
@@ -46,3 +63,126 @@ a {
     background: rgba(255, 255, 255, 0.05);
   }
 }
+
+
+// Callout Text
+.callout {
+    font-family: $font-primary;
+    font-size: $font-size-5xl;
+    font-weight: $font-weight-semibold;
+    color: $color-accent;
+    margin-top: $spacing-6;
+    padding-top: $spacing-2xl;
+}
+
+
+.callout--light {
+    font-weight: $font-weight-normal;
+}
+
+
+.wp-block-quote {
+    position: relative;
+
+    &::after {
+        content:    "";
+        position:   absolute;
+        top:        25%;
+        right:      0;
+        transform:  translateY(-50%);
+        width:      clamp(60px, 8vw, 100px);
+        height:     clamp(60px, 8vw, 100px);
+        background-image:    url('/cms/wp-content/themes/stadtwirt-theme/assets/src/images/icon_quote--light-grey.svg');
+        background-size:     contain;
+        background-repeat:   no-repeat;
+        background-position: top right;
+        opacity:    0.6;
+        pointer-events: none;
+    }
+
+    p {
+        width: 90%; // Platz für das Icon rechts lassen
+    }
+}
+
+
+
+
+// ── Separator / HR ───────────────────────────────────────────────────────────
+//
+// Gutenberg rendert <hr> als .wp-block-separator – beide Selektoren nötig.
+// !important auf den Resets verhindert Überschreibung durch Block-Styles.
+// =============================================================================
+
+hr,
+.wp-block-separator {
+    border:        none !important;
+    border-top:    none !important;  // Gutenberg setzt border-top: 2px solid
+    background:    none !important;
+    color:         transparent !important;
+    height:        auto !important;
+    margin:        $spacing-10 0;
+    text-align:    center;
+
+    // Gutenberg fügt manchmal ein <hr>-Kind-Element ein – verstecken
+    &.is-style-default,
+    &.is-style-wide,
+    &.has-alpha-channel-opacity {
+        border:     none !important;
+        border-top: none !important;
+        background: none !important;
+    }
+
+    &::before { display: none; } // Gutenberg ::before-Reste entfernen
+
+    &::after {
+        content:             '';
+        display:             inline-block;
+        width:               141px;
+        height:              29px;
+        background-repeat:   no-repeat;
+        background-position: center;
+        background-size:     contain;
+        background-image: url('/cms/wp-content/themes/stadtwirt-theme/assets/src/images/separator.svg');
+    }
+}
+
+
+// ── Listen ───────────────────────────────────────────────────────────────────
+.entry-content ul,
+.wp-block-list {
+    list-style: none;
+    padding-left: 1.5em;
+
+    li {
+        position: relative;
+        padding-left: 0.3em;
+
+        &::before {
+            content:    "";
+            position:   absolute;
+            left:       -1.2em;
+            top:        0.35em;
+            width:      1em;
+            height:     1em;
+            background-image:    url('/cms/wp-content/themes/stadtwirt-theme/assets/src/images/list-icon--primary.svg');
+            background-size:     contain;
+            background-repeat:   no-repeat;
+            background-position: center;
+        }
+    }
+}
+
+
+.wp-block-list--padding-top {
+    
+
+    li {
+        position: relative;
+        padding-top: 1.5em;
+
+        &::before {
+            top: 1.90em !important;
+        }
+    }
+} 

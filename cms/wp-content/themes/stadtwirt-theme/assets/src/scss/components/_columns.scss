@@ -1,0 +1,97 @@
+@use '../abstracts' as *;
+
+
+// Slogan – „Tradition trifft Kultur"
+.columns-flush__slogan {
+  position:       absolute;
+  bottom:         -12px;
+  right:          -5rem;
+  width:          clamp(120px, 12vw, 180px);
+  height:         auto;
+  pointer-events: none;
+  z-index:        2;
+
+  @media (max-width: #{$breakpoint-md - 1px}) {
+    display: none;
+  }
+}
+
+// ============================================
+// Carousel Grid
+// ============================================
+.carousel-grid {
+    display: grid;
+    gap: $spacing-4;
+    grid-template-columns: 1fr;
+
+    @include respond-to('md') {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    @include respond-to('lg') {
+        grid-template-columns: repeat(var(--carousel-cols, 3), 1fr);
+    }
+}
+
+.carousel-grid__item {
+    position: relative;
+    overflow: hidden;
+    border-radius: $radius-md;
+}
+
+.carousel-grid__link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+
+    &:hover .carousel-grid__image img {
+        transform: scale(1.05);
+    }
+}
+
+.carousel-grid__image {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform $transition-base;
+        display: block;
+    }
+}
+
+.carousel-grid__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: $spacing-4;
+}
+
+.carousel-grid__title {
+    font-size: $font-size-base;
+    font-weight: 700;
+    color: $color-white;
+    margin: 0 0 $spacing-1;
+}
+
+.carousel-grid__subtitle {
+    font-size: $font-size-sm;
+    color: rgba(255,255,255,0.8);
+    margin: 0;
+}
+
+.carousel-grid__caption {
+    padding: $spacing-3 0;
+}
+
+// Google Map fullwidth
+.google-map-wrapper--fullwidth {
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+}

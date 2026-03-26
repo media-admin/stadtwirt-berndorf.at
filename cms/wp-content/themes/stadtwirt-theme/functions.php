@@ -64,6 +64,7 @@ function customtheme_setup() {
     register_nav_menus(array(
         'primary' => __('Primary Menu', 'custom-theme'),
         'footer' => __('Footer Menu', 'custom-theme'),
+        'footer-legal' => __('Footer Legal', 'custom-theme'),
     ));
     
     // Image sizes

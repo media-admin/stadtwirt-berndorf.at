@@ -1,0 +1,380 @@
+@use '../abstracts' as *;
+
+// =============================================================================
+// Welcome Page
+// Temporäre Willkommensseite – eigenständiges Layout, kein Header/Footer des
+// Themes. Nutzt die bestehenden Design Tokens (Farben, Spacing, Typography).
+// =============================================================================
+
+// ── Basis ─────────────────────────────────────────────────────────────────────
+
+.welcome-page {
+    min-height:      100vh;
+    display:         flex;
+    flex-direction:  column;
+    background:      var(--color-background);
+    color:           var(--color-text);
+    font-family:     $font-primary;
+    position:        relative;
+}
+
+// ── Hintergrund ───────────────────────────────────────────────────────────────
+
+.welcome-page__bg {
+    position:            fixed;
+    inset:               0;
+    z-index:             0;
+    background-size:     cover;
+    background-position: center;
+    background-repeat:   no-repeat;
+
+    // Wenn kein Bild: sauberer weißer/dunkler Hintergrund
+    .welcome-page:not(.welcome-page--has-bg) & {
+        background: var(--color-background);
+    }
+}
+
+.welcome-page__bg-overlay {
+    position:   absolute;
+    inset:      0;
+    background: #000;
+    // Deckkraft wird via PHP inline-style gesetzt
+}
+
+// ── Container ─────────────────────────────────────────────────────────────────
+
+.welcome-page__container {
+    @include container;
+    position:   relative;
+    z-index:    1;
+}
+
+// ── Main ──────────────────────────────────────────────────────────────────────
+
+.welcome-page__main {
+    flex:            1;
+    display:         flex;
+    align-items:     center;
+    justify-content: center;
+    padding:         var(--space-section) 0;
+
+    // Mit Hintergundbild: heller Inhaltsbereich
+    .welcome-page--has-bg & .welcome-page__container {
+        background:    rgba(255, 255, 255, 0.92);
+        border-radius: $radius-xl;
+        padding:       var(--space-2xl) var(--space-xl);
+        max-width:     680px;
+        box-shadow:    $shadow-xl;
+
+        [data-theme="dark"] & {
+            background: rgba(26, 26, 26, 0.92);
+        }
+    }
+}
+
+// ── Header / Logo ─────────────────────────────────────────────────────────────
+
+.welcome-page__header {
+    text-align:    center;
+    margin-bottom: var(--space-xl);
+
+    // WordPress custom-logo Wrapper
+    .custom-logo-link {
+        display:    inline-block;
+        line-height: 0;
+    }
+}
+
+.welcome-page__logo {
+    max-height: clamp(60px, 12vw, 100px);
+    width:      auto;
+    max-width:  280px;
+    object-fit: contain;
+}
+
+.welcome-page__site-name {
+    font-size:   var(--text-3xl);
+    font-weight: $font-weight-bold;
+    color:       var(--color-text);
+    margin:      0;
+}
+
+// ── Flexibler Content-Bereich ─────────────────────────────────────────────────
+
+.welcome-page__content {
+    text-align:    center;
+    margin-bottom: var(--space-xl);
+    padding-bottom: var(--space-xl);
+    border-bottom: 1px solid var(--color-border);
+
+    h1, h2, h3 {
+        font-size:     var(--text-3xl);
+        font-weight:   $font-weight-bold;
+        line-height:   $line-height-tight;
+        margin-bottom: var(--space-sm);
+        color:         var(--color-text);
+    }
+
+    p {
+        font-size:     var(--text-lg);
+        color:         var(--color-text-muted);
+        line-height:   $line-height-relaxed;
+        max-width:     540px;
+        margin:        0 auto var(--space-sm);
+    }
+
+    a {
+        color: $color-primary;
+        &:hover { text-decoration: underline; }
+    }
+}
+
+// ── Firmendaten ───────────────────────────────────────────────────────────────
+
+.welcome-page__company {
+    text-align: center;
+}
+
+.welcome-page__company-name {
+    font-size:     var(--text-xl);
+    font-weight:   $font-weight-bold;
+    color:         var(--color-text);
+    margin-bottom: var(--space-xs);
+}
+
+.welcome-page__address {
+    font-style:    normal;
+    font-size:     var(--text-base);
+    color:         var(--color-text-muted);
+    line-height:   $line-height-relaxed;
+    margin-bottom: var(--space-md);
+}
+
+.welcome-page__contact {
+    list-style:      none;
+    padding:         0;
+    margin:          0 0 var(--space-md);
+    display:         flex;
+    flex-wrap:       wrap;
+    justify-content: center;
+    gap:             var(--space-sm);
+
+    a {
+        color:           var(--color-text-muted);
+        text-decoration: none;
+        font-size:       var(--text-base);
+        transition:      color 0.2s ease;
+
+        &:hover { color: $color-primary; }
+    }
+}
+
+// ── Social Media ──────────────────────────────────────────────────────────────
+
+.welcome-page__social {
+    list-style:      none;
+    padding:         0;
+    margin:          0;
+    display:         flex;
+    flex-wrap:       wrap;
+    justify-content: center;
+    gap:             var(--space-sm);
+}
+
+.welcome-page__social-link {
+    display:         inline-flex;
+    align-items:     center;
+    justify-content: center;
+    // WCAG 2.5.5: min. 44×44px Touch Target
+    width:           44px;
+    height:          44px;
+    border:          1px solid var(--color-border);
+    border-radius:   $radius-full;
+    color:           var(--color-text-muted);
+    text-decoration: none;
+    font-size:       var(--text-sm);  // Fallback für Plattformen ohne Icon
+    font-weight:     $font-weight-medium;
+    transition:      border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+
+    svg {
+        width:        20px;
+        height:       20px;
+        flex-shrink:  0;
+        // stroke-Icons erben currentColor automatisch
+    }
+
+    &:hover {
+        border-color: $color-primary;
+        color:        $color-primary;
+        background:   rgba($color-primary, 0.05);
+    }
+
+    &:focus-visible {
+        outline:        2px solid $color-primary;
+        outline-offset: 3px;
+    }
+}
+
+// ── Footer ────────────────────────────────────────────────────────────────────
+
+.welcome-page__footer {
+    position:  relative;
+    z-index:   1;
+    padding:   var(--space-md) 0;
+    border-top: 1px solid var(--color-border);
+
+    // Transparenter Hintergrund damit Bild durchscheint
+    .welcome-page--has-bg & {
+        background: rgba(0, 0, 0, 0.5);
+        border-top-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .welcome-page__container {
+        display:         flex;
+        flex-wrap:       wrap;
+        align-items:     center;
+        justify-content: space-between;
+        gap:             var(--space-sm);
+
+        @include respond-below('sm') {
+            flex-direction: column;
+            text-align:     center;
+        }
+    }
+}
+
+.welcome-page__footer-nav {
+    list-style:  none;
+    padding:     0;
+    margin:      0;
+    display:     flex;
+    flex-wrap:   wrap;
+    gap:         var(--space-sm);
+
+    li { margin: 0; }
+
+    a {
+        font-size:       var(--text-sm);
+        color:           var(--color-text-muted);
+        text-decoration: none;
+        transition:      color 0.2s ease;
+
+        &:hover { color: $color-primary; }
+
+        .welcome-page--has-bg & {
+            color: rgba(255, 255, 255, 0.7);
+            &:hover { color: #fff; }
+        }
+    }
+}
+
+.welcome-page__copyright {
+    font-size: var(--text-sm);
+    color:     var(--color-text-muted);
+    margin:    0;
+
+    .welcome-page--has-bg & {
+        color: rgba(255, 255, 255, 0.6);
+    }
+}
+
+// ── prefers-reduced-motion ────────────────────────────────────────────────────
+
+@media (prefers-reduced-motion: reduce) {
+    .welcome-page__social-link,
+    .welcome-page__footer a { transition: none; }
+}
+
+// ── Footer Modal ─────────────────────────────────────────────────────────────
+
+.welcome-page__modal {
+    position:  fixed;
+    inset:     0;
+    z-index:   9990;
+    display:   flex;
+    align-items: center;
+    justify-content: center;
+    padding:   var(--space-md);
+
+    &[hidden] { display: none; }
+}
+
+.welcome-page__modal-overlay {
+    position:   absolute;
+    inset:      0;
+    background: rgba(0, 0, 0, 0.6);
+    cursor:     pointer;
+}
+
+.welcome-page__modal-box {
+    position:   relative;
+    z-index:    1;
+    background: var(--color-surface);
+    border-radius: $radius-xl;
+    box-shadow: $shadow-xl;
+    width:      100%;
+    max-width:  720px;
+    max-height: 85vh;
+    display:    flex;
+    flex-direction: column;
+}
+
+.welcome-page__modal-header {
+    display:         flex;
+    align-items:     center;
+    justify-content: space-between;
+    padding:         var(--space-md) var(--space-xl);
+    border-bottom:   1px solid var(--color-border);
+    flex-shrink:     0;
+}
+
+.welcome-page__modal-title {
+    font-size:   var(--text-xl);
+    font-weight: $font-weight-bold;
+    color:       var(--color-text);
+    margin:      0;
+}
+
+.welcome-page__modal-close {
+    display:         flex;
+    align-items:     center;
+    justify-content: center;
+    width:           44px;
+    height:          44px;
+    background:      transparent;
+    border:          none;
+    border-radius:   $radius-full;
+    font-size:       1.75rem;
+    line-height:     1;
+    color:           var(--color-text-muted);
+    cursor:          pointer;
+    transition:      background 0.2s ease, color 0.2s ease;
+    flex-shrink:     0;
+
+    &:hover { background: var(--color-border); color: var(--color-text); }
+
+    &:focus-visible {
+        outline:        2px solid $color-primary;
+        outline-offset: 3px;
+    }
+}
+
+.welcome-page__modal-content {
+    overflow-y:  auto;
+    padding:     var(--space-xl);
+    flex:        1;
+    color:       var(--color-text);
+    font-size:   var(--text-base);
+    line-height: $line-height-relaxed;
+
+    // Sicherstellen dass WP-Content-Styles greifen
+    h1, h2, h3 { margin-top: var(--space-lg); margin-bottom: var(--space-sm); }
+    p           { margin-bottom: var(--space-sm); }
+    a           { color: $color-primary; }
+}
+
+.welcome-page__modal-loading {
+    text-align: center;
+    padding:    var(--space-2xl);
+    color:      var(--color-text-muted);
+}

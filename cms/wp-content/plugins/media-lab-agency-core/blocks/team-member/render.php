@@ -2,18 +2,12 @@
 /**
  * Team-Mitglied Block – ACF Render Template
  *
- * ACF-Felder:
- *   team_image          Image    Porträtfoto
- *   team_name           Text     Vollständiger Name
- *   team_role           Text     Berufsbezeichnung / Rolle
- *   team_bio            Textarea Kurze Beschreibung (optional)
- *   team_email          Email    E-Mail-Adresse (optional)
- *   team_linkedin       URL      LinkedIn-Profil (optional)
- *   team_xing           URL      Xing-Profil (optional)
- *   team_instagram      URL      Instagram-Profil (optional)
+ * WCAG-Patches:
+ *   ✅ 1.3.1 Info and Relationships: aria-hidden auf Dashicon-Pseudoelement-Wrapper
+ *   ✅ 2.5.5 Target Size: Touch-Target 36px → 44px via CSS
  *
  * @package MediaLabAgencyCore
- * @since   1.6.0
+ * @since   1.6.0 / WCAG-Patch
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
@@ -44,6 +38,13 @@ $social_links = array_filter( [
     'instagram' => $instagram ?: '',
 ] );
 
+$platform_labels = [
+    'email'     => __( 'E-Mail senden', 'media-lab-agency-core' ),
+    'linkedin'  => __( 'LinkedIn-Profil', 'media-lab-agency-core' ),
+    'xing'      => __( 'Xing-Profil', 'media-lab-agency-core' ),
+    'instagram' => __( 'Instagram-Profil', 'media-lab-agency-core' ),
+];
+
 ?>
 <div class="<?php echo esc_attr( $block_classes ); ?>"<?php echo $block_id; ?>>
 
@@ -71,14 +72,24 @@ $social_links = array_filter( [
         <?php endif; ?>
 
         <?php if ( $social_links ) : ?>
-        <ul class="ml-team-member__social" aria-label="<?php echo esc_attr( $name ); ?> Social Links">
-            <?php foreach ( $social_links as $platform => $url ) : ?>
+        <ul class="ml-team-member__social"
+            aria-label="<?php echo esc_attr( $name ); ?> – Social Links">
+            <?php foreach ( $social_links as $platform => $url ) :
+                $label = sprintf(
+                    /* translators: 1: platform label, 2: person name */
+                    __( '%1$s von %2$s', 'media-lab-agency-core' ),
+                    $platform_labels[ $platform ] ?? ucfirst( $platform ),
+                    $name
+                );
+            ?>
             <li>
                 <a href="<?php echo esc_url( $url ); ?>"
                    class="ml-team-member__social-link ml-team-member__social-link--<?php echo esc_attr( $platform ); ?>"
                    <?php echo $platform !== 'email' ? 'target="_blank" rel="noopener noreferrer"' : ''; ?>
-                   aria-label="<?php echo esc_attr( ucfirst( $platform ) ); ?>">
-                    <span class="screen-reader-text"><?php echo esc_html( ucfirst( $platform ) ); ?></span>
+                   aria-label="<?php echo esc_attr( $label ); ?>">
+                    
+                    <!-- ✅ WCAG 1.3.1: Icon-Span explizit vor AT verbergen -->
+                    <span class="ml-team-member__social-icon" aria-hidden="true"></span>
                 </a>
             </li>
             <?php endforeach; ?>

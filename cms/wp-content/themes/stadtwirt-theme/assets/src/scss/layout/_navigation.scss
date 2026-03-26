@@ -7,22 +7,27 @@
 
 // ── Header ────────────────────────────────────────────────────────────────────
 
-.site-header {
-    position:    sticky;
-    top:         0;
-    z-index:     1000;
-    background:  $color-primary;
-    border-bottom: 0px solid var(--color-border);
-    box-shadow:  $shadow-sm;
-}
+// .site-header {
+//     position:    sticky;
+//     top:         0;
+//     z-index:     1000;
+//     color: $color-white;
+//     background:  $color-primary;
+//     border-bottom: 0px solid var(--color-border);
+//     box-shadow:  $shadow-sm;
+// }
 
 .site-navigation {
+    position: relative;
     display:         flex;
     align-items:     center;
-    justify-content: space-between;
-    padding:         $spacing-4 $spacing-6;
-    max-width:       1400px;
+    justify-content: space-evenly;
+    padding:         0 $spacing-2;
+    width:           100%;
+    max-width:       $container-width;
     margin:          0 auto;
+    background:  $color-primary;
+    z-index: 1;
 }
 
 .site-logo {
@@ -59,21 +64,34 @@
             display:     flex;
             align-items: center;
             gap:         $spacing-1;
-            padding:     $spacing-3 $spacing-4;
-            color:       var(--color-text);
+            padding:     $spacing-2 $spacing-4;
+            color:       $color-light;
             text-decoration: none;
-            font-weight: 500;
+            font-size:  $font-size-lg;
+            font-weight: 600;
+            text-transform: uppercase;
             white-space: nowrap;
             transition:  all $transition-base;
 
-            &:hover { color: $color-primary; }
+            &:hover { 
+                color: $color-dark;
+                font-weight: 600;
+                background-color: $color-light;
+                text-decoration: underline;
+                text-decoration-color: $color-primary;
+                text-underline-offset: 8px;
+            }
         }
 
         &.current-menu-item > a,
         &.current-menu-parent > a,
         &.current-menu-ancestor > a {
-            color:       $color-primary;
-            font-weight: 600;
+            color: $color-dark;
+                font-weight: 600;
+                background-color: $color-light;
+                text-decoration: underline;
+                text-decoration-color: $color-primary;
+                text-underline-offset: 8px;
         }
 
         // Pfeil-Indikator
@@ -612,7 +630,11 @@
 
 @media (prefers-color-scheme: dark) {
     .site-header {
-        background:     rgba(0, 0, 0, 0.95);
-        backdrop-filter: blur(10px);
+        // background:     rgba(0, 0, 0, 0.95);
+        // backdrop-filter: blur(10px);
+    }
+
+    .site-header::after {
+        filter: invert(100%);
     }
 }

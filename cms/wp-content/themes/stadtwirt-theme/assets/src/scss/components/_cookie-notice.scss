@@ -1,312 +1,353 @@
 @use '../abstracts' as *;
 
 // =============================================================================
-// Cookie Consent – Banner + Modal + Floating Button
+// Cookie Consent Banner + Modal
+// Layout: zweispaltig – langer Text links, 4 Buttons rechts gestapelt
 // =============================================================================
 
 // ── Banner ────────────────────────────────────────────────────────────────────
 
 .cookie-banner {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 9998;
-    background: var(--color-surface);
-    border-top: 2px solid $color-primary;
-    box-shadow: $shadow-xl;
-    transform: translateY(100%);
-    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    position:   fixed;
+    bottom:     0;
+    left:       0;
+    right:      0;
+    z-index:    9997;
+    background: $color-secondary;
+    border-top: 1px solid var(--color-border, #e0e0e0);
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, .08);
+    transform:  translateY(100%);
+    transition: transform .35s ease;
 
     &.is-visible {
         transform: translateY(0);
     }
+}
 
-    &__inner {
-        @include container;
-        padding-top: $spacing-4;
-        padding-bottom: $spacing-4;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: $spacing-6;
-        flex-wrap: wrap;
+.cookie-banner__inner {
+    display:   flex;
+    gap:       2rem;
+    padding:   1.5rem 2rem;
+    max-width: 1400px;
+    margin:    0 auto;
 
-        @media (max-width: 767px) {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: $spacing-3;
-        }
-    }
+    // Mobil: untereinander
+    flex-direction: column;
 
-    &__body {
-        flex: 1;
-        min-width: 0;
-    }
-
-    &__title {
-        font-weight: 700;
-        font-size: $font-size-base;
-        color: var(--color-text);
-        margin: 0 0 $spacing-1;
-    }
-
-    &__text {
-        font-size: $font-size-sm;
-        color: var(--color-text-muted);
-        margin: 0;
-        line-height: 1.5;
-    }
-
-    &__link {
-        color: $color-primary;
-        text-decoration: underline;
-
-        &:hover {
-            text-decoration: none;
-        }
-    }
-
-    &__actions {
-        display: flex;
-        gap: $spacing-2;
-        flex-wrap: wrap;
-        flex-shrink: 0;
-
-        @media (max-width: 767px) {
-            width: 100%;
-        }
+    // Desktop: zweispaltig
+    @include respond-to('lg') {
+        flex-direction: row;
+        align-items:    flex-start;
     }
 }
 
-// ── Modal ─────────────────────────────────────────────────────────────────────
+// ── Linke Spalte: Text ────────────────────────────────────────────────────────
 
-.cookie-modal {
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-    display: none;          // hidden by default – nicht durch [hidden] überschreiben
-    align-items: center;
-    justify-content: center;
-    padding: $spacing-4;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
+.cookie-banner__body {
+    flex:      1;
+    min-width: 0;
+}
 
-    // Sobald JS hidden-Attribut entfernt: sichtbar machen
-    &:not([hidden]) {
-        display: flex;
-        pointer-events: auto;
+.cookie-banner__text {
+    font-size:   .8125rem;  // ~13px
+    line-height: 1.55;
+    color:       var(--color-text, #1a1a1a);
+    margin:      0;
+
+    p {
+        margin: 0 0 .6rem;
+        &:last-child { margin-bottom: 0; }
     }
 
-    &.is-visible {
-        opacity: 1;
+    &--usa {
+        margin-top: .75rem;
+        color:      var(--color-text-muted, #666);
+    }
+}
+
+.cookie-banner__link {
+    color:           var(--color-primary, #d40000);
+    text-decoration: underline;
+
+    &:hover { text-decoration: none; }
+}
+
+// ── Rechte Spalte: 4 Buttons gestapelt ────────────────────────────────────────
+
+.cookie-banner__actions {
+    display:        flex;
+    flex-direction: column;
+    gap:            .5rem;
+    flex-shrink:    0;
+    width:          100%;
+
+    @include respond-to('lg') {
+        width: 280px;
     }
 
-    &__backdrop {
-        position: absolute;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.5);
-        cursor: pointer;
-    }
-
-    &__box {
-        position: relative;
-        background: var(--color-surface);
-        border-radius: $radius-lg;
-        box-shadow: $shadow-xl;
-        width: 100%;
-        max-width: 540px;
-        max-height: 90vh;
-        overflow-y: auto;
-        display: flex;
-        flex-direction: column;
-        transform: translateY(16px);
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
-        .cookie-modal.is-visible & {
-            transform: translateY(0);
-        }
-    }
-
-    &__header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: $spacing-4 $spacing-5;
-        border-bottom: 1px solid var(--color-border);
-        position: sticky;
-        top: 0;
-        background: var(--color-surface);
-        border-radius: $radius-lg $radius-lg 0 0;
-        z-index: 1;
-    }
-
-    &__title {
-        font-size: $font-size-xl;
-        font-weight: 700;
-        margin: 0;
-        color: var(--color-text);
-    }
-
-    &__close {
-        display: flex;
-        align-items: center;
+    .btn {
+        width:          100%;
+        text-align:     center;
         justify-content: center;
-        width: 36px;
-        height: 36px;
-        border: none;
-        background: transparent;
-        cursor: pointer;
-        border-radius: $radius-md;
-        color: var(--color-text-muted);
-        transition: background-color 0.2s, color 0.2s;
-
-        &:hover {
-            background: var(--color-border);
-            color: var(--color-text);
-        }
-    }
-
-    &__intro {
-        font-size: $font-size-sm;
-        color: var(--color-text-muted);
-        padding: $spacing-4 $spacing-5 0;
-        margin: 0;
-        line-height: 1.6;
-    }
-
-    &__categories {
-        padding: $spacing-3 $spacing-5;
-        display: flex;
-        flex-direction: column;
-        gap: $spacing-1;
-    }
-
-    &__category {
-        padding: $spacing-3 0;
-        border-bottom: 1px solid var(--color-border);
-
-        &:last-child {
-            border-bottom: none;
-        }
-    }
-
-    &__category-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: $spacing-4;
-    }
-
-    &__category-info {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-        flex: 1;
-        min-width: 0;
-    }
-
-    &__category-name {
-        font-weight: 600;
-        font-size: $font-size-sm;
-        color: var(--color-text);
-    }
-
-    &__category-desc {
-        font-size: $font-size-sm;
-        color: var(--color-text-muted);
-        line-height: 1.5;
-    }
-
-    &__always-active {
-        font-size: $font-size-sm;
-        color: $color-success;
-        font-weight: 600;
-        white-space: nowrap;
-        flex-shrink: 0;
-    }
-
-    &__footer {
-        display: flex;
-        gap: $spacing-2;
-        padding: $spacing-4 $spacing-5;
-        border-top: 1px solid var(--color-border);
-        position: sticky;
-        bottom: 0;
-        background: var(--color-surface);
-        border-radius: 0 0 $radius-lg $radius-lg;
+        white-space:    nowrap;
+        font-size:      .875rem;
+        padding:        .6rem 1rem;
     }
 }
 
-// body-Klasse verhindert Scroll im Hintergrund
-.cookie-modal-open {
-    overflow: hidden;
-}
-
-// ── Toggle Switch ─────────────────────────────────────────────────────────────
-// Kategorie-Toggles verwenden die Toggle-Komponente (_toggle.scss / .toggle--sm).
-// Kein eigener Block nötig – nur flex-shrink sicherstellen.
-
-.cookie-modal .toggle { flex-shrink: 0; }
-
-// ── Floating Button ───────────────────────────────────────────────────────────
-
-.cookie-settings-btn {
-    position: fixed;
-    bottom: $spacing-4;
-    left: $spacing-4;
-    z-index: 9997;
-
-    width: 44px;
-    height: 44px;
-    border-radius: $radius-full;
-    border: none;
-    background: var(--color-surface);
-    box-shadow: $shadow-lg;
-    cursor: pointer;
-    font-size: 22px;
-    line-height: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    color: var(--color-text);
-
-    // Nicht mit Banner überlagern
-    .cookie-banner.is-visible ~ & {
-        bottom: calc(#{$spacing-4} + 80px);
-    }
+// Button 4: „Individuelle Datenschutz-Präferenzen" – dezenter Link-Stil
+.cookie-banner__link-btn {
+    background:      transparent !important;
+    border:          none !important;
+    color:           var(--color-text-muted, #666) !important;
+    font-size:       .8125rem !important;
+    text-decoration: underline;
+    padding:         .25rem 0 !important;
+    height:          auto !important;
 
     &:hover {
-        transform: scale(1.1);
-        box-shadow: $shadow-xl;
+        color:           var(--color-primary, #d40000) !important;
+        text-decoration: none;
+        background:      transparent !important;
+    }
+}
+
+// =============================================================================
+// Cookie Modal
+// =============================================================================
+
+.cookie-modal {
+    position:  fixed;
+    inset:     0;
+    z-index:   9998;
+    display:   flex;
+    align-items: center;
+    justify-content: center;
+    padding:   1rem;
+    pointer-events: none; // ← NEU
+
+    &.is-visible {
+        pointer-events: auto; // ← NEU
+    }
+}
+
+.cookie-modal__backdrop {
+    position:   absolute;
+    inset:      0;
+    background: rgba(0, 0, 0, .5);
+    cursor:     pointer;
+    opacity:    0;
+    transition: opacity .3s ease;
+
+    .cookie-modal.is-visible & { opacity: 1; }
+}
+
+.cookie-modal__box {
+    position:         relative;
+    z-index:          1;
+    background:       var(--color-card-bg, #fff);
+    border-radius:    0px; // vorher: 12px;
+    box-shadow:       0 20px 60px rgba(0, 0, 0, .2);
+    width:            100%;
+    max-width:        560px;
+    max-height:       90vh;
+    overflow-y:       auto;
+    transform:        translateY(20px);
+    opacity:          0;
+    transition:       transform .3s ease, opacity .3s ease;
+
+    .cookie-modal.is-visible & {
+        transform: translateY(0);
+        opacity:   1;
+    }
+}
+
+.cookie-modal__header {
+    display:         flex;
+    align-items:     center;
+    justify-content: space-between;
+    padding:         1.25rem 1.5rem 0;
+}
+
+.cookie-modal__title {
+    font-size:   1.125rem;
+    font-weight: 700;
+    margin:      0;
+}
+
+.cookie-modal__close {
+    display:         flex;
+    align-items:     center;
+    justify-content: center;
+    width:           36px;
+    height:          36px;
+    border:          none;
+    background:      transparent;
+    cursor:          pointer;
+    border-radius:   0px; // vorher: 50%;
+    color:           var(--color-text-muted, #666);
+    transition:      background .15s, color .15s;
+
+    &:hover {
+        background: var(--color-light, #f5f5f5);
+        color:      var(--color-text, #1a1a1a);
     }
 
     &:focus-visible {
-        outline: 2px solid $color-primary;
+        outline:        3px solid var(--color-primary, #d40000);
+        outline-offset: 2px;
+    }
+}
+
+.cookie-modal__intro {
+    font-size:   .875rem;
+    color:       var(--color-text-muted, #666);
+    padding:     .75rem 1.5rem 0;
+    margin:      0;
+}
+
+// ── Kategorien ────────────────────────────────────────────────────────────────
+
+.cookie-modal__categories {
+    padding: 1rem 1.5rem;
+}
+
+.cookie-modal__category {
+    padding:       1rem 0;
+    border-bottom: 1px solid var(--color-border, #e0e0e0);
+
+    &:last-child { border-bottom: none; }
+}
+
+.cookie-modal__category-header {
+    display:     flex;
+    align-items: center;
+    gap:         1rem;
+}
+
+.cookie-modal__category-info {
+    flex: 1;
+}
+
+.cookie-modal__category-name {
+    display:     block;
+    font-weight: 600;
+    font-size:   .9375rem;
+    margin-bottom: .2rem;
+}
+
+.cookie-modal__category-desc {
+    display:   block;
+    font-size: .8125rem;
+    color:     var(--color-text-muted, #666);
+}
+
+.cookie-modal__always-active {
+    font-size:   .75rem;
+    font-weight: 600;
+    color:       #2e7d32;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+// ── Modal Footer ──────────────────────────────────────────────────────────────
+
+.cookie-modal__footer {
+    display:         flex;
+    gap:             .75rem;
+    padding:         1rem 1.5rem 1.5rem;
+    border-top:      1px solid var(--color-border, #e0e0e0);
+    flex-wrap:       wrap;
+
+    .btn { flex: 1; min-width: 120px; }
+}
+
+// ── Toggle-Schalter ───────────────────────────────────────────────────────────
+
+.cookie-toggle {
+    position:    relative;
+    display:     inline-flex;
+    align-items: center;
+    cursor:      pointer;
+    flex-shrink: 0;
+
+    input {
+        position: absolute;
+        opacity:  0;
+        width:    0;
+        height:   0;
+    }
+
+    // Fokus-Sichtbarkeit (WCAG 2.4.7)
+    input:focus-visible + .cookie-toggle__track {
+        outline:        3px solid var(--color-primary, #d40000);
         outline-offset: 2px;
     }
 
-    // Tooltip
-    &::after {
-        content: attr(aria-label);
-        position: absolute;
-        left: calc(100% + 8px);
-        top: 50%;
-        transform: translateY(-50%);
-        background: var(--color-text);
-        color: var(--color-background);
-        font-size: $font-size-sm;
-        white-space: nowrap;
-        padding: 4px 10px;
-        border-radius: $radius-md;
-        pointer-events: none;
-        opacity: 0;
-        transition: opacity 0.2s;
+    input:checked + .cookie-toggle__track {
+        background: var(--color-primary, #d40000);
     }
 
-    &:hover::after {
-        opacity: 1;
+    input:checked + .cookie-toggle__track .cookie-toggle__thumb {
+        transform: translateX(22px);
     }
+}
+
+.cookie-toggle__track {
+    width:         48px;
+    height:        26px;
+    border-radius: 13px;
+    background:    var(--color-border, #ccc);
+    transition:    background .2s ease;
+    position:      relative;
+}
+
+.cookie-toggle__thumb {
+    position:      absolute;
+    top:           3px;
+    left:          3px;
+    width:         20px;
+    height:        20px;
+    border-radius: 50%;
+    background:    #fff;
+    box-shadow:    0 1px 3px rgba(0, 0, 0, .2);
+    transition:    transform .2s ease;
+}
+
+// ── Floating Button 🍪 ────────────────────────────────────────────────────────
+
+.cookie-settings-btn {
+    position:      fixed;
+    bottom:        1.5rem;
+    left:          1.5rem;
+    z-index:       9996;
+    width:         44px;
+    height:        44px;
+    border-radius: 0px; // vorher: 50%;
+    border:        none;
+    background:    var(--color-dark, #1a1a1a);
+    color:         #fff;
+    font-size:     1.25rem;
+    cursor:        pointer;
+    display:       flex;
+    align-items:   center;
+    justify-content: center;
+    box-shadow:    0 4px 12px rgba(0, 0, 0, .25);
+    transition:    transform .2s, box-shadow .2s;
+
+    &:hover {
+        transform:  scale(1.1);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, .3);
+    }
+
+    &:focus-visible {
+        outline:        3px solid var(--color-primary, #d40000);
+        outline-offset: 3px;
+    }
+}
+
+// ── Body-Lock wenn Modal offen ────────────────────────────────────────────────
+
+body.cookie-modal-open {
+    overflow: hidden;
 }

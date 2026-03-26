@@ -2,17 +2,13 @@
 /**
  * Logo-Grid Block – ACF Render Template
  *
- * ACF-Felder:
- *   logo_grid_title     Text      Überschrift (optional)
- *   logo_grid_columns   Select    3 | 4 | 5 | 6 (Standard: 4)
- *   logo_grid_logos     Repeater
- *     └── logo_image    Image     Logo-Bild
- *     └── logo_url      URL       Verlinkung (optional)
- *     └── logo_alt      Text      Alt-Text (fallback: Dateiname)
- *   logo_grid_grayscale True/False Logos graustufen (Standard: true)
+ * WCAG-Patches:
+ *   ✅ 1.1.1 Non-text Content: Fallback-Alt-Text wenn ACF + Mediathek leer
+ *            Dekorationsbilder (mit Link) erhalten alt="" wenn kein Text verfügbar,
+ *            der Link selbst erhält aria-label mit dem Firmennamen (logo_alt)
  *
  * @package MediaLabAgencyCore
- * @since   1.6.0
+ * @since   1.6.0 / WCAG-Patch
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
@@ -40,19 +36,35 @@ $block_id = ! empty( $block['anchor'] ) ? ' id="' . esc_attr( $block['anchor'] )
 
     <ul class="ml-logo-grid__list" role="list">
         <?php foreach ( $logos as $item ) :
-            $img = $item['logo_image'];
-            $url = $item['logo_url'] ?? '';
+            $img     = $item['logo_image'];
+            $url     = $item['logo_url'] ?? '';
             $img_url = is_array( $img ) ? ( $img['url'] ?? '' ) : (string) $img;
-            $alt     = $item['logo_alt'] ?? ( is_array( $img ) ? ( $img['alt'] ?? '' ) : '' );
             $w       = is_array( $img ) ? ( $img['width']  ?? 200 ) : 200;
             $h       = is_array( $img ) ? ( $img['height'] ?? 80  ) : 80;
+
+            // ✅ WCAG 1.1.1: Alt-Text Priorität:
+            //    1. ACF-Feld logo_alt
+            //    2. Mediathek Alt-Text
+            //    3. Dateiname (bereinigt)
+            //    4. Leerstring (dekorativ, Link erhält aria-label)
+            $alt = trim( $item['logo_alt'] ?? '' );
+            if ( empty( $alt ) && is_array( $img ) ) {
+                $alt = trim( $img['alt'] ?? '' );
+            }
+            if ( empty( $alt ) && is_array( $img ) ) {
+                $filename = pathinfo( $img['filename'] ?? '', PATHINFO_FILENAME );
+                $alt      = $filename ? ucwords( str_replace( [ '-', '_' ], ' ', $filename ) ) : '';
+            }
 
             if ( ! $img_url ) continue;
         ?>
         <li class="ml-logo-grid__item">
             <?php if ( $url ) : ?>
-            <a href="<?php echo esc_url( $url ); ?>" target="_blank"
-               rel="noopener noreferrer" class="ml-logo-grid__link">
+            <a href="<?php echo esc_url( $url ); ?>"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="ml-logo-grid__link"
+               <?php if ( $alt ) : ?>aria-label="<?php echo esc_attr( $alt ); ?>"<?php endif; ?>>
             <?php endif; ?>
 
                 <img src="<?php echo esc_url( $img_url ); ?>"

@@ -96,6 +96,13 @@
 .text-primary   { color: $color-primary; }
 .truncate       { @include truncate; }
 
+
+// -- Color Helpers (für Inline-Styles, z.B. Gutenberg) ───────────────────────────────
+.color-primary   { color: $color-primary !important; }
+.color-secondary { color: $color-secondary !important; }
+.color-accent    { color: $color-accent !important; }
+.color-grey      { color: $color-grey !important; }
+
 // ── Spacing (Margin) ─────────────────────────────────────────────────────────
 .mt-0  { margin-top: 0 !important; }
 .mb-0  { margin-bottom: 0 !important; }
@@ -103,6 +110,16 @@
 .mb-4  { margin-bottom: $spacing-4 !important; }
 .mt-8  { margin-top: $spacing-8 !important; }
 .mb-8  { margin-bottom: $spacing-8 !important; }
+
+
+.mar-t-none { margin-top: 0 !important; }
+.mar-t-sm { margin-top: $spacing-sm !important; }
+.mar-t-md { margin-top: $spacing-md !important; }
+.mar-t-lg { margin-top: $spacing-lg !important; }
+.mar-t-xl { margin-top: $spacing-xl !important; }
+.mar-t-2xl { margin-top: $spacing-2xl !important; }
+
+
 
 // ── Aspect Ratio (CLS-Prävention) ────────────────────────────────────────────
 // Verhindert Layout Shift bei Bildern/Videos/Embeds bevor sie geladen sind.
@@ -157,3 +174,156 @@
 .object-top    { object-position: top; }
 .object-center { object-position: center; }
 .object-bottom { object-position: bottom; }
+
+
+
+// ── Column / Block Padding Helpers ───────────────────────────────────────────
+//
+// Verwendung: Block → Erweitert → Zusätzliche CSS-Klasse
+//
+// .pad-none                → 0
+// .pad-sm / md / lg / xl   → 16 / 24 / 48 / 64px (rundum)
+// .pad-y-*                 → nur oben + unten
+// .pad-x-*                 → nur links + rechts
+// .pad-t-* / .pad-b-*      → nur oben / nur unten
+// =============================================================================
+
+.pad-none { padding: 0 !important; }
+
+// Rundum
+.pad-sm  { padding: $spacing-sm  !important; } // 16px
+.pad-md  { padding: $spacing-md  !important; } // 24px
+.pad-lg  { padding: $spacing-lg  !important; } // 32px
+.pad-xl  { padding: $spacing-xl  !important; } // 48px
+.pad-2xl { padding: $spacing-2xl !important; } // 64px
+
+// Vertikal
+.pad-y-sm  { padding-top: $spacing-sm;  padding-bottom: $spacing-sm;  }
+.pad-y-md  { padding-top: $spacing-md;  padding-bottom: $spacing-md;  }
+.pad-y-lg  { padding-top: $spacing-lg;  padding-bottom: $spacing-lg;  }
+.pad-y-xl  { padding-top: $spacing-xl;  padding-bottom: $spacing-xl;  }
+.pad-y-2xl { padding-top: $spacing-2xl; padding-bottom: $spacing-2xl; }
+
+// Horizontal
+.pad-x-sm  { padding-left: $spacing-sm;  padding-right: $spacing-sm;  }
+.pad-x-md  { padding-left: $spacing-md;  padding-right: $spacing-md;  }
+.pad-x-lg  { padding-left: $spacing-lg;  padding-right: $spacing-lg;  }
+.pad-x-xl  { padding-left: $spacing-xl;  padding-right: $spacing-xl;  }
+.pad-x-2xl { padding-left: $spacing-2xl; padding-right: $spacing-2xl; }
+
+// Einzeln oben / unten
+.pad-t-sm  { padding-top:    $spacing-sm;  }
+.pad-t-md  { padding-top:    $spacing-md;  }
+.pad-t-lg  { padding-top:    $spacing-lg;  }
+.pad-t-xl  { padding-top:    $spacing-xl;  }
+.pad-t-2xl { padding-top:    $spacing-2xl; }
+
+.pad-b-sm  { padding-bottom: $spacing-sm;  }
+.pad-b-md  { padding-bottom: $spacing-md;  }
+.pad-b-lg  { padding-bottom: $spacing-lg;  }
+.pad-b-xl  { padding-bottom: $spacing-xl;  }
+.pad-b-2xl { padding-bottom: $spacing-2xl; }
+
+
+// Einzeln rechts
+.pad-r-sm  { padding-right: $spacing-sm;  }
+.pad-r-md  { padding-right: $spacing-md;  }
+.pad-r-lg  { padding-right: $spacing-lg;  }
+.pad-r-xl  { padding-right: $spacing-xl;  }
+.pad-r-2xl { padding-right: $spacing-2xl; }
+
+// Einzeln links
+.pad-l-sm  { padding-left: $spacing-sm;  }
+.pad-l-md  { padding-left: $spacing-md;  }
+.pad-l-lg  { padding-left: $spacing-lg;  }
+.pad-l-xl  { padding-left: $spacing-xl;  }
+.pad-l-2xl { padding-left: $spacing-2xl; }
+
+
+
+// ── Columns flush zum Container-Rand ─────────────────────────────────────────
+//
+// Verwendung: Gutenberg Columns-Block → Erweitert → Zusätzliche CSS-Klasse
+// Klasse: columns-flush
+// =============================================================================
+
+.columns-flush {
+    background: $color-background;
+    margin-left:  -$container-padding !important;
+    margin-right: -$container-padding !important;
+    width:        calc(100% + #{$container-padding * 2}) !important;
+
+    > .wp-block-column:first-child { padding-left:  0 !important; }
+    > .wp-block-column:last-child  {
+        padding-left:  0 !important;
+        padding-right: $container-padding !important;
+    }
+
+    > .wp-block-column:first-child .wp-block-image {
+        margin-left:  0 !important;
+        margin-right: 0 !important;
+
+        img {
+            display: block;
+            width:   100%;
+        }
+    }
+}
+
+.columns-flush--no-gap {
+    gap: 0 !important;
+}
+
+
+.has-text-align-center {
+  text-align: center;
+  margin: 0 auto;
+}
+
+
+
+
+// ── Colors ───────────────────────────────────────────────────────────────────
+bg-color-grey {
+    background-color: $color-grey !important;
+}
+
+
+
+// ── Section Events ───────────────────────────────────────────────────────────────────
+.column-events {
+    position: relative;
+
+    &::after {
+        content:    '';
+        position:   absolute;
+        top:        -120px;
+        right:      -20px;
+        width:      350px;
+        height:     268px;
+        background-repeat:   no-repeat;
+        background-position: top right;
+        background-size:     contain;
+        background-image: url('/cms/wp-content/themes/stadtwirt-theme/assets/src/images/events-bg.svg');
+        pointer-events:      none;
+        opacity:             0.6;
+    }
+}
+
+
+
+// ── Section Newsletter ───────────────────────────────────────────────────────────────────
+.column-newsletter {
+    @include fullwidth;
+    background-color: transparent !important;
+    background-image: url('/cms/wp-content/themes/stadtwirt-theme/assets/src/images/newsletter-bg.jpg');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+
+.column-newsletter__inner {
+    @include fullwidth;
+    background-color: rgba($color-secondary, 0.8) !important;
+}

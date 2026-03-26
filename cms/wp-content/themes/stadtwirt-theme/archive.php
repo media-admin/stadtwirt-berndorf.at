@@ -8,10 +8,8 @@
  */
 
 get_header();
-get_template_part( 'template-parts/components/breadcrumbs' );
 ?>
 
-<main id="primary" class="site-main">
 <div class="archive-layout container">
 
     <?php /* ── Archive-Header ─────────────────────────────────────────────── */ ?>

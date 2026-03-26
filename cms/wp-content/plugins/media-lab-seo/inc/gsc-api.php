@@ -26,7 +26,10 @@ define( 'MEDIALAB_GSC_CACHE_TTL',  3600 ); // Sekunden – Daten werden 1 Stunde
 // ---------------------------------------------------------------------------
 
 function medialab_gsc_redirect_uri(): string {
-    return admin_url( 'admin.php?page=medialab-seo-dashboard&gsc_oauth=callback' );
+    return add_query_arg(
+        [ 'gsc_oauth' => 'callback' ],
+        admin_url( 'admin.php?page=medialab-seo-dashboard' )
+    );
 }
 
 // ---------------------------------------------------------------------------
@@ -43,7 +46,18 @@ function medialab_gsc_get_settings(): array {
 
 function medialab_gsc_is_configured(): bool {
     $s = medialab_gsc_get_settings();
-    return ! empty( $s['client_id'] ) && ! empty( $s['client_secret'] ) && ! empty( $s['property_url'] );
+
+    if ( empty( $s['client_id'] ) || empty( $s['client_secret'] ) || empty( $s['property_url'] ) ) {
+        return false;
+    }
+
+    // Platzhalter-Werte ablehnen – echte Google OAuth Client IDs
+    // enden immer auf .apps.googleusercontent.com
+    if ( ! str_contains( $s['client_id'], '.apps.googleusercontent.com' ) ) {
+        return false;
+    }
+
+    return true;
 }
 
 function medialab_gsc_is_connected(): bool {

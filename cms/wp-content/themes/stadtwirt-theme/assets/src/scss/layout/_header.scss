@@ -3,27 +3,73 @@
 // Header (aus Figma Header Component)
 
 .site-header {
-  background: var(--color-surface);
+  position: relative;
+  height: 550px;
+  background: $color-secondary;
+  z-index: inherit;  
+
   box-shadow: $shadow-sm;
-  position: sticky;
+  position: relative;
   top: 0;
-  z-index: $z-header;
+  // z-index: $z-header;
   box-shadow: 0 2px 4px var(--color-shadow);
-  padding: $spacing-2 0;
+  padding: 0 0 $spacing-2 0;
   transition: all 0.3s ease;
-  
+
+  // Mobile
+  @media (max-width: $breakpoint-md - 1) {
+    height: initial;
+  }
+
   .container {
     @include flex-between;
+    
+  }
+
+  // Mobile
+  @media (max-width: $breakpoint-md - 1) {
     padding-top: $spacing-2;
     padding-bottom: $spacing-2;
   }
+
+  
+}
+
+
+.site-header::after {
+  background-image: url('/cms/wp-content/themes/stadtwirt-theme/assets/src/images/site-header-bg--desktop.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  filter: invert(0%);
+}
+
+
+.site-header__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  max-width: $container-max-width;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 $spacing-6;
 }
 
 .site-branding {
-  background-color: rgba($color-secondary, 0.85);
+  position: relative;
+  z-index: 1;
+
 
   a {
-    font-size: $font-size-xl;
+    font-size: $font-size-xl; 
     font-weight: $font-weight-bold;
     color: $color-dark;
     text-decoration: none;
@@ -88,11 +134,14 @@
     display: inline-flex;
     align-items: center;
     text-decoration: none;
+    background-color: rgba($color-secondary, 0.85);
+    padding: $spacing-4;
+
 
     &__img {
         display: block;
         height: auto;
-        max-height: 60px; // Sicherheits-Cap, damit das Logo den Header nicht sprengt
+        max-height: 175px; // Sicherheits-Cap, damit das Logo den Header nicht sprengt
     }
 
     // Mobile-Logo standardmäßig ausblenden

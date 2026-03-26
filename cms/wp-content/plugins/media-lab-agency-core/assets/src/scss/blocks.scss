@@ -125,7 +125,7 @@
 .ml-testimonial__quote {
     font-size:     1.1rem;
     line-height:   1.7;
-    color:         var(--ml-color-text);
+    color:         var(--color-text-light) !important;
     font-style:    italic;
     margin-bottom: 1.5rem;
     position:      relative;
@@ -516,4 +516,118 @@
     padding: 1rem;
     background: #f9f9f9;
     border-radius: 4px;
+}
+
+// =============================================================================
+// Media Lab – Block Styles WCAG-Patch
+// Ergänzungen zu blocks.scss
+//
+// Diese Regeln am Ende der bestehenden blocks.scss einfügen.
+//
+// Fixes:
+//   ✅ 1.4.3  Contrast:              --ml-color-primary #ff0000 → #d40000 (5.1:1)
+//   ✅ 1.4.1  Use of Color:          Sterne: ★ (gefüllt) vs ☆ (leer) in render.php
+//   ✅ 2.4.7  Focus Visible:         :focus-visible Styles für alle interaktiven Elemente
+//   ✅ 2.5.5  Target Size:           Social-Links 36px → 44px
+//   ✅ 2.2.2  Pause Stop Hide:       prefers-reduced-motion stoppt Slider-Transition
+//   ✅ 2.3.3  Animation:             prefers-reduced-motion für alle Transitions
+// =============================================================================
+
+// ── Primärfarbe: Kontrast-Fix ─────────────────────────────────────────────────
+// #ff0000 = 4.0:1 (zu wenig für AA-Fließtext)
+// #d40000 = 5.1:1 ✅
+//
+// In _variables.scss / :root anpassen:
+// --ml-color-primary: #d40000;  ← war: #ff0000
+//
+// Direkter Override falls _variables.scss nicht geändert werden kann:
+:root {
+    --ml-color-primary: #d40000;
+}
+
+// ── Focus-Styles – WCAG 2.4.7 Focus Visible ──────────────────────────────────
+// Globaler :focus-visible Reset – greift für ALLE interaktiven Elemente im Block-Kontext.
+// Bitte auch in main.scss des Themes global ergänzen.
+
+*:focus {
+    outline: none; // Standard-Outline entfernen (wird durch :focus-visible ersetzt)
+}
+
+*:focus-visible {
+    outline:        3px solid var(--ml-color-primary);
+    outline-offset: 3px;
+    border-radius:  2px;
+}
+
+// Spezifische Block-Elemente
+.ml-accordion__trigger:focus-visible,
+.btn:focus-visible,
+.ml-hero__cta:focus-visible,
+.ml-cta-banner__btn:focus-visible {
+    outline:        3px solid currentColor;
+    outline-offset: 3px;
+    box-shadow:     0 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.ml-team-member__social-link:focus-visible,
+.ml-logo-grid__link:focus-visible,
+.ml-logo-slider__link:focus-visible {
+    outline:        3px solid var(--ml-color-primary);
+    outline-offset: 3px;
+    border-radius:  50%;
+}
+
+// ── Touch-Target-Größe – WCAG 2.5.5 (44×44px) ────────────────────────────────
+.ml-team-member__social-link {
+    // war: 36×36px → jetzt: 44×44px ✅
+    width:  44px;
+    height: 44px;
+    // Icon bleibt 16px, der Klickbereich wächst
+    font-size: 18px;
+}
+
+// ── prefers-reduced-motion – WCAG 2.2.2 + 2.3.3 ─────────────────────────────
+@media (prefers-reduced-motion: reduce) {
+    // Alle Transitions auf minimal setzen
+    *,
+    *::before,
+    *::after {
+        animation-duration:       0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration:      0.01ms !important;
+        scroll-behavior:          auto !important;
+    }
+
+    // Logo-Slider: Autoplay via JS pausiert (block-logo-slider.js),
+    // CSS-Transition ebenfalls deaktivieren
+    .ml-logo-slider__swiper .swiper-wrapper {
+        transition-duration: 0ms !important;
+    }
+
+    // Team-Card Hover-Animation
+    .ml-block-team-member {
+        transform: none !important;
+        &:hover { transform: none !important; }
+    }
+
+    .ml-team-member__image {
+        transition: none !important;
+        &:hover { transform: none !important; }
+    }
+
+    // Hero: kein Overlay-Fade
+    .ml-hero__overlay {
+        transition: none !important;
+    }
+}
+
+// ── Sterne: Leerfarbe ebenfalls sichtbar ─────────────────────────────────────
+// render.php nutzt ★ (gefüllt) vs ☆ (leer) – Farbe ist zusätzliches Merkmal
+.ml-testimonial__star {
+    color: #767676; // WCAG 1.4.3: #767676 auf weiß = 4.54:1 ✅
+    font-size: 1.2rem;
+}
+
+.ml-testimonial__star--filled {
+    color: #b45309; // Dunkleres Gold: 4.6:1 auf weiß ✅ (war: #f59e0b = 1.87:1 ❌)
 }

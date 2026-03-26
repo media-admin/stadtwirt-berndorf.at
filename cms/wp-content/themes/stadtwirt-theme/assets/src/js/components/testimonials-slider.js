@@ -60,6 +60,13 @@ export default class TestimonialsSlider {
         },
       });
       
+      // Fix: data-animate entfernen damit Animations-System Slides nicht versteckt
+      sliderElement.querySelectorAll('.swiper-slide').forEach(slide => {
+        slide.removeAttribute('data-animate');
+        slide.style.opacity = '';
+        slide.style.visibility = '';
+      });
+
       // Console Info (optional, kann entfernt werden)
       if (!shouldLoop) {
         console.info('Testimonials slider: Loop disabled (not enough slides)');

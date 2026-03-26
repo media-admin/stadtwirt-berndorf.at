@@ -26,11 +26,39 @@ h1 {
 }
 
 h2 {
+  width: fit-content;
+  position: relative;
+  font-family: $font-secondary;
   font-size: $font-size-h2;
+  // text-decoration: underline;
+  // text-decoration-color: $color-primary;
+  // text-decoration-thickness: 3px;
+  // text-underline-offset: 12px;
 }
+
+
+h2::after {
+  display: block;
+  content: '';
+  width: 100%;
+  height: 3px;
+  background: $color-primary;
+  position: absolute;
+  bottom: -4px;
+  left: 4px;
+}
+
+
+.columns-flush:first-of-type h2::after {
+  height: 0;
+}
+
 
 h3 {
   font-size: $font-size-h3;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: 7%;
 }
 
 h4 {

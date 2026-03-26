@@ -64,6 +64,10 @@ class MediaLab_Cookie_Consent {
             'privacyLabel' => $s( 'cc_privacy_label', 'Datenschutzerkl\u00e4rung' ),
             'privacyUrl'   => $s( 'cc_privacy_url',   '/datenschutz' ),
             'alwaysActive' => 'Immer aktiv',
+            // Aliases für JS-Kompatibilität
+            'saveConsent'   => $s( 'cc_save_btn',     'Auswahl speichern' ),
+            'essentialOnly' => $s( 'cc_decline_all',  'Nur essenzielle Cookies akzeptieren' ),
+            'openSettings'  => $s( 'cc_settings_btn', 'Individuelle Datenschutz-Präferenzen' ),
         );
 
         $categories = array(
@@ -248,6 +252,7 @@ class MediaLab_Cookie_Consent {
                 // Komfort
                 array( 'key' => 'field_cc_cat_comfort_label', 'label' => 'Komfort – Bezeichnung',  'name' => 'cc_cat_comfort_label', 'type' => 'text', 'default_value' => 'Komfort',             'wrapper' => array( 'width' => '50' ) ),
                 array( 'key' => 'field_cc_cat_comfort_desc',  'label' => 'Komfort – Beschreibung', 'name' => 'cc_cat_comfort_desc',  'type' => 'textarea', 'rows' => 2, 'default_value' => 'Ermöglichen eingebettete Inhalte wie YouTube-Videos oder Google Maps.', 'wrapper' => array( 'width' => '50' ) ),
+
                 // ── Trennlinie: Code-Snippets ──────────────────────────────────────────
                 array(
                     'key'     => 'field_cc_tab_snippets',
@@ -261,7 +266,6 @@ class MediaLab_Cookie_Consent {
                               . '<strong>Body-Code:</strong> Noscript-Fallbacks für den &lt;body&gt;</p>',
                     'default_value' => '',
                 ),
-
 
                 // Notwendig
                 array(
@@ -369,6 +373,7 @@ class MediaLab_Cookie_Consent {
             'instruction_placement' => 'label',
         ) );
     }
+
     // ─── Snippet-Config ausgeben ──────────────────────────────────────────────
     // Alle vom Admin eingetragenen Code-Snippets werden als JSON in den Head
     // geschrieben. Das JS injiziert sie basierend auf dem gespeicherten Consent.
@@ -402,7 +407,6 @@ class MediaLab_Cookie_Consent {
             . wp_json_encode( $snippets, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES )
             . ';</script>' . "\n";
     }
-
 
 }
 

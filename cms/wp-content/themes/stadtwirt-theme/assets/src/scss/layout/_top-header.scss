@@ -17,6 +17,16 @@
         font-size: $font-size-sm;
     }
 
+
+    &__inner {
+        display: flex;
+        max-width: $container-max-width;
+        width: 100%;
+        justify-content: space-between;
+        margin: 0 auto;
+        padding: 0 $spacing-6;
+    }
+
     &__contact {
         display: flex;
         color: $color-gray-100;
@@ -32,7 +42,7 @@
     }
 
     &__address svg {
-        margin-right: 10px;
+        margin-right: 4px;
     }
 
     &__hours {
@@ -40,7 +50,7 @@
     }
 
     &__hours svg {
-        margin-right: 11px;
+        margin-right: 4px;
     }
 
     &__phone {
@@ -48,7 +58,7 @@
     }
 
     &__phone svg {
-        margin-right: 10px;
+        margin-right: 4px;
     }
 
     &__email {
@@ -56,7 +66,7 @@
     }
 
     &__email svg {
-        margin-right: 10px;
+        margin-right: 4px;
     }
 
     &__social {
@@ -71,9 +81,10 @@
     a {
         color: $color-gray-100;
         text-decoration: none;
+        font-weight: $font-weight-semibold;
 
         &:hover {
-            color: $color-primary;
+            color: $color-text-light;
         }
     }
 }

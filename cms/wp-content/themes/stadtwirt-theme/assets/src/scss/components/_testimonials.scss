@@ -1,255 +1,159 @@
 @use '../abstracts' as *;
 
-// Testimonials Component
+// Testimonials Grid
 .testimonials {
   display: grid;
   gap: $spacing-6;
   margin: $spacing-8 0;
-  
-  // Grid Layout basierend auf Columns
-  &[data-columns="1"] {
-    grid-template-columns: 1fr;
-  }
-  
+
+  &[data-columns="1"] { grid-template-columns: 1fr; }
   &[data-columns="2"] {
     grid-template-columns: 1fr;
-    
-    @include respond-to('md') {
-      grid-template-columns: repeat(2, 1fr);
-    }
+    @include respond-to('md') { grid-template-columns: repeat(2, 1fr); }
   }
-  
   &[data-columns="3"] {
     grid-template-columns: 1fr;
-    
-    @include respond-to('md') {
-      grid-template-columns: repeat(2, 1fr);
-    }
-    
-    @include respond-to('lg') {
-      grid-template-columns: repeat(3, 1fr);
-    }
+    @include respond-to('md') { grid-template-columns: repeat(2, 1fr); }
+    @include respond-to('lg') { grid-template-columns: repeat(3, 1fr); }
   }
-  
   &[data-columns="4"] {
     grid-template-columns: 1fr;
-    
-    @include respond-to('sm') {
-      grid-template-columns: repeat(2, 1fr);
-    }
-    
-    @include respond-to('lg') {
-      grid-template-columns: repeat(4, 1fr);
-    }
+    @include respond-to('sm') { grid-template-columns: repeat(2, 1fr); }
+    @include respond-to('lg') { grid-template-columns: repeat(4, 1fr); }
   }
 }
 
-// Single Testimonial
+// Single Testimonial — horizontales Layout
 .testimonial {
-  background: var(--color-card-bg);
-  border-radius: $radius-lg;
-  padding: $spacing-6;
-  box-shadow: $shadow-sm;
-  transition: all $transition-base;
-  position: relative;
-  
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: $shadow-lg;
-  }
-  
-  // Rating Stars
-  &__rating {
-    display: flex;
-    gap: 4px;
-    margin-bottom: $spacing-3;
-    
-    .star {
-      font-size: 20px;
-      
-      &--filled {
-        color: $color-gold;
-      }
-      
-      &--empty {
-        color: var(--color-border);
-      }
-    }
-  }
-  
-  // Quote Text
-  &__quote {
-    color: var(--color-text);
-    font-size: $font-size-base;
-    line-height: 1.7;
-    margin-bottom: $spacing-4;
-    font-style: italic;
-    position: relative;
-    
-    &::before {
-      content: '"';
-      font-size: 48px;
-      color: $color-primary;
-      opacity: 0.2;
-      position: absolute;
-      top: -10px;
-      left: -10px;
-      font-family: Georgia, serif;
-    }
-    
-    p {
-      margin: 0;
-    }
-  }
-  
-  // Footer (Image + Meta)
-  &__footer {
-    display: flex;
-    align-items: center;
-    gap: $spacing-3;
-    margin-top: auto;
-  }
-  
-  // Avatar Image
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $spacing-6;
+  padding: $spacing-6 $spacing-8;
+
+  // Avatar links
   &__image {
     flex-shrink: 0;
-    width: 56px;
-    height: 56px;
+    width: 90px;
+    height: 90px;
     border-radius: $radius-full;
     overflow: hidden;
-    border: 2px solid var(--color-border);
-    
-    img {
+
+    img, .testimonial__avatar-img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      display: block;
     }
   }
-  
-  // Meta Info
-  &__meta {
+
+  // Body: Name+Stars oben, Quote unten
+  &__body {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-2;
   }
-  
+
+  // Header: Name links, Sterne rechts
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: $spacing-4;
+  }
+
+  &__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
   &__name {
-    font-weight: 600;
+    font-weight: 700;
+    font-size: $font-size-sm;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     color: var(--color-text);
-    margin-bottom: $spacing-1;
   }
-  
+
   &__role {
     font-size: $font-size-sm;
     color: var(--color-text-secondary);
   }
-}
 
-// ============================================
-// STYLE VARIANTS
-// ============================================
+  &__rating {
+    display: flex;
+    gap: 2px;
+    flex-shrink: 0;
 
-// Quote Style (Centered, Larger)
-.testimonials--quote {
-  .testimonial {
-    text-align: center;
-    padding: $spacing-8;
-    
-    &__quote {
-      font-size: $font-size-lg;
-      
-      &::before {
-        position: static;
-        display: block;
-        margin-bottom: $spacing-2;
-      }
+    .star {
+      font-size: 20px;
+      &--filled { color: $color-gold; }
+      &--empty  { color: var(--color-border); }
     }
-    
-    &__footer {
-      flex-direction: column;
-      justify-content: center;
-    }
-    
-    &__image {
-      width: 80px;
-      height: 80px;
-    }
+  }
+
+  &__quote {
+    color: var(--color-text-secondary);
+    font-size: $font-size-base;
+    line-height: 1.7;
+    font-style: italic;
+
+    p { margin: 0; }
+    &::before { display: none; }
   }
 }
 
-// Minimal Style (No card background)
-.testimonials--minimal {
-  .testimonial {
-    background: transparent;
-    box-shadow: none;
-    border-left: 4px solid $color-primary;
-    padding-left: $spacing-4;
-    
-    &:hover {
-      transform: translateX(4px);
-      box-shadow: none;
-    }
-    
-    &__quote::before {
-      display: none;
-    }
-  }
-}
-
-// ============================================
-// SLIDER MODE
-// ============================================
-
+// Slider Mode
 .testimonials--slider {
-  padding-bottom: $spacing-8;
-  
-  .swiper-slide {
-    height: auto;
-  }
-  
+  position: relative;
+  padding: 0 $spacing-10;
+
+  @include respond-to('md') { padding: 0 $spacing-12; }
+
+  .swiper-slide { height: auto; }
+
   .testimonial {
     height: 100%;
+    // background: var(--color-card-bg);
+    border-radius: $radius-lg;
+    padding: $spacing-6;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    align-items: center;
+    gap: $spacing-6;
   }
 }
 
+// Navigation seitlich, vertikal zentriert
 .testimonials__navigation {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
   display: flex;
-  gap: $spacing-2;
-  justify-content: center;
-  margin-top: $spacing-4;
+  justify-content: space-between;
+  pointer-events: none;
+  z-index: 10;
 }
 
 .testimonials__button {
-  width: 44px;
-  height: 44px;
-  border-radius: $radius-full;
-  background: var(--color-card-bg);
-  border: 1px solid var(--color-border);
+  pointer-events: all;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: none;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all $transition-base;
+  transition: color $transition-base;
   color: var(--color-text);
-  
-  &:hover {
-    background: $color-primary;
-    border-color: $color-primary;
-    color: $color-white;
-    transform: scale(1.05);
-  }
-  
-  &:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
-    
-    &:hover {
-      background: var(--color-card-bg);
-      border-color: var(--color-border);
-      color: var(--color-text);
-      transform: none;
-    }
-  }
+
+  &:hover { color: $color-primary; }
+  &:disabled { opacity: 0.3; cursor: not-allowed; }
 }
 
 .testimonials__pagination {
@@ -257,18 +161,27 @@
   justify-content: center;
   gap: $spacing-2;
   margin-top: $spacing-4;
-  
+
   .swiper-pagination-bullet {
     width: 10px;
     height: 10px;
     background: var(--color-border);
     opacity: 1;
     transition: all $transition-base;
-    
+
     &-active {
       background: $color-primary;
       width: 24px;
       border-radius: 5px;
     }
+  }
+}
+
+// Varianten
+.testimonials--minimal {
+  .testimonial {
+    background: transparent;
+    border-left: 4px solid $color-primary;
+    padding-left: $spacing-4;
   }
 }

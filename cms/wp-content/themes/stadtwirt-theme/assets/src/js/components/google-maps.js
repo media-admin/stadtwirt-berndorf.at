@@ -16,16 +16,48 @@ export default class GoogleMaps {
   
   init() {
     console.log(`✅ Found ${this.maps.length} map(s)`);
-    
+
     this.maps.forEach(mapWrapper => {
       const button = mapWrapper.querySelector('[data-action="load-map"]');
-      
+
       if (button) {
         button.addEventListener('click', () => {
+          // Consent via CookieConsent setzen falls vorhanden
+          if (window.CookieConsent && typeof window.CookieConsent._saveConsent === 'function') {
+            const current = window.CookieConsent.consent || {};
+            window.CookieConsent._saveConsent({ ...current, comfort: true });
+          }
           this.loadMap(mapWrapper);
         });
       }
+
+      // Sofort laden wenn Comfort-Consent bereits gesetzt
+      if (this.hasComfortConsent()) {
+        this.loadMap(mapWrapper);
+      }
     });
+
+    // Auf Cookie-Consent-Event lauschen
+    document.addEventListener('cookies:changed', (e) => {
+      if (e.detail?.comfort) {
+        this.maps.forEach(mapWrapper => this.loadMap(mapWrapper));
+      }
+    });
+
+    document.addEventListener('cookies:accepted', (e) => {
+      if (e.detail?.comfort) {
+        this.maps.forEach(mapWrapper => this.loadMap(mapWrapper));
+      }
+    });
+  }
+
+  hasComfortConsent() {
+    try {
+      const stored = JSON.parse(localStorage.getItem('medialab-cookie-consent') || 'null');
+      return stored?.categories?.comfort === true;
+    } catch (e) {
+      return false;
+    }
   }
   
   async loadMap(mapWrapper) {
@@ -67,22 +99,23 @@ export default class GoogleMaps {
       mapTypeControl: false,
       streetViewControl: false,
       fullscreenControl: true,
+      mapId: "DEMO_MAP_ID",
     });
     
-    // Add marker
-    const marker = new google.maps.Marker({
+    // Add marker (AdvancedMarkerElement)
+    const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+    const marker = new AdvancedMarkerElement({
       position: { lat, lng },
       map: map,
       title: markerTitle,
-      animation: google.maps.Animation.DROP,
     });
-    
+
     // Info window (optional)
     if (markerTitle) {
       const infoWindow = new google.maps.InfoWindow({
         content: `<div style="padding: 10px;"><strong>${markerTitle}</strong></div>`,
       });
-      
+
       marker.addListener('click', () => {
         infoWindow.open(map, marker);
       });
@@ -103,25 +136,18 @@ export default class GoogleMaps {
         resolve();
         return;
       }
-      
-      console.log('Loading Google Maps API...');
-      
+
       const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${this.apiKey}&callback=initGoogleMaps`;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${this.apiKey}&loading=async&callback=initGoogleMaps`;
       script.async = true;
       script.defer = true;
-      
+
       window.initGoogleMaps = () => {
         this.apiLoaded = true;
-        console.log('✅ Google Maps API loaded');
         resolve();
       };
-      
-      script.onerror = () => {
-        console.error('❌ Failed to load Google Maps API');
-        reject(new Error('Failed to load Google Maps API'));
-      };
-      
+
+      script.onerror = () => reject(new Error('Failed to load Google Maps API'));
       document.head.appendChild(script);
     });
   }

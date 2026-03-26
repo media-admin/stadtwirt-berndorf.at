@@ -1,6 +1,5 @@
 <?php get_header(); ?>
 
-<main id="primary" class="site-main">
     <div class="container">
         <?php
         if (have_posts()) :
@@ -8,11 +7,12 @@
                 ?>
                 <article <?php post_class(); ?>>
                     <header class="entry-header">
-                        <?php the_title('<h1>', '</h1>'); ?>
+                        <?php the_title('<h1 class="sr-only">', '</h1>'); ?>
                     </header>
                     <div class="entry-content">
                         <?php the_content(); ?>
-                    </div>
+
+                        </div>
                 </article>
                 <?php
             endwhile;

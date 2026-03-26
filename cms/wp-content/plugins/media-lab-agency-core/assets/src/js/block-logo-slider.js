@@ -1,10 +1,10 @@
 /**
  * Logo-Slider Block – Swiper Initialisierung
  *
- * Liest Konfiguration aus data-swiper Attribut.
- * Swiper wird als separate Dependency geladen (via wp_enqueue_script).
+ * Fixes:
+ *   ✅ WCAG 2.2.2: Autoplay pausiert bei Tastaturfokus (focusin/focusout)
  *
- * @since 1.6.0
+ * @since 1.6.0 / WCAG-Patch
  */
 
 ( function () {
@@ -20,14 +20,27 @@
                 console.warn( 'Logo-Slider: Ungültige Swiper-Konfiguration', e );
             }
 
-            // Autoplay mit delay: 0 → CSS-Animation-ähnlicher Loop
             if ( config.autoplay && config.autoplay.delay === 0 ) {
-                config.autoplay.delay = 0;
-                config.speed          = config.speed || 3000;
-                config.loop           = true;
+                config.speed = config.speed || 3000;
+                config.loop  = true;
             }
 
-            new Swiper( el, config );
+            const swiper = new Swiper( el, config );
+
+            // ✅ WCAG 2.2.2: Pause, Stop, Hide
+            // Autoplay stoppt wenn ein Element im Slider Tastaturfokus erhält
+            if ( swiper.autoplay && config.autoplay ) {
+                el.addEventListener( 'focusin', function () {
+                    swiper.autoplay.stop();
+                } );
+
+                el.addEventListener( 'focusout', function ( e ) {
+                    // Nur neu starten wenn Fokus den Slider komplett verlässt
+                    if ( ! el.contains( e.relatedTarget ) ) {
+                        swiper.autoplay.start();
+                    }
+                } );
+            }
         } );
     }
 

@@ -7,7 +7,7 @@
 .google-map-wrapper {
   position: relative;
   width: 100%;
-  border-radius: $radius-lg;
+  border-radius: $radius-none // $radius-lg;
   overflow: hidden;
   background: $color-gray-100;
 }

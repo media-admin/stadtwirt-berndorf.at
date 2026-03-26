@@ -3,6 +3,9 @@
 // Sass Module System (@use/@forward) – Dart Sass 2.0+ kompatibel
 // =============================================================================
 
+// WCAG 2.1 AA Konformität: Einbindung eines Skip-Links für Tastaturnutzer
+@use 'skip-link';
+
 // Configuration – lädt variables + mixins via abstracts/_index.scss
 @use 'abstracts' as *;
 
@@ -72,3 +75,4 @@
 // WooCommerce
 @use 'pages/page-404';
 @use 'woocommerce/woocommerce';
+@use 'components/columns';

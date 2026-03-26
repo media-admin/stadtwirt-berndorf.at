@@ -6,6 +6,7 @@
 // CSS (inkl. Swiper)
 import '../scss/style.scss';
 import 'swiper/css/bundle';
+import sloganUrl from '../images/slogan_tradtion-trifft-kultur.svg?url';
 
 // Sentry (nur in Production)
 if (import.meta.env.PROD) {
@@ -142,7 +143,7 @@ const initApp = async () => {
     safeInit('AjaxFilters', () => new AjaxFilters());
   }
 
-  if (has('.google-map, [data-map]')) {
+  if (has('.google-map-wrapper, .google-map, [data-map]')) {
     await import('./components/google-maps');
   }
 };
@@ -153,3 +154,27 @@ if (document.readyState === 'loading') {
 } else {
   initApp();
 }
+
+// Slogan in zweite Spalte des ersten columns-flush Blocks injizieren
+document.addEventListener('DOMContentLoaded', () => {
+  const firstBlock = document.querySelector('.entry-content .wp-block-columns.columns-flush');
+  if (!firstBlock) return;
+  const secondCol = firstBlock.querySelectorAll(':scope > .wp-block-column')[1];
+  if (!secondCol) return;
+  secondCol.style.position = 'relative';
+  const img = document.createElement('img');
+  img.src = sloganUrl;
+  img.alt = 'Tradition trifft Kultur';
+  img.className = 'columns-flush__slogan';
+  img.setAttribute('aria-hidden', 'true');
+  img.setAttribute('loading', 'eager');
+  secondCol.appendChild(img);
+});
+
+// Carousel Grid: data-columns -> CSS Variable
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.carousel-grid').forEach(grid => {
+    const cols = grid.getAttribute('data-columns');
+    if (cols) grid.style.setProperty('--carousel-cols', cols);
+  });
+});

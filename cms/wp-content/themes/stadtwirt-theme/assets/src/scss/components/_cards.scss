@@ -97,3 +97,30 @@
     }
   }
 }
+
+
+
+.post-card--marble,
+.columns-flush .post-card--marble {
+  color: $color-secondary;
+  border-color: none;
+  aspect-ratio: 1 / 1;
+  gap: 0 ;
+  transition: all $transition-base;
+  background-color: none;
+  background-repeat:   no-repeat;
+  background-position: center;
+  background-size:     cover;
+  background-image: url('/cms/wp-content/themes/stadtwirt-theme/assets/src/images/marble-bg--grey.jpg');
+  // padding-left: initial !important; 
+}
+
+
+.columns-flush .post-card--marble.wp-block-column:first-child {
+  padding-left: $spacing-lg !important; 
+}
+
+.columns-flush .post-card--marble.wp-block-column:last-child {
+  padding-left: $spacing-lg !important; 
+}
+

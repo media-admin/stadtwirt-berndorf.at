@@ -6,14 +6,12 @@
  */
 
 get_header();
-get_template_part( 'template-parts/components/breadcrumbs' );
 
 global $wp_query;
 $search_query = get_search_query();
 $found_posts  = (int) $wp_query->found_posts;
 ?>
 
-<main id="primary" class="site-main">
 <div class="search-page container">
 
     <?php /* ── Header ───────────────────────────────────────────────────── */ ?>

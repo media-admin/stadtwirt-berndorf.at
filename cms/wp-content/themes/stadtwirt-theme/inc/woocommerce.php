@@ -136,30 +136,29 @@ remove_action('woocommerce_before_shop_loop', 'woocommerce_result_count', 20);
  */
 remove_action('woocommerce_after_shop_loop', 'woocommerce_pagination', 10);
 
-add_action('woocommerce_after_shop_loop', function() {
+add_action( 'woocommerce_after_shop_loop', function () {
     global $wp_query;
-    
-    if ($wp_query->max_num_pages <= 1) {
-        return;
-    }
-    
-    echo '<nav class="woocommerce-pagination">';
-    
-    echo paginate_links(array(
-        'base' => esc_url_raw(str_replace(999999999, '%#%', get_pagenum_link(999999999, false))),
-        'format' => '?paged=%#%',
-        'add_args' => false,
-        'current' => max(1, get_query_var('paged')),
-        'total' => $wp_query->max_num_pages,
-        'prev_text' => '&larr;',
-        'next_text' => '&rarr;',
-        'type' => 'list',
-        'end_size' => 3,
-        'mid_size' => 3,
-    ));
-    
+
+    if ( $wp_query->max_num_pages <= 1 ) return;
+
+    echo '<nav class="woocommerce-pagination" aria-label="' . esc_attr__( 'Seitennavigation', 'custom-theme' ) . '">';
+
+    echo paginate_links( [
+        'base'      => esc_url_raw( str_replace( 999999999, '%#%', get_pagenum_link( 999999999, false ) ) ),
+        'format'    => '?paged=%#%',
+        'add_args'  => false,
+        'current'   => max( 1, get_query_var( 'paged' ) ),
+        'total'     => $wp_query->max_num_pages,
+        // ✅ WCAG 2.4.4: Screenreader-Text für Pfeil-Links
+        'prev_text' => '<span aria-hidden="true">&larr;</span><span class="screen-reader-text">' . __( 'Vorherige Seite', 'custom-theme' ) . '</span>',
+        'next_text' => '<span aria-hidden="true">&rarr;</span><span class="screen-reader-text">' . __( 'Nächste Seite', 'custom-theme' ) . '</span>',
+        'type'      => 'list',
+        'end_size'  => 3,
+        'mid_size'  => 3,
+    ] );
+
     echo '</nav>';
-});
+} );
 
 /**
  * Disable WooCommerce scripts on non-shop pages

@@ -30,7 +30,7 @@ export default defineConfig({
    */
   base: isDev
     ? 'http://localhost:3000/'
-    : '/wp-content/themes/stadtwirt-theme/assets/dist/',
+    : '/cms/wp-content/themes/stadtwirt-theme/assets/dist/',
 
   plugins: [
     // Triggert Full-Page-Reload bei PHP-Änderungen (relativ zum CWD = Projekt-Root)

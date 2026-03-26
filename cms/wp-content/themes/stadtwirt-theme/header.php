@@ -4,19 +4,15 @@
     <meta charset="<?php bloginfo('charset'); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php wp_head(); ?>
-    <script>
-        // Theme sofort setzen – verhindert Flash of wrong theme
-        (function() {
-            var stored = localStorage.getItem('theme-preference');
-            var theme = stored
-                ? stored
-                : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-            document.documentElement.setAttribute('data-theme', theme);
-        })();
-    </script>
+    
 </head>
 <body <?php body_class(); ?>>
+
 <?php wp_body_open(); ?>
+
+<a class="skip-link" href="#main-content">
+    <?php esc_html_e( 'Zum Inhalt springen', 'custom-theme' ); ?>
+</a>
 
 <?php
 // ── Scroll Progress Bar ───────────────────────────────────────────────────
@@ -121,12 +117,9 @@ if (function_exists('get_field') && get_field('top_header_enable', 'option')) :
 </div><!-- .top-header -->
 <?php endif; // top_header_enable ?>
 
-<header class="site-header">
+<header class="site-header fullwidth" role="banner">
 
-    <?php get_template_part('template-parts/hero-image'); ?>
-
-    <div class="top-header__inner container site-branding">
-        <mark>Testen</mark>
+    <div class="site-header__inner container site-branding">
         <!-- Logo -->
         <a href="<?php echo esc_url(home_url('/')); ?>" class="site-logo" aria-label="<?php bloginfo('name'); ?>">
             <?php
@@ -200,4 +193,4 @@ if (function_exists('get_field') && get_field('top_header_enable', 'option')) :
 <!-- Mobile Overlay -->
 <div class="mobile-menu-overlay"></div>
 
-<main id="main-content" class="site-main">
+<main id="main-content" class="site-main" tabindex="-1">

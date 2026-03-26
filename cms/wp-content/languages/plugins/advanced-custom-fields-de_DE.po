@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Plugins - Advanced Custom Fields (ACF®) - Stable (latest release) package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2026-03-09 00:28:19+0000\n"
+"PO-Revision-Date: 2026-03-18 20:35:52+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -3843,10 +3843,6 @@ msgstr "Website besuchen"
 msgid "View details"
 msgstr "Details anzeigen"
 
-#: includes/admin/admin.php:177
-msgid "Version %s"
-msgstr "Version %s"
-
 #: includes/admin/admin.php:176
 msgid "Information"
 msgstr "Information"
@@ -3929,6 +3925,10 @@ msgstr "<a href=\"%s\" target=\"_blank\">Help-Desk</a>. Die Support-Experten uns
 #: includes/locations.php:47
 msgid "Location type \"%s\" is already registered."
 msgstr "Der Positionstyp „%s“ ist bereits registriert."
+
+#: includes/admin/admin.php:177
+msgid "Version %s"
+msgstr "Version %s"
 
 #: includes/fields/class-acf-field-user.php:409
 msgid "Error loading field."

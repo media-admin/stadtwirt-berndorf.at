@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the WordPress - 6.9.x - Development - Continents & Cities package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2026-01-20 18:47:47+0000\n"
+"PO-Revision-Date: 2026-03-20 00:20:53+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -165,7 +165,7 @@ msgstr "Creston"
 
 #: wp-admin/includes/continents-cities.php:93
 msgid "Bahia Banderas"
-msgstr "Bahia Banderas"
+msgstr "Bahía Banderas"
 
 #: wp-admin/includes/continents-cities.php:83
 msgid "Salta"
@@ -1349,7 +1349,7 @@ msgstr "Thunder Bay"
 
 #: wp-admin/includes/continents-cities.php:222
 msgid "Thule"
-msgstr "Morrell-Inseln"
+msgstr "Thule"
 
 #: wp-admin/includes/continents-cities.php:221
 msgid "Tegucigalpa"
@@ -1705,7 +1705,7 @@ msgstr "El Salvador"
 
 #: wp-admin/includes/continents-cities.php:121
 msgid "Eirunepe"
-msgstr "Eirunepe"
+msgstr "Eirunepé"
 
 #: wp-admin/includes/continents-cities.php:120
 msgid "Edmonton"
@@ -1789,7 +1789,7 @@ msgstr "Boise"
 
 #: wp-admin/includes/continents-cities.php:99
 msgid "Bogota"
-msgstr "Bogota"
+msgstr "Bogotá"
 
 #: wp-admin/includes/continents-cities.php:98
 msgid "Boa Vista"
@@ -1825,7 +1825,7 @@ msgstr "Atikokan"
 
 #: wp-admin/includes/continents-cities.php:89
 msgid "Asuncion"
-msgstr "Asuncion"
+msgstr "Asunción"
 
 #: wp-admin/includes/continents-cities.php:88
 msgid "Aruba"
@@ -1849,7 +1849,7 @@ msgstr "San Juan"
 
 #: wp-admin/includes/continents-cities.php:82
 msgid "Rio Gallegos"
-msgstr "Rio Gallegos"
+msgstr "Río Gallegos"
 
 #: wp-admin/includes/continents-cities.php:81
 msgid "Mendoza"
@@ -1865,7 +1865,7 @@ msgstr "San Salvador de Jujuy"
 
 #: wp-admin/includes/continents-cities.php:78
 msgid "Cordoba"
-msgstr "Cordoba"
+msgstr "Córdoba"
 
 #: wp-admin/includes/continents-cities.php:77
 msgid "ComodRivadavia"
@@ -1885,7 +1885,7 @@ msgstr "Argentinien"
 
 #: wp-admin/includes/continents-cities.php:73
 msgid "Araguaina"
-msgstr "Araguaina"
+msgstr "Araguaína"
 
 #: wp-admin/includes/continents-cities.php:72
 msgid "Antigua"
@@ -1989,7 +1989,7 @@ msgstr "Luanda"
 
 #: wp-admin/includes/continents-cities.php:46
 msgid "Lome"
-msgstr "Lome"
+msgstr "Lomé"
 
 #: wp-admin/includes/continents-cities.php:45
 msgid "Libreville"
@@ -2033,7 +2033,7 @@ msgstr "Freetown"
 
 #: wp-admin/includes/continents-cities.php:34
 msgid "El Aaiun"
-msgstr "El Aaiun"
+msgstr "El Aaiún"
 
 #: wp-admin/includes/continents-cities.php:33
 msgid "Douala"

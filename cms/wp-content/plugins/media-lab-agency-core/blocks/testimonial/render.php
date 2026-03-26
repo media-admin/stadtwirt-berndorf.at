@@ -2,16 +2,12 @@
 /**
  * Testimonial Block – ACF Render Template
  *
- * ACF-Felder:
- *   testimonial_quote   Textarea  Zitat-Text
- *   testimonial_name    Text      Name der Person
- *   testimonial_role    Text      Rolle / Unternehmen (optional)
- *   testimonial_image   Image     Porträtfoto (optional)
- *   testimonial_rating  Number    Sterne 1–5 (optional, 0 = ausblenden)
- *   testimonial_style   Select    card | minimal | centered (Standard: card)
+ * WCAG-Patches:
+ *   ✅ 1.4.1 Use of Color: Sterne nutzen gefülltes (★) vs. leeres (☆) Symbol
+ *            statt nur Farbe als Unterscheidungsmerkmal
  *
  * @package MediaLabAgencyCore
- * @since   1.6.0
+ * @since   1.6.0 / WCAG-Patch
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
@@ -35,10 +31,15 @@ $block_id  = ! empty( $block['anchor'] ) ? ' id="' . esc_attr( $block['anchor'] 
 <blockquote class="<?php echo esc_attr( $block_classes ); ?>"<?php echo $block_id; ?>>
 
     <?php if ( $rating > 0 ) : ?>
-    <div class="ml-testimonial__stars" aria-label="<?php echo esc_attr( $rating ); ?> von 5 Sternen">
-        <?php for ( $i = 1; $i <= 5; $i++ ) : ?>
-        <span class="ml-testimonial__star<?php echo $i <= $rating ? ' ml-testimonial__star--filled' : ''; ?>"
-              aria-hidden="true">★</span>
+    <div class="ml-testimonial__stars"
+         role="img"
+         aria-label="<?php printf( esc_attr__( 'Bewertung: %d von 5 Sternen', 'media-lab-agency-core' ), $rating ); ?>">
+        <?php for ( $i = 1; $i <= 5; $i++ ) :
+            // ✅ WCAG 1.4.1: gefüllter (★) vs. leerer Stern (☆) – nicht nur Farbe
+            $filled = $i <= $rating;
+        ?>
+        <span class="ml-testimonial__star<?php echo $filled ? ' ml-testimonial__star--filled' : ''; ?>"
+              aria-hidden="true"><?php echo $filled ? '★' : '☆'; ?></span>
         <?php endfor; ?>
     </div>
     <?php endif; ?>

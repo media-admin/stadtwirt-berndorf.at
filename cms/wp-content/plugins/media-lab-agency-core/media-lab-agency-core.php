@@ -49,6 +49,7 @@ function medialab_core_init() {
 
     // Gutenberg Custom Blocks
     require_once MEDIALAB_CORE_PATH . 'inc/blocks.php';
+    require_once MEDIALAB_CORE_PATH . 'inc/acf-blocks.php';
 
     // Multi-Language (checks ACF toggle internally before activating)
     require_once MEDIALAB_CORE_PATH . 'inc/multi-language.php';

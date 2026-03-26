@@ -143,6 +143,18 @@ add_action( 'admin_init', function () {
     // Cron neu planen
     medialab_seo_reschedule_report();
 
+    // ── Bilder-Sitemap ────────────────────────────────────────────────────────────
+    update_option( 'medialab_image_sitemap_enabled',
+        isset( $_POST['image_sitemap_enabled'] ) ? true : false );
+
+    $post_types = isset( $_POST['image_sitemap_post_types'] )
+        ? array_map( 'sanitize_key', (array) $_POST['image_sitemap_post_types'] )
+        : [];
+    update_option( 'medialab_image_sitemap_post_types', $post_types );
+
+    // Rewrite-Rules flushen damit /wp-sitemap-images.xml erreichbar ist
+    flush_rewrite_rules( false );
+
     wp_redirect( admin_url( 'admin.php?page=medialab-seo-dashboard&settings_saved=1' ) );
     exit;
 } );
@@ -257,7 +269,7 @@ function medialab_seo_dashboard_page(): void {
         <?php medialab_dashboard_notices(); ?>
 
         <?php if ( ! $configured || ! $connected ) :
-            medialab_render_connect_panel( $configured, $client_id, $client_secret, $property_url );
+            medialab_render_connect_panel( $configured, $connected, $client_id, $client_secret, $property_url );
         else :
             medialab_render_kpis( $data );
             medialab_render_tables( $data );
@@ -282,21 +294,43 @@ function medialab_dashboard_notices(): void {
     if ( isset( $_GET['settings_saved'] ) )   echo '<div class="notice notice-success is-dismissible"><p>✅ Einstellungen gespeichert.</p></div>';
 }
 
-function medialab_render_connect_panel( bool $configured, string $client_id, string $client_secret, string $property_url ): void {
+/**
+ * Connect-Panel mit drei Zustandsebenen:
+ *  1. Noch gar nicht konfiguriert (Client ID leer)        → Anleitung
+ *  2. Ausgefüllt, aber ungültige Client ID (kein Suffix)  → Warnung + Anleitung
+ *  3. Korrekt konfiguriert, aber noch nicht verbunden     → OAuth-Button
+ */
+function medialab_render_connect_panel( bool $configured, bool $connected, string $client_id, string $client_secret, string $property_url ): void {
+    // Rohen Wert direkt aus wp_options lesen um den validierten Wert zu umgehen
+    $raw_client_id = get_option( 'medialab_gsc_client_id', '' );
+    $has_invalid_id = ! empty( $raw_client_id )
+                      && ! str_contains( $raw_client_id, '.apps.googleusercontent.com' );
     ?>
     <div class="ml-connect-panel">
         <div class="ml-connect-panel__icon">🔗</div>
         <h2>Google Search Console verbinden</h2>
         <p>Verbinde deine GSC-Property, um Klicks, Impressionen, Keywords und Top-Seiten direkt im WordPress-Backend zu sehen.</p>
 
-        <?php if ( $configured ) : ?>
+        <?php if ( $has_invalid_id ) : ?>
+            <div class="ml-notice ml-notice--error">
+                <strong>Ungültige Client ID.</strong><br>
+                Der eingetragene Wert <code><?php echo esc_html( $raw_client_id ); ?></code> ist keine gültige Google OAuth Client ID.<br>
+                Eine echte Client ID endet auf <code>.apps.googleusercontent.com</code>, z. B.:<br>
+                <code>123456789012-abcdefgh.apps.googleusercontent.com</code><br><br>
+                Bitte trage die korrekte Client ID unter <em>„Einstellungen"</em> weiter unten ein.
+            </div>
+        <?php elseif ( $configured ) : ?>
             <a href="<?php echo esc_url( medialab_gsc_auth_url() ); ?>" class="button button-primary button-hero">
                 Mit Google verbinden →
             </a>
-            <p class="description">Du wirst zu Google weitergeleitet. Nach der Genehmigung kehrst du automatisch zurück.</p>
+            <p class="description">
+                Du wirst zu Google weitergeleitet. Nach der Genehmigung kehrst du automatisch zurück.<br>
+                <strong>Redirect-URI</strong> (muss in der Google Cloud Console eingetragen sein):<br>
+                <code><?php echo esc_html( medialab_gsc_redirect_uri() ); ?></code>
+            </p>
         <?php else : ?>
             <div class="ml-notice ml-notice--warning">
-                <strong>Bitte trage zuerst deine Google API Zugangsdaten ein</strong> (Client ID + Secret). <br>
+                <strong>Bitte trage zuerst deine Google API Zugangsdaten ein</strong> (Client ID + Secret + Property URL).<br>
                 Anleitung weiter unten unter <em>„Einstellungen"</em>.
             </div>
         <?php endif; ?>
@@ -474,14 +508,21 @@ function medialab_render_settings_panel(
                     <h3>Google Search Console API</h3>
                     <p class="description">
                         Erstelle ein Projekt in der <a href="https://console.cloud.google.com/" target="_blank">Google Cloud Console</a>,
-                        aktiviere die <em>Search Console API</em> und erstelle OAuth2-Zugangsdaten (Typ: Webanwendung).<br>
-                        Autorisierte Redirect-URI: <code><?php echo esc_html( medialab_gsc_redirect_uri() ); ?></code>
+                        aktiviere die <em>Search Console API</em> und erstelle OAuth2-Zugangsdaten (Typ: Webanwendung).<br><br>
+                        Trage diese URI unter <strong>Autorisierte Weiterleitungs-URIs</strong> ein:<br>
+                        <code><?php echo esc_html( medialab_gsc_redirect_uri() ); ?></code>
                     </p>
 
                     <table class="form-table" role="presentation">
                         <tr>
                             <th><label for="gsc_client_id">Client ID</label></th>
-                            <td><input type="text" id="gsc_client_id" name="gsc_client_id" value="<?php echo esc_attr( $client_id ); ?>" class="regular-text" placeholder="1234567890-xxx.apps.googleusercontent.com"></td>
+                            <td>
+                                <input type="text" id="gsc_client_id" name="gsc_client_id"
+                                    value="<?php echo esc_attr( $client_id ); ?>"
+                                    class="regular-text"
+                                    placeholder="123456789012-abcdefgh.apps.googleusercontent.com">
+                                <p class="description">Endet immer auf <code>.apps.googleusercontent.com</code>.</p>
+                            </td>
                         </tr>
                         <tr>
                             <th><label for="gsc_client_secret">Client Secret</label></th>
@@ -639,6 +680,78 @@ function medialab_render_settings_panel(
                 </div>
 
             </div>
+
+            <!-- ── Bilder-Sitemap ──────────────────────────────────────────────────────── -->
+            <?php
+            $img_enabled    = (bool) get_option( 'medialab_image_sitemap_enabled', false );
+            $img_post_types = (array) get_option( 'medialab_image_sitemap_post_types', [] );
+            $all_post_types = get_post_types( [ 'public' => true ], 'objects' );
+            $sitemap_url    = home_url( '/wp-sitemap-images.xml' );
+            ?>
+
+            <div class="ml-settings-divider">
+                <span>🖼 Bilder-Sitemap <em>(für Google Bildersuche)</em></span>
+            </div>
+
+            <div class="ml-settings-section">
+                <p class="description">
+                    Erstellt eine separate Bilder-Sitemap unter
+                    <a href="<?php echo esc_url( $sitemap_url ); ?>" target="_blank">
+                        <code>/wp-sitemap-images.xml</code>
+                    </a>
+                    mit Hauptbild + Galerie-Bildern pro Post.
+                    Empfohlen für Shops mit visuellen Produkten (Mode, Möbel, Deko, Schmuck).
+                </p>
+
+                <table class="form-table" role="presentation">
+                    <tr>
+                        <th>Bilder-Sitemap aktivieren</th>
+                        <td>
+                            <label>
+                                <input type="checkbox"
+                                    name="image_sitemap_enabled"
+                                    value="1"
+                                    <?php checked( $img_enabled ); ?>>
+                                Bilder-Sitemap generieren
+                            </label>
+                            <?php if ( $img_enabled ) : ?>
+                                <p class="description" style="color:#10b981;margin-top:4px">
+                                    ✅ Aktiv –
+                                    <a href="<?php echo esc_url( $sitemap_url ); ?>" target="_blank">
+                                        Sitemap öffnen ↗
+                                    </a>
+                                    &nbsp;|&nbsp;
+                                    <a href="https://search.google.com/search-console/sitemaps" target="_blank" rel="noopener">
+                                        In Google Search Console eintragen ↗
+                                    </a>
+                                </p>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Post Types</th>
+                        <td>
+                            <?php foreach ( $all_post_types as $pt ) :
+                                if ( in_array( $pt->name, [ 'attachment' ], true ) ) continue;
+                            ?>
+                            <label style="display:block;margin-bottom:4px">
+                                <input type="checkbox"
+                                    name="image_sitemap_post_types[]"
+                                    value="<?php echo esc_attr( $pt->name ); ?>"
+                                    <?php checked( in_array( $pt->name, $img_post_types, true ) ); ?>>
+                                <?php echo esc_html( $pt->labels->name ); ?>
+                                <span style="color:#999;font-size:12px">(<?php echo esc_html( $pt->name ); ?>)</span>
+                            </label>
+                            <?php endforeach; ?>
+                            <p class="description">
+                                Bilder welcher Post Types sollen in der Sitemap erscheinen?<br>
+                                Gesammelt werden: Hauptbild, WooCommerce-Galerie, Gutenberg-Bild-Blöcke, ACF Bild-/Galerie-Felder.
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
 
             <p class="submit">
                 <input type="submit" name="medialab_gsc_save_settings" class="button button-primary" value="Einstellungen speichern">

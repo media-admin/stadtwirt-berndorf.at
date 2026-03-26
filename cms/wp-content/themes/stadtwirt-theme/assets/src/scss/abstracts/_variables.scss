@@ -39,6 +39,7 @@ $color-white:      #ffffff;
 // Aliase für Konsistenz (verweisen auf obige Tokens)
 $color-gray-900: $color-dark;
 $color-gray-700: $color-grey-dark;
+$color-gray-600: $color-grey-dark;
 $color-gray-400: $color-grey;
 $color-gray-200: $color-grey-light;
 $color-gray-100: #f0f0f0;  // Zwischen $color-grey-light und $color-light
@@ -109,10 +110,10 @@ $color-hero-gradient-dark:  #3958e3;  // darken($color-hero-gradient, 10%)
 //    Light Mode defaults – überschrieben durch CSS Custom Properties
 // ─────────────────────────────────────────────────────────────────
 
-$color-text:       $color-secondary;
+$color-text:       $color-light;
 $color-text-muted: $color-grey-dark;
-$color-text-light: $color-grey;
-$color-background: $color-white;
+$color-text-light: $color-grey-light;
+$color-background: $color-secondary;
 $color-border:     $color-grey-light;
 $color-surface:    $color-white;
 $color-card-bg:    $color-white;
@@ -132,17 +133,17 @@ $color-input-bg:   $color-white;
   --color-accent:         #{$color-accent};
 
   // Hintergrund & Oberflächen
-  --color-background:     #{$color-white};
-  --color-surface:        #{$color-white};
+  --color-background:     #{$color-background};
+  --color-surface:        #{$color-surface};
   --color-card-bg:        #{$color-white};
   --color-input-bg:       #{$color-white};
   --color-dark:           #{$color-dark};
   --color-light:          #{$color-light};
 
   // Text
-  --color-text:           #{$color-dark};
+  --color-text:           #{$color-text};
   --color-text-muted:     #{$color-grey-dark};
-  --color-text-light:     #{$color-grey};
+  --color-text-light:     #{$color-grey-light};
   --color-text-secondary: #{$color-grey-dark};   // Alias für --color-text-muted
 
   // Rahmen
@@ -211,8 +212,8 @@ $color-border:         var(--color-border);
 // 6. TYPOGRAPHY
 // ─────────────────────────────────────────────────────────────────
 
-$font-primary:   'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-$font-secondary: 'Merriweather', Georgia, serif;
+$font-primary:   'Work Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+$font-secondary: 'Blenda Script', 'Lobster', serif;
 
 // Fluid Font Scale (px)
 $font-size-xs:   12px;  // Figma: Text/XSmall
@@ -229,8 +230,8 @@ $font-size-7xl:  56px;
 
 // Heading Aliases
 $font-size-h1: $font-size-6xl;  // 48px
-$font-size-h2: 36px;
-$font-size-h3: $font-size-3xl;  // 28px
+$font-size-h2: $font-size-4xl;
+$font-size-h3: $font-size-xl;  // 28px
 $font-size-h4: $font-size-2xl;  // 24px
 $font-size-h5: $font-size-xl;   // 20px
 $font-size-h6: $font-size-lg;   // 18px
