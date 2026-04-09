@@ -13,8 +13,8 @@
 
 .testimonials {
   display: grid;
-  gap:     var(--space-xl);    // war: $spacing-6
-  margin:  var(--space-2xl) 0; // war: $spacing-8 0
+  gap:     var(--space-xl);    // war: $spacing-6 
+  margin:  var(--space-lg) 0; // war: $spacing-8 0
 
   &[data-columns="1"] { grid-template-columns: 1fr; }
 
@@ -46,6 +46,12 @@
   gap:            var(--space-xl);     // war: $spacing-6
   padding:        var(--space-xl) var(--space-2xl); // war: $spacing-6 $spacing-8
 
+  @media (max-width: #{$breakpoint-md - 1px}) {
+    flex-direction: column;
+    align-items: flex-start !important;
+  }
+
+
   // Avatar links
   &__image {
     flex-shrink:   0;
@@ -69,6 +75,7 @@
     display:        flex;
     flex-direction: column;
     gap:            $spacing-2;
+
   }
 
   // Header: Name links, Sterne rechts
@@ -77,6 +84,10 @@
     align-items:     flex-start;
     justify-content: space-between;
     gap:             $spacing-4;
+
+    @media (max-width: #{$breakpoint-md - 1px}) {
+      flex-direction: column;
+    }
   }
 
   &__meta {
@@ -140,6 +151,11 @@
     flex-direction: row;
     align-items:    center;
     gap:            var(--space-xl);
+
+    @media (max-width: #{$breakpoint-md - 1px}) {
+      flex-direction: column;
+      align-items: flex-start !important;
+    }
   }
 }
 
@@ -183,7 +199,7 @@
   display:         flex;
   justify-content: center;
   gap:             $spacing-2;
-  margin-top:      $spacing-4;
+  margin-top:      $spacing-1;
 
   .swiper-pagination-bullet {
     width:      10px;

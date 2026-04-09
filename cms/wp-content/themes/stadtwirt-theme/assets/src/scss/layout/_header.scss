@@ -31,6 +31,7 @@
     height:         initial;
     padding-top:    $spacing-2;
     padding-bottom: $spacing-2;
+    border-top: 12px solid $color-primary;
   }
 
   .container {
@@ -128,6 +129,19 @@
 // Logo – Desktop / Mobile Variante
 // ==========================================================================
 
+@include respond-below('md') {
+  .site-branding {
+    display: flex;
+    align-items: center;
+    gap: $spacing-4;
+    min-height: 220px;
+  }
+  
+  .site-main {
+    top: 0;
+  }
+}
+
 .site-logo {
   display:          inline-flex;
   align-items:      center;
@@ -152,7 +166,7 @@
       display:    block;
       width:      auto;        // Bugfix: kein Strecken
       height:     auto;
-      max-height: 80px;
+      max-height: 150px;
       max-width:  160px;
       object-fit: contain;
     }

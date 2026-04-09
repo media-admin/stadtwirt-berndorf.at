@@ -1,229 +1,193 @@
 <?php
 /**
- * Drag & Drop Post Order
+ * Post & Term Order
+ * Drag & Drop Sortierung für Posts (via menu_order) und Taxonomien (via term_meta).
+ * Kein externes Plugin nötig – nutzt jQuery UI Sortable (in WP enthalten).
  *
- * Ermöglicht das Sortieren von Posts, Pages und allen CPTs
- * per Drag & Drop in der WP-Admin-Listenansicht.
- *
- * Sortierung wird in wp_posts.menu_order gespeichert →
- * kompatibel mit orderby=menu_order in WP_Query.
+ * @package Media Lab Agency Core
+ * @version 1.5.4
  */
+if (!defined('ABSPATH')) { exit; }
 
-if (!defined('ABSPATH')) exit;
+// =============================================================================
+// POST ORDER
+// menu_order für alle öffentlichen CPTs aktivieren
+// =============================================================================
 
-class MediaLab_Post_Order {
-
-    // Post Types die sortierbar sein sollen
-    // 'post' und 'page' + alle eigenen CPTs
-    private $sortable_types = array(
-        'post', 'page',
-        'hero_slide', 'team', 'project', 'testimonial',
-        'faq', 'gmap', 'carousel', 'service',
-        'event', 'job', 'notification',
-    );
-
-    public function __construct() {
-        add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_action('wp_ajax_medialab_update_post_order', array($this, 'ajax_update_order'));
-
-        // Standardmäßig nach menu_order sortieren in Admin-Listen
-        add_action('pre_get_posts', array($this, 'default_order_in_admin'));
-
-        // menu_order als Standard für Frontend-Queries der CPTs
-        add_action('pre_get_posts', array($this, 'default_order_in_frontend'));
+add_action('init', function() {
+    $post_types = get_post_types(['show_ui' => true, 'public' => true], 'names');
+    foreach ($post_types as $post_type) {
+        if (in_array($post_type, ['attachment', 'page'])) continue;
+        add_post_type_support($post_type, 'page-attributes');
     }
+}, 20);
 
-    /**
-     * Skripte nur auf Post-Listen-Seiten laden
-     */
-    public function enqueue_scripts($hook) {
-        if ($hook !== 'edit.php') return;
+// Frontend: nach menu_order sortieren
+add_action('pre_get_posts', function(WP_Query $query) {
+    if (is_admin() || !$query->is_main_query()) return;
+    if ($query->get('orderby') === '' && $query->get('post_type') !== 'post') {
+        $query->set('orderby', 'menu_order');
+        $query->set('order', 'ASC');
+    }
+});
 
-        $post_type = $_GET['post_type'] ?? 'post';
-        if (!in_array($post_type, $this->sortable_types)) return;
+// AJAX: Post-Reihenfolge speichern
+add_action('wp_ajax_medialab_save_post_order', function() {
+    check_ajax_referer('medialab_post_order', 'nonce');
+    if (!current_user_can('edit_posts')) {
+        wp_send_json_error('Unauthorized');
+    }
+    $order = isset($_POST['order']) ? (array)$_POST['order'] : [];
+    foreach ($order as $menu_order => $post_id) {
+        wp_update_post(['ID' => (int)$post_id, 'menu_order' => (int)$menu_order]);
+    }
+    wp_send_json_success();
+});
 
-        wp_enqueue_script('jquery-ui-sortable');
-        wp_enqueue_script(
-            'medialab-post-order',
-            MEDIALAB_CORE_URL . 'assets/js/post-order.js',
-            array('jquery', 'jquery-ui-sortable'),
-            MEDIALAB_CORE_VERSION,
-            true
-        );
-        wp_localize_script('medialab-post-order', 'medialabPostOrder', array(
-            'ajaxUrl'   => admin_url('admin-ajax.php'),
-            'nonce'     => wp_create_nonce('medialab_post_order'),
-            'postType'  => $post_type,
-            'i18n'      => array(
-                'saving'  => __('Speichern...', 'media-lab-core'),
-                'saved'   => __('Reihenfolge gespeichert', 'media-lab-core'),
-                'error'   => __('Fehler beim Speichern', 'media-lab-core'),
-            ),
+// =============================================================================
+// TERM ORDER
+// Reihenfolge in term_meta 'term_order' speichern
+// =============================================================================
+
+/**
+ * Term-Reihenfolge auslesen – Hilfsfunktion für Templates.
+ * Nutzung in get_terms(): 'orderby' => 'meta_value_num', 'meta_key' => 'term_order'
+ * Oder: speisekarte_get_terms_ordered($taxonomy, $args)
+ */
+function medialab_get_terms_ordered(string $taxonomy, array $args = []): array {
+    $defaults = [
+        'taxonomy'   => $taxonomy,
+        'hide_empty' => true,
+        'orderby'    => 'meta_value_num',
+        'order'      => 'ASC',
+        'meta_key'   => 'term_order',
+        'meta_query' => [[
+            'key'     => 'term_order',
+            'compare' => 'EXISTS',
+        ]],
+    ];
+
+    $terms = get_terms(wp_parse_args($args, $defaults));
+
+    // Fallback: Terms ohne term_order hinten anhängen (alphabetisch)
+    if (!is_wp_error($terms)) {
+        $unordered = get_terms(array_merge(
+            wp_parse_args($args, ['taxonomy' => $taxonomy, 'hide_empty' => true, 'orderby' => 'name']),
+            [
+                'meta_query' => [[
+                    'key'     => 'term_order',
+                    'compare' => 'NOT EXISTS',
+                ]],
+                'exclude' => array_column(is_array($terms) ? $terms : [], 'term_id'),
+            ]
         ));
-
-        wp_enqueue_style(
-            'medialab-post-order',
-            MEDIALAB_CORE_URL . 'assets/css/post-order.css',
-            array(),
-            MEDIALAB_CORE_VERSION
-        );
-    }
-
-    /**
-     * AJAX: Reihenfolge in DB speichern
-     */
-    public function ajax_update_order() {
-        check_ajax_referer('medialab_post_order', 'nonce');
-
-        if (!current_user_can('edit_posts')) {
-            wp_send_json_error('Keine Berechtigung', 403);
-        }
-
-        $order = $_POST['order'] ?? array();
-        if (empty($order) || !is_array($order)) {
-            wp_send_json_error('Keine Daten');
-        }
-
-        global $wpdb;
-        foreach ($order as $position => $post_id) {
-            $post_id  = absint($post_id);
-            $position = absint($position);
-            if (!$post_id) continue;
-
-            $wpdb->update(
-                $wpdb->posts,
-                array('menu_order' => $position),
-                array('ID' => $post_id),
-                array('%d'),
-                array('%d')
-            );
-        }
-
-        wp_send_json_success('OK');
-    }
-
-    /**
-     * Admin-Listen standardmäßig nach menu_order sortieren
-     */
-    public function default_order_in_admin($query) {
-        if (!is_admin() || !$query->is_main_query()) return;
-
-        $post_type = $query->get('post_type') ?: 'post';
-        if (!in_array($post_type, $this->sortable_types)) return;
-
-        // Nur wenn noch kein explizites Sorting gesetzt
-        if (!$query->get('orderby')) {
-            $query->set('orderby', 'menu_order');
-            $query->set('order', 'ASC');
+        if (!is_wp_error($unordered) && !empty($unordered)) {
+            $terms = array_merge(is_array($terms) ? $terms : [], $unordered);
         }
     }
 
-    /**
-     * Frontend-Queries der CPTs auf menu_order umstellen
-     */
-    public function default_order_in_frontend($query) {
-        if (is_admin() || !$query->is_main_query()) return;
-
-        $post_type = $query->get('post_type');
-        $custom_types = array_diff($this->sortable_types, array('post', 'page'));
-
-        if (in_array($post_type, $custom_types) && !$query->get('orderby')) {
-            $query->set('orderby', 'menu_order');
-            $query->set('order', 'ASC');
-        }
-    }
+    return is_array($terms) ? $terms : [];
 }
 
-new MediaLab_Post_Order();
-
-
-// ==========================================================================
-// Taxonomy Term Order
-// ==========================================================================
-
-class MediaLab_Term_Order {
-
-    private $meta_key = 'medialab_term_order';
-
-    private $supported_taxonomies = array(
-        'category', 'post_tag',
-        'project_category', 'service_category', 'faq_category',
-        'event_category', 'job_category', 'job_type', 'job_location',
-        'carousel_category',
-    );
-
-    public function __construct() {
-        add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_action('wp_ajax_medialab_update_term_order', array($this, 'ajax_update_order'));
-
-        // Terms nach medialab_term_order sortieren
-        add_filter('terms_clauses', array($this, 'order_terms_by_meta'), 10, 3);
+// AJAX: Term-Reihenfolge speichern
+add_action('wp_ajax_medialab_save_term_order', function() {
+    check_ajax_referer('medialab_term_order', 'nonce');
+    if (!current_user_can('manage_categories')) {
+        wp_send_json_error('Unauthorized');
     }
-
-    public function enqueue_scripts($hook) {
-        if ($hook !== 'edit-tags.php') return;
-
-        $taxonomy = $_GET['taxonomy'] ?? '';
-        if (!in_array($taxonomy, $this->supported_taxonomies)) return;
-
-        wp_enqueue_script('jquery-ui-sortable');
-        wp_enqueue_script(
-            'medialab-term-order',
-            MEDIALAB_CORE_URL . 'assets/js/post-order.js',
-            array('jquery', 'jquery-ui-sortable'),
-            MEDIALAB_CORE_VERSION,
-            true
-        );
-        wp_localize_script('medialab-term-order', 'medialabPostOrder', array(
-            'ajaxUrl'  => admin_url('admin-ajax.php'),
-            'nonce'    => wp_create_nonce('medialab_term_order'),
-            'mode'     => 'term',
-            'taxonomy' => $taxonomy,
-            'i18n'     => array(
-                'saving' => __('Speichern...', 'media-lab-core'),
-                'saved'  => __('Reihenfolge gespeichert', 'media-lab-core'),
-                'error'  => __('Fehler beim Speichern', 'media-lab-core'),
-            ),
-        ));
-
-        wp_enqueue_style('medialab-post-order', MEDIALAB_CORE_URL . 'assets/css/post-order.css', array(), MEDIALAB_CORE_VERSION);
+    $order = isset($_POST['order']) ? (array)$_POST['order'] : [];
+    foreach ($order as $position => $term_id) {
+        update_term_meta((int)$term_id, 'term_order', (int)$position);
     }
+    wp_send_json_success();
+});
 
-    public function ajax_update_order() {
-        check_ajax_referer('medialab_term_order', 'nonce');
+// =============================================================================
+// ADMIN: Drag & Drop UI für Post-Listen und Term-Listen
+// =============================================================================
 
-        if (!current_user_can('manage_categories')) {
-            wp_send_json_error('Keine Berechtigung', 403);
+add_action('admin_enqueue_scripts', function(string $hook) {
+    if (!in_array($hook, ['edit.php', 'edit-tags.php'])) return;
+
+    wp_enqueue_script('jquery-ui-sortable');
+
+    $nonce_post = wp_create_nonce('medialab_post_order');
+    $nonce_term = wp_create_nonce('medialab_term_order');
+
+    wp_add_inline_script('jquery-ui-sortable', '
+    jQuery(function($) {
+
+        // ── POST LIST ───────────────────────────────────────────────────────
+        var postList = $("#the-list");
+        if (postList.length && postList.find("tr[id^=post-]").length) {
+            postList.sortable({
+                items: "tr",
+                axis: "y",
+                cursor: "grab",
+                placeholder: "medialab-sort-placeholder",
+                helper: function(e, tr) {
+                    tr.children().each(function() { $(this).width($(this).width()); });
+                    return tr;
+                },
+                start: function(e, ui) {
+                    ui.placeholder.height(ui.item.height());
+                    ui.placeholder.html("<td colspan=\"20\"></td>");
+                },
+                stop: function() {
+                    var order = {};
+                    postList.find("tr[id^=post-]").each(function(i) {
+                        var id = $(this).attr("id").replace("post-", "");
+                        order[i] = id;
+                    });
+                    $.post(ajaxurl, {
+                        action: "medialab_save_post_order",
+                        nonce: "' . $nonce_post . '",
+                        order: order
+                    });
+                }
+            });
+            postList.find("tr").css("cursor", "grab");
         }
 
-        $order = $_POST['order'] ?? array();
-        if (empty($order) || !is_array($order)) {
-            wp_send_json_error('Keine Daten');
+        // ── TERM LIST ───────────────────────────────────────────────────────
+        var termList = $("#the-list");
+        if (termList.length && termList.find("tr[id^=tag-]").length) {
+            termList.sortable({
+                items: "tr",
+                axis: "y",
+                cursor: "grab",
+                placeholder: "medialab-sort-placeholder",
+                helper: function(e, tr) {
+                    tr.children().each(function() { $(this).width($(this).width()); });
+                    return tr;
+                },
+                start: function(e, ui) {
+                    ui.placeholder.height(ui.item.height());
+                    ui.placeholder.html("<td colspan=\"20\"></td>");
+                },
+                stop: function() {
+                    var order = {};
+                    termList.find("tr[id^=tag-]").each(function(i) {
+                        var id = $(this).attr("id").replace("tag-", "");
+                        order[i] = id;
+                    });
+                    $.post(ajaxurl, {
+                        action: "medialab_save_term_order",
+                        nonce: "' . $nonce_term . '",
+                        order: order
+                    });
+                }
+            });
+            termList.find("tr").css("cursor", "grab");
         }
 
-        foreach ($order as $position => $term_id) {
-            update_term_meta(absint($term_id), $this->meta_key, absint($position));
-        }
+    });
+    ');
 
-        wp_send_json_success('OK');
-    }
-
-    public function order_terms_by_meta($clauses, $taxonomies, $args) {
-        // Nur wenn explizit nach term_order sortiert werden soll
-        // oder wenn es eine unserer Taxonomien ohne explizites orderby ist
-        if (!empty($args['orderby']) && $args['orderby'] !== 'medialab_order') {
-            return $clauses;
-        }
-
-        $relevant = array_intersect((array) $taxonomies, $this->supported_taxonomies);
-        if (empty($relevant)) return $clauses;
-
-        global $wpdb;
-        $clauses['join']   .= " LEFT JOIN {$wpdb->termmeta} AS tm_order ON (t.term_id = tm_order.term_id AND tm_order.meta_key = 'medialab_term_order')";
-        $clauses['orderby'] = 'ORDER BY CAST(IFNULL(tm_order.meta_value, 999999) AS UNSIGNED) ASC, t.name ASC';
-
-        return $clauses;
-    }
-}
-
-new MediaLab_Term_Order();
+    wp_add_inline_style('list-tables', '
+        .medialab-sort-placeholder td { background: #f0f6fc; }
+        #the-list tr:hover { background: #f6f7f7; }
+        #the-list tr { cursor: grab; }
+        #the-list tr:active { cursor: grabbing; }
+    ');
+});

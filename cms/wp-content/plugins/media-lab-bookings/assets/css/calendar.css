@@ -1,0 +1,142 @@
+/* ==========================================================================
+   Media Lab Bookings – Kalenderansicht
+   ========================================================================== */
+
+.mlb-calendar-wrap { max-width: 1200px; }
+
+/* ── Toolbar ─────────────────────────────────────────────────────────────── */
+.mlb-cal-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 16px 0;
+}
+.mlb-cal-nav { display: flex; align-items: center; gap: 8px; }
+.mlb-cal-title { font-size: 1.25rem; font-weight: 700; min-width: 180px; text-align: center; }
+.mlb-cal-filter select { padding: 5px 8px; }
+
+/* ── Legende ─────────────────────────────────────────────────────────────── */
+.mlb-cal-legend { display: flex; gap: 16px; align-items: center; margin-bottom: 12px; font-size: 13px; color: #555; }
+.mlb-cal-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.mlb-cal-dot--pending   { background: #f0ad00; }
+.mlb-cal-dot--confirmed { background: #00a32a; }
+.mlb-cal-dot--cancelled { background: #d63638; }
+
+/* ── Tabelle ─────────────────────────────────────────────────────────────── */
+.mlb-cal-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    background: #fff;
+    border: 1px solid #e2e4e7;
+    border-radius: 6px;
+    overflow: hidden;
+}
+.mlb-cal-table th {
+    background: #f6f7f7;
+    padding: 10px 8px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: #666;
+    border-bottom: 1px solid #e2e4e7;
+}
+
+/* ── Zellen ──────────────────────────────────────────────────────────────── */
+.mlb-cal-cell {
+    vertical-align: top;
+    padding: 6px 8px;
+    height: 110px;
+    border: 1px solid #f0f0f0;
+    transition: background .1s;
+}
+.mlb-cal-cell--empty    { background: #fafafa; }
+.mlb-cal-cell--today    { background: #f0f6ff; }
+.mlb-cal-cell--has-bookings { cursor: pointer; }
+.mlb-cal-cell--has-bookings:hover { background: #f6f7f7; }
+
+.mlb-cal-day-number {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 4px;
+}
+.mlb-cal-cell--today .mlb-cal-day-number {
+    background: #0073aa;
+    color: #fff;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}
+
+/* ── Buchungseinträge in Zelle ───────────────────────────────────────────── */
+.mlb-cal-bookings { display: flex; flex-direction: column; gap: 2px; }
+.mlb-cal-booking {
+    font-size: 11px;
+    padding: 2px 5px;
+    border-radius: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.4;
+}
+.mlb-cal-booking--pending   { background: #fff3cd; color: #7a5000; }
+.mlb-cal-booking--confirmed { background: #d4edda; color: #155724; }
+.mlb-cal-booking--cancelled { background: #f8d7da; color: #721c24; text-decoration: line-through; }
+
+.mlb-cal-booking-time { font-weight: 700; }
+
+/* ── Popup ───────────────────────────────────────────────────────────────── */
+.mlb-cal-popup {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.5);
+    z-index: 99998;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+.mlb-cal-popup[hidden] { display: none; }
+
+.mlb-cal-popup__inner {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0,0,0,.2);
+    max-width: 800px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: 24px;
+    position: relative;
+}
+.mlb-cal-popup__close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #666;
+    line-height: 1;
+    padding: 4px 8px;
+}
+.mlb-cal-popup__close:hover { color: #000; }
+.mlb-cal-popup__table { margin-top: 12px; }
+.mlb-cal-popup__content h3 { margin-top: 0; }
+
+/* ── Badges (wiederverwendet aus admin.php inline) ───────────────────────── */
+.mlb-badge { display:inline-block;padding:3px 8px;border-radius:3px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px; }
+.mlb-badge--pending   { background:#fff3cd;color:#856404; }
+.mlb-badge--confirmed { background:#d4edda;color:#155724; }
+.mlb-badge--cancelled { background:#f8d7da;color:#721c24; }

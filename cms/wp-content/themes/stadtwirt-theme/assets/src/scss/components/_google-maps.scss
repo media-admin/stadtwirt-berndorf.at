@@ -1,107 +1,171 @@
 @use '../abstracts' as *;
 
-// ============================================
-// GOOGLE MAPS (DSGVO)
-// ============================================
+// =============================================================================
+// Google Maps – API-basierte Implementierung (DSGVO-konform)
+// =============================================================================
 
-.google-map-wrapper {
-  position: relative;
-  width: 100%;
-  border-radius: $radius-none; // $radius-lg
-  overflow: hidden;
-  background: $color-gray-100;
+.google-map {
+    position:      relative;
+    width:         100%;
+    height:        var(--map-height, 450px);
+    border-radius: $radius-none;
+    overflow:      hidden;
+    background:    $color-gray-100;
 }
 
-.google-map-canvas {
-  width: 100%;
-  height: 100%;
+.google-map--fullwidth {
+    width:       100vw;
+    margin-left: calc(50% - 50vw);
 }
 
-// DSGVO Overlay
-.google-map-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba($color-white, 0.98);
-  backdrop-filter: blur(10px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-  transition: opacity 0.3s ease;
-  
-  &__content {
+.google-map__canvas {
+    width:  100%;
+    height: 100%;
+}
+
+.google-map__placeholder {
+    position:        absolute;
+    inset:           0;
+    display:         flex;
+    align-items:     center;
+    justify-content: center;
+    background:      rgba($color-secondary, 0.97);
+    backdrop-filter: blur(8px);
+    z-index:         10;
+    transition:      opacity 0.3s ease;
+}
+
+.google-map__placeholder-inner {
     text-align: center;
-    max-width: 500px;
-    padding: 2rem;
-  }
-  
-  &__icon {
-    color: $color-primary;
-    margin-bottom: 1.5rem;
-    
-    svg {
-      width: 64px;
-      height: 64px;
-    }
-  }
-  
-  &__title {
-    font-size: $font-size-2xl;
-    font-weight: $font-weight-bold;
-    margin-bottom: 1rem;
-    color: $color-text;
-  }
-  
-  &__text {
-    font-size: $font-size-base;
-    line-height: 1.6;
-    color: $color-text-muted;
-    margin-bottom: 1.5rem;
-    
-    a {
-      color: $color-primary;
-      text-decoration: underline;
-      
-      &:hover {
-        color: $color-primary-dark;
-      }
-    }
-  }
-  
-  &__address {
-    padding: 1rem;
-    background: $color-gray-50;
-    border-radius: $radius-base;
-    margin-bottom: 1.5rem;
-    font-size: $font-size-sm;
-    color: $color-text-muted;
-    
-    strong {
-      color: $color-text;
-    }
-  }
-  
-  &__button {
+    max-width:  480px;
+    padding:    $spacing-8 $spacing-6;
+}
+
+.google-map__placeholder-icon {
+    color:         $color-primary;
+    margin: 10% auto;
+    width:         48px;
+    height:        48px;
+}
+
+.google-map__placeholder-title {
+    font-size:     $font-size-xl;
+    font-weight:   $font-weight-semibold;
+    color:         var(--color-light);
+    margin-bottom: $spacing-3;
+}
+
+.google-map__placeholder-text {
+    font-size:     $font-size-sm;
+    line-height:   1.6;
+    color:         var(--color-light);
+    margin-bottom: $spacing-6;
+}
+
+.google-map__placeholder-btn {
     @include btn-base;
     @include btn-primary;
-    @include btn-lg;
-  }
-  
-  &__privacy {
-    margin-top: 1rem;
+    margin-bottom: $spacing-3;
+}
+
+.google-map__placeholder-hint {
+    margin:    0;
     font-size: $font-size-xs;
-    color: $color-text-muted;
-    
-    a {
-      color: $color-text-muted;
-      text-decoration: underline;
-      
-      &:hover {
-        color: $color-text;
-      }
+    color:     var(--color-light);
+}
+
+.google-map__placeholder-settings-link {
+    background:      none;
+    border:          none;
+    padding:         0;
+    color:           var(--color-light);
+    font-size:       $font-size-xs;
+    text-decoration: underline;
+    cursor:          pointer;
+
+    &:hover { color: var(--color-light); }
+}
+
+// ── Directions UI ─────────────────────────────────────────────────────────────
+
+.google-map__directions {
+    margin-top: $spacing-3;
+}
+
+.google-map__directions-inner {
+    display:        flex;
+    flex-direction: column;
+    gap:            $spacing-2;
+}
+
+.google-map__directions-input-wrap {
+    display:   flex;
+    gap:       $spacing-2;
+    flex-wrap: wrap;
+}
+
+.google-map__directions-input {
+    flex:       1;
+    min-width:  220px;
+    height:     48px;
+    padding:    $spacing-1 $spacing-2;
+    border:     1px solid var(--color-border);
+    background: none;
+    color:      var(--color-light);
+    font-size:  $font-size-base;
+    font-family: inherit;
+
+    &::placeholder { color: var(--color-text-muted); opacity: 0.7; }
+
+    &:focus {
+        outline:      none;
+        border-color: $color-primary;
+        box-shadow:   0 0 0 4px rgba($color-primary, 0.12);
     }
-  }
+}
+
+.google-map__directions-btn {
+    @include btn-base;
+    @include btn-primary;
+    height:      48px;
+    flex-shrink: 0;
+    border-radius: $radius-none;
+}
+
+.google-map__directions-error {
+    font-size:  $font-size-sm;
+    color:      $color-error;
+    padding:    $spacing-1 0;
+}
+
+.google-map__directions-fallback {
+    font-size:       $font-size-sm;
+    color:           var(--color-light);
+    text-decoration: underline;
+    align-self:      flex-start;
+
+    &:hover { color: var(--color-light); }
+}
+
+// Google Places Autocomplete Dropdown
+.pac-container {
+    border:        1px solid var(--color-border);
+    border-radius: $radius-none;
+    background:    $color-secondary;
+    box-shadow:    $shadow-lg;
+    font-family:   inherit;
+
+    .pac-item {
+        padding:   $spacing-2 $spacing-3;
+        font-size: $font-size-sm;
+        color:     var(--color-text);
+        cursor:    pointer;
+        border-top: 1px solid var(--color-border);
+
+        &:hover,
+        &.pac-item-selected { background: var(--color-hover-bg); }
+    }
+
+    .pac-item-query { color: var(--color-light); }
+    .pac-matched    { font-weight: $font-weight-semibold; }
 }

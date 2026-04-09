@@ -1,0 +1,70 @@
+@use '../abstracts' as *;
+
+// =============================================================================
+// Forms – Globale Basis-Styles & Mixin
+// =============================================================================
+//
+// @mixin field-base  →  wird in _contact-form-7.scss, _fluentform.scss
+//                       und _bookings.scss per @include verwendet.
+//
+// Die globalen Selektoren hier greifen als Fallback für alle anderen
+// Formulare (z.B. WordPress-Core, WooCommerce, Plugins ohne eigene Wrapper).
+// =============================================================================
+
+// ── Globaler Mixin (wiederverwendbar in allen Form-Partials) ──────────────────
+
+@mixin field-base {
+    width:         100%;
+    padding:       $spacing-1 $spacing-1;
+    border:        1px solid var(--color-border);
+    border-radius: $radius-none;
+    background:    none;
+    color:         var(--color-light);
+    font-family:   inherit;
+    font-size:     $font-size-base;
+    line-height:   1.25;
+    transition:    border-color $transition-base, box-shadow $transition-base, background $transition-base;
+    appearance:    none;
+
+    &::placeholder {
+        color:   var(--color-text-muted);
+        opacity: 0.7;
+    }
+
+    &:hover:not(:focus):not(:disabled) {
+        border-color: var(--color-primary);
+    }
+
+    &:focus {
+        outline:      none;
+        border-color: $color-primary;
+        box-shadow:   0 0 0 4px rgba($color-primary, 0.12);
+    }
+
+    &:disabled {
+        opacity:    0.5;
+        cursor:     not-allowed;
+        background: var(--color-hover-bg);
+    }
+}
+
+// ── Fallback: globale Felder (ohne spezifischen Wrapper) ─────────────────────
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="url"],
+input[type="number"],
+input[type="date"],
+input[type="time"],
+input[type="search"],
+textarea,
+select {
+    background:   var(--color-surface);
+    color:        var(--color-text);
+    border-color: var(--color-border);
+
+    &:focus {
+        border-color: $color-primary;
+    }
+}

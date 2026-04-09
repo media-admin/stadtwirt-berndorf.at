@@ -24,7 +24,7 @@
     &__ornament {
         display:         flex;
         justify-content: center;
-        padding:         $spacing-6 0 0;
+        padding:         $spacing-3 0 0;
     }
 
     // ── Hauptbereich: 4 Spalten ───────────────────────────────────────────────
@@ -43,6 +43,13 @@
         @include respond-below('sm') {          // war: @media (max-width: 599px)
             grid-template-columns: 1fr;
             gap: $spacing-6;
+        }
+        
+    }
+
+    @include respond-below('md') {
+        .site-footer__inner {
+            justify-items: center;
         }
     }
 
@@ -130,6 +137,13 @@
         .current-menu-item > a,
         .current_page_item > a { color: $color-primary; }
     }
+
+    @include respond-below('md') {
+        .site-footer__nav-list {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+    
 
     // ── Spalte 4: Social + Legal ──────────────────────────────────────────────
     &__aside {

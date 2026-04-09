@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Plugins - Contact Form 7 - Stable (latest release) package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2026-02-20 12:33:20+0000\n"
+"PO-Revision-Date: 2026-04-05 02:28:42+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1536,7 +1536,7 @@ msgstr "Formular-Tag-Generator: %s"
 
 #: admin/includes/help-tabs.php:97
 msgid "For more information:"
-msgstr "Für weitere Informationen:"
+msgstr "Weitere Informationen:"
 
 #: admin/includes/help-tabs.php:89
 msgid "Any information you provide will not be shared with service providers without your authorization."

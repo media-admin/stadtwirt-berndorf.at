@@ -33,6 +33,23 @@ body {
   }
 }
 
+
+@include respond-below('md') {
+    .site-main {
+      flex: 1;
+      position: relative;
+      top: 0px;
+
+      & .container {
+        @include container;
+        padding-left: var(--container-padding);
+        padding-right: var(--container-padding);
+        // background-color: $color-background;
+      }
+    }
+  }
+
+
 .container {
   @include container;
 }
@@ -71,14 +88,38 @@ a {
     font-size: $font-size-5xl;
     font-weight: $font-weight-semibold;
     color: $color-accent;
-    margin-top: $spacing-6;
-    padding-top: $spacing-2xl;
+    margin-top: $spacing-lg;
+    padding-top: $spacing-xl;
+}
+
+@include respond-below('md') {
+  .callout {
+    font-size: $font-size-2xl;
+    margin-top: $spacing-md;
+    padding-top: $spacing-lg;
+  }
 }
 
 
 .callout--light {
     font-weight: $font-weight-normal;
 }
+
+
+.callout--special {
+  font-family: $font-secondary;
+  font-size: $font-size-4xl;
+  line-height: $font-size-6xl;
+  color: $color-light;
+  margin-top: $spacing-sm;
+}
+
+
+.callout--special strong {
+  font-size: $font-size-6xl;
+  color: $color-primary;
+}
+
 
 
 .wp-block-quote {

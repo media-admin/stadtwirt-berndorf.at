@@ -16,7 +16,6 @@
 
 <?php
 // ── Scroll Progress Bar ───────────────────────────────────────────────────
-// Nur auf Einzelbeitrags-Seiten (single.php), per ACF ein-/ausschaltbar
 if ( function_exists('get_field') && get_field('scroll_progress_enabled', 'option') && is_single() ) : ?>
 <div
     class="scroll-progress"
@@ -29,9 +28,16 @@ if ( function_exists('get_field') && get_field('scroll_progress_enabled', 'optio
 <?php endif; ?>
 
 <?php
+// ── Logo-Variablen (werden in Header UND Mobile Menu verwendet) ───────────
+$logo_desktop       = function_exists('get_field') ? get_field('logo_desktop', 'option')       : null;
+$logo_mobile        = function_exists('get_field') ? get_field('logo_mobile', 'option')        : null;
+$logo_desktop_width = function_exists('get_field') ? get_field('logo_desktop_width', 'option') : 180;
+$logo_mobile_width  = function_exists('get_field') ? get_field('logo_mobile_width', 'option')  : 120;
+?>
+
+<?php
 /**
- * Top Header (über dem Main Header)
- * Wird nur ausgegeben, wenn in Agency Core Settings aktiviert.
+ * Top Header
  */
 if (function_exists('get_field') && get_field('top_header_enable', 'option')) :
     $th_address = get_field('top_header_address', 'option');
@@ -122,54 +128,40 @@ if (function_exists('get_field') && get_field('top_header_enable', 'option')) :
     <div class="site-header__inner container site-branding">
         <!-- Logo -->
         <a href="<?php echo esc_url(home_url('/')); ?>" class="site-logo" aria-label="<?php bloginfo('name'); ?>">
-            <?php
-            $logo_desktop       = function_exists('get_field') ? get_field('logo_desktop', 'option')       : null;
-            $logo_mobile        = function_exists('get_field') ? get_field('logo_mobile', 'option')        : null;
-            $logo_desktop_width = function_exists('get_field') ? get_field('logo_desktop_width', 'option') : 180;
-            $logo_mobile_width  = function_exists('get_field') ? get_field('logo_mobile_width', 'option')  : 120;
-
-            if ($logo_desktop) :
-                // Desktop-Logo (immer angezeigt, auf Mobile ggf. via CSS ausgeblendet)
-                echo '<img src="' . esc_url($logo_desktop['url']) . '"'
-                    . ' alt="' . esc_attr($logo_desktop['alt'] ?: get_bloginfo('name')) . '"'
-                    . ' width="' . esc_attr($logo_desktop_width) . '"'
-                    . ' class="site-logo__img site-logo__img--desktop"'
-                    . ' loading="eager">';
-
-                // Mobiles Logo (nur wenn ein separates hochgeladen wurde)
-                if ($logo_mobile) :
-                    echo '<img src="' . esc_url($logo_mobile['url']) . '"'
-                        . ' alt="' . esc_attr($logo_mobile['alt'] ?: get_bloginfo('name')) . '"'
-                        . ' width="' . esc_attr($logo_mobile_width) . '"'
-                        . ' class="site-logo__img site-logo__img--mobile"'
-                        . ' loading="eager">';
-                endif;
-
-            else :
-                // Fallback: Seitenname als Text
-                echo '<span class="site-logo__text">' . esc_html(get_bloginfo('name')) . '</span>';
-            endif;
-            ?>
+            <?php if ($logo_desktop) : ?>
+                <img src="<?php echo esc_url($logo_desktop['url']); ?>"
+                     alt="<?php echo esc_attr($logo_desktop['alt'] ?: get_bloginfo('name')); ?>"
+                     width="<?php echo esc_attr($logo_desktop_width); ?>"
+                     class="site-logo__img site-logo__img--desktop"
+                     loading="eager">
+                <?php if ($logo_mobile) : ?>
+                    <img src="<?php echo esc_url($logo_mobile['url']); ?>"
+                         alt="<?php echo esc_attr($logo_mobile['alt'] ?: get_bloginfo('name')); ?>"
+                         width="<?php echo esc_attr($logo_mobile_width); ?>"
+                         class="site-logo__img site-logo__img--mobile"
+                         loading="eager">
+                <?php endif; ?>
+            <?php else : ?>
+                <span class="site-logo__text"><?php echo esc_html(get_bloginfo('name')); ?></span>
+            <?php endif; ?>
         </a>
-
     </div>
 
-
     <nav class="site-navigation" role="navigation" aria-label="Primary Navigation">
-        
+
         <!-- Desktop Menu -->
         <div class="primary-menu">
             <?php
             wp_nav_menu(array(
                 'theme_location' => 'primary',
-                'container' => false,
-                'menu_class' => '',
-                'fallback_cb' => false,
-                'depth' => 4, // 4 levels
+                'container'      => false,
+                'menu_class'     => '',
+                'fallback_cb'    => false,
+                'depth'          => 4,
             ));
             ?>
         </div>
-        
+
         <!-- Mobile Toggle -->
         <button class="mobile-menu-toggle" aria-label="Toggle Menu" aria-expanded="false">
             <span></span>
@@ -179,13 +171,38 @@ if (function_exists('get_field') && get_field('top_header_enable', 'option')) :
 
 <!-- Mobile Menu -->
 <div class="mobile-menu" role="navigation" aria-label="Mobile Navigation">
+
+    <div class="mobile-menu__header">
+        <a href="<?php echo esc_url(home_url('/')); ?>" class="mobile-menu__logo" aria-label="<?php bloginfo('name'); ?>">
+            <?php
+            // Mobile Logo bevorzugen, Fallback auf Desktop Logo
+            $menu_logo       = $logo_mobile ?: $logo_desktop;
+            $menu_logo_width = $logo_mobile ? $logo_mobile_width : $logo_desktop_width;
+            ?>
+            <?php if ($menu_logo) : ?>
+                <img src="<?php echo esc_url($menu_logo['url']); ?>"
+                     alt="<?php echo esc_attr($menu_logo['alt'] ?: get_bloginfo('name')); ?>"
+                     width="<?php echo esc_attr($menu_logo_width); ?>"
+                     loading="eager">
+            <?php else : ?>
+                <span><?php echo esc_html(get_bloginfo('name')); ?></span>
+            <?php endif; ?>
+        </a>
+        <button class="mobile-menu__close" aria-label="Menü schließen" type="button">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+        </button>
+    </div>
+
     <?php
     wp_nav_menu(array(
         'theme_location' => 'primary',
-        'container' => false,
-        'menu_class' => '',
-        'fallback_cb' => false,
-        'depth' => 4,
+        'container'      => false,
+        'menu_class'     => '',
+        'fallback_cb'    => false,
+        'depth'          => 4,
     ));
     ?>
 </div>

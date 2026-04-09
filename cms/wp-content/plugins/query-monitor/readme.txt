@@ -1,9 +1,9 @@
-# Query Monitor - The developer tools panel for WordPress
+# Query Monitor
 
 Contributors: johnbillion
 Tags: debug, debug-bar, development, performance, query monitor
 Tested up to: 6.9
-Stable tag: 3.20.4
+Stable tag: 4.0.1
 License: GPL v2 or later
 Donate link: https://github.com/sponsors/johnbillion
 
@@ -55,6 +55,15 @@ I maintain several other plugins for developers. Check them out:
 * [User Switching](https://wordpress.org/plugins/user-switching/) provides instant switching between user accounts in WordPress.
 * [WP Crontrol](https://wordpress.org/plugins/wp-crontrol/) lets you view and control what's happening in the WP-Cron system
 
+### Thanks
+
+The time that I spend maintaining this plugin and others is in part sponsored by:
+
+* [Automattic](https://automattic.com/)
+* [ServMask](https://servmask.com/)
+* [WP Staging](https://wp-staging.com/)
+* [All my kind sponsors on GitHub](https://github.com/sponsors/johnbillion)
+
 ### Privacy Statement
 
 Query Monitor is private by default and always will be. It does not persistently store any of the data that it collects. It does not send data to any third party, nor does it include any third party resources. [Query Monitor's full privacy statement can be found here](https://querymonitor.com/privacy/).
@@ -67,17 +76,17 @@ Query Monitor aims to be fully accessible to all of its users. [Query Monitor's 
 
 1. Admin Toolbar Menu
 2. Aggregate Database Queries by Component
-3. Capability Checks
-4. Database Queries
+3. Database Queries
+4. Timeline
 5. Hooks and Actions
 6. HTTP API Requests
-7. Aggregate Database Queries by Calling Function
+7. Logs
 
 ## Frequently Asked Questions
 
 ### Does this plugin work with PHP 8?
 
-Yes, it's actively tested and working up to PHP 8.4.
+Yes, it's actively tested and working up to PHP 8.5.
 
 ### Who can see Query Monitor's output?
 
@@ -137,6 +146,24 @@ Do not report security issues on the WordPress.org support forums or via email. 
 In addition, if you like the plugin then I'd love for you to [leave a review](https://wordpress.org/support/view/plugin-reviews/query-monitor). Tell all your friends about it too!
 ## Changelog ##
 
+### 4.0.1 (7 April 2026) ###
+
+Version 4 of Query Monitor adds a new timeline view, and switches from rendering its panels server-side in PHP to efficiently rendering them client-side in Preact.
+
+- Version 4.0.1 fixes a backwards compatibility issue with plugins that register their own menus or sub-menus in Query Monitor.
+
+[More information at querymonitor.com/4](https://querymonitor.com/4).
+
+### 4.0.0 (7 April 2026) ###
+
+Version 4 of Query Monitor adds a new timeline view, and switches from rendering its panels server-side in PHP to efficiently rendering them client-side in Preact. This new approach provides several benefits:
+
+- Performance is greatly increased, particularly on sites where a large number of queries are performed, a large number of PHP errors are triggered, or a large amount of data is collected in one of the other panels.
+- Further future enhancements are facilitated, such as displaying client-side metrics, lazy-loading data, showing data from different requests, and more remixing of data into different views.
+- The raw data collected by Query Monitor has been reduced in size and memory usage, and is now exposed to the page as JSON. Take a look at the `QueryMonitorData` object in your browser console to play around with it.
+
+[More information at querymonitor.com/4](https://querymonitor.com/4).
+
 ### 3.20.4 (19 March 2026) ###
 
 * This is a security release which fixes a reflected XSS vulnerability in the Request panel. [Full details in the security advisory](https://github.com/johnbillion/query-monitor/security/advisories/GHSA-2xr4-chcf-vmvf).
@@ -178,21 +205,6 @@ In addition, if you like the plugin then I'd love for you to [leave a review](ht
 ### 3.17.2 (4 February 2025) ###
 
 * Reinstates the "Blocks" panel
-
-### 3.17.1 (2 February 2025) ###
-
-* Prevents use of the deprecated `E_STRICT` constant in PHP 8.4.
-* Avoids use of the deprecated `setted_transient` and `setted_site_transient` actions in WordPress 6.8.
-* Skips showing the `_load_textdomain_just_in_time` notices when they're caused by Query Monitor itself.
-* Uses more appropriate formatting for a fatal error in REST API and Ajax contexts.
-
-
-### 3.17.0 (27 November 2024) ###
-
-* Support for WordPress 6.7.
-* Support for PHP 8.4.
-* Inline scripts are now output using `wp_print_inline_script_tag()` so a Content Security Policy can be fully implemented.
-* Various improvements and fixes.
 
 ### Earlier versions ###
 

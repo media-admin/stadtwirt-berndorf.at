@@ -45,6 +45,18 @@ h2::after {
   left:      4px;
 }
 
+@include respond-below('md') {
+    h2 {
+      font-size:    $font-size-3xl;   // statisch – Stadtwirt Designentscheidung
+    }
+
+    h2::after {
+      height:    3px;
+      bottom:    -4px;
+      left:      4px;
+    }
+}
+
 .columns-flush:first-of-type h2::after {
   height: 0;
 }
@@ -75,6 +87,24 @@ a {
   }
 }
 
+
+.link--unstyled {
+  a {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: none;
+
+    &:hover {
+      color: $color-primary;
+      text-decoration: none;
+      border-bottom: none;
+    }
+  }
+}
+
+
 // Strong & Em
 strong { font-weight: $font-weight-bold; }
 em     { font-style: italic; }
+
+.uppercase { text-transform: uppercase !important; }

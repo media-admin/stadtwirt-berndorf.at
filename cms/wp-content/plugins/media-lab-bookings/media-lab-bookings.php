@@ -3,7 +3,7 @@
  * Plugin Name:  Media Lab Bookings
  * Plugin URI:   https://medialab.agency
  * Description:  Buchungssystem mit Standortverwaltung, Öffnungszeiten, Zeitslots, Kapazitätslimits und standortspezifischen E-Mail-Bestätigungen.
- * Version:      1.0.0
+ * Version:      1.4.0
  * Author:       Media Lab Agency
  * Text Domain:  media-lab-bookings
  * Domain Path:  /languages
@@ -12,7 +12,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'MLB_VERSION',  '1.0.0' );
+define( 'MLB_VERSION',  '1.5.2' );
 define( 'MLB_PATH',     plugin_dir_path( __FILE__ ) );
 define( 'MLB_URL',      plugin_dir_url( __FILE__ ) );
 define( 'MLB_BASENAME', plugin_basename( __FILE__ ) );
@@ -23,9 +23,15 @@ $mlb_includes = [
     'inc/acf-fields.php',
     'inc/slots.php',
     'inc/ajax.php',
+    'inc/ical.php',
     'inc/mail.php',
-    'inc/shortcode.php',
+    'inc/notifications.php',
+    'inc/export.php',
     'inc/admin.php',
+    'inc/feed.php',
+    'inc/calendar.php',
+    'inc/dashboard-widget.php',
+    'inc/shortcode.php',
 ];
 
 foreach ( $mlb_includes as $file ) {

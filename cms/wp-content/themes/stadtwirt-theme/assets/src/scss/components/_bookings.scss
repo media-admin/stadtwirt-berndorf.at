@@ -1,0 +1,136 @@
+@use '../abstracts' as *;
+@use '../base/forms' as *;
+
+// =============================================================================
+// Bookings
+// =============================================================================
+
+.mlb-booking-form {
+    --mlb-color-text:         var(--color-text-light);
+    --mlb-radius:             0;
+    --mlb-color-bg:           none;
+    --mlb-color-bg-input:     none;
+    --mlb-color-border-focus: var(--color-primary);
+    --mlb-shadow-focus:       0 0 0 3px rgba(#{$color-primary}, 0.3);
+    --mlb-color-label:        var(--color-text-light);
+    --mlb-color-placeholder:  var(--color-text-muted);
+
+    // ── Labels ────────────────────────────────────────────────────────────────
+
+    .mlb-form__label {
+        display:       block;
+        margin-bottom: $spacing-1;
+        font-size:     $font-size-sm;
+        font-weight:   400;
+        color:         var(--color-text);
+        cursor:        default;
+    }
+
+    // ── Zeilen-Abstand ────────────────────────────────────────────────────────
+
+    .mlb-form__row,
+    .mlb-form__row--3 {
+        margin-top:    $spacing-2;
+        margin-bottom: $spacing-2;
+    }
+
+    // ── Felder ────────────────────────────────────────────────────────────────
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="number"],
+    input[type="date"],
+    input[type="time"] {
+        @include field-base;
+        height: 48px;
+    }
+
+    textarea {
+        @include field-base;
+        min-height: 140px;
+        resize:     vertical;
+        padding:    $spacing-2;
+    }
+
+    select {
+        @include field-base;
+        height:              48px;
+        cursor:              pointer;
+        padding-right:       $spacing-8;
+        background-image:    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23999' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+        background-repeat:   no-repeat;
+        background-position: right $spacing-4 center;
+        background-size:     12px 8px;
+
+        option { background: var(--color-card-bg); color: var(--color-text); }
+    }
+
+
+    .mlb-form__checkbox-text {
+        color: $color-light;
+     }
+
+    // ── Submit-Button ─────────────────────────────────────────────────────────
+
+    input[type="submit"],
+    button[type="submit"] {
+        @include btn-base;
+        @include btn-outline;
+        @include btn-primary;
+        border-radius: 0;
+        font-family:   inherit;
+        cursor:        pointer;
+        margin-top:    $spacing-2;
+
+        &:disabled {
+            opacity:    0.6;
+            cursor:     not-allowed;
+            transform:  none !important;
+            box-shadow: none !important;
+        }
+    }
+}
+
+// ── Flatpickr ─────────────────────────────────────────────────────────────────
+
+.flatpickr-calendar {
+    background:    $color-grey-light !important;
+    color:         $color-secondary !important;
+    border:        1px solid var(--color-border);
+    border-radius: $radius-none;
+    box-shadow:    none;
+
+    .flatpickr-innerContainer {
+        background: var(--color-grey-light) !important;
+    }
+
+    .flatpickr-months .flatpickr-month {
+        font-family: $font-secondary;
+        font-size:   $font-size-h2;
+        font-weight: $font-weight-bold;
+    }
+
+
+    .flatpickr-calendar .flatpickr-months .flatpickr-month {
+        font-size: $font-size-base !important;
+    }
+    
+
+    .flatpickr-day {
+        &.selected,
+        &.selected.startRange,
+        &.selected.endRange {
+            background: var(--color-primary);
+            color:      var(--color-light);
+        }
+
+        &.inRange {
+            background: rgba($color-primary, 0.1);
+        }
+
+        &.today {
+            border: 1px solid var(--color-primary);
+        }
+    }
+}

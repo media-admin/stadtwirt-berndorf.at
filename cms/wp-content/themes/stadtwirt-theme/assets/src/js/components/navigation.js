@@ -8,6 +8,7 @@ export default class Navigation {
         this.mobileToggle  = document.querySelector('.mobile-menu-toggle');
         this.mobileMenu    = document.querySelector('.mobile-menu');
         this.mobileOverlay = document.querySelector('.mobile-menu-overlay');
+        this.mobileClose   = document.querySelector('.mobile-menu__close'); // NEU
 
         // Alle menu-item-has-children in Mobile + Footer
         this.mobileItems = document.querySelectorAll(
@@ -53,6 +54,11 @@ export default class Navigation {
 
         this.mobileToggle.addEventListener('click', () => this._toggleMobileMenu());
 
+        // NEU: Schließen-Button im Mobile Menu
+        if (this.mobileClose) {
+            this.mobileClose.addEventListener('click', () => this._closeMobileMenu());
+        }
+
         if (this.mobileOverlay) {
             this.mobileOverlay.addEventListener('click', () => this._closeMobileMenu());
         }
@@ -97,19 +103,16 @@ export default class Navigation {
             if (!link) return;
 
             link.addEventListener('click', (e) => {
-                // Hat dieses Item ein echtes Ziel? Nur verhindern wenn Submenu da
                 const href = link.getAttribute('href');
                 const hasRealLink = href && href !== '#' && href !== '';
 
                 if (hasRealLink && !item.classList.contains('is-open')) {
-                    // Erster Tap: Submenu öffnen statt navigieren
                     e.preventDefault();
                     this._toggleSubmenu(item, this.mobileItems);
                 } else if (!hasRealLink) {
                     e.preventDefault();
                     this._toggleSubmenu(item, this.mobileItems);
                 }
-                // Zweiter Tap bei echtem Link: navigiert
             });
         });
     }
@@ -117,13 +120,11 @@ export default class Navigation {
     _toggleSubmenu(item, allItems) {
         const isOpen = item.classList.contains('is-open');
 
-        // Geschwister auf gleicher Ebene schließen
         const parent   = item.parentElement;
         const siblings = parent.querySelectorAll(':scope > .menu-item-has-children');
         siblings.forEach(s => {
             if (s !== item) {
                 s.classList.remove('is-open');
-                // Kinder-Submenüs ebenfalls schließen
                 s.querySelectorAll('.menu-item-has-children').forEach(child => {
                     child.classList.remove('is-open');
                 });
@@ -141,7 +142,6 @@ export default class Navigation {
             if (!link) return;
 
             link.addEventListener('click', (e) => {
-                // Nur auf Mobile als Accordion behandeln
                 if (window.innerWidth >= 768) return;
 
                 e.preventDefault();
@@ -151,7 +151,6 @@ export default class Navigation {
     }
 
     // ─── Desktop: Flyout-Viewport-Kollision erkennen ──────────────────────────
-    // Wenn ein Sub-Menü rechts über den Viewport ragt → .opens-left setzen
 
     _initDesktopViewportCheck() {
         const allSubmenus = document.querySelectorAll(
@@ -168,7 +167,6 @@ export default class Navigation {
             });
         };
 
-        // Beim ersten Hover checken
         document.querySelectorAll(
             '.primary-menu .menu-item-has-children, .footer-nav .menu-item-has-children'
         ).forEach(item => {

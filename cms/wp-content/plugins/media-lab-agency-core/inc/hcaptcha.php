@@ -23,12 +23,33 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+// ── ACF-Verfügbarkeit prüfen ──────────────────────────────────────────────────
+
+/**
+ * Gibt true zurück, wenn ACF PRO aktiv und get_field() verfügbar ist.
+ */
+function medialab_acf_available(): bool {
+    return function_exists( 'get_field' );
+}
+
+// ── Admin-Notice bei fehlendem ACF ────────────────────────────────────────────
+
+add_action( 'admin_notices', function () {
+    if ( medialab_acf_available() ) return;
+
+    echo '<div class="notice notice-error"><p>';
+    echo '<strong>Media Lab Agency Core</strong>: Das Plugin benötigt <strong>ACF PRO</strong>. ';
+    echo 'Bitte installieren und aktivieren, um alle Funktionen zu nutzen.';
+    echo '</p></div>';
+} );
+
 // ── Hilfsfunktionen ───────────────────────────────────────────────────────────
 
 /**
  * Gibt den konfigurierten Site-Key zurück.
  */
 function medialab_hcaptcha_site_key(): string {
+    if ( ! medialab_acf_available() ) return '';
     return (string) get_field( 'hcaptcha_site_key', 'option' );
 }
 
@@ -36,6 +57,7 @@ function medialab_hcaptcha_site_key(): string {
  * Gibt den konfigurierten Secret-Key zurück.
  */
 function medialab_hcaptcha_secret_key(): string {
+    if ( ! medialab_acf_available() ) return '';
     return (string) get_field( 'hcaptcha_secret_key', 'option' );
 }
 
@@ -43,6 +65,7 @@ function medialab_hcaptcha_secret_key(): string {
  * Prüft ob hCaptcha global aktiv und vollständig konfiguriert ist.
  */
 function medialab_hcaptcha_active(): bool {
+    if ( ! medialab_acf_available() )               return false;
     if ( ! get_field( 'hcaptcha_enabled', 'option' ) ) return false;
     if ( ! medialab_hcaptcha_site_key() )               return false;
     if ( ! medialab_hcaptcha_secret_key() )             return false;

@@ -157,6 +157,12 @@
     }
 }
 
+@include respond-below('md') {
+    .wp-block-button__link {
+        font-size: $font-size-base;
+    }
+}
+
 
 // =============================================================================
 // Gutenberg Wrapper-Klasse .btn-primary

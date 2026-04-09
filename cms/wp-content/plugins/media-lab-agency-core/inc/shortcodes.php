@@ -212,7 +212,8 @@ function modal_shortcode($atts, $content = null) {
     $show_header = $atts['show_header'] === 'true';
     $show_footer = $atts['show_footer'] === 'true';
     
-    $body_content = wpautop(do_shortcode($content));
+    $has_cf7 = strpos($content, 'contact-form-7') !== false || strpos($content, 'wpcf7') !== false;
+    $body_content = $has_cf7 ? do_shortcode($content) : wpautop(do_shortcode($content));
     
     $html = '<div class="modal' . $size_class . '" id="' . $modal_id . '">';
     $html .= '<div class="modal__dialog">';
@@ -2404,26 +2405,20 @@ function posts_load_more_template_list() {
 }
 
 // ============================================
-// GOOGLE MAPS SHORTCODE (Cookie Consent + Fullwidth + ACF)
+// GOOGLE MAPS SHORTCODE (Cookie Consent + API + ACF)
 // ============================================
 
 /**
- * DSGVO-konforme Google Maps Embed mit Cookie Consent Integration.
+ * DSGVO-konforme Google Maps via JS API mit Cookie Consent Integration.
  *
- * Unterstützt zwei Verwendungsarten:
- *
- * A) Direkt via src-Parameter:
- *    [google_map src="https://www.google.com/maps/embed?pb=..."]
- *
- * B) Via CPT-ID (liest embed_src aus ACF-Feldern):
- *    [google_map id="42"]
- *    [google_map id="42" fullwidth="true"]
+ * Verwendung:
+ *   [google_map id="42"]
+ *   [google_map id="42" fullwidth="true" height="500px"]
  *
  * Alle Parameter:
  *   id        (int,    optional) – Post-ID des Google Maps CPT
- *   src       (string, optional) – Google Maps Embed-URL (direkt)
- *   height    (int,    optional) – Höhe in px, Standard: 450
- *   title     (string, optional) – title-Attribut des iframes
+ *   height    (string, optional) – Höhe inkl. Einheit, Standard: 450px
+ *   title     (string, optional) – Aria-Label
  *   fullwidth (bool,   optional) – "true" → 100vw breites Layout
  *   class     (string, optional) – Zusätzliche CSS-Klassen
  */
@@ -2431,58 +2426,46 @@ function medialab_shortcode_google_map( array $atts ): string {
 
     $atts = shortcode_atts( array(
         'id'        => '',
-        'src'       => '',
-        'height'    => 450,
+        'height'    => '450px',
         'title'     => __( 'Google Maps', 'media-lab-agency-core' ),
         'fullwidth' => 'false',
         'class'     => '',
     ), $atts, 'google_map' );
 
-    // ── Wenn ID angegeben: Daten aus ACF laden ────────────────────────────────
-    if ( ! empty( $atts['id'] ) ) {
-        $post_id = intval( $atts['id'] );
-
-        // embed_src aus ACF (Pflichtfeld)
-        $embed_src = get_field( 'embed_src', $post_id );
-        if ( empty( $embed_src ) ) {
-            // Fallback: altes Feld falls noch vorhanden
-            $embed_src = get_field( 'maps_embed_url', $post_id );
-        }
-
-        if ( ! empty( $embed_src ) ) {
-            $atts['src'] = $embed_src;
-        }
-
-        // Optionale Overrides aus ACF (nur wenn nicht im Shortcode gesetzt)
-        if ( empty( $atts['title'] ) || $atts['title'] === __( 'Google Maps', 'media-lab-agency-core' ) ) {
-            $marker_title = get_field( 'marker_title', $post_id ) ?: get_the_title( $post_id );
-            if ( $marker_title ) {
-                $atts['title'] = $marker_title;
-            }
-        }
-
-        // Höhe aus ACF falls vorhanden
-        $acf_height = get_field( 'map_height', $post_id );
-        if ( $acf_height && $atts['height'] === 450 ) {
-            $atts['height'] = $acf_height;
-        }
-    }
-
-    // ── Pflichtfeld prüfen ────────────────────────────────────────────────────
-    if ( empty( $atts['src'] ) ) {
+    // ── Daten aus ACF laden ───────────────────────────────────────────────────
+    if ( empty( $atts['id'] ) ) {
         if ( current_user_can( 'edit_posts' ) ) {
             return '<p style="color:red;border:1px solid red;padding:.5rem;">'
-                 . __( '[google_map] Fehler: Kein src oder embed_src gefunden. Bitte Embed-URL im CPT eintragen.', 'media-lab-agency-core' )
+                 . __( '[google_map] Fehler: Keine ID angegeben.', 'media-lab-agency-core' )
                  . '</p>';
         }
         return '';
     }
 
-    $src       = esc_url( $atts['src'] );
-    $height    = absint( $atts['height'] ) ?: 450;
-    $title     = esc_attr( $atts['title'] );
+    $post_id = intval( $atts['id'] );
+
+    $lat          = get_field( 'latitude',    $post_id );
+    $lng          = get_field( 'longitude',   $post_id );
+    $zoom         = get_field( 'zoom',        $post_id ) ?: 15;
+    $marker_title = get_field( 'marker_title', $post_id ) ?: get_the_title( $post_id );
+    $map_style    = get_field( 'map_style',   $post_id ) ?: 'default';
+    $acf_height   = get_field( 'map_height',  $post_id );
+
+    if ( empty( $lat ) || empty( $lng ) ) {
+        if ( current_user_can( 'edit_posts' ) ) {
+            return '<p style="color:red;border:1px solid red;padding:.5rem;">'
+                 . __( '[google_map] Fehler: Keine Koordinaten (latitude/longitude) im CPT eingetragen.', 'media-lab-agency-core' )
+                 . '</p>';
+        }
+        return '';
+    }
+
+    // Höhe: ACF-Wert hat Vorrang vor Shortcode-Attribut
+    $height = $acf_height ? $acf_height . 'px' : $atts['height'];
+
     $fullwidth = filter_var( $atts['fullwidth'], FILTER_VALIDATE_BOOLEAN );
     $extra_cls = sanitize_html_class( $atts['class'] );
+    $map_id    = 'google-map-' . $post_id . '-' . uniqid();
 
     // ── CSS-Klassen ───────────────────────────────────────────────────────────
     $wrapper_classes = array( 'google-map' );
@@ -2501,9 +2484,14 @@ function medialab_shortcode_google_map( array $atts ): string {
     ?>
     <div
         class="<?php echo esc_attr( $wrapper_class_str ); ?>"
-        style="--map-height: <?php echo $height; ?>px;"
-        data-map-src="<?php echo $src; ?>"
-        aria-label="<?php echo $title; ?>"
+        style="--map-height: <?php echo esc_attr( $height ); ?>;"
+        data-map-id="<?php echo esc_attr( $map_id ); ?>"
+        data-lat="<?php echo esc_attr( $lat ); ?>"
+        data-lng="<?php echo esc_attr( $lng ); ?>"
+        data-zoom="<?php echo esc_attr( $zoom ); ?>"
+        data-marker-title="<?php echo esc_attr( $marker_title ); ?>"
+        data-style="<?php echo esc_attr( $map_style ); ?>"
+        aria-label="<?php echo esc_attr( $atts['title'] ); ?>"
     >
         <!-- Placeholder: sichtbar solange kein Komfort-Consent -->
         <div class="google-map__placeholder" aria-live="polite" role="region">
@@ -2548,27 +2536,20 @@ function medialab_shortcode_google_map( array $atts ): string {
             </div>
         </div>
 
-        <!-- iframe: wird vom JS eingeblendet sobald Consent vorliegt -->
-        <iframe
-            class="google-map__iframe"
-            src=""
-            data-src="<?php echo $src; ?>"
-            width="100%"
-            height="<?php echo $height; ?>"
-            title="<?php echo $title; ?>"
-            style="border:0;"
-            allowfullscreen
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade"
-            aria-label="<?php echo $title; ?>"
-            hidden
-        ></iframe>
+        <!-- Canvas: wird vom JS mit der Karte befüllt -->
+        <div
+            class="google-map__canvas"
+            id="<?php echo esc_attr( $map_id ); ?>"
+            style="width:100%;height:var(--map-height,450px);"
+            aria-hidden="true"
+        ></div>
 
     </div>
     <?php
     return ob_get_clean();
 }
 add_shortcode( 'google_map', 'medialab_shortcode_google_map' );
+
 
 
 

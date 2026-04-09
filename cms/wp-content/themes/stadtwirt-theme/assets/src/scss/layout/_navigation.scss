@@ -27,6 +27,12 @@
     z-index:         1;
 }
 
+@include respond-below('md') {
+  .site-navigation {
+        background:      transparent;
+    }
+}
+
 .site-logo {
     font-size:       var(--text-xl);   // war: $font-size-xl
     font-weight:     700;
@@ -251,9 +257,9 @@
     // WCAG 2.5.5: 44×44px ✅
     width:           44px;
     height:          44px;
-    background:      transparent;
-    border:          2px solid var(--color-border);
-    border-radius:   $radius-md;
+    background:      $color-primary;
+    border:          2px solid var(--color-secondary);
+    border-radius:   $radius-none;
     cursor:          pointer;
     transition:      all $transition-base;
     flex-shrink:     0;
@@ -261,7 +267,7 @@
     @include respond-to('lg') { display: none; }
 
     &:hover {
-        border-color: $color-primary;
+        border-color: $color-accent;
         background:   rgba($color-primary, 0.1);
     }
 
@@ -309,14 +315,14 @@
     left:       0;
     width:      100%;
     height:     100vh;
-    background: var(--color-surface);
+    background: var(--color-secondary);
     transform:  translateX(-100%);
     transition: transform $transition-base;
     overflow-y: auto;
     z-index:    999;
     padding:       var(--space-xl);
     // Fluid: nutzt --header-height statt hardcodiertem 80px
-    padding-top:   calc(var(--header-height, 64px) + var(--space-md));
+    // padding-top:   calc(var(--header-height, 64px) + var(--space-md));
 
     @include respond-to('lg') { display: none; }
 
@@ -325,7 +331,7 @@
     ul { list-style: none; margin: 0; padding: 0; }
 
     li {
-        border-bottom: 1px solid var(--color-border);
+        border-bottom: 1px solid var(--color-text-muted);
         margin:        0;
 
         &:last-child { border-bottom: none; }
@@ -337,7 +343,7 @@
     a {
         display:         flex;
         align-items:     center;
-        justify-content: space-between;
+        justify-content: center; // war space-between;
         color:           var(--color-text);
         text-decoration: none;
         transition:      color $transition-base, background $transition-base;
@@ -346,9 +352,9 @@
     }
 
     > ul > li > a {
-        padding:     $spacing-4;
+        padding:     $spacing-2;
         font-weight: 500;
-        font-size:   var(--text-lg);    // war: $font-size-lg
+        font-size:   var(--text-2xl);    // war: $font-size-lg
     }
 
     .menu-item-has-children {
@@ -421,6 +427,53 @@
 
     &.is-active { display: block; opacity: 1; }
 }
+
+// =============================================================================
+// Mobile Menu Header – Logo + Schließen-Button
+// In bestehende _navigation.scss oder _mobile-menu.scss einfügen,
+// innerhalb des .mobile-menu { ... } Blocks (oder direkt darunter).
+// =============================================================================
+
+.mobile-menu__header {
+    display: flex;
+    align-items: center;
+    justify-content: center; // war space-between;
+    // padding: $spacing-6 $spacing-6 $spacing-4;
+    // border-bottom: 1px solid $color-border;
+    margin-top: $spacing-2;
+    margin-bottom: $spacing-1;
+}
+
+.mobile-menu__logo {
+    display: block;
+    line-height: 0;
+
+    img {
+        display: block;
+        max-height: 115px;
+        width: auto;
+    }
+}
+
+.mobile-menu__close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: none;
+    color: $color-text;
+    cursor: pointer;
+    padding: $spacing-2;
+    line-height: 0;
+    flex-shrink: 0;
+    transition: $transition-fast;
+
+    &:hover {
+        color: $color-primary;
+    }
+}
+
+
 
 
 // ── Footer Navigation ─────────────────────────────────────────────────────────

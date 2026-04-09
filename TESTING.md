@@ -178,4 +178,4 @@ Current thresholds:
 - CLS: < 0.1
 - TBT: < 300ms
 
-Update in `lighthouserc.js` if needed.
+Update in `lighthouserc.js` if needed...

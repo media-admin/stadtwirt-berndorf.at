@@ -162,7 +162,30 @@
 
 // Direkte aspect-ratio Utilities (für img/video ohne Wrapper)
 .aspect-video  { aspect-ratio: 16 / 9; width: 100%; object-fit: cover; }
-.aspect-square { aspect-ratio: 1  / 1; width: 100%; object-fit: cover; }
+
+.aspect-square {
+    aspect-ratio: 1 / 1;
+    width:        100%;
+    object-fit:   cover;
+
+    > .wp-block-cover {
+        height:     100%;
+        min-height: unset;
+    }
+
+    // fullwidth innerhalb aspect-square deaktivieren
+    .fullwidth,
+    .wp-block-image.fullwidth,
+    .wp-block-image.alignfull {
+        width:       100% !important;
+        margin-left: 0 !important;
+        max-width:   none !important;
+    }
+}
+
+
+
+
 .aspect-photo  { aspect-ratio: 4  / 3; width: 100%; object-fit: cover; }
 
 // object-fit Utilities
@@ -241,6 +264,7 @@
 
 
 
+
 // ── Columns flush zum Container-Rand ─────────────────────────────────────────
 //
 // Verwendung: Gutenberg Columns-Block → Erweitert → Zusätzliche CSS-Klasse
@@ -272,6 +296,47 @@
 
 .columns-flush--no-gap {
     gap: 0 !important;
+}
+
+
+@include respond-below('md') {
+  .columns-flush {
+        background: $color-background;
+        margin-left:  -$container-padding !important;
+        margin-right: -$container-padding !important;
+        width:        calc(100% + #{$container-padding * 2}) !important;
+
+        > .wp-block-column:first-child { padding-left:  inherit !important; }
+        > .wp-block-column:last-child  {
+            padding-left:  $spacing-4 !important;
+            padding-right: $container-padding !important;
+        }
+
+        > .wp-block-column:first-child .wp-block-image {
+            margin-left:  inherit !important;
+            margin-right: inherit !important;
+
+            img {
+                display: block;
+                width:   100%;
+            }
+        }
+    }
+
+    .columns-flush--no-gap {
+        gap: 0 !important;
+    }
+}
+
+
+
+.flex-basis-0 {
+    flex-basis: 0 !important;
+}
+
+
+.flex-basis-auto {
+    flex-basis: auto !important;
 }
 
 
@@ -322,8 +387,117 @@ bg-color-grey {
     background-repeat: no-repeat;
 }
 
+@include respond-below('md') {
+    .column-newsletter.pad-2xl {
+        padding: $spacing-lg !important;
+    }
+}
+
 
 .column-newsletter__inner {
     @include fullwidth;
     background-color: rgba($color-secondary, 0.8) !important;
+
+    width: 60% !important;
+    position: relative;
+    margin-left: 10% !important;
+    margin-right: 10% !important;
+
+}
+
+
+@include respond-below('md') {
+    .column-newsletter__inner {
+        @include fullwidth;
+        width: 100% !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+
+    .column-newsletter__inner.pad-2xl {
+        padding: $spacing-sm !important;
+    }
+
+    .column-newsletter__inner h2 {
+        max-width: 95% !important;
+    }
+
+    .column-newsletter__inner h2::after {
+        bottom: -8px !important;
+    }
+}
+
+
+// ── Tabellle Öffnungszeiten ───────────────────────────────────────────────────────────────────
+/* Tabelle selbst: Rahmen und Hintergrund weg */
+.table--opening-hours table,
+.table--opening-hours table td,
+.table--opening-hours table tr {
+    border: none;
+    background: transparent;
+    border-collapse: collapse;
+}
+
+/* Tages-Spalte (erste td) */
+.table--opening-hours td:first-child {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    text-align: right;
+    padding-right: 1.5rem;
+    padding-top: 0.4rem;
+    padding-bottom: 0.4rem;
+    white-space: nowrap;
+}
+
+/* Zeit-Spalte (zweite td) */
+.table--opening-hours td:last-child {
+    text-align: left;
+    padding-top: 0.4rem;
+    padding-bottom: 0.4rem;
+}
+
+
+// ── Tabellle Urlaube ───────────────────────────────────────────────────────────────────
+/* Tabelle: Rahmen und Hintergrund weg */
+.table--vacations,
+.table--vacations td,
+.table--vacations tr {
+    border: none;
+    background: transparent;
+    border-collapse: collapse;
+}
+
+/* Datums-Spalte */
+.table--vacations td:first-child {
+    font-weight: 700;
+    text-align: right;
+    padding-right: 1.5rem;
+    padding-top: 0.4rem;
+    padding-bottom: 0.4rem;
+    white-space: nowrap;
+}
+
+/* Bezeichnungs-Spalte */
+.table--vacations td:last-child {
+    text-align: left;
+    padding-top: 0.4rem;
+    padding-bottom: 0.4rem;
+}
+
+
+
+.is-grayscale {
+  filter: grayscale(100%) !important;
+
+  img {
+    filter: grayscale(100%) !important;
+  }
+}
+
+
+.hide-me,
+.wp-block-column.hide-me,
+.wp-block-columns .wp-block-column.hide-me {
+    display: none !important;
 }

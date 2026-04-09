@@ -43,7 +43,7 @@ class ErrorSignalsSubscriber implements SubscriberInterface {
 	 * @param BackWPup_Job|null $job The Job instance.
 	 * @return void
 	 */
-	public function on_error_signal( array $signal, BackWPup_Job $job = null ): void {
+	public function on_error_signal( array $signal, ?BackWPup_Job $job = null ): void {
 		$this->store->store( $signal );
 	}
 }

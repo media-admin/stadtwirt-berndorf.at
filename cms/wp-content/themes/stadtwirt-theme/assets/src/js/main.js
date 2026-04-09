@@ -52,10 +52,14 @@ const initApp = async () => {
   if (has('.scroll-progress')) safeInit('ScrollProgress', () => new ScrollProgress());
 
   // ── Lazy: nur laden wenn DOM-Element vorhanden ────────────────────────────
-
   if (has('.accordion, [data-accordion]')) {
     const { default: Accordion } = await import('./components/accordion');
     safeInit('Accordion', () => new Accordion());
+  }
+
+  if (has('.lightbox, [data-lightbox], .wp-lightbox-container')) {
+    const { default: Lightbox } = await import('./components/lightbox');
+    safeInit('Lightbox', () => new Lightbox());
   }
 
   // Hero Slider: Klasse aus PHP → .hero-slider.swiper

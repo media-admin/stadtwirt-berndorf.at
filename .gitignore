@@ -25,7 +25,7 @@
 /cms/wp-content/w3tc-config/
 
 # ============================================
-# PLUGINS - Third Party (ignorieren)
+# PLUGINS - Third Party (nicht committen)
 # ============================================
 /cms/wp-content/plugins/advanced-custom-fields/
 /cms/wp-content/plugins/advanced-custom-fields-pro/
@@ -37,7 +37,7 @@
 /cms/wp-content/plugins/wp-fastest-cache/
 
 # ============================================
-# THEMES
+# THEMES - nur Default Themes ignorieren
 # ============================================
 /cms/wp-content/themes/twenty*/
 
@@ -49,6 +49,13 @@ npm-debug.log
 yarn-error.log
 *.map
 /vendor/
+
+# Komprimierte Build-Artefakte (von vite-plugin-compression2)
+/cms/wp-content/themes/stadtwirt-theme/assets/dist/*.br
+/cms/wp-content/themes/stadtwirt-theme/assets/dist/*.gz
+
+# Vite Dev Server Marker (verhindert Laden vom falschen Server nach kill)
+/cms/wp-content/themes/stadtwirt-theme/assets/hot
 
 # ============================================
 # OS & IDE
@@ -79,6 +86,7 @@ Thumbs.db
 *-backup/
 *.sql
 *.sql.gz
+*.zip
 docs-backup/
 
 # ============================================
@@ -86,15 +94,4 @@ docs-backup/
 # ============================================
 .env
 .env.local
-
-# ============================================
-# PROJEKT SPEZIFISCH - Stadtwirt
-# ============================================
-
-# Stadtwirt Plugin (wird committed)
-!/cms/wp-content/plugins/stadtwirt-plugin/
-
-# Stadtwirt Theme (wird committed)
-!/cms/wp-content/themes/stadtwirt-theme/
-cms/wp-content/themes/stadtwirt-theme/assets/hot
-
+.env.*.local

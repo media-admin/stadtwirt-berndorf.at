@@ -12,31 +12,47 @@
   display: none;
   align-items: center;
   justify-content: center;
-  
+
   &.is-active {
     display: flex;
   }
-  
+
   &__content {
     max-width: 90vw;
     max-height: 90vh;
     position: relative;
   }
-  
+
   &__image {
     max-width: 100%;
     max-height: 85vh;
     display: block;
     margin: 0 auto;
+    transition: transform 0.2s ease;  // ← neu
+    cursor: zoom-in;                  // ← neu
+
+    &.is-zoomed {
+      cursor: zoom-out;               // ← neu
+    }
   }
-  
+
   &__caption {
     text-align: center;
     color: $color-white;
     padding: $spacing-2;
     font-size: $font-size-sm;
   }
-  
+
+  // Nav/Close-Buttons im Zoom-Modus ausblenden
+  &.is-zoomed {                       // ← neu
+    .lightbox__prev,
+    .lightbox__next,
+    .lightbox__close {
+      opacity: 0;
+      pointer-events: none;
+    }
+  }
+
   &__close,
   &__prev,
   &__next {
@@ -49,29 +65,55 @@
     height: 50px;
     cursor: pointer;
     transition: all $transition-fast;
-    
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+
     &:hover {
       background: rgba(255, 255, 255, 0.2);
     }
   }
-  
+
   &__close {
     top: $spacing-4;
     right: $spacing-4;
     border-radius: $radius-full;
   }
-  
+
   &__prev,
   &__next {
     top: 50%;
     transform: translateY(-50%);
   }
-  
+
   &__prev {
     left: $spacing-4;
   }
-  
+
   &__next {
     right: $spacing-4;
   }
+
+  // Zoom-Hinweis
+  &__zoom-hint {                      // ← neu
+    position: absolute;
+    bottom: $spacing-4;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: $color-white;
+    font-size: $font-size-sm;
+    padding: $spacing-1 $spacing-3;
+    border-radius: $radius-full;
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 0.5s ease;
+    animation: hint-fade 3s forwards;
+  }
+}
+
+@keyframes hint-fade {
+  0%   { opacity: 1; }
+  60%  { opacity: 1; }
+  100% { opacity: 0; }
 }

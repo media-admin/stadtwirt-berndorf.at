@@ -40,6 +40,14 @@
             "wideSize":         "1400px"
         },
         "blocks": {
+            "core/cover": {
+                "color": {
+                    "background":    true,
+                    "custom":        true,
+                    "defaultPalette": true,
+                    "text":          true
+                }
+            },
             "core/separator": {
                 "color": {
                     "background": false,

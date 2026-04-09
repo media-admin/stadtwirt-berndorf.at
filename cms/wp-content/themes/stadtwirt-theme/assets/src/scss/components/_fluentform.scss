@@ -1,0 +1,176 @@
+@use '../abstracts' as *;
+@use '../base/forms' as *;
+
+// =============================================================================
+// FluentForm / FluentCRM – Styling
+// =============================================================================
+//
+// Selektoren:
+//   .ff-el-form-control  → Input, Textarea, Select
+//   .ff-el-input--label  → Label
+//   .ff-el-input--content → Feld-Wrapper
+//   .ff-el-group         → Zeilen-Wrapper (entspricht cf7 <p>)
+//
+// Verwendet denselben @mixin field-base wie CF7 und Bookings.
+// =============================================================================
+
+.ff-el-group {
+    margin-bottom: $spacing-4;
+
+    &:last-child { margin-bottom: 0; }
+}
+
+// ── Labels ────────────────────────────────────────────────────────────────────
+
+.ff-el-input--label {
+    label {
+        display:       block;
+        margin-bottom: $spacing-1;
+        font-weight:   400;
+        font-size:     $font-size-sm;
+        color:         var(--color-text);
+        cursor:        default;
+    }
+}
+
+// ── Felder ────────────────────────────────────────────────────────────────────
+
+.ff-el-form-control {
+    @include field-base;
+
+    &[type="text"],
+    &[type="email"],
+    &[type="tel"],
+    &[type="url"],
+    &[type="number"],
+    &[type="date"],
+    &[type="time"],
+    &[type="search"] {
+        height: 48px;
+    }
+
+    &[type="checkbox"],
+    &[type="radio"] {
+        width:        18px;
+        height:       18px;
+        flex-shrink:  0;
+        cursor:       pointer;
+        accent-color: $color-primary;
+        appearance:   auto; // überschreibt field-base appearance: none für checkboxes
+
+        &:focus-visible {
+            outline:        2px solid $color-primary;
+            outline-offset: 2px;
+        }
+    }
+}
+
+textarea.ff-el-form-control {
+    min-height: 140px;
+    resize:     vertical;
+    padding:    $spacing-2;
+    height:     auto;
+}
+
+select.ff-el-form-control {
+    height:              48px;
+    cursor:              pointer;
+    padding-right:       $spacing-8;
+    background-image:    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23999' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+    background-repeat:   no-repeat;
+    background-position: right $spacing-4 center;
+    background-size:     12px 8px;
+
+    option { background: var(--color-card-bg); color: var(--color-text); }
+}
+
+// ── Checkbox / Radio Listen ───────────────────────────────────────────────────
+
+.ff-el-input--content {
+    .ff-checkbox-wrapper,
+    .ff-radio-wrapper {
+        display:        flex;
+        flex-direction: row;
+        flex-wrap:      wrap;
+        gap:            0 $spacing-4;
+        align-items:    center;
+        margin-top:     $spacing-2;
+    }
+
+    .ff-checkbox-wrapper label,
+    .ff-radio-wrapper label {
+        display:     flex;
+        align-items: center;
+        gap:         $spacing-2;
+        font-weight: 400;
+        font-size:   $font-size-sm;
+        cursor:      pointer;
+        margin:      0 0 $spacing-2;
+        line-height: 1.5;
+    }
+}
+
+// ── Submit-Button ─────────────────────────────────────────────────────────────
+
+.ff-btn-submit,
+.ff-el-group button[type="submit"],
+.ff-el-group input[type="submit"] {
+    @include btn-base;
+    @include btn-outline;
+    @include btn-primary;
+    border-radius: 0 !important;
+    font-family:   inherit;
+    cursor:        pointer;
+
+    &:disabled {
+        opacity:    0.6;
+        cursor:     not-allowed;
+        transform:  none !important;
+        box-shadow: none !important;
+    }
+}
+
+// ── Validation ────────────────────────────────────────────────────────────────
+
+.ff-el-is-error .ff-el-form-control,
+.error .ff-el-form-control {
+    border-color: $color-error !important;
+    background:   rgba($color-error, 0.05) !important;
+    box-shadow:   0 0 0 4px rgba($color-error, 0.1) !important;
+}
+
+.error-message,
+.ff-el-is-error .error-message {
+    display:     block;
+    margin-top:  $spacing-1;
+    color:       $color-error;
+    font-size:   $font-size-sm;
+    font-weight: 500;
+}
+
+// ── Response-Meldung ──────────────────────────────────────────────────────────
+
+.ff-message-success,
+.ff-errors-tip {
+    display:       flex;
+    align-items:   flex-start;
+    gap:           $spacing-2;
+    margin:        $spacing-4 0 0;
+    padding:       $spacing-4;
+    border-radius: $radius-none !important;
+    font-size:     $font-size-sm;
+    font-weight:   500;
+    border:        2px solid transparent;
+}
+
+.ff-message-success {
+    background:   $color-success-light-bg;
+    border-color: $color-success;
+    color:        $color-success-dark;
+}
+
+.ff-errors-tip {
+    background:   $color-error-light-bg;
+    border-color: $color-error;
+    color:        $color-error-dark;
+}
