@@ -93,16 +93,12 @@ class MLB_Ajax {
         // Stornierungstoken generieren
         do_action( 'mlb_after_save_booking', $booking_id, $booking_data );
 
-        // Bestätigungsmail + iCal
+        // Eingangsbestätigung senden (ohne iCal – kommt erst bei Statuswechsel auf 'Bestätigt')
         MLB_Mail::send_confirmation( $booking_id );
 
-        // iCal-Download-URL für Frontend
-        $ical_url = class_exists( 'MLB_ICal' ) ? MLB_ICal::download_url( $booking_id ) : '';
-
         wp_send_json_success( [
-            'message'    => 'Ihre Buchung wurde erfolgreich eingereicht. Sie erhalten in Kürze eine Bestätigung per E-Mail.',
+            'message'    => function_exists( 'get_field' ) && get_field( 'mlb_default_success_message', 'option' ) ? get_field( 'mlb_default_success_message', 'option' ) : 'Ihre ' . ( function_exists( 'mlb_term' ) ? mlb_term('singular') : 'Buchung' ) . ' wurde erfolgreich eingereicht. Sie erhalten in Kürze eine Bestätigung per E-Mail.',
             'booking_id' => $booking_id,
-            'ical_url'   => $ical_url,
         ] );
     }
 }

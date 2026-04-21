@@ -56,8 +56,10 @@ class MediaLab_White_Label {
 
         // Admin
         add_action('admin_enqueue_scripts',  array($this, 'admin_styles'));
-        add_action('admin_bar_menu',         array($this, 'admin_bar_branding'), 1);
         add_filter('admin_footer_text',      array($this, 'footer_text'));
+
+        // Admin Bar
+        add_action('admin_bar_menu',         array($this, 'admin_bar_branding'), 1);
 
         // Dashboard Widget
         add_action('wp_dashboard_setup',     array($this, 'register_dashboard_widget'));
@@ -68,6 +70,8 @@ class MediaLab_White_Label {
 
     // ─────────────────────────────────────────────────────────────
     // LOGIN SCREEN
+    // Direkter <style>-Output ist auf der Login-Seite korrekt,
+    // da WordPress dort wp_add_inline_style nicht unterstützt.
     // ─────────────────────────────────────────────────────────────
 
     public function login_styles() {
@@ -78,17 +82,13 @@ class MediaLab_White_Label {
         $bg_image   = $this->opts['login_bg_image']
             ? wp_get_attachment_image_url($this->opts['login_bg_image'], 'full')
             : '';
-        $primary    = sanitize_hex_color($this->opts['login_primary'] ?: '#2271b1');
+        $primary      = sanitize_hex_color($this->opts['login_primary'] ?: '#2271b1');
         $primary_dark = $this->darken_hex($primary, 15);
-        ?>
-        <style>
+
+        $css = '
         body.login {
-            background-color: <?php echo esc_attr($bg_color); ?>;
-            <?php if ($bg_image) : ?>
-            background-image: url('<?php echo esc_url($bg_image); ?>');
-            background-size: cover;
-            background-position: center;
-            <?php endif; ?>
+            background-color: ' . esc_attr($bg_color) . ';
+            ' . ($bg_image ? 'background-image: url("' . esc_url($bg_image) . '"); background-size: cover; background-position: center;' : '') . '
         }
         body.login #login {
             background: rgba(255,255,255,0.97);
@@ -96,27 +96,17 @@ class MediaLab_White_Label {
             padding: 32px 40px 24px;
             box-shadow: 0 20px 60px rgba(0,0,0,.35);
         }
-        <?php if ($logo_url) : ?>
-        body.login #login h1 a {
-            background-image: url('<?php echo esc_url($logo_url); ?>') !important;
-            background-size: contain !important;
-            background-repeat: no-repeat !important;
-            background-position: center !important;
-            width: <?php echo $logo_width; ?>px !important;
-            height: 80px !important;
-        }
-        <?php endif; ?>
         body.login .button-primary,
         body.login input[type="submit"] {
-            background: <?php echo esc_attr($primary); ?> !important;
-            border-color: <?php echo esc_attr($primary_dark); ?> !important;
-            box-shadow: 0 2px 8px <?php echo esc_attr($primary); ?>66 !important;
+            background: ' . esc_attr($primary) . ' !important;
+            border-color: ' . esc_attr($primary_dark) . ' !important;
+            box-shadow: 0 2px 8px ' . esc_attr($primary) . '66 !important;
             border-radius: 5px !important;
             padding: 10px 20px !important;
             height: auto !important;
         }
         body.login .button-primary:hover {
-            background: <?php echo esc_attr($primary_dark); ?> !important;
+            background: ' . esc_attr($primary_dark) . ' !important;
         }
         body.login input[type="text"],
         body.login input[type="password"],
@@ -129,14 +119,28 @@ class MediaLab_White_Label {
         }
         body.login input[type="text"]:focus,
         body.login input[type="password"]:focus {
-            border-color: <?php echo esc_attr($primary); ?> !important;
-            box-shadow: 0 0 0 2px <?php echo esc_attr($primary); ?>33 !important;
+            border-color: ' . esc_attr($primary) . ' !important;
+            box-shadow: 0 0 0 2px ' . esc_attr($primary) . '33 !important;
         }
         body.login #nav a,
-        body.login #backtoblog a { color: <?php echo esc_attr($primary); ?>; }
-        body.login .privacy-policy-page-link a { color: <?php echo esc_attr($primary); ?>; }
-        </style>
-        <?php
+        body.login #backtoblog a { color: ' . esc_attr($primary) . '; }
+        body.login .privacy-policy-page-link a { color: ' . esc_attr($primary) . '; }
+        ';
+
+        if ($logo_url) {
+            $css .= '
+            body.login #login h1 a {
+                background-image: url("' . esc_url($logo_url) . '") !important;
+                background-size: contain !important;
+                background-repeat: no-repeat !important;
+                background-position: center !important;
+                width: ' . $logo_width . 'px !important;
+                height: 80px !important;
+            }
+            ';
+        }
+
+        wp_add_inline_style( 'login', $css );
     }
 
     public function login_logo_url() {
@@ -156,25 +160,30 @@ class MediaLab_White_Label {
 
     // ─────────────────────────────────────────────────────────────
     // ADMIN STYLES
+    // Korrekt via wp_add_inline_style – kein direkter HTML-Output,
+    // da dieser Quirks Mode in der Mediathek verursacht.
     // ─────────────────────────────────────────────────────────────
 
     public function admin_styles() {
-        $primary = sanitize_hex_color($this->opts['login_primary'] ?: '#2271b1');
-        ?>
-        <style>
-        /* WP-Logo in Admin-Bar verstecken wenn eigenes Logo vorhanden */
-        <?php if (!empty($this->opts['admin_bar_logo'])) : ?>
-        #wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon::before { display: none; }
-        #wpadminbar #wp-admin-bar-wp-logo > .ab-item {
-            background-image: url('<?php echo esc_url(wp_get_attachment_image_url($this->opts['admin_bar_logo'], 'thumbnail')); ?>');
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-            width: 28px;
-        }
-        <?php endif; ?>
-        </style>
-        <?php
+        if ( empty( $this->opts['admin_bar_logo'] ) ) return;
+
+        $logo_url = wp_get_attachment_image_url( $this->opts['admin_bar_logo'], 'thumbnail' );
+        if ( ! $logo_url ) return;
+
+        $css = '
+            #wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon::before {
+                display: none;
+            }
+            #wpadminbar #wp-admin-bar-wp-logo > .ab-item {
+                background-image: url("' . esc_url( $logo_url ) . '");
+                background-size: contain;
+                background-repeat: no-repeat;
+                background-position: center;
+                width: 28px;
+            }
+        ';
+
+        wp_add_inline_style( 'wp-admin', $css );
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -184,7 +193,6 @@ class MediaLab_White_Label {
     public function admin_bar_branding($wp_admin_bar) {
         if (empty($this->opts['agency_name'])) return;
 
-        // WP-Logo-Node umbenennen
         $node = $wp_admin_bar->get_node('wp-logo');
         if ($node) {
             $node->title = '<span class="ab-icon" aria-hidden="true"></span>'
@@ -221,7 +229,6 @@ class MediaLab_White_Label {
             array($this, 'render_dashboard_widget')
         );
 
-        // Widget nach oben verschieben
         global $wp_meta_boxes;
         $widget = $wp_meta_boxes['dashboard']['normal']['core']['medialab_agency_widget'] ?? null;
         if ($widget) {
@@ -276,8 +283,7 @@ class MediaLab_White_Label {
         $allowed_roles = $this->opts['hide_menu_roles'] ?? array();
         if (empty($allowed_roles)) return;
 
-        // Prüfen ob aktueller User eine der erlaubten Rollen hat
-        $user = wp_get_current_user();
+        $user     = wp_get_current_user();
         $has_role = !empty(array_intersect((array) $user->roles, (array) $allowed_roles));
 
         if (!$has_role) {

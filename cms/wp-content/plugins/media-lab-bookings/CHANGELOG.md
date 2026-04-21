@@ -6,6 +6,92 @@ Versionierung nach [Semantic Versioning](https://semver.org/lang/de/).
 
 ---
 
+## [1.6.0] - 2026-04-21
+
+### media-lab-bookings 1.6.0
+
+#### Added
+- **Wording-Konfiguration** (`inc/settings.php`) – neue ACF-Optionsseite unter **Bookings → Einstellungen**; vier konfigurierbare Begriffe: Singular (z.B. „Reservierung"), Plural (z.B. „Reservierungen"), Verb/Button-Text (z.B. „Jetzt reservieren"), Vergangenheit (z.B. „Reservierung eingegangen"); globale Hilfsfunktion `mlb_term( $type )` gibt den konfigurierten Begriff zurück oder den Standard-Fallback
+- **Wording in CPT-Labels** (`inc/cpt.php`) – `mlb_booking` CPT-Labels (name, singular_name, add_new_item, edit_item, not_found) werden dynamisch aus `mlb_term()` befüllt → korrekte Bezeichnung im gesamten WP-Backend
+- **Wording im Admin-Menü** (`inc/admin.php`) – Untermenü-Einträge „Buchungen" und „Neue Buchung" sowie Dashboard-Statistik-Labels nutzen `mlb_term()`
+- **Wording in Erfolgsmeldung** (`inc/ajax.php`) – Formular-Erfolgsmeldung nutzt `mlb_term('singular')`; kann zusätzlich global unter **Einstellungen → Standard Erfolgsmeldung** überschrieben werden
+- **Wording im Shortcode** (`inc/shortcode.php`) – Button-Label Fallback auf `mlb_term('verb')` wenn kein standortspezifisches Label gesetzt ist
+
+#### Fixed
+- **iCal-Anhang** (`inc/mail.php`) – Anhang aus der initialen Bestätigungsmail (Formular-Submit) entfernt. iCal wird nur noch bei Status-Mail „Bestätigt" und Erinnerungsmail angehängt.
+- **iCal-Download-Link** (`templates/booking-form.php`, `assets/js/booking-form.js`, `inc/ajax.php`) – Download-Link aus dem Formular-Erfolgs-Screen entfernt. Termin-Speicherung ist erst nach Bestätigung sinnvoll.
+
+---
+
+## [1.5.9] - 2026-04-20
+
+### media-lab-bookings 1.5.9
+
+#### Fixed
+- **`inc/calendar.php`** – Buchungen wurden im Kalender nicht angezeigt weil ACF das Datum intern als `Ymd` (z.B. `20260422`) speichert, die Kalender-Zellen aber `Y-m-d` (`2026-04-22`) als Array-Key verwenden. Zwei Korrekturen: (1) Datums-Normalisierung beim Gruppieren via `date('Y-m-d', strtotime($date_raw))` damit beide Formate auf denselben Key landen; (2) BETWEEN-Query-Werte auf `Ymd`-Format umgestellt (`20260401`–`20260430`) mit `type => 'CHAR'` statt `type => 'DATE'`, damit der String-Vergleich korrekt funktioniert.
+
+---
+
+## [1.5.8] - 2026-04-20
+
+### media-lab-bookings 1.5.8
+
+#### Fixed
+- **`inc/calendar.php`** – Kritischer PHP-Fehler behoben: `all_booking_statuses()` wurde aufgerufen aber nicht in der Klasse definiert (String-Ersetzung in v1.5.7 fehlgeschlagen). Methode direkt in die Klasse eingefügt.
+
+---
+
+## [1.5.7] - 2026-04-20
+
+### media-lab-bookings 1.5.7
+
+#### Fixed
+- **Root cause:** `post_status => 'any'` in `WP_Query` schließt Custom Post Statuses mit `public => false` aus — WordPress setzt intern `exclude_from_search => true` für diese Statuses, und `'any'` berücksichtigt nur Statuses mit `exclude_from_search => false`. Da `mlb-pending`, `mlb-confirmed` und `mlb-cancelled` alle mit `public => false` registriert sind, wurden sie von `'any'` ignoriert.
+- **`inc/calendar.php`** – neue Hilfsmethode `all_booking_statuses()` liefert alle relevanten Statuses explizit (`publish`, `mlb-pending`, `mlb-confirmed`, `mlb-cancelled`, `draft`, `private`); beide Abfragen (Monatsansicht + Popup) verwenden diese Liste.
+- **`inc/dashboard-widget.php`** – `post_status => 'any'` durch explizite Liste ersetzt.
+- **`inc/admin.php`** – `count_bookings_by_status()` ebenfalls auf explizite Liste.
+
+---
+
+## [1.5.6] - 2026-04-20
+
+### media-lab-bookings 1.5.6
+
+#### Fixed
+- **Root cause identifiziert:** WordPress setzt beim Speichern im Backend-Editor den `post_status` unkontrolliert auf `'publish'`, unabhängig vom ACF-Feld `mlb_booking_status`. Dadurch zählt `wp_count_posts()` alle Buchungen unter `->publish` statt unter `->{'mlb-pending'}` etc. → Dashboard-Zähler zeigen 0.
+- **`inc/admin.php`** – `dashboard_page()`: neue Hilfsmethode `count_bookings_by_status()` zählt via `WP_Query` nach ACF-Meta-Feld `mlb_booking_status` (unabhängig vom WP-Post-Status). `wp_count_posts()` entfernt.
+- **`inc/notifications.php`** – `on_acf_save()`: nach jedem Statuswechsel wird der WP-Post-Status via `wp_update_post()` synchronisiert (`mlb-pending` → `mlb-pending`, `mlb-confirmed` → `mlb-confirmed` etc.). Damit bleiben WP-Post-Status und ACF-Meta dauerhaft konsistent und alle Abfragen (auch `wp_count_posts`) liefern korrekte Ergebnisse.
+- **`inc/dashboard-widget.php`** – `render()`: `post_status => 'any'` statt fester Liste; Ausstehend-Zähler ebenfalls via `WP_Query` nach Meta-Feld; Meta-Filter auf `mlb-pending` und `mlb-confirmed` (IN) statt NOT IN cancelled.
+
+---
+
+## [1.5.5] - 2026-04-20
+
+### media-lab-bookings 1.5.5
+
+#### Fixed
+- **`inc/calendar.php`** – Bestätigte und stornierte Buchungen wurden im Kalender weiterhin nicht angezeigt. Ursache: `get_posts()` setzt intern `suppress_filters => true` und verarbeitet `post_status => 'any'` für registrierte Custom Post Statuses nicht korrekt. Fix: beide Abfragen (Monatsansicht + Tages-Popup) auf `new WP_Query()` umgestellt, das `'any'` zuverlässig verarbeitet und keine Filter unterdrückt. Nicht mehr benötigter `exclude_trash_filter` entfernt.
+
+---
+
+## [1.5.4] - 2026-04-20
+
+### media-lab-bookings 1.5.4
+
+#### Fixed
+- **`inc/calendar.php`** – Kalenderansicht zeigte nur Buchungen mit WP-`post_status = 'mlb-pending'`. Ursache: WordPress setzt beim Speichern im Backend-Editor den `post_status` automatisch auf `'publish'`, unabhängig vom ACF-Feld `mlb_booking_status`. Bestätigte Buchungen hatten dadurch WP-`post_status = 'publish'` und das ACF-Feld `mlb_booking_status = 'mlb-confirmed'`. Die Kalenderabfrage verwendete eine feste Liste (`['publish', 'mlb-pending', ...]`), die `'publish'` zwar enthielt, aber zu eng gefasst war. Fix: `post_status => 'any'` erfasst alle WP-Statuses zuverlässig; Papierkorb-Einträge werden via `posts_where`-Filter explizit ausgeschlossen. Status-Farbgebung liest `mlb_booking_status` aus Post-Meta (unverändert korrekt).
+
+---
+
+## [1.5.3] - 2026-04-20
+
+### media-lab-bookings 1.5.3
+
+#### Fixed
+- **`inc/notifications.php`** – Statuswechsel-Erkennung komplett überarbeitet. Vorher: neuer Status aus `$_POST['acf']['field_mlb_booking_status']` gelesen (unzuverlässig, da ACF zum Zeitpunkt des Hooks den Wert noch nicht gespeichert haben kann) und mit `_mlb_previous_status` verglichen (wurde nie initial gesetzt → leerer Vergleichswert). Führte dazu, dass beim Bestätigen einer Buchung die Stornierungsmail ausgelöst wurde. Jetzt: zwei Hook-Prioritäten — Priorität 5 (`capture_old_status`) sichert den aktuellen DB-Wert **vor** der ACF-Speicherung als Snapshot; Priorität 20 (`on_acf_save`) liest den neuen Status **nach** der ACF-Speicherung direkt aus der DB und vergleicht mit dem Snapshot. Kein `$_POST` mehr.
+
+---
+
 ## [1.5.2] - 2026-04-09
 
 ### media-lab-bookings 1.5.2

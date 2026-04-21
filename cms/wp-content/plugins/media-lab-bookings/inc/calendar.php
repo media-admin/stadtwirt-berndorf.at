@@ -187,33 +187,46 @@ class MLB_Calendar {
     // ── Buchungen pro Monat laden ─────────────────────────────────────────────
 
     private static function get_month_bookings( int $year, int $month, int $location_id ): array {
-        $date_from = sprintf( '%04d-%02d-01', $year, $month );
-        $date_to   = sprintf( '%04d-%02d-%02d', $year, $month, date( 't', mktime( 0, 0, 0, $month, 1, $year ) ) );
+        $days_in_month = (int) date( 't', mktime( 0, 0, 0, $month, 1, $year ) );
+
+        // ACF date_picker speichert intern als 'Ymd' (z.B. 20260422).
+        // BETWEEN-Werte im selben Format + type=>'CHAR' für korrekten String-Vergleich.
+        $date_from = sprintf( '%04d%02d01',   $year, $month );
+        $date_to   = sprintf( '%04d%02d%02d', $year, $month, $days_in_month );
 
         $args = [
             'post_type'      => 'mlb_booking',
-            'post_status'    => [ 'publish', 'mlb-pending', 'mlb-confirmed', 'mlb-cancelled' ],
+            // Alle möglichen WP post_status-Werte explizit angeben.
+            // 'any' schließt Custom Statuses mit public=>false aus (exclude_from_search=true).
+            'post_status'    => self::all_booking_statuses(),
             'posts_per_page' => -1,
             'meta_query'     => [
                 'relation' => 'AND',
-                [ 'key' => 'mlb_booking_date', 'value' => [ $date_from, $date_to ], 'compare' => 'BETWEEN', 'type' => 'DATE' ],
+                [ 'key' => 'mlb_booking_date', 'value' => [ $date_from, $date_to ], 'compare' => 'BETWEEN', 'type' => 'CHAR' ],
             ],
         ];
-
         if ( $location_id ) {
             $args['meta_query'][] = [ 'key' => 'mlb_booking_location', 'value' => $location_id ];
         }
 
-        $posts    = get_posts( $args );
+        // WP_Query statt get_posts() – get_posts() setzt suppress_filters => true
+        // und behandelt post_status => 'any' nicht korrekt für Custom Statuses.
+        $query  = new WP_Query( $args );
+        $posts  = $query->posts;
         $grouped  = [];
 
         foreach ( $posts as $post ) {
-            $date   = get_post_meta( $post->ID, 'mlb_booking_date', true );
-            $status = get_post_meta( $post->ID, 'mlb_booking_status', true ) ?: 'mlb-pending';
-            $time   = get_post_meta( $post->ID, 'mlb_booking_time',   true );
-            $name   = get_post_meta( $post->ID, 'mlb_booking_name',   true );
+            $date_raw = get_post_meta( $post->ID, 'mlb_booking_date', true );
+            $status   = get_post_meta( $post->ID, 'mlb_booking_status', true ) ?: 'mlb-pending';
+            $time     = get_post_meta( $post->ID, 'mlb_booking_time',   true );
+            $name     = get_post_meta( $post->ID, 'mlb_booking_name',   true );
 
-            if ( ! $date ) continue;
+            if ( ! $date_raw ) continue;
+
+            // Datum normalisieren: ACF speichert intern als 'Ymd' (20260422),
+            // Kalender-Zellen verwenden 'Y-m-d' (2026-04-22) als Array-Key.
+            $date = date( 'Y-m-d', strtotime( $date_raw ) );
+            if ( ! $date || $date === '1970-01-01' ) continue;
 
             $grouped[ $date ][] = [
                 'id'     => $post->ID,
@@ -245,7 +258,7 @@ class MLB_Calendar {
 
         $args = [
             'post_type'      => 'mlb_booking',
-            'post_status'    => [ 'publish', 'mlb-pending', 'mlb-confirmed', 'mlb-cancelled' ],
+            'post_status'    => self::all_booking_statuses(),
             'posts_per_page' => -1,
             'meta_query'     => [
                 'relation' => 'AND',
@@ -256,7 +269,8 @@ class MLB_Calendar {
             $args['meta_query'][] = [ 'key' => 'mlb_booking_location', 'value' => $location_id ];
         }
 
-        $posts = get_posts( $args );
+        $query = new WP_Query( $args );
+        $posts = $query->posts;
 
         $status_labels = [ 'mlb-pending' => 'Ausstehend', 'mlb-confirmed' => 'Bestätigt', 'mlb-cancelled' => 'Storniert' ];
 
@@ -290,6 +304,21 @@ class MLB_Calendar {
         $html .= '</tbody></table>';
 
         wp_send_json_success( [ 'html' => $html ] );
+    }
+
+    // ── Alle möglichen WP-Post-Statuses für Buchungen ────────────────────────
+    // 'any' in WP_Query schließt Custom Statuses mit public=>false aus,
+    // weil diese exclude_from_search=true erben. Explizite Liste nötig.
+
+    private static function all_booking_statuses(): array {
+        return [
+            'publish',        // WordPress setzt diesen beim Backend-Speichern
+            'mlb-pending',    // Neu via Formular
+            'mlb-confirmed',  // Bestätigt (nach notifications.php Sync)
+            'mlb-cancelled',  // Storniert
+            'draft',
+            'private',
+        ];
     }
 }
 

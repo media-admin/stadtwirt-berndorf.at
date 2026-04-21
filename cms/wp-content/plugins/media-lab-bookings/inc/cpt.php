@@ -12,8 +12,19 @@ class MLB_CPT {
             'public'          => false, 'show_ui' => true, 'show_in_menu' => false,
             'supports'        => [ 'title' ], 'has_archive' => false, 'rewrite' => false, 'capability_type' => 'post',
         ] );
+        // CPT-Labels nutzen mlb_term() damit Singular/Plural im Backend korrekt erscheinen.
+        // Hinweis: CPT wird bei 'init' registriert, ACF-Optionen sind zu diesem Zeitpunkt verfügbar.
+        $s = function_exists( 'mlb_term' ) ? mlb_term( 'singular' ) : 'Buchung';
+        $p = function_exists( 'mlb_term' ) ? mlb_term( 'plural' )   : 'Buchungen';
         register_post_type( 'mlb_booking', [
-            'labels'          => [ 'name' => 'Buchungen', 'singular_name' => 'Buchung', 'add_new' => 'Hinzufügen', 'add_new_item' => 'Neue Buchung hinzufügen', 'edit_item' => 'Buchung bearbeiten', 'not_found' => 'Keine Buchungen gefunden' ],
+            'labels'          => [
+                'name'               => $p,
+                'singular_name'      => $s,
+                'add_new'            => 'Hinzufügen',
+                'add_new_item'       => 'Neue ' . $s . ' hinzufügen',
+                'edit_item'          => $s . ' bearbeiten',
+                'not_found'          => 'Keine ' . $p . ' gefunden',
+            ],
             'public'          => false, 'show_ui' => true, 'show_in_menu' => false,
             'supports'        => [ 'title' ], 'has_archive' => false, 'rewrite' => false, 'capability_type' => 'post',
         ] );

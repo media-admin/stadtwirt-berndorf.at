@@ -493,6 +493,14 @@ bg-color-grey {
   img {
     filter: grayscale(100%) !important;
   }
+
+  &.wp-block-cover {
+    filter: none !important;
+
+    .wp-block-cover__image-background {
+      filter: grayscale(100%) !important;
+    }
+  }
 }
 
 
@@ -500,4 +508,19 @@ bg-color-grey {
 .wp-block-column.hide-me,
 .wp-block-columns .wp-block-column.hide-me {
     display: none !important;
+}
+
+
+// Mobile-only Zeilenumbruch
+.mobile-br {
+    display: none;
+
+    @include respond-below('md') {
+        display: block;
+    }
+}
+
+// Verhindert Zeilenumbruch innerhalb eines Elements
+.nowrap {
+    white-space: nowrap;
 }

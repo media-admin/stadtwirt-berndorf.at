@@ -118,6 +118,11 @@ a {
 .callout--special strong {
   font-size: $font-size-6xl;
   color: $color-primary;
+  white-space: nowrap; // verhindert Bruch mitten im Wort
+
+    @include respond-below('md') {
+      display: block; // erzwingt eigene Zeile auf Mobile
+    }
 }
 
 

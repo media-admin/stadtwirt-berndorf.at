@@ -51,12 +51,12 @@ class MLB_Dashboard_Widget {
 
         $bookings = get_posts( [
             'post_type'      => 'mlb_booking',
-            'post_status'    => [ 'publish', 'mlb-pending', 'mlb-confirmed' ],
+            'post_status'    => [ 'publish', 'mlb-pending', 'mlb-confirmed', 'mlb-cancelled' ],
             'posts_per_page' => $limit,
             'meta_query'     => [
                 'relation' => 'AND',
                 [ 'key' => 'mlb_booking_date',   'value' => $today, 'compare' => '>=' ],
-                [ 'key' => 'mlb_booking_status', 'value' => 'mlb-cancelled', 'compare' => '!=' ],
+                [ 'key' => 'mlb_booking_status', 'value' => [ 'mlb-pending', 'mlb-confirmed' ], 'compare' => 'IN' ],
             ],
             'orderby'  => 'meta_value',
             'meta_key' => 'mlb_booking_date',
@@ -89,7 +89,8 @@ class MLB_Dashboard_Widget {
             echo '</table>';
         }
 
-        $total_pending = wp_count_posts( 'mlb_booking' )->{'mlb-pending'} ?? 0;
+        $q_pending = new WP_Query( [ 'post_type' => 'mlb_booking', 'post_status' => 'any', 'posts_per_page' => -1, 'fields' => 'ids', 'meta_query' => [ [ 'key' => 'mlb_booking_status', 'value' => 'mlb-pending' ] ] ] );
+        $total_pending = $q_pending->found_posts;
 
         echo '<div class="mlb-widget-footer">';
         echo '<span>' . (int) $total_pending . ' ausstehend</span>';

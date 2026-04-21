@@ -162,7 +162,7 @@
         $.post( cfg.ajaxUrl, data, function ( res ) {
             self.setLoading( false );
             if ( res.success ) {
-                self.showSuccess( res.data.message, res.data.ical_url || '' );
+                self.showSuccess( res.data.message );
             } else {
                 self.showError( ( res.data && res.data.message ) ? res.data.message : cfg.i18n.errorGeneral );
             }
@@ -176,12 +176,9 @@
         this.$submitBtn.prop( 'disabled', isLoading ).toggleClass( 'mlb-form__button--loading', isLoading );
     };
 
-    MLBForm.prototype.showSuccess = function ( message, icalUrl ) {
+    MLBForm.prototype.showSuccess = function ( message ) {
         this.$form.prop( 'hidden', true );
         this.$success.find( '.mlb-form__success-message' ).text( message );
-        if ( icalUrl ) {
-            this.$success.find( '.mlb-form__ical-link' ).attr( 'href', icalUrl ).prop( 'hidden', false );
-        }
         this.$success.prop( 'hidden', false );
         this.$wrap[0].scrollIntoView( { behavior: 'smooth', block: 'start' } );
     };

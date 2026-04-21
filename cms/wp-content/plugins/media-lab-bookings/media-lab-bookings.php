@@ -19,6 +19,7 @@ define( 'MLB_BASENAME', plugin_basename( __FILE__ ) );
 
 // ── Includes ──────────────────────────────────────────────────────────────────
 $mlb_includes = [
+    'inc/settings.php',
     'inc/cpt.php',
     'inc/acf-fields.php',
     'inc/slots.php',

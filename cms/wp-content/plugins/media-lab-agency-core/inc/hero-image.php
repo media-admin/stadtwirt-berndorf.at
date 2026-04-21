@@ -338,6 +338,42 @@ add_action('acf/init', function() {
 // =============================================================================
 
 /**
+ * Normalisiert einen ACF-Bildfeld-Wert immer zu einem Array mit 'url', 'alt' etc.
+ *
+ * ACF kann Bildfelder als Array ODER als Integer-ID zurückgeben – je nachdem ob
+ * die Felddefinition aus der DB (mit ggf. return_format=id) oder die programmatisch
+ * registrierte (return_format=array) bevorzugt wird. Dieser Helper macht beides
+ * verlässlich handhabbar.
+ *
+ * @param  mixed $value  Rückgabewert von get_field() – Array, int oder false/null
+ * @return array|null    Normalisiertes Array mit mindestens 'url' und 'alt', oder null
+ */
+function _medialab_resolve_image($value): ?array {
+    if (!$value) return null;
+
+    // Bereits ein vollständiges Array → direkt verwenden
+    if (is_array($value) && !empty($value['url'])) {
+        return $value;
+    }
+
+    // ACF hat die ID zurückgegeben (oder ein Array ohne URL) → über wp_get_attachment_image_src auflösen
+    $id = is_array($value) ? ($value['ID'] ?? ($value['id'] ?? 0)) : (int) $value;
+    if ($id <= 0) return null;
+
+    $src = wp_get_attachment_image_src($id, 'full');
+    if (!$src) return null;
+
+    return [
+        'ID'     => $id,
+        'id'     => $id,
+        'url'    => $src[0],
+        'width'  => $src[1],
+        'height' => $src[2],
+        'alt'    => get_post_meta($id, '_wp_attachment_image_alt', true) ?: '',
+    ];
+}
+
+/**
  * Gibt alle Hero-Daten für einen Post zurück.
  *
  * @param  int|null $post_id  Post-ID (null = current post)
@@ -345,18 +381,26 @@ add_action('acf/init', function() {
  */
 function media_lab_get_hero_image(?int $post_id = null) : ?array {
 
-    if (!$post_id) $post_id = get_the_ID();
+    // get_queried_object_id() ist zuverlässig auch in header.php (außerhalb Loop),
+    // get_the_ID() gibt dort oft 0 zurück, was alle get_field()-Calls bricht.
+    if (!$post_id) {
+        $post_id = get_queried_object_id();
+    }
+    if (!$post_id) return null;
 
     // Explizit deaktiviert?
+    // ACF gibt für eine noch nie gespeicherte true_false-Field 'false' zurück –
+    // NICHT den default_value (1). false/null bedeutet: Feld unberührt → anzeigen.
+    // Nur ausblenden wenn der User das Feld explizit auf 0 gesetzt hat.
     $show = get_field('hero_image_show', $post_id);
-    if ($show === false || $show === 0) return null;
+    if ($show === 0 || $show === '0') return null;
 
-    // Bilder
-    $desktop = get_field('hero_image_desktop', $post_id)
-            ?: get_field('hero_fallback_desktop', 'option');
-    $mobile  = get_field('hero_image_mobile', $post_id)
-            ?: get_field('hero_fallback_mobile', 'option')
-            ?: $desktop;
+    // Bilder – _medialab_resolve_image() normalisiert Array/ID/false sicher zu Array oder null
+    $desktop = _medialab_resolve_image(get_field('hero_image_desktop', $post_id))
+            ?? _medialab_resolve_image(get_field('hero_fallback_desktop', 'option'));
+    $mobile  = _medialab_resolve_image(get_field('hero_image_mobile', $post_id))
+            ?? _medialab_resolve_image(get_field('hero_fallback_mobile', 'option'))
+            ?? $desktop;
 
     if (!$desktop) return null;
 

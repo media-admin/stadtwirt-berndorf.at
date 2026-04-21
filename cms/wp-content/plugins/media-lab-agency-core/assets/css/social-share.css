@@ -1,0 +1,134 @@
+/**
+ * Media Lab – Social Share Buttons
+ * DSGVO-konform: Kein externes Script, keine Datenübertragung beim Seitenaufruf.
+ *
+ * CSS Custom Properties (überschreibbar im Theme):
+ *   --share-btn-size      Button-Größe         (Standard: 2.5rem)
+ *   --share-btn-radius    Border-Radius         (Standard: 0.5rem)
+ *   --share-gap           Abstand zwischen Btns (Standard: 0.5rem)
+ *   --share-label-color   Farbe des Labels      (Standard: currentColor)
+ */
+
+.medialab-share {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.medialab-share--vertical {
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.medialab-share__label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--share-label-color, currentColor);
+    opacity: 0.7;
+    flex-basis: 100%;
+}
+
+.medialab-share__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--share-gap, 0.5rem);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.medialab-share--vertical .medialab-share__list {
+    flex-direction: column;
+}
+
+/* ── Button ────────────────────────────────────────────────────── */
+
+.medialab-share__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    height: var(--share-btn-size, 2.5rem);
+    padding: 0 0.75rem;
+    border-radius: var(--share-btn-radius, 0.5rem);
+    background-color: var(--share-color, #555);
+    color: #fff;
+    text-decoration: none;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    line-height: 1;
+    transition: filter 0.15s ease, transform 0.1s ease;
+    white-space: nowrap;
+}
+
+.medialab-share__btn:hover,
+.medialab-share__btn:focus-visible {
+    filter: brightness(1.15);
+    transform: translateY(-1px);
+    color: #fff;
+    text-decoration: none;
+}
+
+.medialab-share__btn:active {
+    transform: translateY(0);
+    filter: brightness(0.95);
+}
+
+/* ── Icon ──────────────────────────────────────────────────────── */
+
+.medialab-share__btn svg {
+    width: 1rem;
+    height: 1rem;
+    fill: currentColor;
+    flex-shrink: 0;
+}
+
+/* ── Label im Button ───────────────────────────────────────────── */
+
+.medialab-share__btn-label {
+    /* Standard: sichtbar.
+       Für Icon-only: .medialab-share__btn-label { display: none; }
+       im Theme überschreiben. */
+}
+
+/* ── Responsive: Label auf kleinen Screens ausblenden ─────────── */
+
+@media (max-width: 480px) {
+    .medialab-share__btn {
+        padding: 0 0.625rem;
+    }
+
+    .medialab-share__btn-label {
+        /* Optional: display: none; – auskommentiert, damit Text sichtbar bleibt */
+    }
+}
+
+/* ── Modifier: Icon only ───────────────────────────────────────── */
+
+.medialab-share--icon-only .medialab-share__btn {
+    padding: 0;
+    width: var(--share-btn-size, 2.5rem);
+    justify-content: center;
+}
+
+.medialab-share--icon-only .medialab-share__btn-label {
+    display: none;
+}
+
+/* ── Modifier: Outline-Stil ────────────────────────────────────── */
+
+.medialab-share--outline .medialab-share__btn {
+    background-color: transparent;
+    color: var(--share-color, #555);
+    border: 2px solid var(--share-color, #555);
+}
+
+.medialab-share--outline .medialab-share__btn:hover,
+.medialab-share--outline .medialab-share__btn:focus-visible {
+    background-color: var(--share-color, #555);
+    color: #fff;
+}
+
+.medialab-share--outline .medialab-share__btn svg {
+    fill: currentColor;
+}

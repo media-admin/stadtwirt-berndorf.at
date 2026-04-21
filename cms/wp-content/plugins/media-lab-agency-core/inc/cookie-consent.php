@@ -70,28 +70,45 @@ class MediaLab_Cookie_Consent {
             'openSettings'  => $s( 'cc_settings_btn', 'Individuelle Datenschutz-Präferenzen' ),
         );
 
+        // Notwendig ist immer vorhanden.
+        // Optionale Kategorien werden nur ausgegeben wenn sie im Backend aktiviert sind.
+        $b = function( string $key, bool $default ) use ( $acf ): bool {
+            if ( ! $acf ) return $default;
+            $val = get_field( $key, 'option' );
+            return ( $val !== null && $val !== false ) ? (bool) $val : $default;
+        };
+
         $categories = array(
             'necessary' => array(
                 'label'       => $s( 'cc_cat_necessary_label', 'Notwendig' ),
                 'description' => $s( 'cc_cat_necessary_desc',  'Technisch erforderliche Cookies f\u00fcr die Grundfunktionen der Website.' ),
                 'required'    => true,
             ),
-            'statistics' => array(
+        );
+
+        if ( $b( 'cc_cat_statistics_enabled', false ) ) {
+            $categories['statistics'] = array(
                 'label'       => $s( 'cc_cat_statistics_label', 'Statistik' ),
                 'description' => $s( 'cc_cat_statistics_desc',  'Helfen uns zu verstehen, wie Besucher mit der Website interagieren.' ),
                 'required'    => false,
-            ),
-            'marketing' => array(
+            );
+        }
+
+        if ( $b( 'cc_cat_marketing_enabled', false ) ) {
+            $categories['marketing'] = array(
                 'label'       => $s( 'cc_cat_marketing_label', 'Marketing' ),
                 'description' => $s( 'cc_cat_marketing_desc',  'Werden f\u00fcr personalisierte Werbung und Remarketing verwendet.' ),
                 'required'    => false,
-            ),
-            'comfort' => array(
+            );
+        }
+
+        if ( $b( 'cc_cat_comfort_enabled', false ) ) {
+            $categories['comfort'] = array(
                 'label'       => $s( 'cc_cat_comfort_label', 'Komfort' ),
                 'description' => $s( 'cc_cat_comfort_desc',  'Erm\u00f6glichen eingebettete Inhalte wie YouTube-Videos oder Google Maps.' ),
                 'required'    => false,
-            ),
-        );
+            );
+        }
 
         $version = $s( 'cc_version', '1' );
 
@@ -241,17 +258,59 @@ class MediaLab_Cookie_Consent {
                 array( 'key' => 'field_cc_cat_necessary_label', 'label' => 'Notwendig – Bezeichnung',   'name' => 'cc_cat_necessary_label', 'type' => 'text', 'default_value' => 'Notwendig',          'wrapper' => array( 'width' => '50' ) ),
                 array( 'key' => 'field_cc_cat_necessary_desc',  'label' => 'Notwendig – Beschreibung',  'name' => 'cc_cat_necessary_desc',  'type' => 'textarea', 'rows' => 2, 'default_value' => 'Technisch erforderliche Cookies für die Grundfunktionen der Website.', 'wrapper' => array( 'width' => '50' ) ),
 
-                // Statistik
-                array( 'key' => 'field_cc_cat_statistics_label', 'label' => 'Statistik – Bezeichnung',  'name' => 'cc_cat_statistics_label', 'type' => 'text', 'default_value' => 'Statistik',         'wrapper' => array( 'width' => '50' ) ),
-                array( 'key' => 'field_cc_cat_statistics_desc',  'label' => 'Statistik – Beschreibung', 'name' => 'cc_cat_statistics_desc',  'type' => 'textarea', 'rows' => 2, 'default_value' => 'Helfen uns zu verstehen, wie Besucher mit der Website interagieren.',    'wrapper' => array( 'width' => '50' ) ),
+                // ── Statistik ─────────────────────────────────────────────────
+                array(
+                    'key'           => 'field_cc_cat_statistics_enabled',
+                    'label'         => 'Statistik-Kategorie aktivieren',
+                    'name'          => 'cc_cat_statistics_enabled',
+                    'type'          => 'true_false',
+                    'ui'            => 1,
+                    'default_value' => 0,
+                    'instructions'  => 'Nur aktivieren wenn Statistik-Cookies (z.B. Google Analytics, Matomo) verwendet werden.',
+                    'wrapper'       => array( 'width' => '100' ),
+                ),
+                array( 'key' => 'field_cc_cat_statistics_label', 'label' => 'Statistik – Bezeichnung',  'name' => 'cc_cat_statistics_label', 'type' => 'text', 'default_value' => 'Statistik', 'wrapper' => array( 'width' => '50' ),
+                    'conditional_logic' => array(array(array('field' => 'field_cc_cat_statistics_enabled', 'operator' => '==', 'value' => '1'))),
+                ),
+                array( 'key' => 'field_cc_cat_statistics_desc', 'label' => 'Statistik – Beschreibung', 'name' => 'cc_cat_statistics_desc', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Helfen uns zu verstehen, wie Besucher mit der Website interagieren.', 'wrapper' => array( 'width' => '50' ),
+                    'conditional_logic' => array(array(array('field' => 'field_cc_cat_statistics_enabled', 'operator' => '==', 'value' => '1'))),
+                ),
 
-                // Marketing
-                array( 'key' => 'field_cc_cat_marketing_label', 'label' => 'Marketing – Bezeichnung',  'name' => 'cc_cat_marketing_label', 'type' => 'text', 'default_value' => 'Marketing',          'wrapper' => array( 'width' => '50' ) ),
-                array( 'key' => 'field_cc_cat_marketing_desc',  'label' => 'Marketing – Beschreibung', 'name' => 'cc_cat_marketing_desc',  'type' => 'textarea', 'rows' => 2, 'default_value' => 'Werden für personalisierte Werbung und Remarketing verwendet.',           'wrapper' => array( 'width' => '50' ) ),
+                // ── Marketing ─────────────────────────────────────────────────
+                array(
+                    'key'           => 'field_cc_cat_marketing_enabled',
+                    'label'         => 'Marketing-Kategorie aktivieren',
+                    'name'          => 'cc_cat_marketing_enabled',
+                    'type'          => 'true_false',
+                    'ui'            => 1,
+                    'default_value' => 0,
+                    'instructions'  => 'Nur aktivieren wenn Marketing-Cookies (z.B. Meta Pixel, Google Ads) verwendet werden.',
+                    'wrapper'       => array( 'width' => '100' ),
+                ),
+                array( 'key' => 'field_cc_cat_marketing_label', 'label' => 'Marketing – Bezeichnung', 'name' => 'cc_cat_marketing_label', 'type' => 'text', 'default_value' => 'Marketing', 'wrapper' => array( 'width' => '50' ),
+                    'conditional_logic' => array(array(array('field' => 'field_cc_cat_marketing_enabled', 'operator' => '==', 'value' => '1'))),
+                ),
+                array( 'key' => 'field_cc_cat_marketing_desc', 'label' => 'Marketing – Beschreibung', 'name' => 'cc_cat_marketing_desc', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Werden für personalisierte Werbung und Remarketing verwendet.', 'wrapper' => array( 'width' => '50' ),
+                    'conditional_logic' => array(array(array('field' => 'field_cc_cat_marketing_enabled', 'operator' => '==', 'value' => '1'))),
+                ),
 
-                // Komfort
-                array( 'key' => 'field_cc_cat_comfort_label', 'label' => 'Komfort – Bezeichnung',  'name' => 'cc_cat_comfort_label', 'type' => 'text', 'default_value' => 'Komfort',             'wrapper' => array( 'width' => '50' ) ),
-                array( 'key' => 'field_cc_cat_comfort_desc',  'label' => 'Komfort – Beschreibung', 'name' => 'cc_cat_comfort_desc',  'type' => 'textarea', 'rows' => 2, 'default_value' => 'Ermöglichen eingebettete Inhalte wie YouTube-Videos oder Google Maps.', 'wrapper' => array( 'width' => '50' ) ),
+                // ── Komfort ───────────────────────────────────────────────────
+                array(
+                    'key'           => 'field_cc_cat_comfort_enabled',
+                    'label'         => 'Komfort-Kategorie aktivieren',
+                    'name'          => 'cc_cat_comfort_enabled',
+                    'type'          => 'true_false',
+                    'ui'            => 1,
+                    'default_value' => 0,
+                    'instructions'  => 'Nur aktivieren wenn Komfort-Cookies (z.B. Google Maps, YouTube-Einbettungen) verwendet werden.',
+                    'wrapper'       => array( 'width' => '100' ),
+                ),
+                array( 'key' => 'field_cc_cat_comfort_label', 'label' => 'Komfort – Bezeichnung', 'name' => 'cc_cat_comfort_label', 'type' => 'text', 'default_value' => 'Komfort', 'wrapper' => array( 'width' => '50' ),
+                    'conditional_logic' => array(array(array('field' => 'field_cc_cat_comfort_enabled', 'operator' => '==', 'value' => '1'))),
+                ),
+                array( 'key' => 'field_cc_cat_comfort_desc', 'label' => 'Komfort – Beschreibung', 'name' => 'cc_cat_comfort_desc', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Ermöglichen eingebettete Inhalte wie YouTube-Videos oder Google Maps.', 'wrapper' => array( 'width' => '50' ),
+                    'conditional_logic' => array(array(array('field' => 'field_cc_cat_comfort_enabled', 'operator' => '==', 'value' => '1'))),
+                ),
 
                 // ── Trennlinie: Code-Snippets ──────────────────────────────────────────
                 array(
@@ -385,6 +444,12 @@ class MediaLab_Cookie_Consent {
         $snippets = array();
 
         foreach ( array( 'necessary', 'statistics', 'marketing', 'comfort' ) as $cat ) {
+            // Optionale Kategorien nur einschließen wenn sie aktiviert sind
+            if ( $cat !== 'necessary' ) {
+                $enabled = get_field( "cc_cat_{$cat}_enabled", 'option' );
+                if ( ! $enabled ) continue;
+            }
+
             $head = get_field( "cc_snippet_{$cat}_head", 'option' );
             $body = get_field( "cc_snippet_{$cat}_body", 'option' );
 

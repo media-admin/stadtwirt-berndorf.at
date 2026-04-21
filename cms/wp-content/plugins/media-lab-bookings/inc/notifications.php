@@ -21,8 +21,11 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 class MLB_Notifications {
 
     public static function init(): void {
-        // Status-Änderung erkennen (ACF speichert Felder nach wp_update_post)
-        add_action( 'acf/save_post',        [ __CLASS__, 'on_acf_save' ], 20 );
+        // Status-Änderung erkennen:
+        // Priorität 5 = VOR ACF-Speicherung: alten Wert aus DB sichern
+        // Priorität 20 = NACH ACF-Speicherung: neuen Wert aus DB lesen + vergleichen
+        add_action( 'acf/save_post', [ __CLASS__, 'capture_old_status' ], 5  );
+        add_action( 'acf/save_post', [ __CLASS__, 'on_acf_save' ],        20 );
 
         // Erinnerungs-Cron
         add_action( 'mlb_send_reminder',    [ __CLASS__, 'send_reminder' ] );
@@ -36,31 +39,44 @@ class MLB_Notifications {
         add_action( 'mlb_after_save_booking', [ __CLASS__, 'generate_cancel_token' ], 10, 2 );
     }
 
-    // ── ACF Save: Statuswechsel erkennen ─────────────────────────────────────
+    // ── ACF Save: alten Status VOR der Speicherung sichern (Priorität 5) ───────
+
+    public static function capture_old_status( $post_id ): void {
+        if ( get_post_type( $post_id ) !== 'mlb_booking' ) return;
+
+        // Aktuellen DB-Wert als Vergleichsbasis sichern (bevor ACF überschreibt)
+        $current = get_post_meta( $post_id, 'mlb_booking_status', true ) ?: 'mlb-pending';
+        update_post_meta( $post_id, '_mlb_previous_status', $current );
+    }
+
+    // ── ACF Save: Statuswechsel erkennen NACH der Speicherung (Priorität 20) ──
 
     public static function on_acf_save( $post_id ): void {
         if ( get_post_type( $post_id ) !== 'mlb_booking' ) return;
 
-        $new_status = sanitize_text_field( $_POST['acf']['field_mlb_booking_status'] ?? '' );
+        // Neuen Status direkt aus der DB lesen (ACF hat bereits gespeichert)
+        $new_status = get_post_meta( $post_id, 'mlb_booking_status', true );
         if ( ! $new_status ) return;
 
+        // Alten Status aus unserem Snapshot (gesetzt von capture_old_status)
         $old_status = get_post_meta( $post_id, '_mlb_previous_status', true );
 
         // Nur bei echtem Wechsel reagieren
         if ( $old_status === $new_status ) return;
 
-        update_post_meta( $post_id, '_mlb_previous_status', $new_status );
+        // WP-Post-Status synchronisieren – WordPress setzt beim Backend-Speichern
+        // unkontrolliert 'publish'. Wir korrigieren das hier, damit Abfragen
+        // nach WP-Post-Status (wp_count_posts etc.) korrekte Ergebnisse liefern.
+        wp_update_post( [ 'ID' => $post_id, 'post_status' => $new_status ] );
 
         switch ( $new_status ) {
             case 'mlb-confirmed':
                 self::send_status_mail( $post_id, 'confirmed' );
-                // Erinnerungs-Cron planen
                 self::schedule_reminder( $post_id );
                 break;
 
             case 'mlb-cancelled':
                 self::send_status_mail( $post_id, 'cancelled' );
-                // Geplante Erinnerung entfernen
                 wp_clear_scheduled_hook( 'mlb_send_reminder', [ $post_id ] );
                 break;
         }

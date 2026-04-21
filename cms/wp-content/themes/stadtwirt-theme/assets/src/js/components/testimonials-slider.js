@@ -34,19 +34,30 @@ export default class TestimonialsSlider {
         modules: [Navigation, Pagination, Autoplay],
         slidesPerView: 1,
         spaceBetween: 30,
-        loop: shouldLoop, // Dynamisch: nur wenn genug Slides
+        loop: shouldLoop,
+        // Fix: Swiper registriert DOM-Änderungen und aktualisiert sich selbst
+        observer: true,
+        observeParents: true,
         autoplay: autoplay && shouldLoop ? {
           delay: 5000,
           disableOnInteraction: false,
           pauseOnMouseEnter: true,
         } : false,
         navigation: {
-          nextEl: '.testimonials__button--next',
-          prevEl: '.testimonials__button--prev',
+          nextEl: sliderElement.querySelector('.testimonials__button--next'),
+          prevEl: sliderElement.querySelector('.testimonials__button--prev'),
         },
         pagination: {
-          el: '.testimonials__pagination',
+          el: sliderElement.querySelector('.testimonials__pagination'),
+          type: 'bullets',
           clickable: true,
+        },
+        // Fix: Pagination nach jedem Slide-Wechsel (auch Touch/Swipe) erzwingen
+        on: {
+          realIndexChange: function () {
+            this.pagination.render();
+            this.pagination.update();
+          },
         },
         breakpoints: {
           640: {
@@ -67,7 +78,6 @@ export default class TestimonialsSlider {
         slide.style.visibility = '';
       });
 
-      // Console Info (optional, kann entfernt werden)
       if (!shouldLoop) {
         console.info('Testimonials slider: Loop disabled (not enough slides)');
       }

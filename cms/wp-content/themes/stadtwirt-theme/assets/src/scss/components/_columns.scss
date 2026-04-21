@@ -46,7 +46,8 @@
 .carousel-grid__item {
     position:      relative;
     overflow:      hidden;
-    border-radius: $radius-md;
+    border-radius: $radius-none;
+    padding: $spacing-1
 }
 
 .carousel-grid__link {
@@ -57,28 +58,21 @@
     &:hover .carousel-grid__image img { transform: scale(1.05); }
 }
 
+// Logo-Modus: weißer Hintergrund, contain statt cover
 .carousel-grid__image {
-    position:     relative;
-    overflow:     hidden;
-    aspect-ratio: 4 / 3;
+    background: rgba($color-grey-light, 0.9); // hellgrau
+    border-radius: $radius-none;
 
     img {
-        width:      100%;
-        height:     100%;
-        object-fit: cover;
-        transition: transform $transition-base;
-        display:    block;
+        object-fit: contain; // war: cover
+        padding: $spacing-0;  // Luft um das Logo
     }
 }
 
+// Titel/Caption komplett ausblenden
+.carousel-grid__caption,
 .carousel-grid__overlay {
-    position:        absolute;
-    inset:           0;
-    background:      linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%);
-    display:         flex;
-    flex-direction:  column;
-    justify-content: flex-end;
-    padding:         var(--space-md);  // war: $spacing-4
+    display: none !important;
 }
 
 .carousel-grid__title {

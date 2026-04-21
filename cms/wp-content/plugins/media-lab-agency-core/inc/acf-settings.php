@@ -22,7 +22,7 @@ add_action('admin_menu', function () {
         'agency-core',
         '__return_null',
         'dashicons-admin-generic',
-        2
+        81  // ← war: 2
     );
 }, 5);
 
@@ -398,7 +398,26 @@ add_action('acf/init', function () {
                 'type'          => 'true_false',
                 'ui'            => 1,
                 'default_value' => 0,
-                'instructions'  => 'Zeigt eine dünne Fortschritts-Linie am oberen Rand nur auf Einzelbeitrags-Seiten (single.php).',
+                'instructions'  => 'Zeigt eine dünne Fortschritts-Linie am oberen Viewport-Rand. Wo sie erscheint, steuert die Option darunter.',
+            ),
+
+            array(
+                'key'     => 'field_scroll_progress_scope',
+                'label'   => 'Scroll Progress Bar – Anzeigebereich',
+                'name'    => 'scroll_progress_scope',
+                'type'    => 'select',
+                'choices' => array(
+                    'single'   => 'Nur Blog-Beiträge (single.php)',
+                    'singular' => 'Beiträge + Seiten (single + page)',
+                    'all'      => 'Alle Seiten (inkl. Archiv, Startseite)',
+                ),
+                'default_value'     => 'single',
+                'instructions'      => 'Auf welchen Seitentypen die Scroll Progress Bar angezeigt wird.',
+                'conditional_logic' => array(array(array(
+                    'field'    => 'field_scroll_progress_enabled',
+                    'operator' => '==',
+                    'value'    => '1',
+                ))),
             ),
 
         ),
@@ -976,95 +995,6 @@ add_action('acf/init', function () {
             'param' => 'options_page', 'operator' => '==', 'value' => 'agency-core-multilang',
         ))),
         'menu_order'            => 30,
-        'position'              => 'normal',
-        'style'                 => 'default',
-        'label_placement'       => 'top',
-        'instruction_placement' => 'label',
-    ));
-
-    // ── Field Group: Maintenance Mode ────────────────────────────
-    acf_add_local_field_group(array(
-        'key'    => 'group_maintenance',
-        'title'  => 'Maintenance Mode',
-        'fields' => array(
-
-            array(
-                'key'           => 'field_maintenance_enabled',
-                'label'         => 'Maintenance Mode aktivieren',
-                'name'          => 'maintenance_enabled',
-                'type'          => 'true_false',
-                'ui'            => 1,
-                'default_value' => 0,
-                'instructions'  => 'Aktiviert die Wartungsseite für alle Besucher. Eingeloggte Administratoren sehen die normale Website weiterhin.',
-            ),
-
-            array(
-                'key'     => 'field_maintenance_admin_hint',
-                'label'   => 'Hinweis',
-                'name'    => 'maintenance_admin_hint',
-                'type'    => 'message',
-                'label'   => ' ',
-                'message' => '<div style="background:#fff3cd;border-left:4px solid #f0ad4e;padding:10px 14px;border-radius:0 4px 4px 0;">'
-                           . '⚠️ <strong>Hinweis:</strong> Wenn aktiv, sehen alle Besucher die Wartungsseite (HTTP 503). '
-                           . 'Eingeloggte Administratoren werden automatisch durchgelassen und sehen einen orangenen Indikator in der Admin-Bar.'
-                           . '</div>',
-                'conditional_logic' => array(array(array(
-                    'field' => 'field_maintenance_enabled', 'operator' => '==', 'value' => '1',
-                ))),
-            ),
-
-            array(
-                'key'         => 'field_maintenance_headline',
-                'label'       => 'Überschrift',
-                'name'        => 'maintenance_headline',
-                'type'        => 'text',
-                'placeholder' => 'Wir sind gleich zurück',
-                'instructions'=> 'Leer lassen = Standardtext',
-            ),
-
-            array(
-                'key'         => 'field_maintenance_message',
-                'label'       => 'Nachricht',
-                'name'        => 'maintenance_message',
-                'type'        => 'textarea',
-                'rows'        => 3,
-                'placeholder' => 'Unsere Website wird gerade gewartet und verbessert. Wir sind in Kürze wieder für Sie da.',
-                'instructions'=> 'Kurze Erklärung für Besucher. HTML erlaubt.',
-            ),
-
-            array(
-                'key'         => 'field_maintenance_date',
-                'label'       => 'Voraussichtliches Ende (optional)',
-                'name'        => 'maintenance_date',
-                'type'        => 'text',
-                'placeholder' => 'z.B. 15. März 2026, 10:00 Uhr',
-                'instructions'=> 'Freitext – wird unter der Nachricht angezeigt wenn gesetzt.',
-            ),
-
-            array(
-                'key'           => 'field_maintenance_logo',
-                'label'         => 'Logo (optional)',
-                'name'          => 'maintenance_logo',
-                'type'          => 'image',
-                'return_format' => 'array',
-                'preview_size'  => 'medium',
-                'instructions'  => 'Leer lassen = Website-Name als Text. Empfohlen: SVG oder PNG transparent, max. 60px Höhe.',
-            ),
-
-            array(
-                'key'         => 'field_maintenance_title',
-                'label'       => 'Browser-Tab Titel',
-                'name'        => 'maintenance_title',
-                'type'        => 'text',
-                'placeholder' => 'Website – Wartungsarbeiten',
-                'instructions'=> 'Leer lassen = automatisch aus Website-Name generiert.',
-            ),
-
-        ),
-        'location' => array(array(array(
-            'param' => 'options_page', 'operator' => '==', 'value' => 'agency-core-maintenance',
-        ))),
-        'menu_order'            => 35,
         'position'              => 'normal',
         'style'                 => 'default',
         'label_placement'       => 'top',

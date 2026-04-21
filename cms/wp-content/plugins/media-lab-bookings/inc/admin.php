@@ -19,25 +19,38 @@ class MLB_Admin {
         add_menu_page( 'Media Lab Bookings', 'Bookings', 'edit_posts', 'mlb-bookings', [ __CLASS__, 'dashboard_page' ], 'dashicons-calendar-alt', 26 );
         // Erste Zeile = gleicher Slug wie Toplevel (WordPress-Konvention: umbenennen)
         add_submenu_page( 'mlb-bookings', 'Übersicht',      'Übersicht',       'edit_posts', 'mlb-bookings',                   [ __CLASS__, 'dashboard_page' ] );
-        add_submenu_page( 'mlb-bookings', 'Alle Buchungen', 'Buchungen',        'edit_posts', 'edit.php?post_type=mlb_booking' );
-        add_submenu_page( 'mlb-bookings', 'Neue Buchung',   'Neue Buchung',     'edit_posts', 'post-new.php?post_type=mlb_booking' );
+        add_submenu_page( 'mlb-bookings', mlb_term('plural'), mlb_term('plural'), 'edit_posts', 'edit.php?post_type=mlb_booking' );
+        add_submenu_page( 'mlb-bookings', 'Neue ' . mlb_term('singular'), 'Neue ' . mlb_term('singular'), 'edit_posts', 'post-new.php?post_type=mlb_booking' );
         add_submenu_page( 'mlb-bookings', 'Standorte',      'Standorte',        'edit_posts', 'edit.php?post_type=mlb_location' );
         add_submenu_page( 'mlb-bookings', 'Neuer Standort', 'Neuer Standort',   'edit_posts', 'post-new.php?post_type=mlb_location' );
     }
+    // ── Buchungen nach ACF-Meta-Feld zählen (unabhängig vom WP-Post-Status) ────
+
+    private static function count_bookings_by_status( string $status ): int {
+        $q = new WP_Query( [
+            'post_type'      => 'mlb_booking',
+            'post_status'    => 'any',
+            'posts_per_page' => -1,
+            'fields'         => 'ids',
+            'meta_query'     => [ [ 'key' => 'mlb_booking_status', 'value' => $status ] ],
+        ] );
+        return (int) $q->found_posts;
+    }
+
     public static function dashboard_page() {
-        $pending   = wp_count_posts( 'mlb_booking' )->{'mlb-pending'}   ?? 0;
-        $confirmed = wp_count_posts( 'mlb_booking' )->{'mlb-confirmed'} ?? 0;
-        $cancelled = wp_count_posts( 'mlb_booking' )->{'mlb-cancelled'} ?? 0;
-        $locations = wp_count_posts( 'mlb_location' )->publish           ?? 0;
+        $pending   = self::count_bookings_by_status( 'mlb-pending' );
+        $confirmed = self::count_bookings_by_status( 'mlb-confirmed' );
+        $cancelled = self::count_bookings_by_status( 'mlb-cancelled' );
+        $locations = wp_count_posts( 'mlb_location' )->publish ?? 0;
         echo '<div class="wrap mlb-dashboard"><h1>Media Lab Bookings</h1><div class="mlb-stats">';
-        echo '<div class="mlb-stat mlb-stat--pending"><span class="mlb-stat__count">' . (int)$pending . '</span><span class="mlb-stat__label">Ausstehend</span></div>';
-        echo '<div class="mlb-stat mlb-stat--confirmed"><span class="mlb-stat__count">' . (int)$confirmed . '</span><span class="mlb-stat__label">Bestätigt</span></div>';
-        echo '<div class="mlb-stat mlb-stat--cancelled"><span class="mlb-stat__count">' . (int)$cancelled . '</span><span class="mlb-stat__label">Storniert</span></div>';
+        echo '<div class="mlb-stat mlb-stat--pending"><span class="mlb-stat__count">' . (int)$pending . '</span><span class="mlb-stat__label">' . esc_html( mlb_term('plural') ) . ' – Ausstehend</span></div>';
+        echo '<div class="mlb-stat mlb-stat--confirmed"><span class="mlb-stat__count">' . (int)$confirmed . '</span><span class="mlb-stat__label">' . esc_html( mlb_term('plural') ) . ' – Bestätigt</span></div>';
+        echo '<div class="mlb-stat mlb-stat--cancelled"><span class="mlb-stat__count">' . (int)$cancelled . '</span><span class="mlb-stat__label">' . esc_html( mlb_term('plural') ) . ' – Storniert</span></div>';
         echo '<div class="mlb-stat mlb-stat--locations"><span class="mlb-stat__count">' . (int)$locations . '</span><span class="mlb-stat__label">Standorte</span></div>';
         echo '</div>';
         echo '<p>';
         echo '<a href="' . esc_url( admin_url( 'edit.php?post_type=mlb_booking' ) ) . '" class="button button-primary">Alle Buchungen</a> ';
-        echo '<a href="' . esc_url( admin_url( 'post-new.php?post_type=mlb_booking' ) ) . '" class="button button-primary">+ Neue Buchung</a> ';
+        echo '<a href="' . esc_url( admin_url( 'post-new.php?post_type=mlb_booking' ) ) . '" class="button button-primary">+ Neue ' . esc_html( mlb_term('singular') ) . '</a> ';
         echo '<a href="' . esc_url( admin_url( 'admin.php?page=mlb-calendar' ) ) . '" class="button">Kalender</a> ';
         echo '<a href="' . esc_url( admin_url( 'edit.php?post_type=mlb_location' ) ) . '" class="button">Standorte</a>';
         echo '</p>';
