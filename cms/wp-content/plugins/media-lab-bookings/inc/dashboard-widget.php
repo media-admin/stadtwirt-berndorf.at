@@ -46,40 +46,70 @@ class MLB_Dashboard_Widget {
     // ── Widget rendern ────────────────────────────────────────────────────────
 
     public static function render(): void {
-        $limit  = (int) ( get_option( 'mlb_widget_limit', 5 ) );
-        $today  = date( 'Y-m-d' );
+        $limit    = (int) ( get_option( 'mlb_widget_limit', 5 ) );
+        $tz       = wp_timezone();
+        $now      = new DateTime( 'now', $tz );
 
-        $bookings = get_posts( [
+        // ACF speichert Datum als Ymd (20260422), Zeit als H:i (14:00).
+        // Für den Vergleich "in der Zukunft" kombinieren wir beides zu einem
+        // sortierbaren String YmdHi und laden mehr als $limit um nach PHP-seitigem
+        // Filter die ersten $limit Treffer zu behalten.
+        $today_ymd = $now->format( 'Ymd' );
+
+        $today_dash = $now->format( 'Y-m-d' ); // Für ältere Buchungen mit Y-m-d Format
+
+        $query = new WP_Query( [
             'post_type'      => 'mlb_booking',
-            'post_status'    => [ 'publish', 'mlb-pending', 'mlb-confirmed', 'mlb-cancelled' ],
-            'posts_per_page' => $limit,
+            'post_status'    => [ 'publish', 'mlb-pending', 'mlb-confirmed' ],
+            'posts_per_page' => $limit * 5,
+            'orderby'        => 'meta_value',
+            'meta_key'       => 'mlb_booking_date',
+            'order'          => 'ASC',
             'meta_query'     => [
                 'relation' => 'AND',
-                [ 'key' => 'mlb_booking_date',   'value' => $today, 'compare' => '>=' ],
+                [
+                    'relation' => 'OR',
+                    [ 'key' => 'mlb_booking_date', 'value' => $today_ymd,  'compare' => '>=', 'type' => 'CHAR' ],
+                    [ 'key' => 'mlb_booking_date', 'value' => $today_dash, 'compare' => '>=', 'type' => 'CHAR' ],
+                ],
                 [ 'key' => 'mlb_booking_status', 'value' => [ 'mlb-pending', 'mlb-confirmed' ], 'compare' => 'IN' ],
             ],
-            'orderby'  => 'meta_value',
-            'meta_key' => 'mlb_booking_date',
-            'order'    => 'ASC',
         ] );
 
+        // PHP-seitig nach Datum+Zeit filtern: vergangene heutige Termine ausschließen
+        $now_ts   = $now->getTimestamp();
+        $bookings = [];
+        foreach ( $query->posts as $post ) {
+            $date = get_post_meta( $post->ID, 'mlb_booking_date', true ); // Ymd
+            $time = get_post_meta( $post->ID, 'mlb_booking_time', true ); // H:i
+            if ( ! $date || ! $time ) continue;
+            $dt = DateTime::createFromFormat( 'Ymd H:i', $date . ' ' . $time, $tz );
+            if ( ! $dt ) continue;
+            if ( $dt->getTimestamp() > $now_ts ) {
+                $bookings[] = [ 'post' => $post, 'dt' => $dt ];
+            }
+            if ( count( $bookings ) >= $limit ) break;
+        }
+
         if ( empty( $bookings ) ) {
-            echo '<p class="mlb-widget-empty">Keine bevorstehenden Buchungen.</p>';
+            echo '<p class="mlb-widget-empty">Keine bevorstehenden ' . esc_html( function_exists( 'mlb_term' ) ? mlb_term( 'plural' ) : 'Buchungen' ) . '.</p>';
         } else {
+            $today_fmt     = $now->format( 'Ymd' );
             $status_labels = [ 'mlb-pending' => 'Ausstehend', 'mlb-confirmed' => 'Bestätigt' ];
             echo '<table class="mlb-widget-table">';
-            foreach ( $bookings as $booking ) {
-                $bid     = $booking->ID;
-                $status  = get_post_meta( $bid, 'mlb_booking_status',   true ) ?: 'mlb-pending';
-                $loc_id  = (int) get_post_meta( $bid, 'mlb_booking_location', true );
-                $date    = get_post_meta( $bid, 'mlb_booking_date', true );
-                $date_f  = $date ? date_i18n( 'd.m.Y', strtotime( $date ) ) : '—';
-                $is_today = $date === $today;
-                $s_class = 'mlb-badge mlb-badge--' . str_replace( 'mlb-', '', $status );
+            foreach ( $bookings as $entry ) {
+                $bid      = $entry['post']->ID;
+                $dt       = $entry['dt'];
+                $status   = get_post_meta( $bid, 'mlb_booking_status',   true ) ?: 'mlb-pending';
+                $loc_id   = (int) get_post_meta( $bid, 'mlb_booking_location', true );
+                $date_raw = get_post_meta( $bid, 'mlb_booking_date', true );
+                $date_f   = date_i18n( 'd.m.Y', $dt->getTimestamp() );
+                $is_today = $date_raw === $today_fmt;
+                $s_class  = 'mlb-badge mlb-badge--' . str_replace( 'mlb-', '', $status );
 
                 echo '<tr>';
                 echo '<td><span class="mlb-widget-date">' . ( $is_today ? '<span style="color:#d40000">Heute</span>' : esc_html( $date_f ) ) . '</span><br>';
-                echo '<span class="mlb-widget-time">' . esc_html( get_post_meta( $bid, 'mlb_booking_time', true ) ) . ' Uhr</span></td>';
+                echo '<span class="mlb-widget-time">' . esc_html( $dt->format( 'H:i' ) ) . ' Uhr</span></td>';
                 echo '<td><span class="mlb-widget-name">' . esc_html( get_post_meta( $bid, 'mlb_booking_name', true ) ) . '</span><br>';
                 echo '<span class="mlb-widget-loc">' . esc_html( get_the_title( $loc_id ) ) . '</span></td>';
                 echo '<td><span class="' . esc_attr( $s_class ) . '">' . esc_html( $status_labels[ $status ] ?? $status ) . '</span></td>';
@@ -89,7 +119,7 @@ class MLB_Dashboard_Widget {
             echo '</table>';
         }
 
-        $q_pending = new WP_Query( [ 'post_type' => 'mlb_booking', 'post_status' => 'any', 'posts_per_page' => -1, 'fields' => 'ids', 'meta_query' => [ [ 'key' => 'mlb_booking_status', 'value' => 'mlb-pending' ] ] ] );
+        $q_pending = new WP_Query( [ 'post_type' => 'mlb_booking', 'post_status' => [ 'publish', 'mlb-pending', 'mlb-confirmed', 'mlb-cancelled' ], 'posts_per_page' => -1, 'fields' => 'ids', 'meta_query' => [ [ 'key' => 'mlb_booking_status', 'value' => 'mlb-pending' ] ] ] );
         $total_pending = $q_pending->found_posts;
 
         echo '<div class="mlb-widget-footer">';

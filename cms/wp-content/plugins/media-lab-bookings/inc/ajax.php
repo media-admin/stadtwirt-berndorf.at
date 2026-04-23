@@ -39,10 +39,24 @@ class MLB_Ajax {
     public static function submit_booking() {
         check_ajax_referer( 'mlb_nonce', 'nonce' );
 
-        $required = [ 'location_id', 'date', 'time', 'name', 'email', 'persons' ];
-        foreach ( $required as $field ) {
+        // Basis-Pflichtfelder (immer)
+        foreach ( [ 'location_id', 'date', 'time', 'email' ] as $field ) {
             if ( empty( $_POST[ $field ] ) ) wp_send_json_error( [ 'message' => sprintf( 'Pflichtfeld fehlt: %s', $field ) ] );
         }
+
+        // Konfigurierbare Pflichtfelder aus ACF (pro Standort)
+        $loc_id_for_req = (int) sanitize_text_field( $_POST['location_id'] ?? 0 );
+        $req = [ 'name' => true, 'phone' => false, 'service' => false, 'persons' => true ];
+        foreach ( [ 'name', 'phone', 'service', 'persons' ] as $rf ) {
+            $meta_key = 'mlb_required_' . $rf;
+            if ( metadata_exists( 'post', $loc_id_for_req, $meta_key ) ) {
+                $req[ $rf ] = (bool) get_post_meta( $loc_id_for_req, $meta_key, true );
+            }
+        }
+        if ( $req['name']    && empty( $_POST['name'] ) )    wp_send_json_error( [ 'message' => 'Bitte geben Sie Ihren Namen an.' ] );
+        if ( $req['phone']   && empty( $_POST['phone'] ) )   wp_send_json_error( [ 'message' => 'Bitte geben Sie Ihre Telefonnummer an.' ] );
+        if ( $req['service'] && empty( $_POST['service'] ) ) wp_send_json_error( [ 'message' => 'Bitte wählen Sie eine Dienstleistung.' ] );
+        if ( $req['persons'] && empty( $_POST['persons'] ) ) wp_send_json_error( [ 'message' => 'Bitte geben Sie die Personenanzahl an.' ] );
 
         if ( empty( $_POST['privacy_consent'] ) || $_POST['privacy_consent'] !== '1' ) {
             wp_send_json_error( [ 'message' => 'Bitte stimmen Sie der Datenschutzerklärung zu.' ] );
@@ -79,9 +93,13 @@ class MLB_Ajax {
         $booking_id = wp_insert_post( [ 'post_type' => 'mlb_booking', 'post_status' => 'mlb-pending', 'post_title' => sanitize_text_field( $post_title ) ] );
         if ( is_wp_error( $booking_id ) ) wp_send_json_error( [ 'message' => 'Buchung konnte nicht gespeichert werden.' ] );
 
+        // Datum als Ymd (ACF-internes Format) speichern.
+        // update_field() mit 'Y-m-d' würde es so speichern wie übergeben,
+        // aber ACF date_picker speichert intern immer als 'Ymd'.
+        $date_ymd = date( 'Ymd', strtotime( $date ) );
         update_field( 'mlb_booking_status',   'mlb-pending', $booking_id );
         update_field( 'mlb_booking_location', $location_id,  $booking_id );
-        update_field( 'mlb_booking_date',     $date,         $booking_id );
+        update_field( 'mlb_booking_date',     $date_ymd,     $booking_id );
         update_field( 'mlb_booking_time',     $time,         $booking_id );
         update_field( 'mlb_booking_service',  $service,      $booking_id );
         update_field( 'mlb_booking_persons',  $persons,      $booking_id );

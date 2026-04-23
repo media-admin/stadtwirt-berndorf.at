@@ -140,3 +140,16 @@
 .mlb-badge--pending   { background:#fff3cd;color:#856404; }
 .mlb-badge--confirmed { background:#d4edda;color:#155724; }
 .mlb-badge--cancelled { background:#f8d7da;color:#721c24; }
+
+/* ── View-Switch ─────────────────────────────────────────────────────────── */
+.mlb-cal-view-switch { display: flex; gap: 4px; }
+.mlb-cal-view-switch .button { min-width: 60px; text-align: center; }
+
+/* ── Wochen-View ─────────────────────────────────────────────────────────── */
+.mlb-cal-table--week th { font-size: 13px; }
+.mlb-cal-th--today { background: #e8f0fb !important; color: #0073aa !important; }
+.mlb-cal-cell--week { height: auto; min-height: 80px; vertical-align: top; padding: 8px; }
+
+/* ── Tag-View ────────────────────────────────────────────────────────────── */
+.mlb-cal-day-view { margin-top: 8px; }
+.mlb-cal-day-view .widefat th { font-weight: 600; }

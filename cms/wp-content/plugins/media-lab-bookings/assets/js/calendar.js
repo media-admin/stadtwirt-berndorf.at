@@ -1,12 +1,11 @@
 /**
- * Media Lab Bookings – Kalender JS
+ * Media Lab Bookings – Kalender JS v1.6.5
  */
 ( function ( $, cfg ) {
     'use strict';
     if ( ! cfg ) return;
 
-    var $popup    = $( '#mlb-cal-popup' );
-    var $content  = $popup.find( '.mlb-cal-popup__content' );
+    var $popup = $( '#mlb-cal-popup' );
     var currentLocationId = new URLSearchParams( window.location.search ).get( 'mlb_filter_location' ) || 0;
 
     // Klick auf Zelle mit Buchungen
@@ -14,7 +13,9 @@
         var date = $( this ).data( 'date' );
         if ( ! date ) return;
 
-        $content.html( '<p style="text-align:center;padding:20px">Lädt…</p>' );
+        // $content jedes Mal neu suchen – nicht cachen (verhindert "Keine Buchungen" nach erstem Klick)
+        var $content = $popup.find( '.mlb-cal-popup__content' );
+        $content.html( '<p style="text-align:center;padding:20px">Lädt\u2026</p>' );
         $popup.prop( 'hidden', false );
 
         $.post( cfg.ajaxUrl, {
@@ -23,11 +24,10 @@
             date        : date,
             location_id : currentLocationId,
         }, function ( res ) {
-            if ( res.success ) {
-                $content.html( res.data.html );
-            } else {
-                $content.html( '<p>Fehler beim Laden.</p>' );
-            }
+            // Erneut suchen für den Fall dass DOM sich verändert hat
+            $popup.find( '.mlb-cal-popup__content' ).html(
+                res.success ? res.data.html : '<p>Fehler beim Laden.</p>'
+            );
         } );
     } );
 

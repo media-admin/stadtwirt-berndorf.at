@@ -32,8 +32,10 @@ function agency_core_register_team_cpt() {
     
     $args = array(
         'labels' => $labels,
-        'public' => true,
-        'has_archive' => true,
+        'public'              => true,
+        'publicly_queryable'  => false,
+        'has_archive'         => false,
+        'exclude_from_search' => true,
         'show_in_rest' => true,
         'supports' => array('title', 'editor', 'thumbnail', 'excerpt', 'page-attributes'),
         'menu_icon' => 'dashicons-groups',
@@ -69,8 +71,10 @@ function agency_core_register_testimonials_cpt() {
     
     $args = array(
         'labels' => $labels,
-        'public' => true,
-        'has_archive' => false,
+        'public'              => true,
+        'publicly_queryable'  => false,
+        'has_archive'         => false,
+        'exclude_from_search' => true,
         'show_in_rest' => true,
         'supports' => array('title', 'editor', 'thumbnail', 'page-attributes'),
         'menu_icon' => 'dashicons-testimonial',
@@ -104,8 +108,10 @@ function agency_core_register_services_cpt() {
     
     $args = array(
         'labels' => $labels,
-        'public' => true,
-        'has_archive' => true,
+        'public'              => true,
+        'publicly_queryable'  => false,
+        'has_archive'         => false,
+        'exclude_from_search' => true,
         'show_in_rest' => true,
         'supports' => array('title', 'editor', 'thumbnail', 'excerpt', 'page-attributes'),
         'menu_icon' => 'dashicons-admin-tools',
@@ -171,6 +177,7 @@ function agency_core_register_faq_cpt() {
         'description' => __('Frequently Asked Questions', 'agency-core'),
         'hierarchical' => false,
         'public' => false,
+        'publicly_queryable' => false,
         'show_ui' => true,
         'show_in_menu' => true,
         'menu_position' => 24,
@@ -473,6 +480,12 @@ function agency_core_register_job_category_taxonomy() {
     $args = array(
         'labels' => $labels,
         'hierarchical' => true,
+
+        'public'              => true,
+        'publicly_queryable'  => false,
+        'has_archive'         => false,
+        'exclude_from_search' => true,
+
         'show_ui' => true,
         'show_in_rest' => true,
         'show_admin_column' => true,
@@ -571,13 +584,14 @@ function agency_core_register_speisekarte_cpt() {
     $args = [
         'labels'              => $labels,
         'public'              => true,
-        'publicly_queryable'  => true,
+        'publicly_queryable'  => false,
+        'has_archive'         => false,
+        'exclude_from_search' => true,
         'show_ui'             => true,
         'show_in_menu'        => true,
         'query_var'           => true,
         'rewrite'             => ['slug' => 'speisekarte'],
         'capability_type'     => 'post',
-        'has_archive'         => true,
         'hierarchical'        => false,
         'menu_position'       => 5,
         'menu_icon'           => 'dashicons-food',

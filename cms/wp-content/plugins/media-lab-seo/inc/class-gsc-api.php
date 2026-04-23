@@ -6,7 +6,7 @@
  *
  * Setup:
  *  1. Google Cloud Console → Projekt → APIs & Dienste → OAuth2-Credentials
- *  2. Authorized Redirect URI: {admin_url}admin.php?page=media-lab-toolkit&mlt_gsc_callback=1
+ *  2. Authorized Redirect URI: {admin_url}admin.php?page=media-lab-seo&mlt_gsc_callback=1
  *  3. Client ID + Secret + Property URL in SEO Toolkit → Einstellungen eintragen
  *  4. "Mit Google verbinden" klicken
  */
@@ -81,7 +81,8 @@ class MLT_GSC_API {
             if ( ! empty( $body['refresh_token'] ) ) {
                 update_option( self::OPT_REFRESH_TOKEN, $this->encrypt( $body['refresh_token'] ) );
             }
-            wp_redirect( admin_url( 'admin.php?page=media-lab-toolkit&mlt_gsc_connected=1' ) );
+            do_action( 'medialab_log_event', 'gsc_connected', 'gsc', null, 'Google Search Console' );
+            wp_redirect( admin_url( 'admin.php?page=media-lab-seo&mlt_gsc_connected=1' ) );
             exit;
         }
 
@@ -102,7 +103,8 @@ class MLT_GSC_API {
         delete_transient( 'mlt_gsc_queries' );
         delete_transient( 'mlt_gsc_pages' );
 
-        wp_redirect( admin_url( 'admin.php?page=media-lab-toolkit&mlt_gsc_disconnected=1' ) );
+        do_action( 'medialab_log_event', 'gsc_disconnected', 'gsc', null, 'Google Search Console' );
+        wp_redirect( admin_url( 'admin.php?page=media-lab-seo&mlt_gsc_disconnected=1' ) );
         exit;
     }
 
@@ -306,6 +308,6 @@ class MLT_GSC_API {
     }
 
     public function get_redirect_uri() : string {
-        return admin_url( 'admin.php?page=media-lab-toolkit&mlt_gsc_callback=1' );
+        return admin_url( 'admin.php?page=media-lab-seo&mlt_gsc_callback=1' );
     }
 }

@@ -109,7 +109,7 @@ class MLT_Settings {
     // ── Assets ───────────────────────────────────────────────────────────────
 
     public function enqueue_assets( $hook ) {
-        if ( $hook !== 'toplevel_page_media-lab-toolkit' ) return;
+        if ( $hook !== 'toplevel_page_media-lab-seo' ) return;
 
         wp_enqueue_media(); // für OG-Bild-Upload
         wp_enqueue_style(

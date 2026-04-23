@@ -60,7 +60,7 @@ class MLT_SEO_Dashboard {
             wp_localize_script( 'mlt-dashboard', 'mltDashboard', [
                 'ajaxUrl'     => admin_url( 'admin-ajax.php' ),
                 'nonce'       => wp_create_nonce( 'mlt_dashboard' ),
-                'settingsUrl' => admin_url( 'admin.php?page=media-lab-toolkit' ),
+                'settingsUrl' => admin_url( 'admin.php?page=media-lab-seo' ),
             ] );
         }
     }
@@ -100,7 +100,7 @@ class MLT_SEO_Dashboard {
                 <div class="mlt-notice mlt-notice--warning" style="max-width:680px">
                     <strong>⚠ Google Search Console nicht konfiguriert.</strong>
                     Bitte Client ID, Client Secret und Property URL unter
-                    <a href="<?php echo esc_url( admin_url( 'admin.php?page=media-lab-toolkit#gsc' ) ); ?>">SEO Toolkit → Einstellungen</a>
+                    <a href="<?php echo esc_url( admin_url( 'admin.php?page=media-lab-seo#gsc' ) ); ?>">SEO Toolkit → Einstellungen</a>
                     eintragen.
                 </div>
             <?php elseif ( ! $connected ) : ?>
@@ -253,7 +253,7 @@ class MLT_SEO_Dashboard {
         <?php if ( ! $connected ) : ?>
             <p style="color:#9ca3af;font-size:13px">
                 GSC nicht verbunden.
-                <a href="<?php echo esc_url( admin_url( 'admin.php?page=media-lab-toolkit' ) ); ?>">Einstellungen</a>
+                <a href="<?php echo esc_url( admin_url( 'admin.php?page=media-lab-seo' ) ); ?>">Einstellungen</a>
             </p>
         <?php else : ?>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">

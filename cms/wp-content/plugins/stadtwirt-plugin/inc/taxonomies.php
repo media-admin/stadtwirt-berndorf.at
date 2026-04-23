@@ -169,6 +169,11 @@ function medialab_project_register_taxonomies() {
         'query_var'         => true,
         'rewrite'           => ['slug' => 'kennzeichnung'],
         'show_in_rest'      => true,
+        'public'              => true,
+        'publicly_queryable'  => false,
+        'has_archive'         => false,
+        'exclude_from_search' => true,
+
     ]);
 }
 add_action('init', 'medialab_project_register_taxonomies');

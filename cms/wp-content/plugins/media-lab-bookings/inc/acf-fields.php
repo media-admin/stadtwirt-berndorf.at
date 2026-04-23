@@ -70,6 +70,54 @@ function mlb_register_acf_fields() {
                 [ 'key' => 'field_mlb_label_privacy',      'label' => 'DSGVO-Zustimmungstext',   'name' => 'mlb_label_privacy',      'type' => 'text', 'default_value' => 'Ich habe die Datenschutzerklärung gelesen und stimme der Verarbeitung meiner Daten zu.', 'required' => 1 ],
                 [ 'key' => 'field_mlb_label_privacy_note', 'label' => 'Hinweistext (optional)',  'name' => 'mlb_label_privacy_note', 'type' => 'text', 'placeholder' => '' ],
             ],
+            // Tab: Pflichtfelder
+            [
+                [ 'key' => 'field_mlb_tab_required', 'label' => 'Pflichtfelder', 'name' => '', 'type' => 'tab' ],
+                [
+                    'key'     => 'field_mlb_required_info',
+                    'label'   => '',
+                    'name'    => '',
+                    'type'    => 'message',
+                    'message' => 'E-Mail und DSGVO-Zustimmung sind immer Pflichtfelder und können hier nicht deaktiviert werden.',
+                ],
+                [
+                    'key'           => 'field_mlb_required_name',
+                    'label'         => 'Name ist Pflichtfeld',
+                    'name'          => 'mlb_required_name',
+                    'type'          => 'true_false',
+                    'ui'            => 1,
+                    'default_value' => 1,
+                    'wrapper'       => [ 'width' => '25' ],
+                ],
+                [
+                    'key'           => 'field_mlb_required_phone',
+                    'label'         => 'Telefon ist Pflichtfeld',
+                    'name'          => 'mlb_required_phone',
+                    'type'          => 'true_false',
+                    'ui'            => 1,
+                    'default_value' => 0,
+                    'wrapper'       => [ 'width' => '25' ],
+                ],
+                [
+                    'key'           => 'field_mlb_required_service',
+                    'label'         => 'Dienstleistung ist Pflichtfeld',
+                    'name'          => 'mlb_required_service',
+                    'type'          => 'true_false',
+                    'ui'            => 1,
+                    'default_value' => 0,
+                    'wrapper'       => [ 'width' => '25' ],
+                ],
+                [
+                    'key'           => 'field_mlb_required_persons',
+                    'label'         => 'Personenanzahl ist Pflichtfeld',
+                    'name'          => 'mlb_required_persons',
+                    'type'          => 'true_false',
+                    'ui'            => 1,
+                    'default_value' => 1,
+                    'wrapper'       => [ 'width' => '25' ],
+                ],
+            ],
+
             // Tab: Dienstleistungen
             [
                 [ 'key' => 'field_mlb_tab_services', 'label' => 'Dienstleistungen', 'name' => '', 'type' => 'tab' ],

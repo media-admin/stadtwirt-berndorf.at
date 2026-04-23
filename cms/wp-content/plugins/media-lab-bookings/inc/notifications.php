@@ -58,16 +58,22 @@ class MLB_Notifications {
         $new_status = get_post_meta( $post_id, 'mlb_booking_status', true );
         if ( ! $new_status ) return;
 
+        // WP-Post-Status IMMER synchronisieren – auch wenn kein Statuswechsel stattfand.
+        // WordPress überschreibt den WP-Post-Status bei jedem Backend-Save mit 'publish'.
+        // Ohne diese Korrektur laufen WP-Post-Status und ACF-Meta auseinander.
+        $wp_status = get_post_field( 'post_status', $post_id );
+        if ( $wp_status !== $new_status ) {
+            // remove_action verhindert eine Endlosschleife (wp_update_post → acf/save_post)
+            remove_action( 'acf/save_post', [ __CLASS__, 'on_acf_save' ], 20 );
+            wp_update_post( [ 'ID' => $post_id, 'post_status' => $new_status ] );
+            add_action( 'acf/save_post', [ __CLASS__, 'on_acf_save' ], 20 );
+        }
+
         // Alten Status aus unserem Snapshot (gesetzt von capture_old_status)
         $old_status = get_post_meta( $post_id, '_mlb_previous_status', true );
 
-        // Nur bei echtem Wechsel reagieren
+        // Mails + Cron nur bei echtem Statuswechsel auslösen
         if ( $old_status === $new_status ) return;
-
-        // WP-Post-Status synchronisieren – WordPress setzt beim Backend-Speichern
-        // unkontrolliert 'publish'. Wir korrigieren das hier, damit Abfragen
-        // nach WP-Post-Status (wp_count_posts etc.) korrekte Ergebnisse liefern.
-        wp_update_post( [ 'ID' => $post_id, 'post_status' => $new_status ] );
 
         switch ( $new_status ) {
             case 'mlb-confirmed':

@@ -3,7 +3,7 @@
  * Plugin Name:  Media Lab Bookings
  * Plugin URI:   https://medialab.agency
  * Description:  Buchungssystem mit Standortverwaltung, Öffnungszeiten, Zeitslots, Kapazitätslimits und standortspezifischen E-Mail-Bestätigungen.
- * Version:      1.4.0
+ * Version:      1.7.4
  * Author:       Media Lab Agency
  * Text Domain:  media-lab-bookings
  * Domain Path:  /languages
@@ -12,7 +12,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'MLB_VERSION',  '1.5.2' );
+define( 'MLB_VERSION',  '1.7.4' );
 define( 'MLB_PATH',     plugin_dir_path( __FILE__ ) );
 define( 'MLB_URL',      plugin_dir_url( __FILE__ ) );
 define( 'MLB_BASENAME', plugin_basename( __FILE__ ) );

@@ -331,6 +331,7 @@ class MLT_Redirects {
             'created_at'    => current_time( 'mysql' ),
         ], [ '%s', '%s', '%d', '%d', '%d', '%s' ] );
 
+        do_action( 'medialab_log_event', 'redirect_created', 'redirect', $wpdb->insert_id, $source, "→ {$target} ({$type})" );
         wp_send_json_success( [ 'id' => $wpdb->insert_id, 'source' => $source, 'target' => $target, 'type' => $type ] );
     }
 
@@ -338,7 +339,10 @@ class MLT_Redirects {
         check_ajax_referer( 'mlt_redirects', 'nonce' );
         if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error();
         global $wpdb;
-        $wpdb->delete( $wpdb->prefix . 'mlt_redirects', [ 'id' => (int) $_POST['id'] ], [ '%d' ] );
+        $id = (int) $_POST['id'];
+        $redirect = $wpdb->get_row( $wpdb->prepare( "SELECT source_url FROM {$wpdb->prefix}mlt_redirects WHERE id = %d", $id ) );
+        $wpdb->delete( $wpdb->prefix . 'mlt_redirects', [ 'id' => $id ], [ '%d' ] );
+        do_action( 'medialab_log_event', 'redirect_deleted', 'redirect', $id, $redirect->source_url ?? '' );
         wp_send_json_success();
     }
 
@@ -349,6 +353,7 @@ class MLT_Redirects {
         $current = $wpdb->get_var( $wpdb->prepare( "SELECT is_active FROM {$wpdb->prefix}mlt_redirects WHERE id = %d", (int) $_POST['id'] ) );
         $new     = $current ? 0 : 1;
         $wpdb->update( $wpdb->prefix . 'mlt_redirects', [ 'is_active' => $new ], [ 'id' => (int) $_POST['id'] ], [ '%d' ], [ '%d' ] );
+        do_action( 'medialab_log_event', 'redirect_toggled', 'redirect', (int) $_POST['id'], '', $new ? 'aktiviert' : 'deaktiviert' );
         wp_send_json_success( [ 'active' => $new ] );
     }
 
@@ -386,6 +391,7 @@ class MLT_Redirects {
             $wpdb->delete( $wpdb->prefix . 'mlt_404_log', [ 'id' => $log_id ], [ '%d' ] );
         }
 
+        do_action( 'medialab_log_event', 'redirect_created', 'redirect', $wpdb->insert_id, $source, "→ {$target} ({$type}) [aus 404]" );
         wp_send_json_success( [ 'redirect_id' => $wpdb->insert_id ] );
     }
 

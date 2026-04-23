@@ -5,6 +5,9 @@ class MLB_Admin {
     public static function init() {
         add_action( 'admin_menu',            [ __CLASS__, 'register_menu' ] );
         add_action( 'admin_enqueue_scripts', [ __CLASS__, 'enqueue_styles' ] );
+        add_action( 'wp_ajax_mlb_sync_statuses', [ __CLASS__, 'ajax_sync_statuses' ] );
+        // Buchungsliste: alle Custom-Statuses anzeigen (WP zeigt sonst nur 'publish')
+        add_action( 'pre_get_posts',          [ __CLASS__, 'fix_booking_list_query' ] );
         add_filter( 'manage_mlb_booking_posts_columns',         [ __CLASS__, 'booking_columns' ] );
         add_action( 'manage_mlb_booking_posts_custom_column',   [ __CLASS__, 'booking_column_content' ], 10, 2 );
         add_filter( 'manage_edit-mlb_booking_sortable_columns', [ __CLASS__, 'booking_sortable_columns' ] );
@@ -26,6 +29,67 @@ class MLB_Admin {
     }
     // ── Buchungen nach ACF-Meta-Feld zählen (unabhängig vom WP-Post-Status) ────
 
+    // ── Buchungsliste: alle Custom-Statuses einschließen ─────────────────────
+    // WordPress zeigt in edit.php standardmäßig nur 'publish'-Posts.
+    // Nach dem WP-Status-Sync haben Buchungen Custom-Statuses → default leer.
+
+    public static function fix_booking_list_query( \WP_Query $query ): void {
+        if ( ! is_admin() || ! $query->is_main_query() ) return;
+        if ( $query->get( 'post_type' ) !== 'mlb_booking' ) return;
+
+        // Nur eingreifen wenn kein expliziter WP-Status-Filter gesetzt ist
+        // (Die Status-Tabs oben setzen post_status selbst)
+        $requested_status = $query->get( 'post_status' );
+        if ( $requested_status && $requested_status !== 'any' ) return;
+
+        $query->set( 'post_status', [ 'mlb-pending', 'mlb-confirmed', 'mlb-cancelled', 'publish' ] );
+    }
+
+    // ── Buchungen mit falschem WP-Post-Status zählen ────────────────────────
+
+    private static function count_unsynced_bookings(): int {
+        global $wpdb;
+        // Buchungen wo WP post_status NICHT dem ACF meta mlb_booking_status entspricht
+        return (int) $wpdb->get_var( "
+            SELECT COUNT(p.ID)
+            FROM {$wpdb->posts} p
+            INNER JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id
+            WHERE p.post_type   = 'mlb_booking'
+              AND pm.meta_key   = 'mlb_booking_status'
+              AND p.post_status != pm.meta_value
+              AND p.post_status != 'trash'
+        " );
+    }
+
+    // ── AJAX: Alle Buchungen synchronisieren ──────────────────────────────────
+
+    public static function ajax_sync_statuses(): void {
+        check_ajax_referer( 'mlb_sync_statuses', 'nonce' );
+        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Keine Berechtigung.' );
+
+        global $wpdb;
+        $bookings = $wpdb->get_results( "
+            SELECT p.ID, pm.meta_value as acf_status
+            FROM {$wpdb->posts} p
+            INNER JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id
+            WHERE p.post_type   = 'mlb_booking'
+              AND pm.meta_key   = 'mlb_booking_status'
+              AND p.post_status != pm.meta_value
+              AND p.post_status != 'trash'
+        " );
+
+        $count = 0;
+        foreach ( $bookings as $booking ) {
+            $valid = [ 'mlb-pending', 'mlb-confirmed', 'mlb-cancelled' ];
+            if ( ! in_array( $booking->acf_status, $valid, true ) ) continue;
+            $wpdb->update( $wpdb->posts, [ 'post_status' => $booking->acf_status ], [ 'ID' => $booking->ID ] );
+            clean_post_cache( $booking->ID );
+            $count++;
+        }
+
+        wp_send_json_success( $count . ' Buchung(en) erfolgreich synchronisiert.' );
+    }
+
     private static function count_bookings_by_status( string $status ): int {
         $q = new WP_Query( [
             'post_type'      => 'mlb_booking',
@@ -42,11 +106,17 @@ class MLB_Admin {
         $confirmed = self::count_bookings_by_status( 'mlb-confirmed' );
         $cancelled = self::count_bookings_by_status( 'mlb-cancelled' );
         $locations = wp_count_posts( 'mlb_location' )->publish ?? 0;
+        $url_pending   = admin_url( 'edit.php?post_type=mlb_booking&post_status=mlb-pending' );
+        $url_confirmed = admin_url( 'edit.php?post_type=mlb_booking&post_status=mlb-confirmed' );
+        $url_cancelled = admin_url( 'edit.php?post_type=mlb_booking&post_status=mlb-cancelled' );
+        $url_locations = admin_url( 'edit.php?post_type=mlb_location' );
+        $term_plural   = esc_html( mlb_term('plural') );
+
         echo '<div class="wrap mlb-dashboard"><h1>Media Lab Bookings</h1><div class="mlb-stats">';
-        echo '<div class="mlb-stat mlb-stat--pending"><span class="mlb-stat__count">' . (int)$pending . '</span><span class="mlb-stat__label">' . esc_html( mlb_term('plural') ) . ' – Ausstehend</span></div>';
-        echo '<div class="mlb-stat mlb-stat--confirmed"><span class="mlb-stat__count">' . (int)$confirmed . '</span><span class="mlb-stat__label">' . esc_html( mlb_term('plural') ) . ' – Bestätigt</span></div>';
-        echo '<div class="mlb-stat mlb-stat--cancelled"><span class="mlb-stat__count">' . (int)$cancelled . '</span><span class="mlb-stat__label">' . esc_html( mlb_term('plural') ) . ' – Storniert</span></div>';
-        echo '<div class="mlb-stat mlb-stat--locations"><span class="mlb-stat__count">' . (int)$locations . '</span><span class="mlb-stat__label">Standorte</span></div>';
+        echo '<a href="' . esc_url( $url_pending ) . '" class="mlb-stat mlb-stat--pending"><span class="mlb-stat__count">' . (int)$pending . '</span><span class="mlb-stat__label">' . $term_plural . ' – Ausstehend</span></a>';
+        echo '<a href="' . esc_url( $url_confirmed ) . '" class="mlb-stat mlb-stat--confirmed"><span class="mlb-stat__count">' . (int)$confirmed . '</span><span class="mlb-stat__label">' . $term_plural . ' – Bestätigt</span></a>';
+        echo '<a href="' . esc_url( $url_cancelled ) . '" class="mlb-stat mlb-stat--cancelled"><span class="mlb-stat__count">' . (int)$cancelled . '</span><span class="mlb-stat__label">' . $term_plural . ' – Storniert</span></a>';
+        echo '<a href="' . esc_url( $url_locations ) . '" class="mlb-stat mlb-stat--locations"><span class="mlb-stat__count">' . (int)$locations . '</span><span class="mlb-stat__label">Standorte</span></a>';
         echo '</div>';
         echo '<p>';
         echo '<a href="' . esc_url( admin_url( 'edit.php?post_type=mlb_booking' ) ) . '" class="button button-primary">Alle Buchungen</a> ';
@@ -68,6 +138,37 @@ class MLB_Admin {
             }
             echo '</tbody></table>';
             echo '<p style="font-size:12px;color:#888;margin-top:8px">💡 Der <code>token</code>-Parameter schützt den Feed vor unbefugtem Zugriff. URL nicht öffentlich teilen.</p>';
+        }
+        // Migrations-Tool
+        $needs_sync = self::count_unsynced_bookings();
+        if ( $needs_sync > 0 ) {
+            $nonce = wp_create_nonce( 'mlb_sync_statuses' );
+            echo '<div style="margin-top:24px;padding:16px;background:#fff3cd;border:1px solid #ffc107;border-radius:6px">';
+            echo '<strong>⚠️ ' . (int) $needs_sync . ' Buchung(en) haben einen veralteten WP-Post-Status.</strong> ';
+            echo 'Das führt zu falschen Zählern in der Buchungsliste. ';
+            echo '<button type="button" class="button button-secondary" id="mlb-sync-btn" style="margin-left:8px">Jetzt synchronisieren</button>';
+            echo '<span id="mlb-sync-result" style="margin-left:12px;color:#666"></span>';
+            echo '</div>';
+            echo '<script>
+                jQuery(document).ready(function($){
+                    $("#mlb-sync-btn").on("click", function(){
+                        var $btn = $(this);
+                        $btn.prop("disabled", true).text("Synchronisiere…");
+                        $.post(ajaxurl, {
+                            action: "mlb_sync_statuses",
+                            nonce:  "' . $nonce . '"
+                        }, function(res){
+                            if (res.success) {
+                                $("#mlb-sync-result").css("color","#155724").text(res.data);
+                                $btn.closest("div").delay(2000).fadeOut(500);
+                            } else {
+                                $("#mlb-sync-result").css("color","#721c24").text(res.data);
+                                $btn.prop("disabled", false).text("Jetzt synchronisieren");
+                            }
+                        });
+                    });
+                });
+            </script>';
         }
         echo '</div>';
     }
@@ -143,6 +244,8 @@ class MLB_Admin {
             .mlb-stats{display:flex;gap:16px;margin:20px 0;flex-wrap:wrap}.mlb-stat{background:#fff;border:1px solid #e2e4e7;border-radius:6px;padding:20px 28px;min-width:120px;text-align:center}
             .mlb-stat__count{display:block;font-size:36px;font-weight:700;line-height:1}.mlb-stat__label{display:block;font-size:12px;color:#666;margin-top:6px;text-transform:uppercase;letter-spacing:.5px}
             .mlb-stat--pending .mlb-stat__count{color:#856404}.mlb-stat--confirmed .mlb-stat__count{color:#155724}.mlb-stat--cancelled .mlb-stat__count{color:#721c24}.mlb-stat--locations .mlb-stat__count{color:#0073aa}
+            a.mlb-stat{text-decoration:none;cursor:pointer;transition:box-shadow .15s,transform .1s}
+            a.mlb-stat:hover{box-shadow:0 4px 12px rgba(0,0,0,.1);transform:translateY(-1px)}
         ' );
     }
 }
