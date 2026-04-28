@@ -1,5 +1,12 @@
 /**
  * Notifications - Banner, Popup, Toast
+ *
+ * Dismiss-Status wird in localStorage gespeichert → bleibt über
+ * Tab-Schließungen, Browser-Neustarts und Inkognito-Sessions hinaus erhalten.
+ *
+ * Hinweis: notification.js (simple, kein Memory) ist deprecated und kann
+ * entfernt werden – alle Anwendungsfälle werden über den Notifications CPT
+ * und diese Klasse abgedeckt.
  */
 export default class Notifications {
   constructor() {
@@ -41,7 +48,7 @@ export default class Notifications {
     if (data.popups && data.popups.length) {
       data.popups.forEach(n => {
         const key = `popup_dismissed_${n.id}`;
-        if (sessionStorage.getItem(key)) return; // bereits weggeklickt
+        if (localStorage.getItem(key)) return; // bereits weggeklickt
         const delay = (n.delay || 3) * 1000;
         setTimeout(() => this.showPopup(n), delay);
       });
@@ -81,11 +88,11 @@ export default class Notifications {
   }
 
   isDismissed(id) {
-    return id && sessionStorage.getItem(`notification_dismissed_${id}`);
+    return id && localStorage.getItem(`notification_dismissed_${id}`);
   }
 
   markDismissed(id) {
-    if (id) sessionStorage.setItem(`notification_dismissed_${id}`, '1');
+    if (id) localStorage.setItem(`notification_dismissed_${id}`, '1');
   }
 
   dismiss(notification) {
@@ -172,10 +179,10 @@ export default class Notifications {
     const overlay = document.querySelector('.notification-popup__overlay');
     if (!overlay) return;
 
-    // Session: nicht mehr anzeigen
+    // localStorage: nicht mehr anzeigen
     const popup = overlay.querySelector('.notification-popup');
     if (popup && popup.dataset.id) {
-      sessionStorage.setItem(`popup_dismissed_${popup.dataset.id}`, '1');
+      localStorage.setItem(`popup_dismissed_${popup.dataset.id}`, '1');
     }
 
     overlay.classList.remove('notification-popup__overlay--visible');

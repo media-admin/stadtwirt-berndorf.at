@@ -44,6 +44,12 @@
   background-size:       cover;
   background-position:   center;
   background-attachment: fixed;
+
+  // iOS Safari Fix
+  @supports (-webkit-touch-callout: none) {
+    background-attachment: scroll;
+  }
+
   content:  "";
   position: absolute;
   top:  0;

@@ -152,6 +152,10 @@
         align-items:    flex-end;
         gap:            $spacing-4;
         padding-top:    $spacing-1;
+
+        @include respond-below('md') {
+            align-items: center;
+        }
     }
 
     &__social {
@@ -236,6 +240,7 @@
 
         @include respond-below('md') {      // war: @media (max-width: 767px)
             gap: $spacing-1 $spacing-3;
+            align-items: center;
         }
     }
 

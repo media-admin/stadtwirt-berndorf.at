@@ -330,6 +330,15 @@
 }
 
 
+// .columns-flush + .pad-2xl: seitliches Padding auf Mobile aufheben
+@include respond-below('md') {
+    .columns-flush.pad-2xl {
+        padding-left:  0 !important;
+        padding-right: 0 !important;
+    }
+}
+
+
 
 .flex-basis-0 {
     flex-basis: 0 !important;
