@@ -1,0 +1,1 @@
+import{A as s,S as t}from"./autoplay-B980ONWd.js";class r{constructor(){this.sliders=document.querySelectorAll(".ml-logo-slider__swiper"),this.sliders.length&&this.init()}init(){this.sliders.forEach(r=>{if(r.swiper)return;let e={};try{e=JSON.parse(r.dataset.swiper||"{}")}catch(i){return}e.modules=[s];try{new t(r,e)}catch(l){}})}}export{r as default};

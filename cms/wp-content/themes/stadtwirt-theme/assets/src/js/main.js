@@ -79,6 +79,18 @@ const initApp = async () => {
     safeInit('LogoCarousel', () => new LogoCarousel());
   }
 
+  // Media Lab Blocks – Swiper-Slider
+  if (has('.ml-slider__swiper')) {
+    const { default: MLSlider } = await import('./components/ml-slider');
+    safeInit('MLSlider', () => new MLSlider());
+  }
+
+  // Media Lab Blocks – Logo-Slider
+  if (has('.ml-logo-slider__swiper')) {
+    const { default: MLLogoSlider } = await import('./components/ml-logo-slider');
+    safeInit('MLLogoSlider', () => new MLLogoSlider());
+  }
+
   // Carousel: Klasse aus PHP → .carousel.swiper
   if (has('.carousel')) {
     const { default: Carousel } = await import('./components/carousel');

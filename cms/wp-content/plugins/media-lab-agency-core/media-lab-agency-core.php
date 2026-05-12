@@ -38,6 +38,7 @@ function medialab_core_init() {
     require_once MEDIALAB_CORE_PATH . 'inc/notifications-cpt.php';
     require_once MEDIALAB_CORE_PATH . 'inc/notifications-shortcodes.php';
     require_once MEDIALAB_CORE_PATH . 'inc/acf-fields-gmap.php';
+    require_once MEDIALAB_CORE_PATH . 'inc/top-header-order.php';
 
     // ── ACF Options + Fields ──────────────────────────────
     require_once MEDIALAB_CORE_PATH . 'inc/acf-settings.php';

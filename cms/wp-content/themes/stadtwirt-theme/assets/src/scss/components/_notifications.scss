@@ -241,12 +241,12 @@
 .notification-popup__overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.85);
   z-index: 10000;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1.5rem;
+  padding: 1.5rem max(#{$spacing-4}, calc((100vw - #{$container-width}) / 2));
   opacity: 0;
   transition: opacity 0.3s ease;
 
@@ -259,13 +259,19 @@
   position: relative;
   background: $color-white;
   border-radius: $radius-xl;
-  padding: 2.5rem 2rem 2rem;
-  max-width: 480px;
+  padding: $container-padding;
+  max-width: $container-width;
   width: 100%;
   box-shadow: $shadow-xl;
   transform: translateY(1rem);
   transition: transform 0.3s ease;
-  text-align: center;
+  text-align: center; // Nur für Standard-Popup (kein Gutenberg-Content)
+
+  // Bei Rich Content (Gutenberg): kein globales text-align,
+  // Gutenberg-Blöcke steuern die Ausrichtung selbst via .has-text-align-*
+  &.notification-popup--rich {
+    text-align: left;
+  }
 
   .notification-popup__overlay--visible & {
     transform: translateY(0);
@@ -314,3 +320,157 @@
 }
 
 body.popup-open { overflow: hidden; }
+
+// ─── POPUP: RICH CONTENT (Gutenberg-Blöcke) ───────────────────
+//
+// Wird aktiviert wenn der Notification-Post Gutenberg-Content enthält
+// (n.content ist befüllt). JS setzt die Modifier-Klasse --rich.
+
+.notification-popup--rich {
+  max-width: $container-width;
+  padding: $container-padding;
+
+  // Titel bleibt lesbar
+  .notification-popup__title {
+    font-size: $font-size-lg;
+    margin-bottom: 1rem;
+  }
+}
+
+// Body-Wrapper für Gutenberg-Output
+.notification-popup__body {
+  color: $color-text-muted;
+  line-height: $line-height-base;
+
+  // Rich-Variante: scoped Gutenberg-Block-Styles
+  &--rich {
+
+    // ── Basis-Reset ──────────────────────────────────────────
+    // Verhindert dass Theme-weite Margins den Popup sprengen
+    > * {
+      margin-top: 0;
+
+      &:not(:last-child) {
+        margin-bottom: 1rem;
+      }
+    }
+
+    // ── Gutenberg-Ausrichtung respektieren ───────────────────
+    // Gutenberg setzt .has-text-align-* wenn explizit ausgewählt.
+    // Kein Ausrichtungs-Override von außen – Blöcke steuern sich selbst.
+    .has-text-align-left   { text-align: left; }
+    .has-text-align-center { text-align: center; }
+    .has-text-align-right  { text-align: right; }
+
+    // ── Fließtext ────────────────────────────────────────────
+    p {
+      color: $color-text;
+      line-height: $line-height-base;
+      margin: 0;
+
+      &:not(:last-child) { margin-bottom: 0.75rem; }
+    }
+
+    // ── Bild (wp:image) ──────────────────────────────────────
+    .wp-block-image {
+      margin: 0 0 1rem;
+
+      img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: $radius-md;
+        object-fit: cover;
+      }
+
+      figcaption {
+        font-size: $font-size-sm;
+        color: $color-text-muted;
+        margin-top: 0.375rem;
+        text-align: center;
+      }
+    }
+
+    // ── Überschriften ────────────────────────────────────────
+    h2, h3, h4 {
+      color: $color-text;
+      font-weight: $font-weight-bold;
+      line-height: $line-height-tight;
+      margin: 0 0 0.5rem;
+    }
+
+    h2 { font-size: $font-size-xl; }
+    h3 { font-size: $font-size-lg; }
+    h4 { font-size: $font-size-base; }
+
+    // ── Buttons (wp:button / wp:buttons) ─────────────────────
+    .wp-block-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin: 1.25rem 0 0;
+    }
+
+    .wp-block-button {
+      display: inline-flex;
+    }
+
+    .wp-block-button__link,
+    .wp-element-button {
+      display: inline-block;
+      padding: 0.625rem 1.5rem;
+      border-radius: $radius-md;
+      font-size: $font-size-sm;
+      font-weight: $font-weight-semibold;
+      text-decoration: none;
+      cursor: pointer;
+      transition: opacity 0.2s ease, transform 0.15s ease;
+      line-height: 1.4;
+
+      // Standard: Primary-Farbe – überschreibbar via Gutenberg-Inline-Style
+      background-color: var(--wp--preset--color--primary, #{$color-primary});
+      color: $color-white;
+
+      &:hover {
+        opacity: 0.88;
+        transform: translateY(-1px);
+        text-decoration: none;
+      }
+
+      // Outline-Variante (.is-style-outline)
+      .wp-block-button.is-style-outline & {
+        background-color: transparent;
+        border: 2px solid currentColor;
+        color: var(--wp--preset--color--primary, #{$color-primary});
+      }
+    }
+
+    // ── Listen ───────────────────────────────────────────────
+    ul, ol {
+      padding-left: 1.25rem;
+      color: $color-text;
+
+      li {
+        margin-bottom: 0.25rem;
+        line-height: $line-height-base;
+      }
+    }
+
+    // ── Trennlinie (wp:separator) ────────────────────────────
+    hr,
+    .wp-block-separator {
+      border: none;
+      border-top: 1px solid $color-border;
+      margin: 1rem 0;
+    }
+  }
+}
+
+// ─── RESPONSIVE: Rich-Popup auf Mobile ────────────────────────
+
+@include respond-to('sm') {
+  .notification-popup--rich {
+    max-width: 100%;
+    padding: $container-padding;
+  }
+}

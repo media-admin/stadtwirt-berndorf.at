@@ -150,17 +150,27 @@ export default class Notifications {
       info:    'dashicons-info',
     };
 
+    // Gutenberg-Content hat Vorrang vor dem ACF-Kurztext.
+    // hasRichContent = true → Icon wird ausgeblendet, Popup bekommt
+    // die Modifier-Klasse notification-popup--rich für breiteres Layout.
+    const hasRichContent = !! (n.content && n.content.trim());
+    const bodyHtml = hasRichContent
+      ? `<div class="notification-popup__body notification-popup__body--rich">${n.content}</div>`
+      : `<div class="notification-popup__body">${n.message}</div>`;
+
     const overlay = document.createElement('div');
     overlay.className = 'notification-popup__overlay';
     overlay.innerHTML = `
-      <div class="notification-popup notification--${n.type}" role="dialog" aria-modal="true" data-id="${n.id}">
+      <div class="notification-popup notification--${n.type}${hasRichContent ? ' notification-popup--rich' : ''}"
+           role="dialog" aria-modal="true" data-id="${n.id}">
         <button class="notification-popup__close" aria-label="Schließen">&times;</button>
+        ${! hasRichContent ? `
         <div class="notification-popup__icon">
           <span class="dashicons ${icons[n.type] || icons.info}"></span>
-        </div>
+        </div>` : ''}
         <div class="notification-popup__content">
           ${n.title ? `<h3 class="notification-popup__title">${n.title}</h3>` : ''}
-          <div class="notification-popup__message">${n.message}</div>
+          ${bodyHtml}
         </div>
       </div>
     `;

@@ -1,13 +1,20 @@
 {
-  "_autoplay-CfrMw7Ki.js": {
-    "file": "js/chunks/autoplay-CfrMw7Ki.js",
+  "_autoplay-B980ONWd.js": {
+    "file": "js/chunks/autoplay-B980ONWd.js",
     "name": "autoplay"
   },
-  "_pagination-BBFIH0gR.js": {
-    "file": "js/chunks/pagination-BBFIH0gR.js",
+  "_effect-fade-BGAxf8IT.js": {
+    "file": "js/chunks/effect-fade-BGAxf8IT.js",
+    "name": "effect-fade",
+    "imports": [
+      "_autoplay-B980ONWd.js"
+    ]
+  },
+  "_pagination-BcqC9JVv.js": {
+    "file": "js/chunks/pagination-BcqC9JVv.js",
     "name": "pagination",
     "imports": [
-      "_autoplay-CfrMw7Ki.js"
+      "_autoplay-B980ONWd.js"
     ]
   },
   "fonts/blenda-script/blenda-script.ttf": {
@@ -233,13 +240,13 @@
     "isDynamicEntry": true
   },
   "src/js/components/carousel.js": {
-    "file": "js/chunks/carousel-B_6_yDoS.js",
+    "file": "js/chunks/carousel-C21PGdZk.js",
     "name": "carousel",
     "src": "src/js/components/carousel.js",
     "isDynamicEntry": true,
     "imports": [
-      "_autoplay-CfrMw7Ki.js",
-      "_pagination-BBFIH0gR.js"
+      "_autoplay-B980ONWd.js",
+      "_pagination-BcqC9JVv.js"
     ]
   },
   "src/js/components/faq-accordion.js": {
@@ -255,13 +262,14 @@
     "isDynamicEntry": true
   },
   "src/js/components/hero-slider.js": {
-    "file": "js/chunks/hero-slider-CJnROJ7T.js",
+    "file": "js/chunks/hero-slider-BpNCsLu4.js",
     "name": "hero-slider",
     "src": "src/js/components/hero-slider.js",
     "isDynamicEntry": true,
     "imports": [
-      "_autoplay-CfrMw7Ki.js",
-      "_pagination-BBFIH0gR.js"
+      "_autoplay-B980ONWd.js",
+      "_pagination-BcqC9JVv.js",
+      "_effect-fade-BGAxf8IT.js"
     ]
   },
   "src/js/components/image-comparison.js": {
@@ -283,12 +291,32 @@
     "isDynamicEntry": true
   },
   "src/js/components/logo-carousel.js": {
-    "file": "js/chunks/logo-carousel-C1fGwAn5.js",
+    "file": "js/chunks/logo-carousel-BKPb3Ubt.js",
     "name": "logo-carousel",
     "src": "src/js/components/logo-carousel.js",
     "isDynamicEntry": true,
     "imports": [
-      "_autoplay-CfrMw7Ki.js"
+      "_autoplay-B980ONWd.js"
+    ]
+  },
+  "src/js/components/ml-logo-slider.js": {
+    "file": "js/chunks/ml-logo-slider-DsSYBMq7.js",
+    "name": "ml-logo-slider",
+    "src": "src/js/components/ml-logo-slider.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_autoplay-B980ONWd.js"
+    ]
+  },
+  "src/js/components/ml-slider.js": {
+    "file": "js/chunks/ml-slider-D2EH0_S8.js",
+    "name": "ml-slider",
+    "src": "src/js/components/ml-slider.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_autoplay-B980ONWd.js",
+      "_pagination-BcqC9JVv.js",
+      "_effect-fade-BGAxf8IT.js"
     ]
   },
   "src/js/components/modal.js": {
@@ -322,13 +350,13 @@
     "isDynamicEntry": true
   },
   "src/js/components/testimonials-slider.js": {
-    "file": "js/chunks/testimonials-slider-mU120tOr.js",
+    "file": "js/chunks/testimonials-slider-DbLAItpQ.js",
     "name": "testimonials-slider",
     "src": "src/js/components/testimonials-slider.js",
     "isDynamicEntry": true,
     "imports": [
-      "_autoplay-CfrMw7Ki.js",
-      "_pagination-BBFIH0gR.js"
+      "_autoplay-B980ONWd.js",
+      "_pagination-BcqC9JVv.js"
     ]
   },
   "src/js/components/video-player.js": {
@@ -349,6 +377,8 @@
       "src/js/components/hero-slider.js",
       "src/js/components/testimonials-slider.js",
       "src/js/components/logo-carousel.js",
+      "src/js/components/ml-slider.js",
+      "src/js/components/ml-logo-slider.js",
       "src/js/components/carousel.js",
       "src/js/components/lightbox.js",
       "src/js/components/modal.js",
