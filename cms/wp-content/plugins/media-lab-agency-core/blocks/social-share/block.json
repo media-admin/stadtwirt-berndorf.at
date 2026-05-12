@@ -1,0 +1,24 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "medialab/social-share",
+  "title": "Share-Buttons",
+  "description": "DSGVO-konforme Social Media Share-Buttons. Kanäle, Layout und Label per Block-Einstellungen oder global via Agency Core → Share-Buttons konfigurierbar.",
+  "category": "design",
+  "icon": "share",
+  "keywords": ["share", "social", "teilen", "sharing"],
+  "textdomain": "media-lab-agency-core",
+  "acf": {
+    "mode": "preview",
+    "renderTemplate": "render.php"
+  },
+  "supports": {
+    "anchor": true,
+    "align": ["wide"],
+    "spacing": {
+      "margin": true,
+      "padding": true
+    }
+  },
+  "example": {}
+}

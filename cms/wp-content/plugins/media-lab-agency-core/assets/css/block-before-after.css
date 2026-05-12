@@ -1,0 +1,140 @@
+/**
+ * Before / After Block
+ * Strukturelles CSS + minimales visuelles Styling für den Handle.
+ * Weitere Anpassungen → Theme SCSS: _block-before-after.scss
+ */
+
+.ml-block-before-after {
+    --ba-handle-color: #ffffff;
+    --ba-handle-bg:    rgba(0, 0, 0, 0.5);
+    --ba-label-bg:     rgba(0, 0, 0, 0.5);
+    --ba-label-color:  #ffffff;
+}
+
+/* Container */
+.ml-ba__container {
+    position: relative;
+    overflow: hidden;
+    cursor: ew-resize;
+    user-select: none;
+    touch-action: pan-y;
+    line-height: 0;
+}
+
+/* Spacer-Div: height:0 + padding-top = Container bekommt Höhe */
+.ml-ba__ratio {
+    display: block;
+    height: 0;
+    width: 100%;
+    pointer-events: none;
+}
+
+/* Bilder */
+.ml-ba__after,
+.ml-ba__before {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
+.ml-ba__after {
+    /* Basis – immer vollständig sichtbar */
+}
+
+.ml-ba__before {
+    /* Geclipt auf Slider-Position */
+    border-right: 2px solid var(--ba-handle-color);
+}
+
+.ml-ba__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+    display: block;
+}
+
+/* Vorher-Bild: linke Kante verankern damit kein Wandern beim Ziehen */
+.ml-ba__before .ml-ba__img { object-position: left center; }
+
+/* Nachher-Bild: rechte Kante verankern */
+.ml-ba__after  .ml-ba__img { object-position: right center; }
+
+/* Labels */
+.ml-ba__label {
+    position: absolute;
+    bottom: 0.75rem;
+    padding: 0.25rem 0.625rem;
+    background: var(--ba-label-bg);
+    color: var(--ba-label-color);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    border-radius: 4px;
+    line-height: 1.4;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.ml-ba__label--before { left:  0.75rem; }
+.ml-ba__label--after  { right: 0.75rem; }
+
+/* Handle */
+.ml-ba__handle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 44px;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 3;
+    cursor: ew-resize;
+    touch-action: none;
+}
+
+.ml-ba__handle-line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 2px;
+    transform: translateX(-50%);
+    background: var(--ba-handle-color);
+    pointer-events: none;
+}
+
+.ml-ba__handle-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--ba-handle-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ba-handle-color);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    flex-shrink: 0;
+    pointer-events: none;
+    transition: transform 0.15s ease;
+}
+
+.ml-ba__handle:hover   .ml-ba__handle-icon,
+.ml-ba__handle:focus   .ml-ba__handle-icon,
+.ml-ba__handle.is-drag .ml-ba__handle-icon {
+    transform: scale(1.1);
+}
+
+.ml-ba__handle:focus-visible {
+    outline: 2px solid var(--color-primary, #3b82f6);
+    outline-offset: 2px;
+    border-radius: 50%;
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    .ml-ba__handle-icon { transition: none; }
+}

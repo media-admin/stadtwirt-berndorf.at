@@ -323,7 +323,7 @@ $app->addFilter('fluentform/permission_callback', function ($status, $permission
 
 // Get current user allowed form ids, if current user has specific form permission
 $app->addFilter('fluentform/current_user_allowed_forms', function ($form){
-    return \FluentForm\App\Services\Manager\FormManagerService::getUserAllowedForms();
+    return \FluentForm\App\Services\Manager\FormManagerService::getUserAllowedFormsScope();
 });
 
 $app->addFilter('fluentform/validate_input_item_input_email', ['\FluentForm\App\Helpers\Helper', 'isUniqueValidation'], 10, 5);

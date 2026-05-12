@@ -201,10 +201,10 @@ const AppSettings = () => {
                         if(fieldKey !== 'template') {
                             let field = settings['fields'][ fieldKey ];
                             if( field.type === 'text' || field.type === 'number' || 'radio' === field.type ) {
-                                if ( field.value ) {
+                                if ( field.value !== undefined && field.value !== null ) {
                                     _formData[fieldKey] = field.value;
                                 } else {
-                                    _formData[fieldKey] = field.default;
+                                    _formData[fieldKey] = field.default !== undefined ? field.default : '';
                                 }
                             } else if( field.type === 'checkbox' ) {
                                 if ( field.checked ) {
@@ -220,10 +220,10 @@ const AppSettings = () => {
                                 Object.keys( settings['fields'][ fieldKey ].sub_fields ).map( ( subFieldKey ) => {
                                     const subField = settings['fields'][ fieldKey ].sub_fields[ subFieldKey ];
                                     if ( subField.type === 'text' || subField.type === 'number' ) {
-                                        if ( subField.value ) {
+                                        if ( subField.value !== undefined && subField.value !== null ) {
                                             _formData[ subFieldKey ] = subField.value;
                                         } else {
-                                            _formData[ subFieldKey ] = subField.default;
+                                            _formData[ subFieldKey ] = subField.default !== undefined ? subField.default : '';
                                         }
                                     } else if ( subField.type === 'checkbox' ) {
                                         if ( subField.checked ) {

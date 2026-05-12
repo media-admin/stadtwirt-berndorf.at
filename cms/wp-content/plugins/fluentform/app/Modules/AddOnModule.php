@@ -441,7 +441,7 @@ class AddOnModule
                 'title'       => __('Multilingual Forms for Fluent Forms (WPML)', 'fluentform'),
                 'description' => __('Make Fluent Forms multilingual with WPML integration', 'fluentform'),
                 'logo'        => 'wpml-ff.png',
-                'slug'        => 'multilingual-forms-fluent-forms-wpml/multilingual-forms-fluent-forms-wpml.php',
+                'slug'        => 'multilingual-forms-fluent-forms-wpml/multilingual-forms-for-fluent-forms-with-wpml.php',
                 'basename'    => 'multilingual-forms-fluent-forms-wpml',
                 'badge_type'  => 'official',
                 'wporg_url'   => 'https://wordpress.org/plugins/multilingual-forms-fluent-forms-wpml/',

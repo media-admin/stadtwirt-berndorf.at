@@ -111,7 +111,7 @@ class EditorShortcodeParser
             if (false !== strpos($handler, 'cookie.')) {
                 $scookieProperty = substr($handler, strlen('cookie.'));
                 
-                return wpFluentForm('request')->cookie($scookieProperty);
+                return array_key_exists($scookieProperty, $_COOKIE) ? wp_unslash($_COOKIE[$scookieProperty]) : '';
             }
             
             if (false !== strpos($handler, 'dynamic.')) {

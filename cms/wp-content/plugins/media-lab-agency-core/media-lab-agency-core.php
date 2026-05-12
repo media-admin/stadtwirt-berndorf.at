@@ -3,7 +3,7 @@
  * Plugin Name: Media Lab Agency Core
  * Plugin URI: https://github.com/media-admin/media-lab-starter-kit
  * Description: Core functionality for Media Lab agency websites. Provides shortcodes, security features, and admin customizations.
- * Version:           1.8.4
+ * Version:           1.12.0
  * Author: Media Lab
  * Author URI: https://medialab.at
  * Text Domain: media-lab-core
@@ -12,25 +12,18 @@
  * Requires PHP: 8.0
  */
 
-if (!defined('ABSPATH')) {
-    exit; // Exit if accessed directly
-}
+if (!defined('ABSPATH')) { exit; }
 
-// Plugin Constants
-define('MEDIALAB_CORE_VERSION', '1.8.4');
+define('MEDIALAB_CORE_VERSION', '1.12.0');
 define('MEDIALAB_CORE_FILE', __FILE__);
 define('MEDIALAB_CORE_PATH', plugin_dir_path(__FILE__));
 define('MEDIALAB_CORE_URL', plugin_dir_url(__FILE__));
 define('MEDIALAB_CORE_BASENAME', plugin_basename(__FILE__));
 
-/**
- * Initialize Plugin
- */
 function medialab_core_init() {
-    // Load text domain
     load_plugin_textdomain('media-lab-core', false, dirname(MEDIALAB_CORE_BASENAME) . '/languages');
 
-    // Load core components (each file only once)
+    // ── Core ─────────────────────────────────────────────
     require_once MEDIALAB_CORE_PATH . 'inc/shortcodes.php';
     require_once MEDIALAB_CORE_PATH . 'inc/social-share.php';
     require_once MEDIALAB_CORE_PATH . 'inc/security.php';
@@ -46,60 +39,43 @@ function medialab_core_init() {
     require_once MEDIALAB_CORE_PATH . 'inc/notifications-shortcodes.php';
     require_once MEDIALAB_CORE_PATH . 'inc/acf-fields-gmap.php';
 
-    // ACF: Options Page + all field groups (Top Header, Multi-Language)
+    // ── ACF Options + Fields ──────────────────────────────
     require_once MEDIALAB_CORE_PATH . 'inc/acf-settings.php';
 
-    // Gutenberg Custom Blocks
+    // ── Gutenberg Blocks ──────────────────────────────────
     require_once MEDIALAB_CORE_PATH . 'inc/blocks.php';
     require_once MEDIALAB_CORE_PATH . 'inc/acf-blocks.php';
 
-    // Multi-Language (checks ACF toggle internally before activating)
+    // ── Table of Contents — since 1.10.0 ──────────────────
+    require_once MEDIALAB_CORE_PATH . 'inc/table-of-contents.php';
+
+    // ── Logo CPT — since 1.11.0 ───────────────────────────
+    require_once MEDIALAB_CORE_PATH . 'inc/cpt-logos.php';
+
+    // ── Weitere Komponenten ───────────────────────────────
     require_once MEDIALAB_CORE_PATH . 'inc/multi-language.php';
-
-    // Drag & Drop Post Order
     require_once MEDIALAB_CORE_PATH . 'inc/post-order.php';
-
-    // Duplicate Post / Term
     require_once MEDIALAB_CORE_PATH . 'inc/duplicate-post.php';
-
-    // SMTP Mailer
     require_once MEDIALAB_CORE_PATH . 'inc/smtp.php';
-
-    // E-Mail Obfuskierung / Spam-Schutz
     require_once MEDIALAB_CORE_PATH . 'inc/email-obfuscation.php';
-
-    // White Label / Agentur-Branding
     require_once MEDIALAB_CORE_PATH . 'inc/white-label.php';
-
-    // Maintenance Mode
     require_once MEDIALAB_CORE_PATH . 'inc/maintenance.php';
-
-    // Cookie Consent
     require_once MEDIALAB_CORE_PATH . 'inc/cookie-consent.php';
     require_once MEDIALAB_CORE_PATH . 'inc/hcaptcha.php';
 
-    // Media Replace
+    // ── Dark Mode Toggle — since 1.12.0 ───────────────────
+    require_once MEDIALAB_CORE_PATH . 'inc/dark-mode.php';
+
     require_once MEDIALAB_CORE_PATH . 'inc/media-replace.php';
 }
 add_action('plugins_loaded', 'medialab_core_init', 5);
 
-/**
- * Activation Hook
- */
-function medialab_core_activate() {
-    flush_rewrite_rules();
-}
+function medialab_core_activate() { flush_rewrite_rules(); }
 register_activation_hook(__FILE__, 'medialab_core_activate');
 
-/**
- * Deactivation Hook
- */
 function medialab_core_deactivate() {
     flush_rewrite_rules();
-    // Cron-Job für IP-Anonymisierung entfernen
-    $timestamp = wp_next_scheduled('medialab_anonymize_ip_addresses');
-    if ($timestamp) {
-        wp_unschedule_event($timestamp, 'medialab_anonymize_ip_addresses');
-    }
+    $ts = wp_next_scheduled('medialab_anonymize_ip_addresses');
+    if ($ts) wp_unschedule_event($ts, 'medialab_anonymize_ip_addresses');
 }
 register_deactivation_hook(__FILE__, 'medialab_core_deactivate');

@@ -6,10 +6,10 @@ use FluentForm\App\Services\Integrations\FormIntegrationService;
 
 class FormIntegrationController extends Controller
 {
-    public function index(FormIntegrationService $integrationService)
+    public function index(FormIntegrationService $integrationService, $formId)
     {
         try {
-            $formId = (int) $this->request->get('form_id');
+            $formId = (int) $formId;
             return $this->sendSuccess(
                 $integrationService->get($formId)
             );
@@ -20,10 +20,13 @@ class FormIntegrationController extends Controller
         }
     }
     
-    public function find(FormIntegrationService $integrationService)
+    public function find(FormIntegrationService $integrationService, $formId)
     {
         try {
-            $integration = $integrationService->find($this->request->all());
+            $attributes = $this->request->all();
+            $attributes['form_id'] = (int) $formId;
+
+            $integration = $integrationService->find($attributes);
             return $this->sendSuccess($integration);
         } catch (\Exception $e) {
             return $this->sendError([
@@ -32,10 +35,13 @@ class FormIntegrationController extends Controller
         }
     }
     
-    public function update(FormIntegrationService $integrationService)
+    public function update(FormIntegrationService $integrationService, $formId)
     {
         try {
-            $integration = $integrationService->update($this->request->all());
+            $attributes = $this->request->all();
+            $attributes['form_id'] = (int) $formId;
+
+            $integration = $integrationService->update($attributes);
             return $this->sendSuccess($integration);
         } catch (\Exception $e) {
             return $this->sendError([
@@ -44,10 +50,10 @@ class FormIntegrationController extends Controller
         }
     }
     
-    public function delete(FormIntegrationService $integrationService)
+    public function delete(FormIntegrationService $integrationService, $formId)
     {
         try {
-            $formId = intval($this->request->get('form_id'));
+            $formId = (int) $formId;
             $id = intval($this->request->get('integration_id'));
             $integrationService->delete($id, $formId);
             return $this->sendSuccess([
@@ -60,10 +66,11 @@ class FormIntegrationController extends Controller
         }
     }
     
-    public function integrationListComponent()
+    public function integrationListComponent($formId)
     {
         try {
             $attributes = $this->request->all();
+            $attributes['form_id'] = (int) $formId;
             
             $sanitizeMap = [
                 'integration_name' => 'sanitize_text_field',

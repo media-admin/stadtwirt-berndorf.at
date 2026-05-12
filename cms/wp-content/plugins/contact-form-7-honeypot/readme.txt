@@ -2,13 +2,13 @@
 Tags: anti-spam, spam protection, captcha, honeypot, cf7 database
 Requires at least: 4.8
 Tested up to: 6.9
-Stable tag: 3.4.0
+Stable tag: 3.5.0
 Requires PHP: 5.6
 Contributors: wpexpertsio
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Addons for Contact Form 7 — Honeypot, Database Entries, Redirection, Spam Protection, Webhooks, ACF integration for Contact Form 7, and more.
+Add hCaptcha, Honeypot, and Redirection to Contact Form 7 with CF7 Apps, and generate forms effortlessly with AI. Improve form security, keep it lightweight, and avoid unnecessary code.
 
 == Description ==
 
@@ -29,6 +29,8 @@ Right out of the box, CF7 Apps includes:
 ✅ **Redirection App**
 ✅ **Webhook App**
 ✅ **ACF Integeration**
+✅ **AI Form Generator**
+
 💡 **[Suggest a Feature](https://cf7apps.com/submit-idea/?utm_source=wp_org&utm_medium=readme&utm_campaign=suggest_a_feature)**
 
 And that’s just the beginning.
@@ -60,6 +62,10 @@ Automatically forward your Contact Form 7 submission data to any external servic
 
 Easily pull Advanced Custom Fields (ACF) data into your Contact Form 7 forms using the built-in ACF field tags. This integration lets you map and display your custom ACF fields directly inside CF7 without any extra plugins or coding. Just enable the feature, select your ACF fields, and your form is ready to use.
 
+🌟 **Generate Forms Instantly with AI**
+
+Create powerful Contact Form 7 forms in seconds using the built-in AI Form Generator. Simply enter your requirements, and the AI will generate a complete, ready-to-use form tailored to your needs, with no manual setup or coding required. Just enable the feature, provide your prompt, and your form is ready to go.
+
 **NOTE:**
 The best thing is that both features work independently. You can run them alone or together based on your site’s needs.
 
@@ -72,6 +78,7 @@ With the CF7 Apps, you can do the following:
   ✔️ Redirect your Contact Form 7 submissions to any internal or external page.
   ✔️ Send your form data to any third-party service or custom endpoint through our Webhook.
   ✔️ Display dynamic ACF field values inside your Contact Form 7 forms for personalized entries.
+✔️ Instantly generate dynamic, ready-to-use forms with AI based on your input and requirements.
 
 ==Why Should You Install CF7 Apps?==
 
@@ -144,6 +151,9 @@ The Redirection App allows you to redirect users to any internal or external pag
 = What is the Webhook App? =
 The Webhook App enables you to send your Contact Form 7 form data to any third-party service or custom endpoint. It makes integrations simple by allowing you to push form submissions to CRMs, marketing tools, automation platforms, or any external API without coding.
 
+= Do I need any technical skills to use the AI Form Generator? =
+No, the AI Form Generator is designed to be user-friendly. Just enter your requirements, and it will create a ready-to-use form without any coding or technical expertise.
+
 = How do I report a security issue? =
 If you discover a security vulnerability, please report it to us via the [official Support Channel.](https://wordpress.org/support/plugin/contact-form-7-honeypot) Our team will review, verify, and fix all security-related reports responsibly.
 
@@ -182,6 +192,9 @@ CF7 Apps is a third-party plugin and is not officially associated with or endors
 5. CF7 Apps Tags.
 
 == Changelog ==
+
+= 3.5.0 - Apr 23, 2026 =
+* NEW - Introduced AI Form Generator.
 
 = 3.4.0 - Jan 28, 2026 =
 * NEW - Introduced Advanced Custom Fields (ACF) Integration.

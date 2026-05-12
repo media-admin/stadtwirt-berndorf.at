@@ -18,7 +18,19 @@ trait PredefinedForms
             );
         }
 
-        $predefinedForm = json_decode($predefinedForm['json'], true)[0];
+        $predefinedJson = Arr::get($predefinedForm, 'json');
+
+        if ($predefinedJson) {
+            $decodedForm = json_decode($predefinedJson, true);
+            $predefinedForm = isset($decodedForm[0]) ? $decodedForm[0] : [];
+        }
+
+        if (!$predefinedForm || !is_array($predefinedForm)) {
+            throw new Exception(
+                // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception message, not output
+                __("The selected template is invalid.", 'fluentform')
+            );
+        }
 
         if (isset($predefinedForm['form_fields'])) {
             $predefinedForm['form_fields'] = json_encode($predefinedForm['form_fields']);

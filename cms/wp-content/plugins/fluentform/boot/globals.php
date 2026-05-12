@@ -387,9 +387,6 @@ function fluentform_sanitize_html($html)
         'style'           => [],
     ];
     
-    //button
-    $tags['button']['onclick'] = [];
-
     //svg
     if (empty($tags['svg'])) {
         $svg_args = [
@@ -433,6 +430,19 @@ function fluentform_sanitize_html($html)
     );
 
     $tags = apply_filters('fluentform/allowed_html_tags', $tags);
+
+    // Event-handler attributes are executable JavaScript and must not be re-enabled by filters.
+    foreach ($tags as $tagName => $attributes) {
+        if (!is_array($attributes)) {
+            continue;
+        }
+
+        foreach (array_keys($attributes) as $attribute) {
+            if (preg_match('/^on[a-z]+/i', $attribute)) {
+                unset($tags[$tagName][$attribute]);
+            }
+        }
+    }
 
     return wp_kses($html, $tags);
 }

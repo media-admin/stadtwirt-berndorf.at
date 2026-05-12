@@ -1,0 +1,67 @@
+/**
+ * Slider Block – Strukturelles CSS
+ * Visuelles Styling → Theme SCSS: _block-slider.scss
+ *
+ * Swiper-Core-CSS wird separat geladen (via Logo-Slider-Dependency).
+ */
+
+/* ── Container ───────────────────────────────────────────────────── */
+
+.ml-block-slider {
+    position: relative; /* Basis für absolute-positionierte Pfeile */
+}
+
+/* ── Swiper-Wrapper ──────────────────────────────────────────────── */
+
+.ml-slider__swiper {
+    position: relative; /* Swiper erwartet position:relative */
+    width: 100%;
+    overflow: hidden;   /* Pfeile bleiben INNERHALB des Containers */
+}
+
+/* ── Slides ──────────────────────────────────────────────────────── */
+
+.ml-slider__wrapper > .swiper-slide {
+    height: auto;
+    /* Bilder in Slides auf Containergröße beschränken */
+    overflow: hidden;
+}
+
+.ml-slider__wrapper > .swiper-slide img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+}
+
+/* ── Navigation Buttons ──────────────────────────────────────────── */
+
+.ml-slider__btn {
+    z-index: 10;
+}
+
+/* ── Pagination ──────────────────────────────────────────────────── */
+
+.ml-slider__pagination {
+    position: relative !important;
+    bottom: auto !important;
+    margin-top: 0.75rem;
+    text-align: center;
+}
+
+/* ── Fade-Effekt ─────────────────────────────────────────────────── */
+
+.ml-slider--effect-fade .swiper-slide {
+    pointer-events: none;
+}
+.ml-slider--effect-fade .swiper-slide-active {
+    pointer-events: auto;
+}
+
+/* ── Reduced Motion ──────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+    .ml-slider__swiper {
+        --swiper-transition-duration: 0ms !important;
+    }
+}

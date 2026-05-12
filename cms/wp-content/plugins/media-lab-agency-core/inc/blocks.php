@@ -51,6 +51,11 @@ function medialab_register_acf_blocks(): void {
         'team-member',
         'logo-grid',
         'logo-slider',
+        'social-share',
+        'table-of-contents',
+        'parallax',
+        'before-after',
+        'slider',
     ];
 
     foreach ( $acf_blocks as $block ) {
@@ -89,8 +94,21 @@ function medialab_register_native_blocks(): void {
 add_action( 'enqueue_block_editor_assets', 'medialab_enqueue_block_editor_assets' );
 
 function medialab_enqueue_block_editor_assets(): void {
-    $dist_uri = plugin_dir_url( dirname( __FILE__ ) ) . 'assets/dist/';
-    $dist_dir = plugin_dir_path( dirname( __FILE__ ) ) . 'assets/dist/';
+    $dist_uri   = plugin_dir_url(  dirname( __FILE__ ) ) . 'assets/dist/';
+    $dist_dir   = plugin_dir_path( dirname( __FILE__ ) ) . 'assets/dist/';
+    $plugin_uri = plugin_dir_url(  dirname( __FILE__ ) );
+    $plugin_dir = plugin_dir_path( dirname( __FILE__ ) );
+
+    // Editor-Override-CSS (Größen-Fixes für neue Blöcke)
+    $override_css = $plugin_dir . 'assets/css/block-editor-overrides.css';
+    if ( file_exists( $override_css ) ) {
+        wp_enqueue_style(
+            'medialab-block-editor-overrides',
+            $plugin_uri . 'assets/css/block-editor-overrides.css',
+            [ 'wp-edit-blocks' ],
+            filemtime( $override_css )
+        );
+    }
 
     // Editor-CSS für alle Blöcke
     $editor_css = $dist_dir . 'css/blocks-editor.css';
@@ -148,13 +166,15 @@ function medialab_enqueue_block_frontend_assets(): void {
     }
 
     // Swiper für Logo-Slider (nur wenn Block auf der Seite)
-    if ( has_block( 'medialab/logo-slider' ) ) {
+    $needs_swiper = has_block( 'medialab/logo-slider' ) || has_block( 'medialab/slider' );
+    if ( $needs_swiper ) {
         $swiper_js  = get_template_directory_uri() . '/assets/dist/js/chunks/swiper.js';
         $swiper_css = get_template_directory_uri() . '/assets/dist/css/swiper.css';
+        wp_enqueue_script( 'swiper', $swiper_js,  [], '11.0.0', true );
+        wp_enqueue_style(  'swiper', $swiper_css, [], '11.0.0' );
+    }
 
-        wp_enqueue_script(  'swiper', $swiper_js,  [], '11.0.0', true );
-        wp_enqueue_style(   'swiper', $swiper_css, [], '11.0.0' );
-
+    if ( has_block( 'medialab/logo-slider' ) ) {
         $logo_slider_js = $dist_dir . 'js/block-logo-slider.js';
         if ( file_exists( $logo_slider_js ) ) {
             wp_enqueue_script(
@@ -165,5 +185,81 @@ function medialab_enqueue_block_frontend_assets(): void {
                 true
             );
         }
+    }
+
+    // Logo-Grid Block
+    if ( has_block( 'medialab/logo-grid' ) ) {
+        $plugin_uri = plugin_dir_url( dirname( __FILE__ ) );
+        $plugin_dir = plugin_dir_path( dirname( __FILE__ ) );
+        wp_enqueue_style(
+            'medialab-block-logo-grid',
+            $plugin_uri . 'assets/css/block-logo-grid.css',
+            [],
+            file_exists( $plugin_dir . 'assets/css/block-logo-grid.css' )
+                ? filemtime( $plugin_dir . 'assets/css/block-logo-grid.css' ) : MEDIALAB_CORE_VERSION
+        );
+    }
+
+    // Parallax Block
+    if ( has_block( 'medialab/parallax' ) ) {
+        $plugin_uri = plugin_dir_url( dirname( __FILE__ ) );
+        $plugin_dir = plugin_dir_path( dirname( __FILE__ ) );
+        wp_enqueue_style(
+            'medialab-block-parallax',
+            $plugin_uri . 'assets/css/block-parallax.css',
+            [],
+            file_exists( $plugin_dir . 'assets/css/block-parallax.css' )
+                ? filemtime( $plugin_dir . 'assets/css/block-parallax.css' ) : MEDIALAB_CORE_VERSION
+        );
+        wp_enqueue_script(
+            'medialab-block-parallax',
+            $plugin_uri . 'assets/js/block-parallax.js',
+            [],
+            file_exists( $plugin_dir . 'assets/js/block-parallax.js' )
+                ? filemtime( $plugin_dir . 'assets/js/block-parallax.js' ) : MEDIALAB_CORE_VERSION,
+            true
+        );
+    }
+
+    // Before / After Block
+    if ( has_block( 'medialab/before-after' ) ) {
+        $plugin_uri = plugin_dir_url( dirname( __FILE__ ) );
+        $plugin_dir = plugin_dir_path( dirname( __FILE__ ) );
+        wp_enqueue_style(
+            'medialab-block-before-after',
+            $plugin_uri . 'assets/css/block-before-after.css',
+            [],
+            file_exists( $plugin_dir . 'assets/css/block-before-after.css' )
+                ? filemtime( $plugin_dir . 'assets/css/block-before-after.css' ) : MEDIALAB_CORE_VERSION
+        );
+        wp_enqueue_script(
+            'medialab-block-before-after',
+            $plugin_uri . 'assets/js/block-before-after.js',
+            [],
+            file_exists( $plugin_dir . 'assets/js/block-before-after.js' )
+                ? filemtime( $plugin_dir . 'assets/js/block-before-after.js' ) : MEDIALAB_CORE_VERSION,
+            true
+        );
+    }
+
+    // Slider Block
+    if ( has_block( 'medialab/slider' ) ) {
+        $plugin_uri = plugin_dir_url( dirname( __FILE__ ) );
+        $plugin_dir = plugin_dir_path( dirname( __FILE__ ) );
+        wp_enqueue_style(
+            'medialab-block-slider',
+            $plugin_uri . 'assets/css/block-slider.css',
+            [ 'swiper' ],
+            file_exists( $plugin_dir . 'assets/css/block-slider.css' )
+                ? filemtime( $plugin_dir . 'assets/css/block-slider.css' ) : MEDIALAB_CORE_VERSION
+        );
+        wp_enqueue_script(
+            'medialab-block-slider',
+            $plugin_uri . 'assets/js/block-slider.js',
+            [ 'swiper' ],
+            file_exists( $plugin_dir . 'assets/js/block-slider.js' )
+                ? filemtime( $plugin_dir . 'assets/js/block-slider.js' ) : MEDIALAB_CORE_VERSION,
+            true
+        );
     }
 }

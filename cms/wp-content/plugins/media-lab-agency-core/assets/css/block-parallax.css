@@ -1,0 +1,66 @@
+/**
+ * Parallax Block – Strukturelles CSS
+ * Visuelles Styling (Farben, Typografie) → Theme SCSS: _block-parallax.scss
+ */
+
+.ml-block-parallax {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+}
+
+/* Hintergrundbild – wird per JS via transform verschoben */
+.ml-parallax__bg {
+    position: absolute;
+    inset: -20% 0;     /* 20% Überlappung oben+unten für Parallax-Spielraum */
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    will-change: transform;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Overlay */
+.ml-parallax__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* Content-Wrapper */
+.ml-parallax__content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding-block: clamp(3rem, 8vw, 6rem);
+}
+
+.ml-parallax__inner {
+    width: 100%;
+    max-width: 1200px;
+    padding-inline: clamp(1rem, 4vw, 2rem);
+}
+
+/* Ausrichtung */
+.ml-block-parallax.ml-parallax--align-top    { align-items: flex-start; }
+.ml-block-parallax.ml-parallax--align-center { align-items: center;     }
+.ml-block-parallax.ml-parallax--align-bottom { align-items: flex-end;   }
+
+/* Content-Breite */
+.ml-parallax--width-narrow  .ml-parallax__inner { max-width: 640px;  }
+.ml-parallax--width-medium  .ml-parallax__inner { max-width: 960px;  }
+.ml-parallax--width-full    .ml-parallax__inner { max-width: 100%;   }
+
+/* Reduced Motion: kein JS-Parallax, BG fixed */
+@media (prefers-reduced-motion: reduce) {
+    .ml-parallax__bg {
+        inset: 0;
+        background-attachment: scroll;
+        transform: none !important;
+    }
+}

@@ -16,7 +16,8 @@ class Logger
     public function get($attributes = [])
     {
         $statuses = Arr::get($attributes, 'status');
-        $formIds = Arr::get($attributes, 'form_id');
+        $formIds = $this->normalizeFormScope(Arr::get($attributes, 'form_id'));
+        $formIds = $this->resolveVisibleFormScope($formIds);
         $components = Arr::get($attributes, 'component');
         $sortBy = \FluentForm\App\Helpers\Helper::sanitizeOrderValue(Arr::get($attributes, 'sort_by', 'DESC'));
         $type = Arr::get($attributes, 'type', 'log');
@@ -25,14 +26,14 @@ class Logger
         $endDate = Arr::get($dateRange, 1);
         [$table, $model, $columns, $join, $componentColumn, $dateColumn] = $this->getBases($type);
 
-        if (!$formIds && $allowForms = FormManagerService::getUserAllowedForms()) {
-            $formIds = $allowForms;
-        }
         $logsQuery = $model->select($columns)
             ->leftJoin('fluentform_forms', 'fluentform_forms.id', '=', $join)
             ->orderBy($table . '.id', $sortBy)
-            ->when($formIds, function ($q) use ($formIds) {
+            ->when(false !== $formIds && [] !== $formIds, function ($q) use ($formIds) {
                 return $q->whereIn('fluentform_forms.id', array_map('intval', $formIds));
+            })
+            ->when([] === $formIds, function ($q) {
+                return $q->whereIn('fluentform_forms.id', [0]);
             })
             ->when($statuses, function ($q) use ($statuses, $table) {
                 return $q->whereIn($table . '.status', array_map('sanitize_text_field', $statuses));
@@ -102,6 +103,32 @@ class Logger
         return apply_filters('fluentform/get_logs', $logs);
     }
 
+    protected function normalizeFormScope($formIds)
+    {
+        if (null === $formIds || false === $formIds || '' === $formIds || [] === $formIds) {
+            return false;
+        }
+
+        $normalized = array_values(array_filter(array_map('intval', (array) $formIds)));
+
+        return $normalized ?: [];
+    }
+
+    protected function resolveVisibleFormScope($requestedFormIds)
+    {
+        $allowedForms = FormManagerService::getUserAllowedFormsScope();
+
+        if (false === $allowedForms) {
+            return $requestedFormIds;
+        }
+
+        if (false === $requestedFormIds) {
+            return $allowedForms;
+        }
+
+        return array_values(array_intersect($requestedFormIds, $allowedForms));
+    }
+
     protected function getBases($type)
     {
         if ('log' === $type) {
@@ -167,13 +194,13 @@ class Logger
         })->values();
 
         $formIds = $formIdRows->pluck('form_id')->filter()->toArray();
-        if ($allowForms = FormManagerService::getUserAllowedForms()) {
+        if (false !== ($allowForms = FormManagerService::getUserAllowedFormsScope())) {
             $formIds = array_filter($formIds, function($value) use ($allowForms) {
                 return in_array($value, $allowForms);
             });
         }
 
-        $forms = Form::select('id', 'title')->whereIn('id', $formIds)->get();
+        $forms = Form::select('id', 'title')->whereIn('id', $formIds ?: [0])->get();
 
         return apply_filters('fluentform/get_log_filters', [
             'statuses'   => $statuses,
@@ -294,7 +321,7 @@ class Logger
 
     public function remove($attributes = [])
     {
-        $ids = Arr::get($attributes, 'log_ids');
+        $ids = $this->normalizeLogIds($attributes);
 
         if (!$ids) {
             throw new ValidationException(
@@ -303,14 +330,97 @@ class Logger
             );
         }
 
-        $logType = Arr::get($attributes, 'type', 'logs');
+        $logType = Arr::get($attributes, 'type', Arr::get($attributes, 'log_type', 'logs'));
+        $entryId = intval(Arr::get($attributes, 'entry_id'));
+        $targetLogs = $this->getLogsForDeletion($ids, $logType);
 
-        $model = 'logs' === $logType ? Log::query() : Scheduler::query();
+        if (!$targetLogs->count()) {
+            throw new ValidationException(
+               // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception message, not output
+                __('No selections found', 'fluentform')
+            );
+        }
 
-        $model->whereIn('id', $ids)->delete();
+        $this->assertDeletePermission($targetLogs, $entryId);
+        $this->getDeleteQuery($logType)
+            ->whereIn('id', $targetLogs->pluck('id')->all())
+            ->delete();
 
         return [
             'message' => __('Selected log(s) successfully deleted', 'fluentform'),
         ];
+    }
+
+    protected function normalizeLogIds($attributes)
+    {
+        $ids = Arr::get($attributes, 'log_ids', []);
+
+        if (!is_array($ids)) {
+            $ids = [];
+        }
+
+        $singleLogId = intval(Arr::get($attributes, 'log_id'));
+        if ($singleLogId) {
+            $ids[] = $singleLogId;
+        }
+
+        $ids = array_map('intval', $ids);
+        $ids = array_filter($ids);
+
+        return array_values(array_unique($ids));
+    }
+
+    protected function getLogsForDeletion($ids, $logType)
+    {
+        if ('logs' === $logType) {
+            return Log::select([
+                'id',
+                'parent_source_id as form_id',
+                'source_id as submission_id',
+            ])->whereIn('id', $ids)->get();
+        }
+
+        return Scheduler::select([
+            'id',
+            'form_id',
+            'origin_id as submission_id',
+        ])->whereIn('id', $ids)->get();
+    }
+
+    protected function getDeleteQuery($logType)
+    {
+        return 'logs' === $logType ? Log::query() : Scheduler::query();
+    }
+
+    protected function assertDeletePermission($targetLogs, $entryId = 0)
+    {
+        if ($entryId) {
+            foreach ($targetLogs as $targetLog) {
+                if (intval($targetLog->submission_id) !== $entryId) {
+                    $this->throwDeletePermissionError();
+                }
+            }
+        }
+
+        $allowedForms = FormManagerService::getUserAllowedFormsScope();
+        if (false === $allowedForms) {
+            return;
+        }
+
+        foreach ($targetLogs as $targetLog) {
+            $formId = intval($targetLog->form_id);
+
+            if (!$formId || !in_array($formId, $allowedForms, true)) {
+                $this->throwDeletePermissionError();
+            }
+        }
+    }
+
+    protected function throwDeletePermissionError()
+    {
+        throw new ValidationException(
+           // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception message, not output
+            __('You do not have permission to delete the selected logs', 'fluentform')
+        );
     }
 }

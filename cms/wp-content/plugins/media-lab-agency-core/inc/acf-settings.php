@@ -420,6 +420,17 @@ add_action('acf/init', function () {
                 ))),
             ),
 
+            // ── Dark Mode Toggle ──────────────────────────────────────────────
+            array(
+                'key'           => 'field_dark_mode_enabled',
+                'label'         => 'Dark Mode Toggle',
+                'name'          => 'dark_mode_enabled',
+                'type'          => 'true_false',
+                'ui'            => 1,
+                'default_value' => 1,
+                'instructions'  => 'Zeigt den Dark/Light-Mode-Umschalter im Frontend an (🌙 / ☀️). Wenn deaktiviert, wird immer der Light Mode erzwungen.',
+            ),
+
         ),
         'location' => array(
             array(

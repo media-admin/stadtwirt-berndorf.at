@@ -142,7 +142,7 @@ class ShortCodeParser
                 $value = static::getSubmissionData($submissionProperty);
             } elseif (false !== strpos($matches[1], 'cookie.')) {
                 $scookieProperty = substr($matches[1], strlen('cookie.'));
-                $value = wpFluentForm('request')->cookie($scookieProperty);
+                $value = array_key_exists($scookieProperty, $_COOKIE) ? wp_unslash($_COOKIE[$scookieProperty]) : '';
             } elseif (false !== strpos($matches[1], 'payment.')) {
                 $property = substr($matches[1], strlen('payment.'));
                 $deprecatedValue = apply_filters_deprecated(

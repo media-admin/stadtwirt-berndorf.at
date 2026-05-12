@@ -27,15 +27,15 @@ class ManagerService
         $managers = [];
 
         foreach ($query->get_results() as $user) {
-            $allowedForms = FormManagerService::getUserAllowedForms($user->ID);
-            $hasSpecificFormsPermission = FormManagerService::hasSpecificFormsPermission($user->ID);
+            $allowedForms = FormManagerService::getUserAllowedFormsScope($user->ID);
+            $hasSpecificFormsPermission = false !== $allowedForms;
             $managers[] = [
                 'id'          => $user->ID,
                 'first_name'  => $user->first_name,
                 'last_name'   => $user->last_name,
                 'email'       => $user->user_email,
                 'permissions' => Acl::getUserPermissions($user),
-                'forms'       => $allowedForms ? $allowedForms : false,
+                'forms'       => false !== $allowedForms ? array_values($allowedForms) : false,
                 'roles'       => $this->getUserRoles($user->roles),
                 'has_specific_forms_permission'=> $hasSpecificFormsPermission ? 'yes' : 'no',
             ];
@@ -73,12 +73,18 @@ class ManagerService
         Acl::attachPermissions($user, $permissions);
         
         update_user_meta($user->ID, '_fluent_forms_has_role', 1);
+        
+        $hasSpecificFormsPermission = 'yes' === Arr::get($manager, 'has_specific_forms_permission');
+        $allowedForms = array_values(array_filter(array_map('intval', (array) Arr::get($manager, 'forms', []))));
 
-        FormManagerService::updateHasSpecificFormsPermission($user->ID , Arr::get($manager, 'has_specific_forms_permission'));
-
-        // Add allowed forms for user
-        if ('yes' === Arr::get($manager, 'has_specific_forms_permission')) {
-            FormManagerService::addUserAllowedForms(Arr::get($manager, 'forms', []), $user->ID);
+        // Keep an empty selection unrestricted so the manager UI's
+        // "leave blank for all forms" behavior matches the saved ACL state.
+        if ($hasSpecificFormsPermission && $allowedForms) {
+            FormManagerService::updateHasSpecificFormsPermission($user->ID, 'yes');
+            FormManagerService::addUserAllowedForms($allowedForms, $user->ID);
+        } else {
+            FormManagerService::updateHasSpecificFormsPermission($user->ID, 'no');
+            FormManagerService::deleteUserAllowedForms($user->ID);
         }
 
         $updatedUser = [

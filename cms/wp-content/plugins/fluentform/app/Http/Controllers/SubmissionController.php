@@ -201,7 +201,7 @@ class SubmissionController extends Controller
             $attributes = $this->request->all();
             
             $sanitizeMap = [
-                'entry_ids' => function($value) {
+                'submission_ids' => function($value) {
                     if (is_array($value)) {
                         return array_map('intval', $value);
                     }
@@ -210,6 +210,15 @@ class SubmissionController extends Controller
                 'form_id' => 'intval',
             ];
             $attributes = fluentform_backend_sanitizer($attributes, $sanitizeMap);
+
+            // Preserve backward compatibility with any legacy callers that still
+            // send entry_ids, while normalizing to the current submission_ids key.
+            if (empty($attributes['submission_ids']) && isset($attributes['entry_ids'])) {
+                $entryIds = $attributes['entry_ids'];
+                $attributes['submission_ids'] = is_array($entryIds)
+                    ? array_map('intval', $entryIds)
+                    : [];
+            }
             
             return $this->sendSuccess(
                 $submissionService->getPrintContent($attributes)

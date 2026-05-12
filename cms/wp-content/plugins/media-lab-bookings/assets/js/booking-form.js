@@ -19,6 +19,7 @@
         self.$submitBtn    = $wrap.find( '.mlb-form__button' );
         self.flatpickrInstance = null;
         self.openWeekdays      = [];
+        self.blockedDates      = [];
         self.currentLocationId = 0;
 
         var preset = self.$locationSel.data( 'preset' );
@@ -51,6 +52,7 @@
         }, function ( res ) {
             if ( ! res.success ) return;
             self.openWeekdays = res.data.open_weekdays || [];
+            self.blockedDates = res.data.blocked_dates || [];
             self.initDatePicker();
             self.populateServices( res.data.services || [] );
         } );
@@ -59,13 +61,21 @@
     MLBForm.prototype.initDatePicker = function () {
         var self = this;
         if ( self.flatpickrInstance ) self.flatpickrInstance.destroy();
+        var disableRules = [
+            function ( date ) { return self.openWeekdays.indexOf( date.getDay() ) === -1; }
+        ];
+        if ( self.blockedDates.length ) {
+            self.blockedDates.forEach( function ( block ) {
+                disableRules.push( { from: block.from, to: block.to || block.from } );
+            } );
+        }
         self.flatpickrInstance = flatpickr( self.$datePicker[0], {
             locale     : 'de',
             dateFormat : 'Y-m-d',
             altInput   : true,
             altFormat  : 'j. F Y',
             minDate    : 'today',
-            disable    : [ function ( date ) { return self.openWeekdays.indexOf( date.getDay() ) === -1; } ],
+            disable    : disableRules,
             onReady    : function ( s, d, fp ) { if ( fp.altInput ) fp.altInput.classList.add( 'mlb-form__input' ); },
             onChange   : function ( selectedDates, dateStr ) {
                 dateStr ? self.loadSlots( dateStr ) : self.resetSlots();

@@ -3,7 +3,7 @@
 Contributors: johnbillion
 Tags: debug, debug-bar, development, performance, query monitor
 Tested up to: 6.9
-Stable tag: 4.0.1
+Stable tag: 4.0.6
 License: GPL v2 or later
 Donate link: https://github.com/sponsors/johnbillion
 
@@ -146,6 +146,60 @@ Do not report security issues on the WordPress.org support forums or via email. 
 In addition, if you like the plugin then I'd love for you to [leave a review](https://wordpress.org/support/view/plugin-reviews/query-monitor). Tell all your friends about it too!
 ## Changelog ##
 
+### 4.0.6 (11 April 2026) ###
+
+Version 4 of Query Monitor adds a new timeline view, and switches from rendering its panels server-side in PHP to efficiently rendering them client-side in Preact.
+
+Version 4.0.6 fixes a compatibility issue with the GeneratePress theme.
+
+[More information at querymonitor.com/4](https://querymonitor.com/4).
+
+### 4.0.5 (10 April 2026) ###
+
+Version 4 of Query Monitor adds a new timeline view, and switches from rendering its panels server-side in PHP to efficiently rendering them client-side in Preact.
+
+Version 4.0.5 fixes the following:
+
+- Ensures closing script tags within data don't break the output
+- Adds "Doing it Wrong" data to the timeline view
+
+[More information at querymonitor.com/4](https://querymonitor.com/4).
+
+### 4.0.4 (10 April 2026) ###
+
+Version 4 of Query Monitor adds a new timeline view, and switches from rendering its panels server-side in PHP to efficiently rendering them client-side in Preact.
+
+Version 4.0.4 fixes the following:
+
+- Ensures the Scripts panel remains visible when no scripts are enqueued in the header
+- Corrects the display of number formatting in some locales
+
+[More information at querymonitor.com/4](https://querymonitor.com/4).
+
+### 4.0.3 (9 April 2026) ###
+
+Version 4 of Query Monitor adds a new timeline view, and switches from rendering its panels server-side in PHP to efficiently rendering them client-side in Preact.
+
+Version 4.0.3 fixes the following:
+
+- Improves compatibility with plugins that perform non-UTF8 queries or make other use of non-UTF8 data
+- Avoids a PHP warning for undefined file and line number in some stack trace frames
+- Simplifies and standardises the format of names used for closure callbacks
+- Improves styling and layout of the timeline view
+
+[More information at querymonitor.com/4](https://querymonitor.com/4).
+
+### 4.0.2 (9 April 2026) ###
+
+Version 4 of Query Monitor adds a new timeline view, and switches from rendering its panels server-side in PHP to efficiently rendering them client-side in Preact.
+
+Version 4.0.2 fixes the following:
+
+- Adds further backwards compatibility for third-party plugins that read from the QM data collectors and output their own panels
+- Adds transient updates to the timeline view
+
+[More information at querymonitor.com/4](https://querymonitor.com/4).
+
 ### 4.0.1 (7 April 2026) ###
 
 Version 4 of Query Monitor adds a new timeline view, and switches from rendering its panels server-side in PHP to efficiently rendering them client-side in Preact.
@@ -178,33 +232,6 @@ Version 4 of Query Monitor adds a new timeline view, and switches from rendering
 ### 3.20.2 (11 December 2025) ###
 
 - Prevents a PHP error being triggered under certain conditions and when no database queries are performed.
-
-### 3.20.1 (8 December 2025) ###
-
-* Confirms support for WordPress 6.9.
-* Removes calls to deprecated `jQuery.focus()` method.
-* Add line breaks to HTML output to keep your browser happy when viewing the page source.
-
-### 3.20.0 (7 September 2025) ###
-
-* Defers loading of translation files as late as possible to minimise the chance of triggering the `Translation loading for the query-monitor domain was triggered too early` error
-* Implements some initial compatibility tweaks for the upcoming PHP 8.5
-
-### 3.19.0 (23 July 2025) ###
-
-* Adds Guzzle middleware support for logging HTTP client requests.
-* Fixes plugin conflicts caused by the global `qm` JavaScript variable by renaming it to `QueryMonitorData`.
-* Corrects invalid HTML markup where `<th>` elements were closed with `</td>` tags.
-
-### 3.18.0 (16 June 2025) ###
-
-* Adds more comprehensive handling of HTTP API requests which were overridden by the `pre_http_request` filter.
-* Corrects the handling of suppressed PHP errors on both PHP 7 and PHP 8.
-* Confirms support for WordPress 6.8.
-
-### 3.17.2 (4 February 2025) ###
-
-* Reinstates the "Blocks" panel
 
 ### Earlier versions ###
 

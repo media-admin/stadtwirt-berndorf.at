@@ -278,11 +278,8 @@ class MLT_Settings {
                             if ( $gsc->is_connected() ) : ?>
                                 <div class="mlt-notice mlt-notice--success">
                                     <strong>✓ Verbunden.</strong> GSC-Daten werden im Dashboard angezeigt.
-                                    <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="display:inline">
-                                        <?php wp_nonce_field( 'mlt_gsc_disconnect' ); ?>
-                                        <input type="hidden" name="action" value="mlt_gsc_disconnect">
-                                        <button type="submit" class="button button-small mlt-btn-remove" style="margin-left:12px">Verbindung trennen</button>
-                                    </form>
+                                    <a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=mlt_gsc_disconnect' ), 'mlt_gsc_disconnect' ) ); ?>"
+                                        class="button button-small mlt-btn-remove" style="margin-left:12px">Verbindung trennen</a>
                                 </div>
                             <?php endif; ?>
 
@@ -302,10 +299,10 @@ class MLT_Settings {
                                 </div>
                                 <div class="mlt-field">
                                     <label for="mlt_gsc_property_url">GSC Property URL</label>
-                                    <input type="url" id="mlt_gsc_property_url" name="mlt_gsc_property_url"
+                                    <input type="text" id="mlt_gsc_property_url" name="mlt_gsc_property_url"
                                         value="<?php echo esc_attr( get_option( 'mlt_gsc_property_url', '' ) ); ?>"
-                                        class="regular-text" placeholder="https://www.example.at/" />
-                                    <p class="mlt-hint">Exakt wie in GSC eingetragen (mit https:// und trailing slash)</p>
+                                        class="regular-text" placeholder="https://www.example.at/ oder sc-domain:example.at" />
+                                    <p class="mlt-hint">URL-Prefix: https://www.example.at/ — Domain Property: sc-domain:example.at</p>
                                 </div>
                                 <div class="mlt-field">
                                     <label>Redirect URI (in Google Cloud eintragen)</label>

@@ -1,0 +1,77 @@
+/**
+ * Media Lab – Table of Contents: Strukturelles Skelett
+ *
+ * Nur Layout- und Funktions-CSS das für die korrekte Darstellung
+ * zwingend nötig ist – unabhängig vom eingesetzten Theme.
+ *
+ * Visuelles Styling (Farben, Typografie, Abstände, Border) gehört
+ * ins Theme: assets/src/scss/components/_table-of-contents.scss
+ */
+
+/* ── Listen-Struktur ────────────────────────────────────────────── */
+
+.toc__list {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.toc__sublist {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ── Toggle / Collapsible ───────────────────────────────────────── */
+
+.toc__list {
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.25s ease;
+    max-height: 9999px;
+    opacity: 1;
+}
+
+.toc__list.is-collapsed {
+    max-height: 0;
+    opacity: 0;
+}
+
+.toc__toggle svg {
+    transition: transform 0.25s ease;
+}
+
+.toc__toggle[aria-expanded="false"] svg {
+    transform: rotate(180deg);
+}
+
+/* ── Sticky-Modus ───────────────────────────────────────────────── */
+
+.toc--sticky {
+    position: sticky;
+    top: var(--toc-top, 2rem);
+    max-height: var(--toc-max-height, calc(100vh - 4rem));
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+.toc--sticky::-webkit-scrollbar { width: 4px; }
+.toc--sticky::-webkit-scrollbar-track { background: transparent; }
+
+@media (max-width: 768px) {
+    .toc--sticky {
+        position: static;
+        max-height: none;
+    }
+}
+
+/* ── Reduced Motion ─────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+    .toc__list,
+    .toc__toggle svg,
+    .toc__link { transition: none; }
+}

@@ -1,0 +1,52 @@
+/**
+ * Editor-only Overrides für Media Lab Blocks
+ *
+ * Wird nur im Gutenberg-Editor geladen (enqueue_block_editor_assets).
+ * Verhindert, dass Blöcke mit großen Mindesthöhen oder Vollbild-Layouts
+ * den Editor-Canvas überwältigen.
+ */
+
+/* ── Parallax ────────────────────────────────────────────────────── */
+
+.editor-styles-wrapper .ml-block-parallax {
+    min-height: 220px !important;
+}
+
+.editor-styles-wrapper .ml-parallax__bg {
+    /* Kein Transform-Parallax im Editor */
+    transform: none !important;
+    inset: 0 !important;
+}
+
+.editor-styles-wrapper .ml-parallax__content {
+    padding-block: 1.5rem;
+}
+
+/* ── Before / After ─────────────────────────────────────────────── */
+
+.editor-styles-wrapper .ml-ba__container {
+    max-height: 400px;
+}
+
+.editor-styles-wrapper .ml-ba__img {
+    max-height: 400px;
+    object-fit: cover;
+}
+
+/* ── Slider ──────────────────────────────────────────────────────── */
+
+.editor-styles-wrapper .ml-block-slider {
+    /* Im Editor keine fixe Höhe erzwingen */
+    min-height: 0;
+}
+
+.editor-styles-wrapper .ml-slider__swiper {
+    overflow: visible; /* InnerBlocks im Editor sichtbar halten */
+}
+
+/* ── Allgemein: Align Full/Wide im Editor begrenzen ─────────────── */
+
+.editor-styles-wrapper .alignfull.ml-block-parallax,
+.editor-styles-wrapper .alignwide.ml-block-parallax {
+    margin-inline: 0;
+}

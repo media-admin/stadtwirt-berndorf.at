@@ -408,16 +408,21 @@ class QM_Dispatcher_Html extends QM_Dispatcher {
 				'abspath' => QM_Util::normalize_path( ABSPATH ),
 				'contentpath' => QM_Util::normalize_path( dirname( WP_CONTENT_DIR ) . '/' ),
 			],
-			'number_format' => $wp_locale->number_format,
+			'number_format' => array(
+				'thousands_sep' => html_entity_decode( $wp_locale->number_format['thousands_sep'] ),
+				'decimal_point' => html_entity_decode( $wp_locale->number_format['decimal_point'] ),
+			),
 			'locale_data' => self::get_script_locale_data(),
 		);
 
 		$this->output_assets();
 
+		$encoded = wp_json_encode( $json, JSON_UNESCAPED_SLASHES | JSON_HEX_TAG );
+
 		wp_print_inline_script_tag(
 			sprintf(
 				'var QueryMonitorData = %s;',
-				json_encode( $json, JSON_UNESCAPED_SLASHES )
+				false !== $encoded ? $encoded : 'false'
 			),
 			array(
 				'id' => 'query-monitor-inline-data',
@@ -647,7 +652,7 @@ class QM_Dispatcher_Html extends QM_Dispatcher {
 
 				printf(
 					'<li>%s</li>',
-					QM_Output_Html::output_filename( $name, $frame['file'], $frame['line'] )
+					QM_Output_Html::output_filename( $name, $frame['file'] ?? '', $frame['line'] ?? 0 )
 				); // WPCS: XSS ok.
 			}
 			echo '</ol>';

@@ -11,6 +11,45 @@ class Acl
 
     public static $role = '';
 
+    public static function normalizeFormId($formId)
+    {
+        if ($formId === null || $formId === false || $formId === '') {
+            return null;
+        }
+
+        if (is_string($formId)) {
+            $formId = trim($formId);
+        }
+
+        if (!is_int($formId) && (!is_string($formId) || !ctype_digit($formId))) {
+            return null;
+        }
+
+        $formId = (int) $formId;
+
+        return $formId > 0 ? $formId : null;
+    }
+
+    public static function verifyFormId(
+        $formId,
+        $message = 'Invalid form id.',
+        $json = true
+    ) {
+        $formId = static::normalizeFormId($formId);
+
+        if ($formId) {
+            return $formId;
+        }
+
+        if ($json) {
+            wp_send_json_error([
+                'message' => $message,
+            ], 422);
+        }
+
+        throw new \InvalidArgumentException(esc_html($message));
+    }
+
     public static function getPermissionSet()
     {
         $data = [
@@ -120,38 +159,51 @@ class Acl
         if ($formId && !FormManagerService::hasFormPermission($formId)) {
             return false;
         }
-        $userCapability = static::getCurrentUserCapability();
 
-        if ($userCapability) {
+        // Only explicit full-access users should bypass individual permission checks.
+        if (static::hasExplicitFullAccess()) {
             return true;
-        } else {
-            if (current_user_can('fluentform_full_access')) {
-                return true;
-            }
-
-            $permissions = (array) $permissions;
-
-            foreach ($permissions as $permission) {
-                $allowed = current_user_can($permission);
-
-                if ($allowed) {
-                    $allowed = apply_filters_deprecated(
-                        'fluentform_verify_user_permission_' . $permission,
-                        [
-                            $allowed,
-                            $formId
-                        ],
-                        FLUENTFORM_FRAMEWORK_UPGRADE,
-                        'fluentform/verify_user_permission_' . $permission,
-                        'Use fluentform/verify_user_permission_' . $permission . ' instead of fluentform_verify_user_permission_' . $permission
-                    );
-
-                    return apply_filters('fluentform/verify_user_permission_' . $permission, $allowed, $formId);
-                }
-            }
-
-            return false;
         }
+
+        $grantedRole = static::getCurrentUserCapability();
+
+        foreach ((array) $permissions as $permission) {
+            $allowed = current_user_can($permission);
+
+            // A granted role can satisfy scoped permissions, but never full access.
+            if (!$allowed && $grantedRole && 'fluentform_full_access' !== $permission) {
+                $allowed = true;
+            }
+
+            if (!$allowed) {
+                continue;
+            }
+
+            return static::filterPermissionCheck($permission, $allowed, $formId);
+        }
+
+        return false;
+    }
+
+    private static function hasExplicitFullAccess()
+    {
+        return current_user_can('fluentform_full_access') || current_user_can('manage_options');
+    }
+
+    private static function filterPermissionCheck($permission, $allowed, $formId)
+    {
+        $allowed = apply_filters_deprecated(
+            'fluentform_verify_user_permission_' . $permission,
+            [
+                $allowed,
+                $formId
+            ],
+            FLUENTFORM_FRAMEWORK_UPGRADE,
+            'fluentform/verify_user_permission_' . $permission,
+            'Use fluentform/verify_user_permission_' . $permission . ' instead of fluentform_verify_user_permission_' . $permission
+        );
+
+        return apply_filters('fluentform/verify_user_permission_' . $permission, $allowed, $formId);
     }
 
     public static function hasAnyFormPermission($form_id = false)

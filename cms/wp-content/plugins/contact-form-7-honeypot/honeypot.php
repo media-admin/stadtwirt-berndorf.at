@@ -5,7 +5,7 @@
  * Description: Contact Form 7 Apps is a collection of useful modules and extensions for Contact Form 7.
  * Author: CF7 Apps
  * Author URI: https://cf7apps.com/
- * Version: 3.4.0
+ * Version: 3.5.0
  * Text Domain: contact-form-7-honeypot
  * Domain Path: /languages/
  * Requires Plugins: contact-form-7
@@ -56,7 +56,7 @@ if ( ! function_exists( 'cf7h_fs' ) ) {
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'CF7APPS_VERSION', '3.4.0' );
+define( 'CF7APPS_VERSION', '3.5.0' );
 define( 'CF7APPS_PLUGIN', __FILE__ );
 define( 'CF7APPS_PLUGIN_BASENAME', plugin_basename( CF7APPS_PLUGIN ) );
 define( 'CF7APPS_PLUGIN_NAME', trim( dirname( CF7APPS_PLUGIN_BASENAME ), '/' ) );

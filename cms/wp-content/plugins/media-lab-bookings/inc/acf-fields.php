@@ -22,6 +22,41 @@ function mlb_register_acf_fields() {
                 [ 'key' => 'field_mlb_max_capacity',     'label' => 'Max. Buchungen pro Slot',          'name' => 'mlb_max_capacity',     'type' => 'number', 'default_value' => 1,   'min' => 1,  'required' => 1, 'wrapper' => [ 'width' => '25' ] ],
                 [ 'key' => 'field_mlb_max_per_day',      'label' => 'Max. Buchungen pro Tag (0 = unbegrenzt)', 'name' => 'mlb_max_per_day', 'type' => 'number', 'default_value' => 0, 'min' => 0, 'instructions' => '0 = kein Tageslimit', 'wrapper' => [ 'width' => '25' ] ],
             ],
+
+            // Tab: Sperren (Urlaub / Feiertage / geblockte Zeiten)
+            [
+                [ 'key' => 'field_mlb_tab_blocked', 'label' => 'Sperren', 'name' => '', 'type' => 'tab' ],
+                [
+                    'key' => 'field_mlb_blocked_info', 'label' => ' ', 'name' => 'mlb_blocked_info', 'type' => 'message',
+                    'message' => '<p style="margin:0;font-size:12px;color:#666;">Tage und Zeitfenster ohne Buchungsmöglichkeit. Österreichische Feiertage können über den Import-Button in der rechten Seitenleiste importiert werden.</p>',
+                    'default_value' => '',
+                ],
+                [
+                    'key'          => 'field_mlb_blocked_periods',
+                    'label'        => 'Gesperrte Zeiträume',
+                    'name'         => 'mlb_blocked_periods',
+                    'type'         => 'repeater',
+                    'min'          => 0,
+                    'layout'       => 'block',
+                    'button_label' => 'Sperre hinzufügen',
+                    'instructions' => 'Einzel-Tag: nur „Von" ausfüllen. Zeitraum: „Von" + „Bis". Zeitfenster: Typ wählen + Uhrzeiten eintragen.',
+                    'sub_fields'   => [
+                        [ 'key' => 'field_mlb_blocked_label', 'label' => 'Bezeichnung', 'name' => 'blocked_label', 'type' => 'text', 'placeholder' => 'z.B. Betriebsurlaub, Neujahr, Wartung', 'wrapper' => [ 'width' => '50' ] ],
+                        [ 'key' => 'field_mlb_blocked_type',  'label' => 'Typ', 'name' => 'blocked_type', 'type' => 'radio',
+                          'choices' => [ 'day' => 'Ganzer Tag', 'timerange' => 'Zeitfenster' ],
+                          'default_value' => 'day', 'layout' => 'horizontal', 'wrapper' => [ 'width' => '50' ] ],
+                        [ 'key' => 'field_mlb_blocked_date_from', 'label' => 'Von (Datum)', 'name' => 'blocked_date_from', 'type' => 'date_picker', 'display_format' => 'd.m.Y', 'return_format' => 'Y-m-d', 'required' => 1, 'wrapper' => [ 'width' => '25' ] ],
+                        [ 'key' => 'field_mlb_blocked_date_to',   'label' => 'Bis (Datum, opt.)', 'name' => 'blocked_date_to', 'type' => 'date_picker', 'display_format' => 'd.m.Y', 'return_format' => 'Y-m-d', 'instructions' => 'Leer = nur der Von-Tag.', 'wrapper' => [ 'width' => '25' ] ],
+                        [ 'key' => 'field_mlb_blocked_time_from', 'label' => 'Zeit von', 'name' => 'blocked_time_from', 'type' => 'time_picker', 'display_format' => 'H:i', 'return_format' => 'H:i', 'wrapper' => [ 'width' => '25' ],
+                          'conditional_logic' => [ [ [ 'field' => 'field_mlb_blocked_type', 'operator' => '==', 'value' => 'timerange' ] ] ] ],
+                        [ 'key' => 'field_mlb_blocked_time_to',   'label' => 'Zeit bis', 'name' => 'blocked_time_to', 'type' => 'time_picker', 'display_format' => 'H:i', 'return_format' => 'H:i', 'wrapper' => [ 'width' => '25' ],
+                          'conditional_logic' => [ [ [ 'field' => 'field_mlb_blocked_type', 'operator' => '==', 'value' => 'timerange' ] ] ] ],
+                        [ 'key' => 'field_mlb_blocked_yearly', 'label' => 'Jährlich wiederholen', 'name' => 'blocked_yearly', 'type' => 'true_false', 'ui' => 1, 'default_value' => 0,
+                          'instructions' => 'z.B. für Feiertage mit festem Datum.', 'wrapper' => [ 'width' => '100' ] ],
+                    ],
+                ],
+            ],
+
             // Tab: Kontakt
             [
                 [ 'key' => 'field_mlb_tab_contact', 'label' => 'Kontakt', 'name' => '', 'type' => 'tab' ],

@@ -61,12 +61,12 @@ class HoneyPot
                 !ArrayHelper::exists($requestData, $honeyPotName) ||
                 !empty(ArrayHelper::get($requestData, $honeyPotName))
         ) {
-            wp_send_json(
-                [
-                    'errors' => __('Sorry! You can not submit this form at this moment!', 'fluentform'),
-                ],
-                422
+            $message = apply_filters(
+                'fluentform/honeypot_spam_message',
+                __('Sorry! You can not submit this form at this moment!', 'fluentform'),
+                $formId
             );
+            wp_send_json(['errors' => $message], 422);
         }
         return;
     }

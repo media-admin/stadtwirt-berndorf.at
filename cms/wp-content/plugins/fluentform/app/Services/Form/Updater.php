@@ -175,7 +175,49 @@ class Updater
 
             if ('welcome_screen' == $element) {
                 if ($value = Arr::get($field, 'settings.button_ui.text')) {
-                    $field['settings']['button_ui']['text'] = sanitize_text_field($value);
+                    $field['settings']['button_ui']['text'] = fluentform_sanitize_html($value);
+                }
+            }
+
+            if ('form_step' == $element) {
+                foreach (['next_btn', 'prev_btn'] as $buttonKey) {
+                    $buttonSettings = Arr::get($field, 'settings.' . $buttonKey);
+                    if (!is_array($buttonSettings)) {
+                        continue;
+                    }
+
+                    if (isset($buttonSettings['type'])) {
+                        $field['settings'][$buttonKey]['type'] = sanitize_text_field($buttonSettings['type']);
+                    }
+
+                    if (isset($buttonSettings['text'])) {
+                        $field['settings'][$buttonKey]['text'] = fluentform_sanitize_html($buttonSettings['text']);
+                    }
+
+                    if (isset($buttonSettings['img_url'])) {
+                        $field['settings'][$buttonKey]['img_url'] = esc_url_raw($buttonSettings['img_url']);
+                    }
+
+                    if (isset($buttonSettings['img_alt'])) {
+                        $field['settings'][$buttonKey]['img_alt'] = sanitize_text_field($buttonSettings['img_alt']);
+                    }
+                }
+            }
+
+            if ('save_progress_button' == $element) {
+                $buttonUi = Arr::get($field, 'settings.button_ui');
+                if (is_array($buttonUi)) {
+                    if (isset($buttonUi['type'])) {
+                        $field['settings']['button_ui']['type'] = sanitize_text_field($buttonUi['type']);
+                    }
+
+                    if (isset($buttonUi['text'])) {
+                        $field['settings']['button_ui']['text'] = fluentform_sanitize_html($buttonUi['text']);
+                    }
+
+                    if (isset($buttonUi['img_url'])) {
+                        $field['settings']['button_ui']['img_url'] = esc_url_raw($buttonUi['img_url']);
+                    }
                 }
             }
             
@@ -258,7 +300,7 @@ class Updater
             ],
             'button_ui'     => [
                 'type'    => 'sanitize_text_field',
-                'text'    => 'sanitize_text_field',
+                'text'    => 'fluentform_sanitize_html',
                 'img_url' => 'esc_url_raw',
             ],
         ];
@@ -294,7 +336,7 @@ class Updater
         $stepsSanitizationMap = [
             'prev_btn' => [
                 'type'    => 'sanitize_text_field',
-                'text'    => 'sanitize_text_field',
+                'text'    => 'fluentform_sanitize_html',
                 'img_url' => 'esc_url_raw',
             ],
         ];

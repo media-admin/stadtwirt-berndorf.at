@@ -18,8 +18,12 @@ class SubmissionPrint
         $orderBy = Helper::sanitizeOrderValue(Arr::get($attr, 'sort_by', 'DESC'));
         $formId = intval(Arr::get($attr, 'form_id'));
         $form = Helper::getForm($formId);
-        $submissions = Submission::whereIn('id', $submissionIds)->orderBy('id', $orderBy)->get();
-        if (count($submissions) === 0 || !$form) {
+        $submissions = Submission::where('form_id', $formId)
+            ->whereIn('id', $submissionIds)
+            ->orderBy('id', $orderBy)
+            ->get();
+
+        if (!$form || count($submissionIds) === 0 || count($submissions) !== count($submissionIds)) {
             // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception message, not output
             throw new \Exception(__('Invalid Submissions', 'fluentform'));
         }

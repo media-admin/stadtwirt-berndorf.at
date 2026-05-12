@@ -91,6 +91,8 @@ class Validations
                     $this->prepareValidations($fieldName, $ruleName, $rule);
                 }
             }
+
+            $this->ensureStringTypeForSizeRules($fieldName, $rules);
         }
 
 
@@ -222,5 +224,30 @@ class Validations
                      $rule['value'];
 
         return $ruleName.':'.$ruleValue;
+    }
+
+    /**
+     * Ensure fields with max/min rules but no numeric rule
+     * are treated as strings for character-length validation.
+     *
+     * Without this, the WPFluent validator treats numeric-looking
+     * input (e.g. phone "123456") as a number and compares the
+     * numeric value against max/min instead of string length.
+     *
+     * @param string $fieldName
+     * @param array  $rules
+     */
+    protected function ensureStringTypeForSizeRules($fieldName, $rules)
+    {
+        if (!isset($this->rules[$fieldName])) {
+            return;
+        }
+
+        $hasSizeRule = !empty($rules['max']['value']) || !empty($rules['min']['value']);
+        $hasNumericRule = !empty($rules['numeric']['value']);
+
+        if ($hasSizeRule && !$hasNumericRule && !is_array($this->getFieldValue())) {
+            $this->rules[$fieldName] = 'string|' . $this->rules[$fieldName];
+        }
     }
 }

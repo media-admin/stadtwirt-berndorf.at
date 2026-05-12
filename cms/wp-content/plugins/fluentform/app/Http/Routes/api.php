@@ -93,15 +93,15 @@ $router->prefix('logs')->withPolicy('SubmissionPolicy')->group(function ($router
 /*
 * Global Integrations
 */
-$router->prefix('integrations')->withPolicy('FormPolicy')->group(function ($router) {
-    $router->get('/', 'GlobalIntegrationController@index');
-    $router->post('/', 'GlobalIntegrationController@updateIntegration');
-    $router->post('update-status', 'GlobalIntegrationController@updateModuleStatus');
+$router->prefix('integrations')->group(function ($router) {
+    $router->get('/', 'GlobalIntegrationController@index')->withPolicy('GlobalIntegrationPolicy');
+    $router->post('/', 'GlobalIntegrationController@updateIntegration')->withPolicy('GlobalIntegrationPolicy');
+    $router->post('update-status', 'GlobalIntegrationController@updateModuleStatus')->withPolicy('GlobalIntegrationPolicy');
     
     /*
     * Form Integrations
     */
-    $router->prefix('{form_id}')->group(function ($router) {
+    $router->prefix('{form_id}')->withPolicy('FormPolicy')->group(function ($router) {
         $router->get('/form-integrations', 'FormIntegrationController@index');
         $router->get('/', 'FormIntegrationController@find');
         $router->post('/', 'FormIntegrationController@update');

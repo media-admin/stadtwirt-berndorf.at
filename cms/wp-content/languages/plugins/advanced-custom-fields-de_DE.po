@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Plugins - Advanced Custom Fields (ACF®) - Stable (latest release) package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2026-03-18 20:35:52+0000\n"
+"PO-Revision-Date: 2026-05-10 20:30:24+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -47,19 +47,19 @@ msgstr "Optionen erstellen"
 msgid "Learn more"
 msgstr "Weitere Informationen"
 
-#: src/Site_Health/Site_Health.php:298
+#: src/Site_Health/Site_Health.php:410
 msgid "Update Source"
 msgstr "Quelle aktualisieren"
 
-#: includes/admin/views/acf-field-group/field.php:332
+#: includes/admin/views/acf-field-group/field.php:337
 msgid "Close and Add Field"
 msgstr "Schließen und Feld hinzufügen"
 
-#: src/Site_Health/Site_Health.php:299
+#: src/Site_Health/Site_Health.php:411
 msgid "wordpress.org"
 msgstr "de.wordpress.org"
 
-#: includes/fields/class-acf-field.php:355
+#: includes/fields/class-acf-field.php:402
 msgid "Learn more."
 msgstr "Mehr erfahren."
 
@@ -485,6 +485,7 @@ msgstr "Individuelles-Zeichen-Icon"
 #: includes/ajax/class-acf-ajax-query-users.php:42
 #: includes/ajax/class-acf-ajax-upgrade.php:33
 #: includes/ajax/class-acf-ajax-user-setting.php:47
+#: src/AI/GEO/FieldSettings.php:82
 msgid "Sorry, you do not have permission to do that."
 msgstr "Du bist leider nicht berechtigt, diese Aktion durchzuführen."
 
@@ -544,55 +545,55 @@ msgstr "Mediathek"
 msgid "Dashicons"
 msgstr "Dashicons"
 
-#: src/Site_Health/Site_Health.php:686
+#: src/Site_Health/Site_Health.php:798
 msgid "Standard"
 msgstr "Standard"
 
-#: src/Site_Health/Site_Health.php:391
+#: src/Site_Health/Site_Health.php:503
 msgid "Active Plugins"
 msgstr "Aktive Plugins"
 
-#: src/Site_Health/Site_Health.php:365
+#: src/Site_Health/Site_Health.php:477
 msgid "Parent Theme"
 msgstr "Übergeordnetes Theme"
 
-#: src/Site_Health/Site_Health.php:354
+#: src/Site_Health/Site_Health.php:466
 msgid "Active Theme"
 msgstr "Aktives Theme"
 
-#: src/Site_Health/Site_Health.php:340
+#: src/Site_Health/Site_Health.php:452
 msgid "MySQL Version"
 msgstr "MySQL-Version"
 
-#: src/Site_Health/Site_Health.php:335
+#: src/Site_Health/Site_Health.php:447
 msgid "WordPress Version"
 msgstr "WordPress-Version"
 
-#: src/Site_Health/Site_Health.php:287
+#: src/Site_Health/Site_Health.php:399
 msgid "Plugin Version"
 msgstr "Plugin-Version"
 
-#: src/Site_Health/Site_Health.php:320
+#: src/Site_Health/Site_Health.php:432
 msgid "License Status"
 msgstr "Lizenzstatus"
 
-#: src/Site_Health/Site_Health.php:315
+#: src/Site_Health/Site_Health.php:427
 msgid "License Type"
 msgstr "Lizenz-Typ"
 
-#: src/Site_Health/Site_Health.php:304
+#: src/Site_Health/Site_Health.php:416
 msgid "License Activated"
 msgstr "Lizenz aktiviert"
 
-#: src/Site_Health/Site_Health.php:293
+#: src/Site_Health/Site_Health.php:405
 msgid "Free"
 msgstr "Kostenlos"
 
-#: src/Site_Health/Site_Health.php:292
+#: src/Site_Health/Site_Health.php:404
 msgid "Plugin Type"
 msgstr "Plugin-Typ"
 
-#: src/Site_Health/Site_Health.php:310
+#: src/Site_Health/Site_Health.php:422
 msgid "Licensed URL"
 msgstr "Lizensierte URL"
 
@@ -600,7 +601,7 @@ msgstr "Lizensierte URL"
 msgid "Search icons..."
 msgstr "Icons suchen …"
 
-#: src/Site_Health/Site_Health.php:779
+#: src/Site_Health/Site_Health.php:900
 msgid "Shortcode Enabled"
 msgstr "Shortcode aktiviert"
 
@@ -736,7 +737,7 @@ msgstr "Multisite-Icon"
 msgid "Network Icon"
 msgstr "Netzwerk-Icon"
 
-#: src/Site_Health/Site_Health.php:685
+#: src/Site_Health/Site_Health.php:797
 msgid "REST API Format"
 msgstr "REST-API-Format"
 
@@ -1023,15 +1024,15 @@ msgstr "Es wurden keine Ergebnisse für diesen Suchbegriff gefunden."
 msgid "Browse Media Library"
 msgstr "Mediathek durchsuchen"
 
-#: src/Site_Health/Site_Health.php:785
+#: src/Site_Health/Site_Health.php:906
 msgid "Registered ACF Forms"
 msgstr "Registrierte ACF-Formulare"
 
-#: src/Site_Health/Site_Health.php:620
+#: src/Site_Health/Site_Health.php:732
 msgid "Registered Taxonomies (JSON)"
 msgstr "Registrierte Taxonomien (JSON)"
 
-#: src/Site_Health/Site_Health.php:596
+#: src/Site_Health/Site_Health.php:708
 msgid "Registered Post Types (JSON)"
 msgstr "Registrierte Inhaltstypen (JSON)"
 
@@ -1047,7 +1048,7 @@ msgstr "ID-Icon"
 msgid "List View Icon"
 msgstr "Listenansicht-Icon"
 
-#: src/Site_Health/Site_Health.php:692
+#: src/Site_Health/Site_Health.php:809
 msgid "Registered ACF Blocks"
 msgstr "Registrierte ACF-Blöcke"
 
@@ -1083,7 +1084,7 @@ msgstr "Backup-Icon"
 msgid "Awards Icon"
 msgstr "Auszeichnungen-Icon"
 
-#: src/Site_Health/Site_Health.php:328
+#: src/Site_Health/Site_Health.php:440
 msgid "Subscription Expiry Date"
 msgstr "Ablaufdatum des Abonnements"
 
@@ -1107,35 +1108,35 @@ msgstr "Begriff ist gleich"
 msgid "Schedule Icon"
 msgstr "Zeitplan-Icon"
 
-#: src/Site_Health/Site_Health.php:608
+#: src/Site_Health/Site_Health.php:720
 msgid "Registered Taxonomies (UI)"
 msgstr "Registrierte Taxonomien (UI)"
 
-#: src/Site_Health/Site_Health.php:584
+#: src/Site_Health/Site_Health.php:696
 msgid "Registered Post Types (UI)"
 msgstr "Registrierte Inhaltstypen (UI)"
 
-#: src/Site_Health/Site_Health.php:427
+#: src/Site_Health/Site_Health.php:539
 msgid "Registered Field Groups (JSON)"
 msgstr "Registrierte Feldgruppen (JSON)"
 
-#: src/Site_Health/Site_Health.php:415
+#: src/Site_Health/Site_Health.php:527
 msgid "Registered Field Groups (PHP)"
 msgstr "Registrierte Feldgruppen (PHP)"
 
-#: src/Site_Health/Site_Health.php:403
+#: src/Site_Health/Site_Health.php:515
 msgid "Registered Field Groups (UI)"
 msgstr "Registrierte Feldgruppen (UI)"
 
-#: src/Site_Health/Site_Health.php:677
+#: src/Site_Health/Site_Health.php:789
 msgid "Registered Options Pages (PHP)"
 msgstr "Registrierte Optionsseiten (PHP)"
 
-#: src/Site_Health/Site_Health.php:663
+#: src/Site_Health/Site_Health.php:775
 msgid "Registered Options Pages (JSON)"
 msgstr "Registrierte Optionsseiten (JSON)"
 
-#: src/Site_Health/Site_Health.php:658
+#: src/Site_Health/Site_Health.php:770
 msgid "Registered Options Pages (UI)"
 msgstr "Registrierte Optionsseiten (UI)"
 
@@ -1147,7 +1148,7 @@ msgstr "Papierkorb-Icon"
 msgid "Forms Icon"
 msgstr "Formulare-Icon"
 
-#: src/Site_Health/Site_Health.php:345
+#: src/Site_Health/Site_Health.php:457
 msgid "Is Multisite"
 msgstr "Ist Multisite"
 
@@ -1266,7 +1267,7 @@ msgstr "Verschieben-Icon"
 msgid "Dismiss Icon"
 msgstr "Abweisen-Icon"
 
-#: src/Site_Health/Site_Health.php:686
+#: src/Site_Health/Site_Health.php:798
 msgid "Light"
 msgstr "Leicht"
 
@@ -1349,11 +1350,11 @@ msgstr "Upgrade auf ACF PRO"
 msgid "Add Options Page"
 msgstr "Optionen-Seite hinzufügen"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:716
+#: includes/admin/views/acf-post-type/advanced-settings.php:727
 msgid "Title Placeholder"
 msgstr "Titel-Platzhalter"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:717
+#: includes/admin/views/acf-post-type/advanced-settings.php:728
 msgid "In the editor used as the placeholder of the title."
 msgstr "Wird im Editor als Platzhalter für den Titel verwendet."
 
@@ -1501,7 +1502,7 @@ msgstr "Preise anzeigen und Upgrade installieren"
 msgid "WP Engine logo"
 msgstr "Logo von WP Engine"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:938
+#: includes/admin/views/acf-post-type/advanced-settings.php:949
 msgid "Sets whether posts should be excluded from search results and taxonomy archive pages."
 msgstr "Legt fest, ob Beiträge von den Suchergebnissen und Taxonomie-Archivseiten ausgeschlossen werden sollen."
 
@@ -1582,37 +1583,37 @@ msgstr "Neuer Inhaltstyp"
 msgid "Add New Post Type"
 msgstr "Neuen Inhaltstyp hinzufügen"
 
-#: includes/post-types/class-acf-taxonomy.php:297
+#: includes/post-types/class-acf-taxonomy.php:299
 msgid "This taxonomy key is already in use by another taxonomy registered outside of ACF and cannot be used."
 msgstr "Dieser Taxonomie-Schlüssel stammt von einer anderen Taxonomie außerhalb von ACF und kann nicht verwendet werden."
 
-#: includes/post-types/class-acf-taxonomy.php:293
+#: includes/post-types/class-acf-taxonomy.php:295
 msgid "This taxonomy key is already in use by another taxonomy in ACF and cannot be used."
 msgstr "Dieser Taxonomie-Schlüssel stammt von einer anderen Taxonomie in ACF und kann nicht verwendet werden."
 
-#: includes/post-types/class-acf-taxonomy.php:265
+#: includes/post-types/class-acf-taxonomy.php:267
 msgid "The taxonomy key must only contain lower case alphanumeric characters, underscores or dashes."
 msgstr "Der Taxonomie-Schlüssel darf nur Kleinbuchstaben, Unterstriche und Trennstriche enthalten."
 
-#: includes/post-types/class-acf-post-type.php:370
+#: includes/post-types/class-acf-post-type.php:372
 msgid "This post type key is already in use by another post type in ACF and cannot be used."
 msgstr "Dieser Inhaltstyp-Schlüssel stammt von einem anderen Inhaltstyp in ACF und kann nicht verwendet werden."
 
-#: includes/post-types/class-acf-post-type.php:375
+#: includes/post-types/class-acf-post-type.php:377
 msgid "This post type key is already in use by another post type registered outside of ACF and cannot be used."
 msgstr "Dieser Inhaltstyp-Schlüssel stammt von einem anderen Inhaltstyp außerhalb von ACF und kann nicht verwendet werden."
 
 #. translators: %s a link to WordPress.org's Reserved Terms page
-#: includes/post-types/class-acf-post-type.php:348
-#: includes/post-types/class-acf-taxonomy.php:271
+#: includes/post-types/class-acf-post-type.php:350
+#: includes/post-types/class-acf-taxonomy.php:273
 msgid "This field must not be a WordPress <a href=\"%s\" target=\"_blank\">reserved term</a>."
 msgstr "Dieses Feld darf kein von WordPress <a href=\"%s\" target=\"_blank\">reservierter Begriff</a> sein."
 
-#: includes/post-types/class-acf-post-type.php:342
+#: includes/post-types/class-acf-post-type.php:344
 msgid "The post type key must only contain lower case alphanumeric characters, underscores or dashes."
 msgstr "Der Inhaltstyp-Schlüssel darf nur Kleinbuchstaben, Unterstriche und Trennstriche enthalten."
 
-#: includes/post-types/class-acf-post-type.php:337
+#: includes/post-types/class-acf-post-type.php:339
 msgid "The post type key must be under 20 characters."
 msgstr "Der Inhaltstyp-Schlüssel muss kürzer als 20 Zeichen sein."
 
@@ -1763,7 +1764,7 @@ msgstr "Eine einfache Eingabe in Form eines Textbereiches zum Speichern von Text
 msgid "We do not recommend using this field in ACF Blocks."
 msgstr "Es wird nicht empfohlen, dieses Feld in ACF-Blöcken zu verwenden."
 
-#: includes/post-types/class-acf-taxonomy.php:260
+#: includes/post-types/class-acf-taxonomy.php:262
 msgid "The taxonomy key must be under 32 characters."
 msgstr "Der Taxonomie-Schlüssel muss kürzer als 32 Zeichen sein."
 
@@ -1776,7 +1777,7 @@ msgid "Search Taxonomies"
 msgstr "Taxonomien suchen"
 
 #: includes/admin/views/global/navigation.php:96 includes/fields.php:341
-#: src/Site_Health/Site_Health.php:293
+#: src/Site_Health/Site_Health.php:405
 msgid "PRO"
 msgstr "PRO"
 
@@ -1841,7 +1842,7 @@ msgid "taxonomy"
 msgstr "Taxonomie"
 
 #: includes/admin/admin.php:56 includes/admin/admin.php:394
-#: src/Site_Health/Site_Health.php:257
+#: src/Site_Health/Site_Health.php:367
 msgid "ACF"
 msgstr "ACF"
 
@@ -2028,7 +2029,7 @@ msgstr "Kategorie"
 msgid "Export"
 msgstr "Export"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:33
+#: includes/admin/views/acf-post-type/advanced-settings.php:38
 msgid "Trackbacks"
 msgstr "Trackbacks"
 
@@ -2036,150 +2037,142 @@ msgstr "Trackbacks"
 msgid "Editor"
 msgstr "Editor"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:40
+#: includes/admin/views/acf-post-type/advanced-settings.php:44
 msgid "Post Formats"
 msgstr "Beitragsformate"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:97
+#: includes/admin/views/acf-post-type/advanced-settings.php:108
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:149
 msgid "Regenerate"
 msgstr "Neu generieren"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:113
+#: includes/admin/views/acf-post-type/advanced-settings.php:124
 msgid "Menu Name"
 msgstr "Menüname"
 
 #. translators: %s Plural form of post type name
 #. translators: %s Plural form of taxonomy name
-#: includes/admin/views/acf-post-type/advanced-settings.php:130
+#: includes/admin/views/acf-post-type/advanced-settings.php:141
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:182
 msgid "All %s"
 msgstr "Alle %s"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:133
+#: includes/admin/views/acf-post-type/advanced-settings.php:144
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:185
 msgid "All Items"
 msgstr "Alle Elemente"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:135
+#: includes/admin/views/acf-post-type/advanced-settings.php:146
 msgid "All Posts"
 msgstr "Alle Beiträge"
 
 #. translators: %s Singular form of post type name
 #. translators: %s Singular form of taxonomy name
-#: includes/admin/views/acf-post-type/advanced-settings.php:150
+#: includes/admin/views/acf-post-type/advanced-settings.php:161
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:202
 msgid "Edit %s"
 msgstr "%s bearbeiten"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:153
+#: includes/admin/views/acf-post-type/advanced-settings.php:164
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:205
 msgid "Edit Item"
 msgstr "Element bearbeiten"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:155
+#: includes/admin/views/acf-post-type/advanced-settings.php:166
 msgid "Edit Post"
 msgstr "Beitrag bearbeiten"
 
 #. translators: %s Singular form of post type name
 #. translators: %s Plural form of post type name
 #. translators: %s Singular form of taxonomy name
-#: includes/admin/views/acf-post-type/advanced-settings.php:170
-#: includes/admin/views/acf-post-type/advanced-settings.php:190
+#: includes/admin/views/acf-post-type/advanced-settings.php:181
+#: includes/admin/views/acf-post-type/advanced-settings.php:201
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:222
 msgid "View %s"
 msgstr "%s anzeigen"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:173
+#: includes/admin/views/acf-post-type/advanced-settings.php:184
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:225
 msgid "View Item"
 msgstr "Element anzeigen"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:175
+#: includes/admin/views/acf-post-type/advanced-settings.php:186
 msgid "View Post"
 msgstr "Beitrag anzeigen"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:193
+#: includes/admin/views/acf-post-type/advanced-settings.php:204
 msgid "View Items"
 msgstr "Elemente anzeigen"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:195
+#: includes/admin/views/acf-post-type/advanced-settings.php:206
 msgid "View Posts"
 msgstr "Beiträge anzeigen"
 
-#. translators: %s Singular form of post type name
-#. translators: %s Singular form of taxonomy name
-#: includes/admin/views/acf-post-type/advanced-settings.php:210
-#: includes/admin/views/acf-post-type/advanced-settings.php:230
-#: includes/admin/views/acf-taxonomy/advanced-settings.php:262
-msgid "Add New %s"
-msgstr "Neu hinzufügen: %s"
-
-#: includes/admin/views/acf-post-type/advanced-settings.php:337
+#: includes/admin/views/acf-post-type/advanced-settings.php:348
 msgid "No posts found in Trash"
 msgstr "Es wurden keine Beiträge im Papierkorb gefunden"
 
 #. translators: %s Singular form of post type name
-#: includes/admin/views/acf-post-type/advanced-settings.php:372
+#: includes/admin/views/acf-post-type/advanced-settings.php:383
 msgid "%s Attributes"
 msgstr "%s-Attribute"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:377
+#: includes/admin/views/acf-post-type/advanced-settings.php:388
 msgid "Post Attributes"
 msgstr "Beitrags-Attribute"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:392
+#: includes/admin/views/acf-post-type/advanced-settings.php:403
 msgid "Featured image"
 msgstr "Beitragsbild"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:405
+#: includes/admin/views/acf-post-type/advanced-settings.php:416
 msgid "Set Featured Image"
 msgstr "Beitragsbild festlegen"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:407
+#: includes/admin/views/acf-post-type/advanced-settings.php:418
 msgid "Set featured image"
 msgstr "Beitragsbild festlegen"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:420
+#: includes/admin/views/acf-post-type/advanced-settings.php:431
 msgid "Remove Featured Image"
 msgstr "Beitragsbild entfernen"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:422
+#: includes/admin/views/acf-post-type/advanced-settings.php:433
 msgid "Remove featured image"
 msgstr "Beitragsbild entfernen"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:435
+#: includes/admin/views/acf-post-type/advanced-settings.php:446
 msgid "Use Featured Image"
 msgstr "Beitragsbild verwenden"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:437
+#: includes/admin/views/acf-post-type/advanced-settings.php:448
 msgid "Use as featured image"
 msgstr "Als Beitragsbild verwenden"
 
 #. translators: %s Singular form of post type name
-#: includes/admin/views/acf-post-type/advanced-settings.php:452
+#: includes/admin/views/acf-post-type/advanced-settings.php:463
 msgid "Insert into %s"
 msgstr "In %s einfügen"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:458
+#: includes/admin/views/acf-post-type/advanced-settings.php:469
 msgid "Insert into post"
 msgstr "In den Beitrag einfügen"
 
 #. translators: %s Singular form of post type name
-#: includes/admin/views/acf-post-type/advanced-settings.php:473
+#: includes/admin/views/acf-post-type/advanced-settings.php:484
 msgid "Uploaded to this %s"
 msgstr "Zu diesem %s hochgeladen"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:477
+#: includes/admin/views/acf-post-type/advanced-settings.php:488
 msgid "Uploaded To This Item"
 msgstr "Zu diesem Element hochgeladen"
 
 #. translators: %s Plural form of post type name
-#: includes/admin/views/acf-post-type/advanced-settings.php:494
+#: includes/admin/views/acf-post-type/advanced-settings.php:505
 msgid "Filter %s list"
 msgstr "%s-Liste filtern"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:498
+#: includes/admin/views/acf-post-type/advanced-settings.php:509
 msgid "Filter Items List"
 msgstr "Elemente-Liste filtern"
 
@@ -2335,11 +2328,6 @@ msgid "Popular Tags"
 msgstr "Beliebte Schlagwörter"
 
 #. translators: %s Plural form of taxonomy name
-#: includes/admin/views/acf-taxonomy/advanced-settings.php:395
-msgid "Separate %s with commas"
-msgstr "Trenne %s durch Kommas"
-
-#. translators: %s Plural form of taxonomy name
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:370
 msgid "Popular %s"
 msgstr "Beliebte %s"
@@ -2453,7 +2441,7 @@ msgstr "Beliebte Felder"
 msgid "Try a different search term or browse %s"
 msgstr "Probiere es mit einem anderen Suchbegriff oder durchsuche %s"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:57
+#: includes/admin/views/acf-post-type/advanced-settings.php:68
 msgid "Add Custom"
 msgstr "Individuell hinzufügen"
 
@@ -2466,82 +2454,75 @@ msgid ". The Custom Post Type UI plugin can be deactivated."
 msgstr ". Das Plugin Custom Post Type UI kann deaktiviert werden."
 
 #. translators: %s Singular form of post type name
-#: includes/admin/views/acf-post-type/advanced-settings.php:250
+#: includes/admin/views/acf-post-type/advanced-settings.php:261
 msgid "New %s"
 msgstr "Neuer Inhaltstyp %s"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:253
+#: includes/admin/views/acf-post-type/advanced-settings.php:264
 msgid "New Item"
 msgstr "Neues Element"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:255
+#: includes/admin/views/acf-post-type/advanced-settings.php:266
 msgid "New Post"
 msgstr "Neuer Beitrag"
 
 #. translators: %s Singular form of post type name
 #. translators: %s Singular form of taxonomy name
-#: includes/admin/views/acf-post-type/advanced-settings.php:270
+#: includes/admin/views/acf-post-type/advanced-settings.php:281
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:327
 msgid "Parent %s:"
 msgstr "%s, übergeordnet:"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:273
+#: includes/admin/views/acf-post-type/advanced-settings.php:284
 msgid "Parent Item Prefix"
 msgstr "Präfix des übergeordneten Elementes"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:274
+#: includes/admin/views/acf-post-type/advanced-settings.php:285
 msgid "For hierarchical types in the post type list screen."
 msgstr "Für hierarchische Typen in der Listenansicht der Inhaltstypen."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:275
+#: includes/admin/views/acf-post-type/advanced-settings.php:286
 msgid "Parent Page:"
 msgstr "Übergeordnete Seite:"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:294
+#: includes/admin/views/acf-post-type/advanced-settings.php:305
 msgid "At the top of the items screen when searching for an item."
 msgstr "Oben in der Elementansicht, während der Suche nach einem Element."
 
-#. translators: %s Singular form of post type name
-#. translators: %s Plural form of taxonomy name
-#: includes/admin/views/acf-post-type/advanced-settings.php:290
-#: includes/admin/views/acf-taxonomy/advanced-settings.php:351
-msgid "Search %s"
-msgstr "%s suchen"
-
-#: includes/admin/views/acf-post-type/advanced-settings.php:293
+#: includes/admin/views/acf-post-type/advanced-settings.php:304
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:354
 msgid "Search Items"
 msgstr "Elemente suchen"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:295
+#: includes/admin/views/acf-post-type/advanced-settings.php:306
 msgid "Search Posts"
 msgstr "Beiträge suchen"
 
 #. translators: %s Plural form of post type name
 #. translators: %s Plural form of taxonomy name
-#: includes/admin/views/acf-post-type/advanced-settings.php:310
+#: includes/admin/views/acf-post-type/advanced-settings.php:321
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:489
 msgid "No %s found"
 msgstr "%s konnten nicht gefunden werden"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:315
+#: includes/admin/views/acf-post-type/advanced-settings.php:326
 msgid "At the top of the post type list screen when there are no posts to display."
 msgstr "Oben in der Listenansicht für Inhaltstypen, wenn es keine Beiträge zum Anzeigen gibt."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:316
+#: includes/admin/views/acf-post-type/advanced-settings.php:327
 msgid "No posts found"
 msgstr "Es wurden keine Beiträge gefunden"
 
 #. translators: %s Plural form of post type name
-#: includes/admin/views/acf-post-type/advanced-settings.php:331
+#: includes/admin/views/acf-post-type/advanced-settings.php:342
 msgid "No %s found in Trash"
 msgstr "%s konnten nicht im Papierkorb gefunden werden"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:335
+#: includes/admin/views/acf-post-type/advanced-settings.php:346
 msgid "No Items Found in Trash"
 msgstr "Es wurden keine Elemente im Papierkorb gefunden"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:314
+#: includes/admin/views/acf-post-type/advanced-settings.php:325
 msgid "No Items Found"
 msgstr "Es wurden keine Elemente gefunden"
 
@@ -2559,93 +2540,93 @@ msgstr "Schlagwörter-Metabox"
 msgid "Categories Meta Box"
 msgstr "Kategorien-Metabox"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:213
+#: includes/admin/views/acf-post-type/advanced-settings.php:224
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:265
 msgid "Add New Item"
 msgstr "Neues Element hinzufügen"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:562
+#: includes/admin/views/acf-post-type/advanced-settings.php:573
 msgid "Posts list"
 msgstr "Liste der Beiträge"
 
 #. translators: %s Plural form of post type name
 #. translators: %s Plural form of taxonomy name
-#: includes/admin/views/acf-post-type/advanced-settings.php:557
+#: includes/admin/views/acf-post-type/advanced-settings.php:568
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:646
 msgid "%s list"
 msgstr "%s-Liste"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:521
+#: includes/admin/views/acf-post-type/advanced-settings.php:532
 msgid "Filter posts by date"
 msgstr "Beiträge nach Datum filtern"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:500
+#: includes/admin/views/acf-post-type/advanced-settings.php:511
 msgid "Filter posts list"
 msgstr "Liste mit Beiträgen filtern"
 
 #. translators: %s Plural form of post type name
-#: includes/admin/views/acf-post-type/advanced-settings.php:515
+#: includes/admin/views/acf-post-type/advanced-settings.php:526
 msgid "Filter %s by date"
 msgstr "%s nach Datum filtern"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:519
+#: includes/admin/views/acf-post-type/advanced-settings.php:530
 msgid "Filter Items By Date"
 msgstr "Elemente nach Datum filtern"
 
 #. translators: %s Plural form of post type name
 #. translators: %s Plural form of taxonomy name
-#: includes/admin/views/acf-post-type/advanced-settings.php:537
+#: includes/admin/views/acf-post-type/advanced-settings.php:548
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:626
 msgid "%s list navigation"
 msgstr "%s-Listen-Navigation"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:540
+#: includes/admin/views/acf-post-type/advanced-settings.php:551
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:629
 msgid "Items List Navigation"
 msgstr "Navigation der Elementliste"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:542
+#: includes/admin/views/acf-post-type/advanced-settings.php:553
 msgid "Posts list navigation"
 msgstr "Navigation der Beiträge-Liste"
 
 #. translators: %s Singular form of post type name
-#: includes/admin/views/acf-post-type/advanced-settings.php:577
+#: includes/admin/views/acf-post-type/advanced-settings.php:588
 msgid "%s published."
 msgstr "%s wurde veröffentlicht."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:580
+#: includes/admin/views/acf-post-type/advanced-settings.php:591
 msgid "Item Published"
 msgstr "Das Element wurde veröffentlicht"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:582
+#: includes/admin/views/acf-post-type/advanced-settings.php:593
 msgid "Post published."
 msgstr "Der Beitrag wurde veröffentlicht."
 
 #. translators: %s Singular form of post type name
-#: includes/admin/views/acf-post-type/advanced-settings.php:597
+#: includes/admin/views/acf-post-type/advanced-settings.php:608
 msgid "%s published privately."
 msgstr "%s wurde privat veröffentlicht."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:560
+#: includes/admin/views/acf-post-type/advanced-settings.php:571
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:649
 msgid "Items List"
 msgstr "Elementliste"
 
 #. translators: %s Singular form of post type name
-#: includes/admin/views/acf-post-type/advanced-settings.php:637
+#: includes/admin/views/acf-post-type/advanced-settings.php:648
 msgid "%s scheduled."
 msgstr "%s wurde geplant."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:640
+#: includes/admin/views/acf-post-type/advanced-settings.php:651
 msgid "Item Scheduled"
 msgstr "Das Element wurde geplant"
 
 #. translators: %s Singular form of post type name
-#: includes/admin/views/acf-post-type/advanced-settings.php:657
+#: includes/admin/views/acf-post-type/advanced-settings.php:668
 msgid "%s updated."
 msgstr "%s wurde aktualisiert."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:660
+#: includes/admin/views/acf-post-type/advanced-settings.php:671
 msgid "Item Updated"
 msgstr "Das Element wurde aktualisiert"
 
@@ -2653,119 +2634,119 @@ msgstr "Das Element wurde aktualisiert"
 msgid "Browse Fields"
 msgstr "Felder durchsuchen"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:215
-#: includes/admin/views/acf-post-type/advanced-settings.php:235
+#: includes/admin/views/acf-post-type/advanced-settings.php:226
+#: includes/admin/views/acf-post-type/advanced-settings.php:246
 msgid "Add New Post"
 msgstr "Neuen Beitrag hinzufügen"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:375
+#: includes/admin/views/acf-post-type/advanced-settings.php:386
 msgid "Attributes Meta Box"
 msgstr "Metabox-Attribute"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:390
+#: includes/admin/views/acf-post-type/advanced-settings.php:401
 msgid "Featured Image Meta Box"
 msgstr "Beitragsbild-Metabox"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:602
+#: includes/admin/views/acf-post-type/advanced-settings.php:613
 msgid "Post published privately."
 msgstr "Der Beitrag wurde privat veröffentlicht."
 
 #. translators: %s Singular form of post type name
-#: includes/admin/views/acf-post-type/advanced-settings.php:617
+#: includes/admin/views/acf-post-type/advanced-settings.php:628
 msgid "%s reverted to draft."
 msgstr "%s wurde auf Entwurf zurückgesetzt."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:620
+#: includes/admin/views/acf-post-type/advanced-settings.php:631
 msgid "Item Reverted To Draft"
 msgstr "Das Element wurde auf Entwurf zurückgesetzt"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:622
+#: includes/admin/views/acf-post-type/advanced-settings.php:633
 msgid "Post reverted to draft."
 msgstr "Der Beitrag wurde auf Entwurf zurückgesetzt."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:662
+#: includes/admin/views/acf-post-type/advanced-settings.php:673
 msgid "Post updated."
 msgstr "Der Beitrag wurde aktualisiert."
 
 #. translators: %s Singular form of post type name
 #. translators: %s Singular form of taxonomy name
-#: includes/admin/views/acf-post-type/advanced-settings.php:677
+#: includes/admin/views/acf-post-type/advanced-settings.php:688
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:687
 msgid "%s Link"
 msgstr "%s-Link"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:680
+#: includes/admin/views/acf-post-type/advanced-settings.php:691
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:690
 msgid "Item Link"
 msgstr "Element-Link"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:682
+#: includes/admin/views/acf-post-type/advanced-settings.php:693
 msgid "Post Link"
 msgstr "Beitragslink"
 
 #. translators: %s Singular form of post type name
-#: includes/admin/views/acf-post-type/advanced-settings.php:697
+#: includes/admin/views/acf-post-type/advanced-settings.php:708
 msgid "A link to a %s."
 msgstr "Ein Link zu einem Inhaltstyp %s"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:786
+#: includes/admin/views/acf-post-type/advanced-settings.php:797
 msgid "Menu Position"
 msgstr "Menü-Position"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:904
+#: includes/admin/views/acf-post-type/advanced-settings.php:915
 msgid "Show In Admin Bar"
 msgstr "In der Adminleiste anzeigen"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:937
+#: includes/admin/views/acf-post-type/advanced-settings.php:948
 msgid "Exclude From Search"
 msgstr "Von der Suche ausschließen"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:1033
+#: includes/admin/views/acf-post-type/advanced-settings.php:1044
 msgid "Delete With User"
 msgstr "Zusammen mit dem Benutzer löschen"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:1018
+#: includes/admin/views/acf-post-type/advanced-settings.php:1029
 msgid "Can Export"
 msgstr "Kann exportieren"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:1053
+#: includes/admin/views/acf-post-type/advanced-settings.php:1064
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:943
 msgid "Custom Permalink"
 msgstr "Individueller Permalink"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:1052
-#: includes/admin/views/acf-post-type/advanced-settings.php:1222
+#: includes/admin/views/acf-post-type/advanced-settings.php:1063
+#: includes/admin/views/acf-post-type/advanced-settings.php:1233
 #: includes/admin/views/acf-post-type/basic-settings.php:66
 msgid "Post Type Key"
 msgstr "Inhaltstyp-Schlüssel"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:1079
+#: includes/admin/views/acf-post-type/advanced-settings.php:1090
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:969
 msgid "URL Slug"
 msgstr "URL-Titelform"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:1118
+#: includes/admin/views/acf-post-type/advanced-settings.php:1129
 msgid "Feed URL"
 msgstr "Feed-URL"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:1136
+#: includes/admin/views/acf-post-type/advanced-settings.php:1147
 msgid "Pagination"
 msgstr "Seitennummerierung"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:1157
+#: includes/admin/views/acf-post-type/advanced-settings.php:1168
 msgid "Archive"
 msgstr "Archiv"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:1171
+#: includes/admin/views/acf-post-type/advanced-settings.php:1182
 msgid "Archive Slug"
 msgstr "Archiv-Titelform"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:1246
+#: includes/admin/views/acf-post-type/advanced-settings.php:1257
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:1083
 msgid "Query Variable"
 msgstr "Abfrage-Variable"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:1283
+#: includes/admin/views/acf-post-type/advanced-settings.php:1294
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:1200
 msgid "Base URL"
 msgstr "Basis-URL"
@@ -2861,10 +2842,6 @@ msgstr "Der für die Betrachtung ausgewählte Inhaltstyp ist ungültig."
 msgid "Importing a Post Type or Taxonomy with the same key as one that already exists will overwrite the settings for the existing Post Type or Taxonomy with those of the import."
 msgstr "Wenn ein Inhaltstyp oder eine Taxonomie mit einem Schlüssel importiert wird, der bereits vorhanden ist, werden die Einstellungen des vorhandenen Inhaltstyps oder der vorhandenen Taxonomie mit denen des Imports überschrieben."
 
-#: includes/admin/tools/class-acf-admin-tool-export.php:363
-msgid "The following code can be used to register a local version of the selected items. Storing field groups, post types, or taxonomies locally can provide many benefits such as faster load times, version control & dynamic fields/settings. Simply copy and paste the following code to your theme's functions.php file or include it within an external file, then deactivate or delete the items from the ACF admin."
-msgstr "Der folgende Code kann verwendet werden, um eine lokale Version der ausgewählten Elemente zu registrieren. Die lokale Speicherung von Feldgruppen, Inhaltstypen oder Taxonomien kann viele Vorteile bieten, wie z. B. schnellere Ladezeiten, Versionskontrolle und dynamische Felder/Einstellungen. Kopiere den folgenden Code in die Datei functions.php deines Themes oder füge ihn in eine externe Datei ein und deaktiviere oder lösche anschließend die Elemente in der ACF-Administration."
-
 #: includes/admin/tools/class-acf-admin-tool-import.php:239
 msgid "Nothing from Custom Post Type UI plugin selected for import."
 msgstr "Es wurde nichts aus dem Plugin Custom Post Type UI für den Import ausgewählt."
@@ -2876,19 +2853,23 @@ msgid_plural "Imported %d items from Custom Post Type UI -"
 msgstr[0] "Es wurde %d Element von Custom Post Type UI importiert -"
 msgstr[1] "Es wurden %d Elemente von Custom Post Type UI importiert -"
 
+#: includes/admin/tools/class-acf-admin-tool-export.php:363
+msgid "The following code can be used to register a local version of the selected items. Storing field groups, post types, or taxonomies locally can provide many benefits such as faster load times, version control & dynamic fields/settings. Simply copy and paste the following code to your theme's functions.php file or include it within an external file, then deactivate or delete the items from the ACF admin."
+msgstr "Der folgende Code kann verwendet werden, um eine lokale Version der ausgewählten Elemente zu registrieren. Die lokale Speicherung von Feldgruppen, Inhaltstypen oder Taxonomien kann viele Vorteile bieten, wie z. B. schnellere Ladezeiten, Versionskontrolle und dynamische Felder/Einstellungen. Kopiere den folgenden Code in die Datei functions.php deines Themes oder füge ihn in eine externe Datei ein und deaktiviere oder lösche anschließend die Elemente in der ACF-Administration."
+
 #: includes/admin/views/acf-post-type/basic-settings.php:97
 msgid "Select existing taxonomies to classify items of the post type."
 msgstr "Vorhandene Taxonomien auswählen, um Elemente des Inhaltstyps zu kategorisieren."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:51
+#: includes/admin/views/acf-post-type/advanced-settings.php:61
 msgid "Enable various features in the content editor."
 msgstr "Verschiedene Funktionen im Inhalts-Editor aktivieren."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:72
+#: includes/admin/views/acf-post-type/advanced-settings.php:83
 msgid "A descriptive summary of the post type."
 msgstr "Eine beschreibende Zusammenfassung des Inhaltstyps."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:88
+#: includes/admin/views/acf-post-type/advanced-settings.php:99
 msgid "Active post types are enabled and registered with WordPress."
 msgstr "Aktive Inhaltstypen sind aktiviert und in WordPress registriert."
 
@@ -2904,54 +2885,54 @@ msgid_plural "Imported %s items"
 msgstr[0] "1 Element wurde importiert"
 msgstr[1] "%s Elemente wurden importiert"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:99
+#: includes/admin/views/acf-post-type/advanced-settings.php:110
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:151
 msgid "Regenerate all labels using the Singular and Plural labels"
 msgstr "Alle Beschriftungen unter Verwendung der Einzahl- und Mehrzahl-Beschriftungen neu generieren"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:114
+#: includes/admin/views/acf-post-type/advanced-settings.php:125
 msgid "Admin menu name for the post type."
 msgstr "Name des Admin-Menüs für den Inhaltstyp."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:134
-#: includes/admin/views/acf-post-type/advanced-settings.php:234
-#: includes/admin/views/acf-post-type/advanced-settings.php:254
+#: includes/admin/views/acf-post-type/advanced-settings.php:145
+#: includes/admin/views/acf-post-type/advanced-settings.php:245
+#: includes/admin/views/acf-post-type/advanced-settings.php:265
 msgid "In the post type submenu in the admin dashboard."
 msgstr "Im Untermenü des Inhaltstyps im Admin-Dashboard."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:154
+#: includes/admin/views/acf-post-type/advanced-settings.php:165
 msgid "At the top of the editor screen when editing an item."
 msgstr "Oben in der Editoransicht, wenn ein Element bearbeitet wird."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:174
+#: includes/admin/views/acf-post-type/advanced-settings.php:185
 msgid "In the admin bar to view item when editing it."
 msgstr "In der Adminleiste, um das Element beim Bearbeiten anzuzeigen."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:194
+#: includes/admin/views/acf-post-type/advanced-settings.php:205
 msgid "Appears in the admin bar in the 'All Posts' view, provided the post type supports archives and the home page is not an archive of that post type."
 msgstr "Wird in der Adminleiste in der Ansicht „Alle Beiträge“ angezeigt, sofern der Inhaltstyp Archive unterstützt und die Homepage kein Archiv dieses Inhaltstyps ist."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:214
+#: includes/admin/views/acf-post-type/advanced-settings.php:225
 msgid "At the top of the editor screen when adding a new item."
 msgstr "Oben in der Editoransicht, wenn ein neues Element hinzugefügt wird."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:336
+#: includes/admin/views/acf-post-type/advanced-settings.php:347
 msgid "At the top of the post type list screen when there are no posts in the trash."
 msgstr "Oben in der Listen-Ansicht des Inhaltstyps, wenn keine Beiträge im Papierkorb vorhanden sind."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:355
+#: includes/admin/views/acf-post-type/advanced-settings.php:366
 msgid "Archives Nav Menu"
 msgstr "Navigations-Menü der Archive"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:356
+#: includes/admin/views/acf-post-type/advanced-settings.php:367
 msgid "Adds 'Post Type Archive' items with this label to the list of posts shown when adding items to an existing menu in a CPT with archives enabled. Only appears when editing menus in 'Live Preview' mode and a custom archive slug has been provided."
 msgstr "Fügt ‚Inhaltstyp-Archiv‘-Elemente mit dieser Beschriftung zur Liste der Beiträge hinzu, die beim Hinzufügen von Elementen zu einem bestehenden Menü in einem individuellen Inhaltstyp mit aktivierten Archiven angezeigt werden. Erscheint nur, wenn Menüs im Modus „Live-Vorschau“ bearbeitet werden und eine individuelle Archiv-Titelform angegeben wurde."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:376
+#: includes/admin/views/acf-post-type/advanced-settings.php:387
 msgid "In the editor used for the title of the post attributes meta box."
 msgstr "In dem Editor, der für den Titel der Beitragsattribute-Metabox verwendet wird."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:831
+#: includes/admin/views/acf-post-type/advanced-settings.php:842
 #: includes/fields/class-acf-field-icon_picker.php:652
 msgid "Menu Icon"
 msgstr "Menü-Icon"
@@ -2986,17 +2967,7 @@ msgstr "Hierarchisch"
 msgid "Sort Terms"
 msgstr "Begriffe sortieren"
 
-#: includes/admin/views/acf-post-type/basic-settings.php:49
-#: includes/admin/views/acf-taxonomy/basic-settings.php:49
-msgid "Singular Label"
-msgstr "Beschriftung (Einzahl)"
-
-#: includes/admin/views/acf-post-type/basic-settings.php:32
-#: includes/admin/views/acf-taxonomy/basic-settings.php:32
-msgid "Plural Label"
-msgstr "Beschriftung (Mehrzahl)"
-
-#: includes/admin/views/acf-post-type/advanced-settings.php:952
+#: includes/admin/views/acf-post-type/advanced-settings.php:963
 msgid "Rename Capabilities"
 msgstr "Berechtigungen umbenennen"
 
@@ -3008,7 +2979,7 @@ msgstr "Feldgruppe(n)"
 msgid "Link Existing Field Groups"
 msgstr "Vorhandene Feldgruppen verknüpfen"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:703
+#: includes/admin/views/acf-post-type/advanced-settings.php:714
 msgid "A link to a post."
 msgstr "Ein Link zu einem Beitrag."
 
@@ -3024,26 +2995,21 @@ msgstr "Einzelnes Wort, keine Leerzeichen. Unterstriche und Bindestriche erlaubt
 msgid "Choose From Most Used"
 msgstr "Wähle aus den Meistgenutzten"
 
-#. translators: %s Plural form of taxonomy name
-#: includes/admin/views/acf-taxonomy/advanced-settings.php:447
-msgid "Choose from the most used %s"
-msgstr "Wähle aus den meistgenutzten %s"
-
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:924
 msgid "Show Admin Column"
 msgstr "Admin-Spalte anzeigen"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:747
+#: includes/admin/views/acf-post-type/advanced-settings.php:758
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:742
 msgid "Show In Admin Menu"
 msgstr "Im Admin-Menü anzeigen"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:1321
+#: includes/admin/views/acf-post-type/advanced-settings.php:1332
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:1239
 msgid "Controller Class"
 msgstr "Controller-Klasse"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:1172
+#: includes/admin/views/acf-post-type/advanced-settings.php:1183
 msgid "Custom slug for the Archive URL."
 msgstr "Individuelle Titelform für die Archiv-URL."
 
@@ -3056,11 +3022,11 @@ msgstr "Erweiterte Konfiguration"
 msgid "Lower case letters, underscores and dashes only, Max 20 characters."
 msgstr "Nur Kleinbuchstaben, Unterstriche und Bindestriche, maximal 20 Zeichen."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:1080
+#: includes/admin/views/acf-post-type/advanced-settings.php:1091
 msgid "Customize the slug used in the URL."
 msgstr "Passe die Titelform an, die in der URL genutzt wird."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:1063
+#: includes/admin/views/acf-post-type/advanced-settings.php:1074
 msgid "Permalinks for this post type are disabled."
 msgstr "Permalinks sind für diesen Inhaltstyp deaktiviert."
 
@@ -3068,17 +3034,17 @@ msgstr "Permalinks sind für diesen Inhaltstyp deaktiviert."
 msgid "The name of the default term."
 msgstr "Der Name des Standardbegriffs."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:1302
+#: includes/admin/views/acf-post-type/advanced-settings.php:1313
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:1219
 msgid "Namespace Route"
 msgstr "Namensraum-Route"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:1303
+#: includes/admin/views/acf-post-type/advanced-settings.php:1314
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:1220
 msgid "The namespace part of the REST API URL."
 msgstr "Der Namensraum-Teil der REST-API-URL."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:870
+#: includes/admin/views/acf-post-type/advanced-settings.php:881
 msgid "Custom Meta Box Callback"
 msgstr "Individueller Metabox-Callback"
 
@@ -3086,85 +3052,81 @@ msgstr "Individueller Metabox-Callback"
 msgid "Register Meta Box Callback"
 msgstr "Metabox-Callback registrieren"
 
-#: includes/admin/views/acf-taxonomy/advanced-settings.php:399
-msgid "Separate Items With Commas"
-msgstr "Trenne Elemente mit Kommas"
-
-#: includes/admin/views/acf-post-type/advanced-settings.php:600
+#: includes/admin/views/acf-post-type/advanced-settings.php:611
 msgid "Item Published Privately"
 msgstr "Das Element wurde privat veröffentlicht"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:733
+#: includes/admin/views/acf-post-type/advanced-settings.php:744
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:727
 msgid "Show In UI"
 msgstr "In der Benutzeroberfläche anzeigen"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:1048
+#: includes/admin/views/acf-post-type/advanced-settings.php:1059
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:939
 msgid "Permalink Rewrite"
 msgstr "Permalink neu schreiben"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:421
+#: includes/admin/views/acf-post-type/advanced-settings.php:432
 msgid "As the button label when removing the featured image."
 msgstr "Als Button-Beschriftung, wenn das Beitragsbild entfernt wird."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:406
+#: includes/admin/views/acf-post-type/advanced-settings.php:417
 msgid "As the button label when setting the featured image."
 msgstr "Als Button-Beschriftung, wenn das Beitragsbild festgelegt wird."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:457
+#: includes/admin/views/acf-post-type/advanced-settings.php:468
 msgid "As the button label when adding media to content."
 msgstr "Als Button-Beschriftung, wenn Medien zum Inhalt hinzugefügt werden."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:436
+#: includes/admin/views/acf-post-type/advanced-settings.php:447
 msgid "As the button label for selecting to use an image as the featured image."
 msgstr "Als Button-Beschriftung, wenn ein Bild als Beitragsbild ausgewählt wird."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:661
+#: includes/admin/views/acf-post-type/advanced-settings.php:672
 msgid "In the editor notice after an item is updated."
 msgstr "Im Editor-Hinweis, nachdem ein Element aktualisiert wurde."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:641
+#: includes/admin/views/acf-post-type/advanced-settings.php:652
 msgid "In the editor notice after scheduling an item."
 msgstr "Im Editor-Hinweis, nachdem ein Element geplant wurde."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:621
+#: includes/admin/views/acf-post-type/advanced-settings.php:632
 msgid "In the editor notice after reverting an item to draft."
 msgstr "Im Editor-Hinweis, nachdem ein Element auf Entwurf zurückgesetzt wurde."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:601
+#: includes/admin/views/acf-post-type/advanced-settings.php:612
 msgid "In the editor notice after publishing a private item."
 msgstr "Im Editor-Hinweis, nachdem ein Element privat veröffentlicht wurde."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:581
+#: includes/admin/views/acf-post-type/advanced-settings.php:592
 msgid "In the editor notice after publishing an item."
 msgstr "Im Editor-Hinweis, nachdem ein Element veröffentlicht wurde."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:1193
+#: includes/admin/views/acf-post-type/advanced-settings.php:1204
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:1031
 msgid "Publicly Queryable"
 msgstr "Öffentlich abfragbar"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:1137
+#: includes/admin/views/acf-post-type/advanced-settings.php:1148
 msgid "Pagination support for the items URLs such as the archives."
 msgstr "Unterstützung für Seitennummerierung der Element-URLs, wie bei Archiven."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:1219
+#: includes/admin/views/acf-post-type/advanced-settings.php:1230
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:1056
 msgid "Query Variable Support"
 msgstr "Unterstützung von Abfrage-Variablen"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:1223
+#: includes/admin/views/acf-post-type/advanced-settings.php:1234
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:1060
 msgid "Custom Query Variable"
 msgstr "Individuelle Abfrage-Variable"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:1224
+#: includes/admin/views/acf-post-type/advanced-settings.php:1235
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:1061
 msgid "No Query Variable Support"
 msgstr "Keine Unterstützung von Abfrage-Variablen"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:1247
+#: includes/admin/views/acf-post-type/advanced-settings.php:1258
 msgid "Customize the query variable name."
 msgstr "Den Namen der Abfrage-Variable anpassen."
 
@@ -3172,32 +3134,32 @@ msgstr "Den Namen der Abfrage-Variable anpassen."
 msgid "Customize the query variable name"
 msgstr "Den Namen der Abfrage-Variable anpassen"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:701
+#: includes/admin/views/acf-post-type/advanced-settings.php:712
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:711
 msgid "Item Link Description"
 msgstr "Beschreibung des Element-Links"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:1119
+#: includes/admin/views/acf-post-type/advanced-settings.php:1130
 msgid "RSS feed URL for the post type items."
 msgstr "RSS-Feed-URL für Inhaltstyp-Elemente."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:986
+#: includes/admin/views/acf-post-type/advanced-settings.php:997
 msgid "Plural Capability Name"
 msgstr "Name der Berechtigung (Mehrzahl)"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:967
+#: includes/admin/views/acf-post-type/advanced-settings.php:978
 msgid "Singular Capability Name"
 msgstr "Name der Berechtigung (Einzahl)"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:987
+#: includes/admin/views/acf-post-type/advanced-settings.php:998
 msgid "Optionally provide a plural to be used in capabilities."
 msgstr "Du kannst optional eine Mehrzahl für Berechtigungen angeben."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:1269
+#: includes/admin/views/acf-post-type/advanced-settings.php:1280
 msgid "Exposes this post type in the REST API. Required to use the block editor."
 msgstr "Zeigt diesen Inhalttyp in der REST-API. Wird zur Verwendung im Block-Editor benötigt."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:1322
+#: includes/admin/views/acf-post-type/advanced-settings.php:1333
 msgid "Optional custom controller to use instead of `WP_REST_Posts_Controller`."
 msgstr "Optionalen individuellen Controller verwenden anstelle von „WP_REST_Posts_Controller“."
 
@@ -3205,23 +3167,19 @@ msgstr "Optionalen individuellen Controller verwenden anstelle von „WP_REST_Po
 msgid "Optional custom controller to use instead of `WP_REST_Terms_Controller `."
 msgstr "Optionalen individuellen Controller verwenden anstelle von „WP_REST_Terms_Controller“."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:1019
+#: includes/admin/views/acf-post-type/advanced-settings.php:1030
 msgid "Allow the post type to be exported from 'Tools' > 'Export'."
 msgstr "Erlaubt den Inhaltstyp zu exportieren unter „Werkzeuge“ > „Export“."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:968
+#: includes/admin/views/acf-post-type/advanced-settings.php:979
 msgid "Choose another post type to base the capabilities for this post type."
 msgstr "Wähle einen anderen Inhaltstyp aus als Basis der Berechtigungen für diesen Inhaltstyp."
 
-#: includes/admin/views/acf-taxonomy/advanced-settings.php:453
-msgid "Choose from the most used tags"
-msgstr "Wähle aus den meistgenutzten Schlagwörtern"
-
-#: includes/admin/views/acf-post-type/advanced-settings.php:905
+#: includes/admin/views/acf-post-type/advanced-settings.php:916
 msgid "Appears as an item in the 'New' menu in the admin bar."
 msgstr "Erscheint als Eintrag im „Neu“-Menü der Adminleiste."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:787
+#: includes/admin/views/acf-post-type/advanced-settings.php:798
 msgid "The position in the sidebar menu in the admin dashboard."
 msgstr "Die Position im Seitenleisten-Menü des Admin-Dashboards."
 
@@ -3269,26 +3227,26 @@ msgstr "Metabox-Bereinigungs-Callback"
 msgid "List the taxonomy in the Tag Cloud Widget controls."
 msgstr "Listet die Taxonomie in den Steuerelementen des Schlagwortwolke-Widgets auf."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:734
+#: includes/admin/views/acf-post-type/advanced-settings.php:745
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:728
 msgid "Items can be edited and managed in the admin dashboard."
 msgstr "Elemente können im Admin-Dashboard bearbeitet und verwaltet werden."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:1034
+#: includes/admin/views/acf-post-type/advanced-settings.php:1045
 msgid "Delete items by a user when that user is deleted."
 msgstr "Elemente eines Benutzers löschen, wenn der Benutzer gelöscht wird."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:924
+#: includes/admin/views/acf-post-type/advanced-settings.php:935
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:883
 msgid "Allow items to be added to menus in the 'Appearance' > 'Menus' screen. Must be turned on in 'Screen options'."
 msgstr "Erlaubt das Hinzufügen von Elementen zu Menüs unter „Design“ > „Menüs“. Muss aktiviert werden unter „Ansicht anpassen“."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:923
+#: includes/admin/views/acf-post-type/advanced-settings.php:934
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:882
 msgid "Appearance Menus Support"
 msgstr "Unterstützung für Design-Menüs"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:767
+#: includes/admin/views/acf-post-type/advanced-settings.php:778
 msgid "Admin Menu Parent"
 msgstr "Übergeordnetes Admin-Menü"
 
@@ -3300,7 +3258,7 @@ msgstr "Übergeordnetes Element mit Doppelpunkt"
 msgid "Assigns parent item text, but with a colon (:) added to the end."
 msgstr "Den Text des übergeordneten Elements zuordnen, aber mit einem Doppelpunkt (:) am Ende."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:1284
+#: includes/admin/views/acf-post-type/advanced-settings.php:1295
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:1201
 msgid "The base URL for the post type REST API URLs."
 msgstr "Die Basis-URL für REST-API-URLs des Inhalttyps."
@@ -3330,11 +3288,6 @@ msgstr "Aktive Taxonomien sind aktiviert und in WordPress registriert."
 msgid "Filter By Item"
 msgstr "Filtern nach Element"
 
-#. translators: %s Singular form of taxonomy name
-#: includes/admin/views/acf-taxonomy/advanced-settings.php:282
-msgid "New %s Name"
-msgstr "Neuer %s-Name"
-
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:583
 msgid "Describes the Description field on the Edit Tags screen."
 msgstr "Beschreibt das Beschreibungsfeld in der Schlagwörter-bearbeiten-Ansicht."
@@ -3351,10 +3304,6 @@ msgstr "Beschreibt das Titelform-Feld in der Schlagwörter-bearbeiten-Ansicht."
 msgid "Describes the Name field on the Edit Tags screen."
 msgstr "Beschreibt das Namensfeld in der Schlagwörter-bearbeiten-Ansicht."
 
-#: includes/admin/views/acf-taxonomy/advanced-settings.php:285
-msgid "New Item Name"
-msgstr "Name des neuen Elements"
-
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:206
 msgid "At the top of the editor screen when editing a term."
 msgstr "Oben in der Editoransicht, wenn ein Begriff bearbeitet wird."
@@ -3367,7 +3316,7 @@ msgstr "Erweitere die Funktionalität von WordPress über Standard-Beiträge und
 msgid "Tags list navigation"
 msgstr "Navigation der Schlagwörterliste"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:1220
+#: includes/admin/views/acf-post-type/advanced-settings.php:1231
 msgid "Items can be accessed using the non-pretty permalink, eg. {post_type}={post_slug}."
 msgstr "Elemente können über den unschicken Permalink abgerufen werden, z. B. {post_type}={post_slug}."
 
@@ -3389,17 +3338,17 @@ msgstr "Schnellbearbeitung"
 msgid "Invalid post ID."
 msgstr "Die Beitrags-ID ist ungültig."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:642
+#: includes/admin/views/acf-post-type/advanced-settings.php:653
 msgid "Post scheduled."
 msgstr "Der Beitrag wurde geplant."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:1268
+#: includes/admin/views/acf-post-type/advanced-settings.php:1279
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:1183
 msgid "Show In REST API"
 msgstr "In der REST-API anzeigen"
 
 #. translators: %s Singular form of post type name
-#: includes/admin/views/acf-post-type/advanced-settings.php:352
+#: includes/admin/views/acf-post-type/advanced-settings.php:363
 msgid "%s Archives"
 msgstr "%s-Archiv"
 
@@ -3407,27 +3356,79 @@ msgstr "%s-Archiv"
 msgid "Not Found"
 msgstr "Nicht gefunden"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:357
+#: includes/admin/views/acf-post-type/advanced-settings.php:368
 msgid "Post Archives"
 msgstr "Beitragsarchiv"
 
-#: includes/admin/views/acf-taxonomy/advanced-settings.php:896
-msgid "Tag Cloud"
-msgstr "Schlagwort-Wolke"
-
-#: includes/admin/views/acf-post-type/advanced-settings.php:702
+#: includes/admin/views/acf-post-type/advanced-settings.php:713
 msgid "Description for a navigation link block variation."
 msgstr "Beschreibung einer Navigationslink-Blockvariante."
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:1099
+#: includes/admin/views/acf-post-type/advanced-settings.php:1110
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:989
 msgid "Front URL Prefix"
 msgstr "URL-Präfix"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:1054
+#: includes/admin/views/acf-post-type/advanced-settings.php:1065
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:944
 msgid "No Permalink (prevent URL rewriting)"
 msgstr "Kein Permalink (verhindert URL-Umschreibung)"
+
+#. translators: %s Plural form of taxonomy name
+#: includes/admin/views/acf-taxonomy/advanced-settings.php:395
+msgid "Separate %s with commas"
+msgstr "%s durch Kommas trennen"
+
+#. translators: %s Singular form of taxonomy name
+#: includes/admin/views/acf-taxonomy/advanced-settings.php:282
+msgid "New %s Name"
+msgstr "Neuer Name für %s"
+
+#. translators: %s Singular form of post type name
+#. translators: %s Plural form of taxonomy name
+#: includes/admin/views/acf-post-type/advanced-settings.php:301
+#: includes/admin/views/acf-taxonomy/advanced-settings.php:351
+msgid "Search %s"
+msgstr "%s durchsuchen"
+
+#. translators: %s Plural form of taxonomy name
+#: includes/admin/views/acf-taxonomy/advanced-settings.php:447
+msgid "Choose from the most used %s"
+msgstr "Aus den Meistgenutzten (%s) auswählen"
+
+#: includes/admin/views/acf-taxonomy/advanced-settings.php:285
+msgid "New Item Name"
+msgstr "Neuer Elementname"
+
+#: includes/admin/views/acf-taxonomy/advanced-settings.php:896
+msgid "Tag Cloud"
+msgstr "Schlagwortwolke"
+
+#: includes/admin/views/acf-taxonomy/advanced-settings.php:399
+msgid "Separate Items With Commas"
+msgstr "Elemente durch Kommas trennen"
+
+#: includes/admin/views/acf-taxonomy/advanced-settings.php:453
+msgid "Choose from the most used tags"
+msgstr "Aus den meistgenutzten Schlagwörtern auswählen"
+
+#: includes/admin/views/acf-post-type/basic-settings.php:32
+#: includes/admin/views/acf-taxonomy/basic-settings.php:32
+msgid "Plural Label"
+msgstr "Plural-Beschriftung"
+
+#: includes/admin/views/acf-post-type/basic-settings.php:49
+#: includes/admin/views/acf-taxonomy/basic-settings.php:49
+msgid "Singular Label"
+msgstr "Singular-Beschriftung"
+
+#. translators: %s Singular form of post type name
+#. translators: %s Singular form of taxonomy name
+#: includes/admin/views/acf-post-type/advanced-settings.php:221
+#: includes/admin/views/acf-post-type/advanced-settings.php:241
+#: includes/admin/views/acf-taxonomy/advanced-settings.php:262
+msgid "Add New %s"
+msgstr "%s hinzufügen"
 
 #. Author URI of the plugin
 #: acf.php
@@ -3439,7 +3440,7 @@ msgid "Field Settings Tabs"
 msgstr "Tabs für Feldeinstellungen"
 
 #: includes/admin/admin-internal-post-type.php:290
-#: includes/admin/post-types/admin-field-group.php:572
+#: includes/admin/post-types/admin-field-group.php:573
 msgid "Close Modal"
 msgstr "Modal schließen"
 
@@ -3467,7 +3468,7 @@ msgstr "Änderungen speichern"
 msgid "Field Group Title"
 msgstr "Feldgruppen-Titel"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:718
+#: includes/admin/views/acf-post-type/advanced-settings.php:729
 #: includes/admin/views/global/form-top.php:13
 msgid "Add title"
 msgstr "Titel hinzufügen"
@@ -3644,7 +3645,7 @@ msgstr "Aktivieren"
 msgid "Activate this item"
 msgstr "Dieses Element aktivieren"
 
-#: acf.php:571 includes/admin/admin-internal-post-type-list.php:264
+#: acf.php:580 includes/admin/admin-internal-post-type-list.php:264
 #: includes/admin/post-types/admin-field-group.php:304
 #: includes/admin/post-types/admin-post-type.php:283
 #: includes/admin/post-types/admin-taxonomy.php:285
@@ -3675,11 +3676,11 @@ msgstr[1] "%s Feldgruppen wurden deaktiviert."
 msgid "Move field group to trash?"
 msgstr "Soll die Feldgruppe in den Papierkorb verschoben werden?"
 
-#: acf.php:627
+#: acf.php:636
 msgid "Advanced Custom Fields and Advanced Custom Fields PRO should not be active at the same time. We've automatically deactivated Advanced Custom Fields."
 msgstr "Advanced Custom Fields und Advanced Custom Fields PRO sollten nicht gleichzeitig aktiviert sein. Advanced Custom Fields wurde automatisch deaktiviert."
 
-#: acf.php:629
+#: acf.php:638
 msgid "Advanced Custom Fields and Advanced Custom Fields PRO should not be active at the same time. We've automatically deactivated Advanced Custom Fields PRO."
 msgstr "Advanced Custom Fields und Advanced Custom Fields PRO sollten nicht gleichzeitig aktiviert sein. Advanced Custom Fields PRO wurde automatisch deaktiviert."
 
@@ -3802,7 +3803,7 @@ msgstr "Taxonomien"
 #: includes/acf-wp-functions.php:53
 #: includes/admin/post-types/admin-post-type.php:125
 #: includes/admin/post-types/admin-post-types.php:119
-#: includes/admin/views/acf-post-type/advanced-settings.php:115
+#: includes/admin/views/acf-post-type/advanced-settings.php:126
 msgid "Posts"
 msgstr "Beiträge"
 
@@ -3935,7 +3936,7 @@ msgid "Error loading field."
 msgstr "Fehler beim Laden des Felds."
 
 #: includes/ajax/class-acf-ajax-query-users.php:52
-#: includes/ajax/class-acf-ajax.php:166
+#: includes/ajax/class-acf-ajax.php:166 src/AI/GEO/FieldSettings.php:72
 msgid "Invalid nonce."
 msgstr "Der Nonce ist ungültig."
 
@@ -4034,7 +4035,7 @@ msgid "Categories"
 msgstr "Kategorien"
 
 #: includes/admin/views/acf-field-group/options.php:195
-#: includes/admin/views/acf-post-type/advanced-settings.php:37
+#: includes/admin/views/acf-post-type/advanced-settings.php:43
 msgid "Page Attributes"
 msgstr "Seiten-Attribute"
 
@@ -4043,7 +4044,7 @@ msgid "Format"
 msgstr "Format"
 
 #: includes/admin/views/acf-field-group/options.php:193
-#: includes/admin/views/acf-post-type/advanced-settings.php:31
+#: includes/admin/views/acf-post-type/advanced-settings.php:37
 msgid "Author"
 msgstr "Autor"
 
@@ -4052,13 +4053,13 @@ msgid "Slug"
 msgstr "Titelform"
 
 #: includes/admin/views/acf-field-group/options.php:191
-#: includes/admin/views/acf-post-type/advanced-settings.php:36
+#: includes/admin/views/acf-post-type/advanced-settings.php:39
 msgid "Revisions"
 msgstr "Revisionen"
 
 #: includes/acf-wp-functions.php:75
 #: includes/admin/views/acf-field-group/options.php:190
-#: includes/admin/views/acf-post-type/advanced-settings.php:32
+#: includes/admin/views/acf-post-type/advanced-settings.php:41
 msgid "Comments"
 msgstr "Kommentare"
 
@@ -4067,7 +4068,7 @@ msgid "Discussion"
 msgstr "Diskussion"
 
 #: includes/admin/views/acf-field-group/options.php:187
-#: includes/admin/views/acf-post-type/advanced-settings.php:35
+#: includes/admin/views/acf-post-type/advanced-settings.php:42
 msgid "Excerpt"
 msgstr "Textauszug"
 
@@ -4096,11 +4097,11 @@ msgstr "Schlüssel"
 msgid "Order"
 msgstr "Reihenfolge"
 
-#: includes/admin/views/acf-field-group/field.php:331
+#: includes/admin/views/acf-field-group/field.php:336
 msgid "Close Field"
 msgstr "Feld schließen"
 
-#: includes/admin/views/acf-field-group/field.php:282
+#: includes/admin/views/acf-field-group/field.php:285
 msgid "Wrapper Attributes"
 msgstr "Wrapper-Attribute"
 
@@ -4190,7 +4191,7 @@ msgstr "Dokumentation"
 #: includes/admin/post-types/admin-post-types.php:115
 #: includes/admin/post-types/admin-taxonomies.php:114
 #: includes/admin/views/acf-field-group/options.php:258
-#: includes/admin/views/acf-post-type/advanced-settings.php:71
+#: includes/admin/views/acf-post-type/advanced-settings.php:82
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:123
 #: includes/admin/views/upgrade/network.php:37
 #: includes/admin/views/upgrade/network.php:48
@@ -4213,7 +4214,7 @@ msgstr "Position"
 msgid "Null"
 msgstr "Null"
 
-#: includes/admin/post-types/admin-field-group.php:609
+#: includes/admin/post-types/admin-field-group.php:610
 msgid "Move Field"
 msgstr "Feld verschieben"
 
@@ -4228,7 +4229,7 @@ msgid "Remove"
 msgstr "Entfernen"
 
 #: includes/admin/views/acf-field-group/options.php:188
-#: includes/admin/views/acf-post-type/advanced-settings.php:39
+#: includes/admin/views/acf-post-type/advanced-settings.php:40
 msgid "Custom Fields"
 msgstr "Individuelle Felder"
 
@@ -4256,7 +4257,7 @@ msgstr "Datei bearbeiten"
 msgid "Select File"
 msgstr "Datei auswählen"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:30
+#: includes/admin/views/acf-post-type/advanced-settings.php:33
 #: includes/forms/form-front.php:54
 msgid "Title"
 msgstr "Titel"
@@ -4327,7 +4328,7 @@ msgstr "1 Feld erfordert Aufmerksamkeit"
 msgid "Restricted"
 msgstr "Eingeschränkt"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:479
+#: includes/admin/views/acf-post-type/advanced-settings.php:490
 #: includes/media.php:60
 msgid "Uploaded to this post"
 msgstr "Zu diesem Beitrag hochgeladen"
@@ -4347,7 +4348,7 @@ msgstr "Aktualisieren"
 #: includes/admin/views/acf-field-group/conditional-logic.php:191
 #: includes/admin/views/acf-field-group/location-group.php:14
 #: includes/admin/views/acf-field-group/locations.php:43
-#: includes/api/api-helpers.php:3017
+#: includes/api/api-helpers.php:3072
 msgid "or"
 msgstr "oder"
 
@@ -4495,7 +4496,7 @@ msgid "Post Object"
 msgstr "Beitrags-Objekt"
 
 #: includes/admin/views/acf-field-group/options.php:196
-#: includes/admin/views/acf-post-type/advanced-settings.php:38
+#: includes/admin/views/acf-post-type/advanced-settings.php:36
 #: includes/fields/class-acf-field-relationship.php:710
 msgid "Featured Image"
 msgstr "Beitragsbild"
@@ -4665,13 +4666,13 @@ msgstr "Standardwert"
 
 #: includes/assets.php:357 includes/fields/class-acf-field-true_false.php:88
 #: includes/fields/class-acf-field-true_false.php:184
-#: src/Site_Health/Site_Health.php:284 src/Site_Health/Site_Health.php:346
+#: src/Site_Health/Site_Health.php:394 src/Site_Health/Site_Health.php:458
 msgid "No"
 msgstr "Nein"
 
 #: includes/assets.php:356 includes/fields/class-acf-field-true_false.php:85
 #: includes/fields/class-acf-field-true_false.php:168
-#: src/Site_Health/Site_Health.php:283 src/Site_Health/Site_Health.php:346
+#: src/Site_Health/Site_Health.php:393 src/Site_Health/Site_Health.php:458
 msgid "Yes"
 msgstr "Ja"
 
@@ -4719,41 +4720,41 @@ msgstr "Zoom"
 msgid "Return Format"
 msgstr "Rückgabeformat"
 
-#: acf.php:535
+#: acf.php:544
 msgid "View Field"
 msgstr "Feld anzeigen"
 
-#: acf.php:534 includes/admin/views/acf-field-group/fields.php:123
+#: acf.php:543 includes/admin/views/acf-field-group/fields.php:124
 msgid "New Field"
 msgstr "Neues Feld"
 
-#: acf.php:533
+#: acf.php:542
 msgid "Edit Field"
 msgstr "Feld bearbeiten"
 
-#: acf.php:530
+#: acf.php:539
 msgid "Field"
 msgstr "Feld"
 
-#: acf.php:529 includes/admin/post-types/admin-field-group.php:179
+#: acf.php:538 includes/admin/post-types/admin-field-group.php:179
 #: includes/admin/post-types/admin-field-groups.php:98
 #: includes/admin/views/acf-field-group/fields.php:42
 msgid "Fields"
 msgstr "Felder"
 
-#: acf.php:502
+#: acf.php:511
 msgid "Search Field Groups"
 msgstr "Feldgruppen durchsuchen"
 
-#: acf.php:501
+#: acf.php:510
 msgid "View Field Group"
 msgstr "Feldgruppe anzeigen"
 
-#: acf.php:500
+#: acf.php:509
 msgid "New Field Group"
 msgstr "Neue Feldgruppe"
 
-#: acf.php:499
+#: acf.php:508
 msgid "Edit Field Group"
 msgstr "Feldgruppe bearbeiten"
 
@@ -4761,11 +4762,11 @@ msgstr "Feldgruppe bearbeiten"
 msgid "Import Field Groups"
 msgstr "Feldgruppen importieren"
 
-#: acf.php:496
+#: acf.php:505
 msgid "Field Group"
 msgstr "Feldgruppe"
 
-#: acf.php:495 includes/admin/post-types/admin-field-groups.php:61
+#: acf.php:504 includes/admin/post-types/admin-field-groups.php:61
 #: includes/admin/post-types/admin-post-types.php:118
 #: includes/admin/post-types/admin-taxonomies.php:117
 msgid "Field Groups"
@@ -4783,8 +4784,8 @@ msgstr "Datei"
 msgid "Password"
 msgstr "Passwort"
 
-#: includes/admin/post-types/admin-field-group.php:602
-#: includes/admin/post-types/admin-field-group.php:606
+#: includes/admin/post-types/admin-field-group.php:603
+#: includes/admin/post-types/admin-field-group.php:607
 msgid "Please select the destination for this field"
 msgstr "Bitte das Ziel für dieses Feld auswählen"
 
@@ -4849,7 +4850,7 @@ msgstr "Farbe auswählen"
 msgid "Default"
 msgstr "Standard"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:98
+#: includes/admin/views/acf-post-type/advanced-settings.php:109
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:150
 #: includes/fields/class-acf-field-color_picker.php:77
 msgid "Clear"
@@ -4987,11 +4988,11 @@ msgstr "HTML maskieren"
 msgid "Link Array"
 msgstr "Link-Array"
 
-#: acf.php:536
+#: acf.php:545
 msgid "Search Fields"
 msgstr "Felder suchen"
 
-#: includes/acf-field-functions.php:868
+#: includes/acf-field-functions.php:871
 #: includes/admin/post-types/admin-field-group.php:95
 msgid "(no label)"
 msgstr "(keine Beschriftung)"
@@ -5009,7 +5010,7 @@ msgstr "Feldschlüssel"
 msgid "Sync available"
 msgstr "Synchronisierung verfügbar"
 
-#: includes/admin/views/acf-post-type/advanced-settings.php:50
+#: includes/admin/views/acf-post-type/advanced-settings.php:60
 msgid "Supports"
 msgstr "Hilfe"
 
@@ -5034,19 +5035,19 @@ msgstr "Feld in eine andere Gruppe verschieben"
 msgid "Field Label"
 msgstr "Feldbeschriftung"
 
-#: includes/admin/views/acf-field-group/field.php:229
+#: includes/admin/views/acf-field-group/field.php:231
 msgid "Instructions"
 msgstr "Anweisungen"
 
-#: includes/admin/views/acf-field-group/field.php:288
+#: includes/admin/views/acf-field-group/field.php:291
 msgid "width"
 msgstr "Breite"
 
-#: includes/admin/views/acf-field-group/field.php:246
+#: includes/admin/views/acf-field-group/field.php:248
 msgid "class"
 msgstr "Klasse"
 
-#: includes/admin/views/acf-field-group/field.php:262
+#: includes/admin/views/acf-field-group/field.php:264
 msgid "id"
 msgstr "ID"
 
@@ -5093,27 +5094,27 @@ msgstr "Lokales JSON"
 msgid "(no title)"
 msgstr "(ohne Titel)"
 
-#: includes/api/api-helpers.php:2956
+#: includes/api/api-helpers.php:3011
 msgid "Image width must be at least %dpx."
 msgstr "Die Breite des Bildes muss mindestens %dpx sein."
 
-#: includes/api/api-helpers.php:2960
+#: includes/api/api-helpers.php:3015
 msgid "Image width must not exceed %dpx."
 msgstr "Die Breite des Bildes darf %dpx nicht überschreiten."
 
-#: includes/api/api-helpers.php:2972
+#: includes/api/api-helpers.php:3027
 msgid "Image height must be at least %dpx."
 msgstr "Die Höhe des Bildes muss mindestens %dpx sein."
 
-#: includes/api/api-helpers.php:2976
+#: includes/api/api-helpers.php:3031
 msgid "Image height must not exceed %dpx."
 msgstr "Die Höhe des Bild darf %dpx nicht überschreiten."
 
-#: includes/api/api-helpers.php:2989
+#: includes/api/api-helpers.php:3044
 msgid "File size must be at least %s."
 msgstr "Die Dateigröße muss mindestens %s sein."
 
-#: includes/api/api-helpers.php:3020
+#: includes/api/api-helpers.php:3075
 msgid "File type must be %s."
 msgstr "Der Dateityp muss %s sein."
 
@@ -5407,7 +5408,7 @@ msgid "Parent Page (has children)"
 msgstr "Übergeordnete Seite (hat Unterseiten)"
 
 #. translators: counts for inactive field groups
-#: acf.php:577
+#: acf.php:586
 msgid "Inactive <span class=\"count\">(%s)</span>"
 msgid_plural "Inactive <span class=\"count\">(%s)</span>"
 msgstr[0] "Deaktiviert <span class=\"count\">(%s)</span>"
@@ -5437,7 +5438,7 @@ msgstr "Danke für die Aktualisierung auf %1$s v%2$s!"
 msgid "Gallery"
 msgstr "Galerie"
 
-#: includes/api/api-helpers.php:2993
+#: includes/api/api-helpers.php:3048
 msgid "File size must not exceed %s."
 msgstr "Die Dateigröße darf nicht größer als %s sein."
 
@@ -5448,7 +5449,7 @@ msgstr "Suchen"
 
 #: includes/admin/views/acf-field-group/field.php:62
 #: includes/admin/views/acf-field-group/options.php:230
-#: includes/admin/views/acf-post-type/advanced-settings.php:87
+#: includes/admin/views/acf-post-type/advanced-settings.php:98
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:139
 msgid "Active"
 msgstr "Aktiv"
@@ -5523,16 +5524,16 @@ msgstr "Auswahl"
 msgid "Conditional Logic"
 msgstr "Bedingte Logik"
 
-#: acf.php:532
+#: acf.php:541
 msgid "Add New Field"
 msgstr "Neues Feld hinzufügen"
 
-#: acf.php:498
+#: acf.php:507
 msgid "Add New Field Group"
 msgstr "Neue Feldgruppe hinzufügen"
 
-#: acf.php:497 acf.php:531
-#: includes/admin/views/acf-post-type/advanced-settings.php:233
+#: acf.php:506 acf.php:540
+#: includes/admin/views/acf-post-type/advanced-settings.php:244
 #: includes/post-types/class-acf-post-type.php:102
 #: includes/post-types/class-acf-taxonomy.php:101
 msgid "Add New"
@@ -5604,7 +5605,7 @@ msgstr "Ein Ergebnis ist verfügbar, Eingabetaste drücken, um es auszuwählen."
 
 #. translators: Confirmation message once a field has been moved to a different
 #. field group.
-#: includes/admin/post-types/admin-field-group.php:568
+#: includes/admin/post-types/admin-field-group.php:569
 msgid "The %1$s field can now be found in the %2$s field group"
 msgstr "Das %1$s-Feld kann jetzt in der %2$s-Feldgruppe gefunden werden"
 
@@ -5693,7 +5694,7 @@ msgstr "Wird geladen"
 msgid "Basic"
 msgstr "Grundlegend"
 
-#: includes/fields/class-acf-field.php:326
+#: includes/fields/class-acf-field.php:373
 msgid "Required"
 msgstr "Erforderlich"
 
@@ -5978,7 +5979,7 @@ msgstr "Dieses Akkordeon beim Laden der Seite in geöffnetem Zustand anzeigen."
 msgid "Field group draft updated."
 msgstr "Der Entwurf der Feldgruppe wurde aktualisiert."
 
-#: includes/admin/post-types/admin-field-group.php:565
+#: includes/admin/post-types/admin-field-group.php:566
 msgid "Move Complete."
 msgstr "Das Verschieben ist abgeschlossen."
 
@@ -6039,19 +6040,19 @@ msgstr "Die Feldgruppe wurde gelöscht."
 msgid "Field group published."
 msgstr "Die Feldgruppe wurde veröffentlicht."
 
-#: acf.php:503
+#: acf.php:512
 msgid "No Field Groups found"
 msgstr "Es wurden keine Feldgruppen gefunden"
 
-#: acf.php:504
+#: acf.php:513
 msgid "No Field Groups found in Trash"
 msgstr "Es wurden keine Feldgruppen im Papierkorb gefunden"
 
-#: acf.php:537
+#: acf.php:546
 msgid "No Fields found"
 msgstr "Es wurden keine Felder gefunden"
 
-#: acf.php:538
+#: acf.php:547
 msgid "No Fields found in Trash"
 msgstr "Es wurden keine Felder im Papierkorb gefunden"
 
@@ -6202,7 +6203,7 @@ msgstr "Automatisches Hinzufügen von &lt;br&gt;"
 
 #: includes/admin/post-types/admin-field-group.php:97
 #: includes/class-acf-internal-post-type.php:737
-#: includes/post-types/class-acf-field-group.php:355
+#: includes/post-types/class-acf-field-group.php:357
 msgid "copy"
 msgstr "kopieren"
 
@@ -6289,6 +6290,6 @@ msgid "Posts Page"
 msgstr "Beitragsseite"
 
 #. Plugin Name of the plugin
-#: acf.php acf.php:341
+#: acf.php acf.php:347
 msgid "Advanced Custom Fields"
 msgstr "Advanced Custom Fields"

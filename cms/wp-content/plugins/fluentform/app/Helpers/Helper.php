@@ -1027,10 +1027,19 @@ class Helper
                 if (ArrayHelper::isTrue($rawField, 'attributes.multiple')) {
                     $fieldType = 'multi_select';
                 }
-                $options = array_column(
-                    ArrayHelper::get($rawField, 'settings.advanced_options', []),
-                    'value'
-                );
+                $formattedOptions = ArrayHelper::get($rawField, 'settings.advanced_options', []);
+                if (!$formattedOptions) {
+                    $formattedOptions = [];
+                    foreach (ArrayHelper::get($rawField, 'options', []) as $value => $label) {
+                        $formattedOptions[] = [
+                            'label' => $label,
+                            'value' => $value,
+                        ];
+                    }
+                    // @todo : Update all reference in form templates
+                }
+
+                $options = array_column($formattedOptions, 'value');
                 
                 // Add field-specific __ff_other__ to options if "Other" option is enabled
                 if (in_array($fieldType, ['input_checkbox', 'input_radio']) &&

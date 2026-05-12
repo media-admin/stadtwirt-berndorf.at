@@ -465,11 +465,11 @@ class Menu
             $entriesTitle = __('Entries', 'fluentform');
 
             if (Helper::isFluentAdminPage()) {
-                $allowForms = FormManagerService::getUserAllowedForms();
+                $allowForms = FormManagerService::getUserAllowedFormsScope();
                 $entriesCount = wpFluent()->table('fluentform_submissions')
                     ->where('status', 'unread')
-                    ->when($allowForms, function ($q) use ($allowForms){
-                        return $q->whereIn('form_id', $allowForms);
+                    ->when(false !== $allowForms, function ($q) use ($allowForms){
+                        return $q->whereIn('form_id', $allowForms ?: [0]);
                     })
                     ->count();
 
@@ -814,8 +814,8 @@ class Menu
             (new ActivationHandler())->migrate();
         }
 
-        if ($allowForms = FormManagerService::getUserAllowedForms()) {
-            $formsCount = wpFluent()->table('fluentform_forms')->whereIn('id', $allowForms)->count();
+        if (false !== ($allowForms = FormManagerService::getUserAllowedFormsScope())) {
+            $formsCount = wpFluent()->table('fluentform_forms')->whereIn('id', $allowForms ?: [0])->count();
         } else {
             $formsCount = wpFluent()->table('fluentform_forms')->count();
         }
@@ -1044,7 +1044,8 @@ class Menu
 				    'net_promoter_score',
 				    'rangeslider',
 				    'custom_payment_component',
-                    'item_quantity_component'
+                    'item_quantity_component',
+                    'subscription_payment_component'
 			    ]
 		    ];
 	    }
@@ -1140,12 +1141,12 @@ class Menu
 
     public function renderTransfer()
     {
-        $allowForms = FormManagerService::getUserAllowedForms();
+        $allowForms = FormManagerService::getUserAllowedFormsScope();
         $forms = wpFluent()->table('fluentform_forms')
             ->orderBy('id', 'desc')
             ->select(['id', 'title'])
-            ->when($allowForms, function ($q) use ($allowForms){
-                return $q->whereIn('id', $allowForms);
+            ->when(false !== $allowForms, function ($q) use ($allowForms){
+                return $q->whereIn('id', $allowForms ?: [0]);
             })
             ->get();
 

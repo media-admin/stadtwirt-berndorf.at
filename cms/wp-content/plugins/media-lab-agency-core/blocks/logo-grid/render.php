@@ -2,31 +2,54 @@
 /**
  * Logo-Grid Block – ACF Render Template
  *
- * WCAG-Patches:
- *   ✅ 1.1.1 Non-text Content: Fallback-Alt-Text wenn ACF + Mediathek leer
- *            Dekorationsbilder (mit Link) erhalten alt="" wenn kein Text verfügbar,
- *            der Link selbst erhält aria-label mit dem Firmennamen (logo_alt)
+ * Seit v1.11.6: Logos können aus dem CPT `medialab_logo` geladen werden.
+ * Toggle `logo_grid_source` wählt zwischen CPT und manuellem Repeater.
  *
  * @package MediaLabAgencyCore
- * @since   1.6.0 / WCAG-Patch
+ * @since   1.6.0
+ * @updated 1.11.6  CPT-Quelle hinzugefügt
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 $title     = get_field( 'logo_grid_title' );
 $columns   = (int) ( get_field( 'logo_grid_columns' ) ?: 4 );
-$logos     = get_field( 'logo_grid_logos' );
 $grayscale = get_field( 'logo_grid_grayscale' ) !== false;
+$source    = get_field( 'logo_grid_source' ) ?: 'manual';
 
-if ( empty( $logos ) ) return;
+// ── Logos laden ───────────────────────────────────────────────────────────────
+$logos = [];
+
+if ( $source === 'cpt' && function_exists( 'medialab_get_logos' ) ) {
+    foreach ( medialab_get_logos() as $logo ) {
+        $img     = $logo['image'];
+        $logos[] = [
+            'logo_image' => $img,
+            'logo_alt'   => $logo['name'] ?: ( is_array( $img ) ? ( $img['alt'] ?? '' ) : '' ),
+            'logo_url'   => $logo['url'],
+        ];
+    }
+} else {
+    $logos = get_field( 'logo_grid_logos' ) ?: [];
+}
+
+if ( empty( $logos ) ) {
+    if ( $is_preview ) {
+        echo '<div style="padding:1.5rem;background:#f9fafb;text-align:center;color:#aaa;font-size:.875rem;">';
+        echo esc_html( $source === 'cpt'
+            ? __( 'Logo-Leiste – noch keine Logos im CPT „Logos" vorhanden.', 'media-lab-core' )
+            : __( 'Logo-Leiste – bitte Logos im Repeater hinzufügen.', 'media-lab-core' )
+        );
+        echo '</div>';
+    }
+    return;
+}
 
 $block_classes = 'ml-block-logo-grid ml-logo-grid--cols-' . $columns;
-if ( $grayscale )                      $block_classes .= ' ml-logo-grid--grayscale';
-if ( ! empty( $block['className'] ) )  $block_classes .= ' ' . $block['className'];
-if ( ! empty( $block['align'] ) )      $block_classes .= ' align' . $block['align'];
-
+if ( $grayscale )                     $block_classes .= ' ml-logo-grid--grayscale';
+if ( ! empty( $block['className'] ) ) $block_classes .= ' ' . $block['className'];
+if ( ! empty( $block['align'] ) )     $block_classes .= ' align' . $block['align'];
 $block_id = ! empty( $block['anchor'] ) ? ' id="' . esc_attr( $block['anchor'] ) . '"' : '';
-
 ?>
 <div class="<?php echo esc_attr( $block_classes ); ?>"<?php echo $block_id; ?>>
 
@@ -42,11 +65,6 @@ $block_id = ! empty( $block['anchor'] ) ? ' id="' . esc_attr( $block['anchor'] )
             $w       = is_array( $img ) ? ( $img['width']  ?? 200 ) : 200;
             $h       = is_array( $img ) ? ( $img['height'] ?? 80  ) : 80;
 
-            // ✅ WCAG 1.1.1: Alt-Text Priorität:
-            //    1. ACF-Feld logo_alt
-            //    2. Mediathek Alt-Text
-            //    3. Dateiname (bereinigt)
-            //    4. Leerstring (dekorativ, Link erhält aria-label)
             $alt = trim( $item['logo_alt'] ?? '' );
             if ( empty( $alt ) && is_array( $img ) ) {
                 $alt = trim( $img['alt'] ?? '' );
@@ -61,8 +79,7 @@ $block_id = ! empty( $block['anchor'] ) ? ' id="' . esc_attr( $block['anchor'] )
         <li class="ml-logo-grid__item">
             <?php if ( $url ) : ?>
             <a href="<?php echo esc_url( $url ); ?>"
-               target="_blank"
-               rel="noopener noreferrer"
+               target="_blank" rel="noopener noreferrer"
                class="ml-logo-grid__link"
                <?php if ( $alt ) : ?>aria-label="<?php echo esc_attr( $alt ); ?>"<?php endif; ?>>
             <?php endif; ?>

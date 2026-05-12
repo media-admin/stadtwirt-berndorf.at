@@ -1,0 +1,24 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "medialab/before-after",
+  "title": "Vorher / Nachher",
+  "description": "Fotovergleich mit ziehbarem Drag-Slider. Zwei Bilder werden übereinandergelegt und durch Ziehen verglichen.",
+  "category": "design",
+  "icon": "image-flip-horizontal",
+  "keywords": ["vorher", "nachher", "before", "after", "vergleich", "slider", "foto"],
+  "textdomain": "media-lab-agency-core",
+  "acf": {
+    "mode": "edit",
+    "renderTemplate": "render.php"
+  },
+  "supports": {
+    "anchor": true,
+    "align": ["wide", "full"],
+    "spacing": {
+      "margin": true,
+      "padding": true
+    }
+  },
+  "example": {}
+}

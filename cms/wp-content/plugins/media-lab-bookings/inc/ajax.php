@@ -3,7 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 class MLB_Ajax {
     public static function init() {
-        $actions = [ 'mlb_get_location_data', 'mlb_get_slots', 'mlb_submit_booking' ];
+        $actions = [ 'mlb_get_location_data', 'mlb_get_slots', 'mlb_submit_booking', 'mlb_get_blocked_dates' ];
         foreach ( $actions as $action ) {
             $method = str_replace( 'mlb_', '', $action );
             add_action( "wp_ajax_{$action}",        [ __CLASS__, $method ] );
@@ -21,7 +21,18 @@ class MLB_Ajax {
         foreach ( $services_raw as $s ) {
             if ( ! empty( $s['service_name'] ) ) $services[] = [ 'name' => sanitize_text_field( $s['service_name'] ), 'duration' => isset( $s['service_duration'] ) ? (int) $s['service_duration'] : null ];
         }
-        wp_send_json_success( [ 'open_weekdays' => $open_weekdays, 'services' => $services ] );
+        wp_send_json_success( [ 'open_weekdays' => $open_weekdays, 'services' => $services, 'blocked_dates' => MLB_Slots::get_blocked_dates_for_range( $location_id, date('Y-m-d'), date('Y-m-d', strtotime('+13 months')) ) ] );
+    }
+
+    public static function get_blocked_dates() {
+        check_ajax_referer( 'mlb_nonce', 'nonce' );
+        $location_id = (int) sanitize_text_field( $_POST['location_id'] ?? 0 );
+        $year        = (int) sanitize_text_field( $_POST['year']        ?? date('Y') );
+        $month       = (int) sanitize_text_field( $_POST['month']       ?? date('m') );
+        if ( ! $location_id || get_post_type( $location_id ) !== 'mlb_location' ) wp_send_json_error( [ 'message' => 'Ungültiger Standort.' ] );
+        $from = sprintf( '%04d-%02d-01', $year, $month );
+        $to   = date( 'Y-m-d', mktime( 0, 0, 0, $month + 1, 0, $year ) );
+        wp_send_json_success( [ 'blocked_dates' => MLB_Slots::get_blocked_dates_for_range( $location_id, $from, $to ) ] );
     }
 
     public static function get_slots() {
@@ -31,6 +42,7 @@ class MLB_Ajax {
         if ( ! $location_id || get_post_type( $location_id ) !== 'mlb_location' ) wp_send_json_error( [ 'message' => 'Ungültiger Standort.' ] );
         if ( ! $date || ! preg_match( '/^\d{4}-\d{2}-\d{2}$/', $date ) ) wp_send_json_error( [ 'message' => 'Ungültiges Datum.' ] );
         if ( strtotime( $date ) < strtotime( 'today' ) ) wp_send_json_error( [ 'message' => 'Datum liegt in der Vergangenheit.' ] );
+        if ( MLB_Slots::is_day_blocked( $location_id, $date ) ) wp_send_json_success( [ 'slots' => [], 'message' => 'An diesem Tag sind keine Buchungen möglich (gesperrt).' ] );
         if ( ! MLB_Slots::is_date_open( $location_id, $date ) ) wp_send_json_success( [ 'slots' => [], 'message' => 'An diesem Tag ist der Standort geschlossen.' ] );
         $slots = MLB_Slots::generate( $location_id, $date );
         wp_send_json_success( [ 'slots' => $slots ] );

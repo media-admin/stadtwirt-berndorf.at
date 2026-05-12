@@ -1,0 +1,24 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "medialab/table-of-contents",
+  "title": "Inhaltsverzeichnis",
+  "description": "Automatisches Inhaltsverzeichnis aus den H2/H3/H4-Überschriften des Beitrags. Inline oder sticky konfigurierbar.",
+  "category": "design",
+  "icon": "list-view",
+  "keywords": ["toc", "inhaltsverzeichnis", "navigation", "headings", "überschriften"],
+  "textdomain": "media-lab-agency-core",
+  "acf": {
+    "mode": "preview",
+    "renderTemplate": "render.php"
+  },
+  "supports": {
+    "anchor": true,
+    "align": ["wide"],
+    "spacing": {
+      "margin": true,
+      "padding": true
+    }
+  },
+  "example": {}
+}

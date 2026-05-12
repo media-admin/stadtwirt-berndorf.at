@@ -356,9 +356,13 @@ class Extractor
         $shouldSetMaxValidation = $maxLength && !$fieldHasMaxValidation;
 
         if ($shouldSetMaxValidation) {
+            $message = Helper::getGlobalDefaultMessage('max');
+            if (!$message) {
+                $message = __('Validation fails for maximum value', 'fluentform');
+            }
             $this->result[$this->attribute]['rules']['max'] = [
                 'value'   => $maxLength,
-                "message" => Helper::getGlobalDefaultMessage('max'),
+                'message' => $message,
             ];
         }
 

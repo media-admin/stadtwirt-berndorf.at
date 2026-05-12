@@ -85,14 +85,14 @@ $privacy_url   = get_privacy_policy_url();
         <div class="mlb-form__step mlb-form__step--service">
             <div class="mlb-form__row">
                 <div class="mlb-form__field">
-                    <label for="<?php echo esc_attr( $form_id ); ?>-service" class="mlb-form__label<?php echo $required_fields['service'] ? ' mlb-form__label--required' : ''; ?>"><?php echo $labels['service']; ?></label>
-                    <select id="<?php echo esc_attr( $form_id ); ?>-service" name="service" class="mlb-form__select mlb-service-select" <?php echo $required_fields['service'] ? 'required' : ''; ?>>
+                    <label for="<?php echo esc_attr( $form_id ); ?>-service" class="mlb-form__label"><?php echo $labels['service']; ?></label>
+                    <select id="<?php echo esc_attr( $form_id ); ?>-service" name="service" class="mlb-form__select mlb-service-select">
                         <option value="">Bitte zuerst Standort wählen</option>
                     </select>
                 </div>
                 <div class="mlb-form__field">
-                    <label for="<?php echo esc_attr( $form_id ); ?>-persons" class="mlb-form__label<?php echo $required_fields['persons'] ? ' mlb-form__label--required' : ''; ?>"><?php echo $labels['persons']; ?></label>
-                    <input type="number" id="<?php echo esc_attr( $form_id ); ?>-persons" name="persons" class="mlb-form__input" value="1" min="1" max="99" <?php echo $required_fields['persons'] ? 'required' : ''; ?>>
+                    <label for="<?php echo esc_attr( $form_id ); ?>-persons" class="mlb-form__label mlb-form__label--required"><?php echo $labels['persons']; ?></label>
+                    <input type="number" id="<?php echo esc_attr( $form_id ); ?>-persons" name="persons" class="mlb-form__input" value="1" min="1" max="99" required>
                 </div>
             </div>
         </div>
@@ -100,8 +100,8 @@ $privacy_url   = get_privacy_policy_url();
         <!-- Kontaktdaten -->
         <div class="mlb-form__step mlb-form__step--contact">
             <div class="mlb-form__field">
-                <label for="<?php echo esc_attr( $form_id ); ?>-name" class="mlb-form__label<?php echo $required_fields['name'] ? ' mlb-form__label--required' : ''; ?>"><?php echo $labels['name']; ?></label>
-                <input type="text" id="<?php echo esc_attr( $form_id ); ?>-name" name="name" class="mlb-form__input" autocomplete="name" <?php echo $required_fields['name'] ? 'required' : ''; ?>>
+                <label for="<?php echo esc_attr( $form_id ); ?>-name" class="mlb-form__label mlb-form__label--required"><?php echo $labels['name']; ?></label>
+                <input type="text" id="<?php echo esc_attr( $form_id ); ?>-name" name="name" class="mlb-form__input" autocomplete="name" required>
             </div>
             <div class="mlb-form__row" style="margin-top:16px">
                 <div class="mlb-form__field">
@@ -109,8 +109,8 @@ $privacy_url   = get_privacy_policy_url();
                     <input type="email" id="<?php echo esc_attr( $form_id ); ?>-email" name="email" class="mlb-form__input" autocomplete="email" required>
                 </div>
                 <div class="mlb-form__field">
-                    <label for="<?php echo esc_attr( $form_id ); ?>-phone" class="mlb-form__label<?php echo $required_fields['phone'] ? ' mlb-form__label--required' : ''; ?>"><?php echo $labels['phone']; ?></label>
-                    <input type="tel" id="<?php echo esc_attr( $form_id ); ?>-phone" name="phone" class="mlb-form__input" autocomplete="tel" <?php echo $required_fields['phone'] ? 'required' : ''; ?>>
+                    <label for="<?php echo esc_attr( $form_id ); ?>-phone" class="mlb-form__label"><?php echo $labels['phone']; ?></label>
+                    <input type="tel" id="<?php echo esc_attr( $form_id ); ?>-phone" name="phone" class="mlb-form__input" autocomplete="tel">
                 </div>
             </div>
             <div class="mlb-form__field" style="margin-top:16px">
