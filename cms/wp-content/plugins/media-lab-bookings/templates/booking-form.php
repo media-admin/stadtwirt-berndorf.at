@@ -155,6 +155,12 @@ $privacy_url   = get_privacy_policy_url();
                 <p class="mlb-form__privacy-note"><?php echo esc_html( $labels['privacy_note'] ); ?></p>
             <?php endif; ?>
         </div>
+        <?php
+        // Honeypot-Schutz (media-lab-agency-core muss aktiv sein)
+        if ( function_exists( 'medialab_honeypot_render' ) ) {
+            echo medialab_honeypot_render(); // phpcs:ignore WordPress.Security.EscapeOutput
+        }
+        ?>
     </form>
 
     <!-- Erfolgsmeldung -->

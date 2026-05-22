@@ -1,0 +1,39 @@
+// =============================================================================
+// Honeypot Spam Protection
+// =============================================================================
+//
+// Versteckt das Honeypot-Feld (.ml-hp) vollständig vor echten Nutzern.
+//
+// WICHTIG: display:none oder visibility:hidden NICHT verwenden –
+// fortgeschrittene Bots erkennen diese CSS-Properties und überspringen
+// das Feld. Off-Screen-Positionierung ist für Bots nicht trivial erkennbar.
+//
+// Das aria-hidden="true" und tabindex="-1" im PHP-Output stellen sicher,
+// dass Screen Reader und Tab-Navigation das Feld ignorieren.
+// =============================================================================
+
+.ml-hp {
+    // Außerhalb des sichtbaren Bereichs positionieren.
+    position: absolute;
+    left: -9999px;
+    top:  -9999px;
+
+    // Auf 1px reduzieren statt 0px – einige Bots prüfen auf display:none
+    // equivalent behavior, aber 1px-Elemente sind im DOM vorhanden.
+    width:    1px;
+    height:   1px;
+    overflow: hidden;
+
+    // Visuell vollständig unsichtbar.
+    opacity: 0;
+
+    // Keine Interaktion möglich.
+    pointer-events: none;
+
+    // Enthaltene Elemente ebenso deaktivieren.
+    label,
+    input {
+        pointer-events: none;
+        cursor: default;
+    }
+}

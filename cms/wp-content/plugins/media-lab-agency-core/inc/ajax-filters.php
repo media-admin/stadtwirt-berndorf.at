@@ -153,7 +153,9 @@ function agency_core_ajax_filter_posts() {
             }
             
             if ($post_type === 'project') {
-                $post_data['client'] = get_field('client_name');
+                $post_data['client'] = get_field('projekt_kunde') ?: get_field('client_name');
+                $terms = get_the_terms(get_the_ID(), 'projekt_fachgebiet') ?: get_the_terms(get_the_ID(), 'project_category');
+                $post_data['category'] = ($terms && !is_wp_error($terms)) ? $terms[0]->name : '';
                 $post_data['project_date'] = get_field('project_date');
             }
 

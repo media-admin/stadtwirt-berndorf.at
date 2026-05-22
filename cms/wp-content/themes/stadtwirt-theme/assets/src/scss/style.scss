@@ -63,6 +63,7 @@
 @use 'components/job-card';
 @use 'components/ajax-filters';
 @use 'components/bookings';
+@use 'components/honeypot';
 
 // Templates
 @use 'templates/page-builder';

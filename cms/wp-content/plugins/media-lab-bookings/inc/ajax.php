@@ -51,6 +51,17 @@ class MLB_Ajax {
     public static function submit_booking() {
         check_ajax_referer( 'mlb_nonce', 'nonce' );
 
+        // Honeypot-Prüfung
+        if ( function_exists( 'medialab_honeypot_check' ) ) {
+            $hp_check = medialab_honeypot_check();
+            if ( is_wp_error( $hp_check ) ) {
+                wp_send_json_error( [
+                    'message' => $hp_check->get_error_message(),
+                    'code'    => $hp_check->get_error_code(),
+                ], 400 );
+            }
+        }
+
         // Basis-Pflichtfelder (immer)
         foreach ( [ 'location_id', 'date', 'time', 'email' ] as $field ) {
             if ( empty( $_POST[ $field ] ) ) wp_send_json_error( [ 'message' => sprintf( 'Pflichtfeld fehlt: %s', $field ) ] );
