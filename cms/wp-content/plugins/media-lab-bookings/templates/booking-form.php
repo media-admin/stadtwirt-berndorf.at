@@ -1,7 +1,13 @@
 <?php
 /**
- * Template: Buchungsformular v1.4.0
+ * Template: Buchungsformular v1.5.0
  * Variablen: $atts, $locations, $preset_location_id
+ *
+ * Neu in v1.5.0:
+ *   - Service-Vorbelegung über URL-Parameter ?service=<Name>
+ *     Wert muss exakt dem Namen in mlb_services (ACF Repeater) entsprechen.
+ *     Wird als data-preset Attribut an .mlb-service-select übergeben
+ *     und von booking-form.js nach dem Laden der Services angewendet.
  */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -38,6 +44,9 @@ $labels = [
 $wrapper_class = 'mlb-booking-form' . ( ! empty( $atts['class'] ) ? ' ' . esc_attr( $atts['class'] ) : '' );
 $form_id       = 'mlb-form-' . wp_unique_id();
 $privacy_url   = get_privacy_policy_url();
+
+// Service-Vorbelegung aus URL-Parameter ?service=<Name>
+$preset_service = isset( $_GET['service'] ) ? sanitize_text_field( wp_unslash( $_GET['service'] ) ) : '';
 ?>
 <div class="<?php echo esc_attr( $wrapper_class ); ?>" id="<?php echo esc_attr( $form_id ); ?>">
 
@@ -86,7 +95,10 @@ $privacy_url   = get_privacy_policy_url();
             <div class="mlb-form__row">
                 <div class="mlb-form__field">
                     <label for="<?php echo esc_attr( $form_id ); ?>-service" class="mlb-form__label"><?php echo $labels['service']; ?></label>
-                    <select id="<?php echo esc_attr( $form_id ); ?>-service" name="service" class="mlb-form__select mlb-service-select">
+                    <select id="<?php echo esc_attr( $form_id ); ?>-service"
+                            name="service"
+                            class="mlb-form__select mlb-service-select"
+                            <?php if ( $preset_service ) : ?>data-preset="<?php echo esc_attr( $preset_service ); ?>"<?php endif; ?>>
                         <option value="">Bitte zuerst Standort wählen</option>
                     </select>
                 </div>

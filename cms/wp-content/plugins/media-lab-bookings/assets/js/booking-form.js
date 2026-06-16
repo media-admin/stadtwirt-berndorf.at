@@ -1,5 +1,9 @@
 /**
- * Media Lab Bookings – Frontend JS v1.4.0
+ * Media Lab Bookings – Frontend JS v1.5.0
+ *
+ * Neu in v1.5.0:
+ *   - Service-Vorbelegung via data-preset Attribut auf .mlb-service-select
+ *     (wird gesetzt, sobald Standortdaten + Services geladen wurden)
  */
 ( function ( $, cfg ) {
     'use strict';
@@ -55,6 +59,7 @@
             self.blockedDates = res.data.blocked_dates || [];
             self.initDatePicker();
             self.populateServices( res.data.services || [] );
+            self.applyPresetService();
         } );
     };
 
@@ -95,6 +100,31 @@
             var label = s.name + ( s.duration ? ' (' + s.duration + ' Min.)' : '' );
             self.$serviceSel.append( $( '<option>' ).val( s.name ).text( label ) );
         } );
+    };
+
+    /**
+     * Wendet eine vorausgewählte Dienstleistung an, sofern
+     * .mlb-service-select ein data-preset Attribut trägt
+     * (z.B. aus dem URL-Parameter ?service=... gesetzt durch das Template).
+     *
+     * Das Attribut wird nach Anwendung entfernt, damit ein späterer
+     * Standortwechsel die Auswahl nicht erneut überschreibt.
+     */
+    MLBForm.prototype.applyPresetService = function () {
+        var self    = this;
+        var preset  = self.$serviceSel.data( 'preset' );
+        if ( ! preset ) return;
+
+        var $match = self.$serviceSel.find( 'option' ).filter( function () {
+            return $( this ).val() === preset;
+        } );
+
+        if ( $match.length ) {
+            self.$serviceSel.val( preset );
+        }
+
+        // Nur beim ersten Laden anwenden
+        self.$serviceSel.removeAttr( 'data-preset' );
     };
 
     MLBForm.prototype.loadSlots = function ( date ) {
