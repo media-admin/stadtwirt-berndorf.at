@@ -5,6 +5,11 @@
  * Konfigurierbar über Agency Core Settings (ACF).
  * Ersetzt den WP-Standard-Mailer (PHP mail()) via PHPMailer-Hook.
  * Enthält Test-Mail-Funktion direkt im Backend.
+ *
+ * Versand-Modi (gesteuert über Option 'medialab_smtp_mode'):
+ *   'smtp'   → Klassisches SMTP via ACF/wp-config Credentials (Standard)
+ *   'ms365'  → Microsoft 365 OAuth2 (via MediaLab_SMTP_OAuth)
+ *   'google' → Google Workspace OAuth2 (via MediaLab_SMTP_OAuth)
  */
 
 if (!defined('ABSPATH')) exit;
@@ -44,9 +49,12 @@ class MediaLab_SMTP {
     }
 
     /**
-     * PHPMailer mit SMTP-Einstellungen konfigurieren
+     * PHPMailer konfigurieren.
      *
-     * Credentials-Priorität (F-05):
+     * Bei aktivem OAuth-Modus (ms365 / google) übernimmt MediaLab_SMTP_OAuth
+     * die Konfiguration vollständig – diese Methode kehrt dann sofort zurück.
+     *
+     * Credentials-Priorität für klassisches SMTP (F-05):
      *   1. Konstanten in wp-config.php (MEDIALAB_SMTP_HOST, _PORT, _USER, _PASS, _FROM, _FROM_NAME, _ENC)
      *   2. ACF Options (Fallback – Passwort dann in DB im Klartext)
      *
@@ -60,6 +68,14 @@ class MediaLab_SMTP {
      *   define('MEDIALAB_SMTP_FROM_NAME', 'Meine Website');
      */
     public function configure_phpmailer($phpmailer) {
+        // OAuth-Modus: MediaLab_SMTP_OAuth übernimmt via eigenem phpmailer_init-Hook
+        // (Priorität 20, also nach diesem Hook auf Priorität 10)
+        // Hier nur abbrechen, damit SMTP-Credentials nicht überschreiben.
+        $mode = get_option( MEDIALAB_SMTP_MODE_KEY, 'smtp' );
+        if ( $mode !== 'smtp' ) {
+            return;
+        }
+
         $opts = $this->get_options();
         if (!$opts['enabled'] || empty($opts['host'])) return;
 

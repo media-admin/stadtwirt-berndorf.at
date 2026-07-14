@@ -1,0 +1,61 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "medialab/slide",
+  "title": "Folie",
+  "description": "Einzelne Folie innerhalb des Slider-Blocks: Bild, Überschrift, Text, Button. Nur innerhalb von medialab/slider einfügbar.",
+  "category": "design",
+  "icon": "format-image",
+  "parent": [
+    "medialab/slider"
+  ],
+  "textdomain": "media-lab-agency-core",
+  "attributes": {
+    "imageId": {
+      "type": "number",
+      "default": 0
+    },
+    "imageUrl": {
+      "type": "string",
+      "default": ""
+    },
+    "imageAlt": {
+      "type": "string",
+      "default": ""
+    },
+    "heading": {
+      "type": "string",
+      "default": ""
+    },
+    "text": {
+      "type": "string",
+      "default": ""
+    },
+    "buttonText": {
+      "type": "string",
+      "default": ""
+    },
+    "buttonUrl": {
+      "type": "string",
+      "default": ""
+    },
+    "buttonTarget": {
+      "type": "boolean",
+      "default": false
+    },
+    "customClass": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "supports": {
+    "html": false,
+    "reusable": false
+  },
+  "example": {
+    "attributes": {
+      "heading": "Folientitel",
+      "text": "Kurzer Beschreibungstext für diese Folie."
+    }
+  }
+}

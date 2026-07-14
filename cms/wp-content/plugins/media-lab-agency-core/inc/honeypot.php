@@ -16,14 +16,17 @@
  *   Beim Rendern des Formulars wird ein HMAC-signierter Zeitstempel erzeugt.
  *   Wird das Formular in weniger als MEDIALAB_HP_MIN_TIME Sekunden abgeschickt,
  *   stammt die Einreichung mit hoher Wahrscheinlichkeit von einem Bot.
- *   Abgelaufene Formulare (> 24 h, für gecachte Seiten großzügig) werden ebenfalls
- *   abgelehnt und der Nutzer aufgefordert, die Seite neu zu laden.
+ *   Abgelaufene Formulare (> max_age, für gecachte Seiten großzügig) werden
+ *   ebenfalls abgelehnt und der Nutzer aufgefordert, die Seite neu zu laden.
+ *
+ * Konfiguration:
+ *   Alle Parameter sind in Agency Core → Spam-Schutz konfigurierbar.
+ *   Konstanten (z.B. in wp-config.php gesetzt) überschreiben ACF-Werte –
+ *   damit bleiben bestehende Projekte, die Konstanten nutzen, kompatibel.
  *
  * Integration:
- *   – CF7:      Automatisch via wpcf7_form_elements + wpcf7_spam Filter.
- *   – Bookings: medialab_honeypot_render() im Template einfügen,
- *               medialab_honeypot_check() im AJAX-Handler aufrufen.
- *   – Eigene Formulare: Beide Funktionen direkt verwenden.
+ *   – CF7:            Automatisch via wpcf7_form_elements + wpcf7_spam Filter.
+ *   – Eigene Formulare: medialab_honeypot_render() + medialab_honeypot_check()
  *
  * @package  media-lab-agency-core
  * @since    1.8.6
@@ -32,6 +35,7 @@
 defined( 'ABSPATH' ) || exit;
 
 // ── Konfiguration ─────────────────────────────────────────────────────────────
+// Konstanten als Hard-Override (für wp-config.php), ACF als konfigurierbarer Default.
 
 /** Honeypot-Feldname – klingt für Bots wie ein echtes Pflichtfeld. */
 if ( ! defined( 'MEDIALAB_HP_FIELD' ) ) {
@@ -45,7 +49,7 @@ if ( ! defined( 'MEDIALAB_HP_TS_FIELD' ) ) {
 
 /** Mindest-Ausfüllzeit in Sekunden (echte Nutzer brauchen länger). */
 if ( ! defined( 'MEDIALAB_HP_MIN_TIME' ) ) {
-    define( 'MEDIALAB_HP_MIN_TIME', 3 );
+    define( 'MEDIALAB_HP_MIN_TIME', null ); // null = ACF-Wert verwenden
 }
 
 /**
@@ -53,7 +57,43 @@ if ( ! defined( 'MEDIALAB_HP_MIN_TIME' ) ) {
  * 24 h – großzügig gewählt, damit gecachte Seiten nicht sofort ablaufen.
  */
 if ( ! defined( 'MEDIALAB_HP_MAX_AGE' ) ) {
-    define( 'MEDIALAB_HP_MAX_AGE', 86400 );
+    define( 'MEDIALAB_HP_MAX_AGE', null ); // null = ACF-Wert verwenden
+}
+
+// ── Laufzeit-Konfiguration ────────────────────────────────────────────────────
+
+/**
+ * Gibt die effektive Mindest-Ausfüllzeit zurück.
+ * Priorität: Konstante (wenn nicht null) → ACF-Option → Fallback 3 s.
+ */
+function medialab_hp_min_time(): int {
+    if ( MEDIALAB_HP_MIN_TIME !== null ) {
+        return (int) MEDIALAB_HP_MIN_TIME;
+    }
+    if ( function_exists( 'get_field' ) ) {
+        $val = get_field( 'honeypot_min_time', 'option' );
+        if ( $val !== null && $val !== '' && $val !== false ) {
+            return max( 1, (int) $val );
+        }
+    }
+    return 3;
+}
+
+/**
+ * Gibt das maximale Formular-Alter zurück.
+ * Priorität: Konstante (wenn nicht null) → ACF-Option → Fallback 86400 s (24 h).
+ */
+function medialab_hp_max_age(): int {
+    if ( MEDIALAB_HP_MAX_AGE !== null ) {
+        return (int) MEDIALAB_HP_MAX_AGE;
+    }
+    if ( function_exists( 'get_field' ) ) {
+        $val = get_field( 'honeypot_max_age', 'option' );
+        if ( $val !== null && $val !== '' && $val !== false ) {
+            return max( 60, (int) $val );
+        }
+    }
+    return 86400;
 }
 
 // ── HTML-Ausgabe ──────────────────────────────────────────────────────────────
@@ -102,8 +142,8 @@ function medialab_honeypot_render(): string {
  *   hp_ts_missing    – Zeitstempel-Feld fehlt
  *   hp_ts_malformed  – Zeitstempel-Format ungültig
  *   hp_ts_invalid    – HMAC-Signatur stimmt nicht
- *   hp_too_fast      – Unter MEDIALAB_HP_MIN_TIME Sekunden abgeschickt
- *   hp_expired       – Formular älter als MEDIALAB_HP_MAX_AGE Sekunden
+ *   hp_too_fast      – Unter medialab_hp_min_time() Sekunden abgeschickt
+ *   hp_expired       – Formular älter als medialab_hp_max_age() Sekunden
  *
  * @return true|\WP_Error
  */
@@ -142,14 +182,14 @@ function medialab_honeypot_check(): true|\WP_Error {
 
     $elapsed = time() - $ts;
 
-    if ( $elapsed < MEDIALAB_HP_MIN_TIME ) {
+    if ( $elapsed < medialab_hp_min_time() ) {
         return new \WP_Error(
             'hp_too_fast',
             __( 'Das Formular wurde zu schnell abgeschickt. Bitte versuche es erneut.', 'media-lab' )
         );
     }
 
-    if ( $elapsed > MEDIALAB_HP_MAX_AGE ) {
+    if ( $elapsed > medialab_hp_max_age() ) {
         return new \WP_Error(
             'hp_expired',
             __( 'Deine Sitzung ist abgelaufen. Bitte lade die Seite neu und versuche es erneut.', 'media-lab' )
@@ -160,15 +200,9 @@ function medialab_honeypot_check(): true|\WP_Error {
 }
 
 // ── Contact Form 7 Integration ────────────────────────────────────────────────
-//
-// Die Filter werden bedingungslos registriert. Sind keine CF7-Hooks vorhanden
-// (CF7 inaktiv), werden die Callbacks nie ausgeführt – kein Performance-Impact.
 
 /**
  * Honeypot-Felder ans Ende jedes CF7-Formulars anhängen.
- *
- * Wird via wpcf7_form_elements direkt ins Formular-HTML injiziert,
- * bevor CF7 das Markup an den Browser schickt.
  */
 add_filter( 'wpcf7_form_elements', function ( string $html ): string {
     return $html . medialab_honeypot_render();
@@ -176,20 +210,10 @@ add_filter( 'wpcf7_form_elements', function ( string $html ): string {
 
 /**
  * CF7-Submission auf Spam prüfen.
- *
- * Gibt true zurück → CF7 markiert die Einreichung als Spam und sendet
- * keine E-Mail. Der Nutzer sieht die wpcf7-spam-blocked Rückmeldung.
- *
- * Läuft vor den CF7-eigenen Spam-Checks (z.B. Akismet), sodass
- * offensichtlicher Bot-Traffic gar nicht erst zu Akismet durchgeht.
- *
- * @param bool $spam Bereits erkannter Spam (z.B. von Akismet).
- * @return bool
  */
 add_filter( 'wpcf7_spam', function ( bool $spam ): bool {
     if ( $spam ) {
-        return true; // Bereits als Spam erkannt, nicht nochmal prüfen.
+        return true;
     }
-
     return is_wp_error( medialab_honeypot_check() );
-}, 5 ); // Priority 5 → vor Standard-Spam-Checks ausführen
+}, 5 );

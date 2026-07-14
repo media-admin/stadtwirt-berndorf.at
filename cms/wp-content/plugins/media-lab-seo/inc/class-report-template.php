@@ -182,7 +182,7 @@ class MLT_Report_Template {
                 Dieser Report wird automatisch von
                 <a href="<?php echo esc_url( $url ); ?>" style="color:#6b7280"><?php echo esc_html( $site ); ?></a>
                 via <strong>Media Lab SEO Toolkit</strong> gesendet. &nbsp;·&nbsp;
-                <a href="<?php echo esc_url( admin_url( 'admin.php?page=media-lab-toolkit' ) ); ?>" style="color:#6b7280">Report deaktivieren</a>
+                <a href="<?php echo esc_url( admin_url( 'admin.php?page=media-lab-seo' ) ); ?>" style="color:#6b7280">Report deaktivieren</a>
             </p>
         </td>
     </tr>

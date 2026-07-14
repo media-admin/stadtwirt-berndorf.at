@@ -6,10 +6,14 @@
   "description": "Feature-Kachel mit Icon (SVG/Dashicon/Emoji), Titel und Text.",
   "category": "design",
   "icon": "star-filled",
-  "keywords": ["icon", "feature", "kachel", "vorteil", "benefit"],
+  "keywords": [
+    "icon",
+    "feature",
+    "kachel",
+    "vorteil",
+    "benefit"
+  ],
   "textdomain": "media-lab-agency-core",
-  "editorScript": "file:../../assets/dist/js/blocks.js",
-  "style":        "file:../../assets/dist/css/blocks.css",
   "attributes": {
     "icon": {
       "type": "string",

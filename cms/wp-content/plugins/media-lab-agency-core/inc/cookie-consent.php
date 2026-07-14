@@ -18,6 +18,12 @@
  *  – Code-Snippets (GA4, Meta Pixel …) sind sprachunabhängig und bleiben in
  *    den Flat-Feldern.
  *
+ * DSGVO-Hinweis für Drittdienste:
+ *  – Cloudflare Turnstile (wenn aktiviert): Kategorie „Notwendig" – wird unter
+ *    berechtigtem Interesse betrieben. In der Datenschutzerklärung dokumentieren.
+ *  – Google Analytics / GA4: Kategorie „Statistik"
+ *  – Meta Pixel / Remarketing: Kategorie „Marketing"
+ *
  * @package MediaLab_Core
  * @since   1.9.0
  */
@@ -53,16 +59,13 @@ class MediaLab_Cookie_Consent {
      * Reihenfolge: Polylang → WPML → WP-Locale-Substring.
      */
     private function get_current_lang(): string {
-        // Polylang
         if ( function_exists( 'pll_current_language' ) ) {
             $lang = pll_current_language( 'slug' );
             if ( $lang ) return (string) $lang;
         }
-        // WPML
         if ( defined( 'ICL_LANGUAGE_CODE' ) && ICL_LANGUAGE_CODE ) {
             return (string) ICL_LANGUAGE_CODE;
         }
-        // WP-Locale-Fallback (z.B. 'de_DE' → 'de')
         $locale = get_locale();
         return substr( $locale, 0, 2 ) ?: 'de';
     }
@@ -71,21 +74,19 @@ class MediaLab_Cookie_Consent {
 
     /**
      * Liefert alle sprachabhängigen Texte als assoziatives Array.
-     * Wählt je nach Konfiguration Repeater-Zeile oder Flat-Felder.
      *
      * @return array<string,string>
      */
     private function resolve_texts(): array {
         $acf = function_exists( 'get_field' );
 
-        // Mehrsprachigkeit aktiv?
         if ( $acf && get_field( 'cc_multilang_enabled', 'option' ) ) {
             $lang = $this->get_current_lang();
             $rows = get_field( 'cc_languages', 'option' );
 
             if ( is_array( $rows ) && ! empty( $rows ) ) {
                 $match    = null;
-                $fallback = $rows[0]; // erste Zeile = Standard-Sprache
+                $fallback = $rows[0];
 
                 foreach ( $rows as $row ) {
                     $code = isset( $row['cc_lang_code'] ) ? trim( (string) $row['cc_lang_code'] ) : '';
@@ -99,13 +100,10 @@ class MediaLab_Cookie_Consent {
             }
         }
 
-        // Flat-Felder (Rückwärtskompatibilität / Einsprachig)
         return $this->texts_from_flat( $acf );
     }
 
     /**
-     * Extrahiert Texte aus einer Repeater-Zeile.
-     *
      * @param  array<string,mixed> $row
      * @return array<string,string>
      */
@@ -118,27 +116,21 @@ class MediaLab_Cookie_Consent {
         };
 
         return array(
-            // Banner
             'bannerTitle'        => $s( 'cc_lang_banner_title'   ),
             'bannerText'         => $s( 'cc_lang_banner_text'    ),
             'bannerTextUSA'      => $s( 'cc_lang_banner_text_usa' ),
-            // Buttons
             'acceptAll'          => $s( 'cc_lang_accept_all'    ),
             'declineAll'         => $s( 'cc_lang_decline_all'   ),
             'settings'           => $s( 'cc_lang_settings_btn'  ),
             'saveConsent'        => $s( 'cc_lang_save_consent'  ),
-            'essentialOnly'      => $s( 'cc_lang_decline_all'   ), // alias
-            'openSettings'       => $s( 'cc_lang_settings_btn'  ), // alias
-            // Modal
+            'essentialOnly'      => $s( 'cc_lang_decline_all'   ),
+            'openSettings'       => $s( 'cc_lang_settings_btn'  ),
             'modalTitle'         => $s( 'cc_lang_modal_title'   ),
             'modalIntro'         => $s( 'cc_lang_modal_intro'   ),
             'saveSettings'       => $s( 'cc_lang_save_btn'      ),
-            // Datenschutz
             'privacyLabel'       => $s( 'cc_lang_privacy_label' ),
             'privacyUrl'         => $s( 'cc_lang_privacy_url', '/' ),
-            // Immer aktiv
             'alwaysActive'       => $s( 'cc_lang_always_active' ),
-            // Kategorie-Bezeichnungen (werden für categories-Objekt genutzt)
             '_catNecessaryLabel' => $s( 'cc_lang_cat_necessary_label' ),
             '_catNecessaryDesc'  => $s( 'cc_lang_cat_necessary_desc'  ),
             '_catStatisticsLabel'=> $s( 'cc_lang_cat_statistics_label' ),
@@ -151,9 +143,7 @@ class MediaLab_Cookie_Consent {
     }
 
     /**
-     * Liest Texte aus den bisherigen Flat-Feldern (Rückwärtskompatibilität).
-     *
-     * @param  bool  $acf  ACF verfügbar?
+     * @param  bool  $acf
      * @return array<string,string>
      */
     private function texts_from_flat( bool $acf ): array {
@@ -165,30 +155,36 @@ class MediaLab_Cookie_Consent {
                 : $default;
         };
 
+        // Prüfen ob Turnstile aktiv ist – dann Notwendig-Beschreibung anpassen
+        $turnstile_active = function_exists( 'medialab_turnstile_active' ) && medialab_turnstile_active();
+        $necessary_desc   = $turnstile_active
+            ? 'Technisch erforderliche Cookies für die Grundfunktionen der Website. Beinhaltet Cloudflare Turnstile für Spam-Schutz (berechtigtes Interesse, Art. 6 Abs. 1 lit. f DSGVO).'
+            : 'Technisch erforderliche Cookies für die Grundfunktionen der Website.';
+
         return array(
-            'bannerTitle'        => $s( 'cc_banner_title',  'Wir verwenden Cookies' ),
-            'bannerText'         => $s( 'cc_banner_text',   'Wir setzen Cookies ein, um Ihnen die bestmögliche Nutzung unserer Website zu ermöglichen.' ),
+            'bannerTitle'        => $s( 'cc_banner_title',  'Diese Website verwendet Cookies' ),
+            'bannerText'         => $s( 'cc_banner_text',   'Wir verwenden Cookies und ähnliche Technologien, um unsere Website zu betreiben und Ihnen die bestmögliche Nutzung zu ermöglichen. Einige sind technisch notwendig, andere helfen uns, die Website zu verbessern.' ),
             'bannerTextUSA'      => $s( 'cc_banner_text_usa', '' ),
             'acceptAll'          => $s( 'cc_accept_all',    'Alle akzeptieren' ),
-            'declineAll'         => $s( 'cc_decline_all',   'Ablehnen' ),
+            'declineAll'         => $s( 'cc_decline_all',   'Nur Notwendige' ),
             'settings'           => $s( 'cc_settings_btn',  'Einstellungen' ),
             'saveConsent'        => $s( 'cc_save_btn',      'Auswahl speichern' ),
-            'essentialOnly'      => $s( 'cc_decline_all',   'Nur essenzielle Cookies' ),
-            'openSettings'       => $s( 'cc_settings_btn',  'Individuelle Datenschutz-Präferenzen' ),
+            'essentialOnly'      => $s( 'cc_decline_all',   'Nur Notwendige' ),
+            'openSettings'       => $s( 'cc_settings_btn',  'Cookie-Einstellungen' ),
             'modalTitle'         => $s( 'cc_modal_title',   'Cookie-Einstellungen' ),
-            'modalIntro'         => $s( 'cc_modal_intro',   'Hier können Sie Ihre Cookie-Einstellungen jederzeit anpassen.' ),
+            'modalIntro'         => $s( 'cc_modal_intro',   'Hier können Sie Ihre Cookie-Einstellungen jederzeit anpassen. Notwendige Cookies können nicht deaktiviert werden, da sie für den Betrieb der Website erforderlich sind.' ),
             'saveSettings'       => $s( 'cc_save_btn',      'Auswahl speichern' ),
             'privacyLabel'       => $s( 'cc_privacy_label', 'Datenschutzerklärung' ),
             'privacyUrl'         => $s( 'cc_privacy_url',   '/datenschutz' ),
             'alwaysActive'       => $s( 'cc_always_active', 'Immer aktiv' ),
             '_catNecessaryLabel' => $s( 'cc_cat_necessary_label', 'Notwendig' ),
-            '_catNecessaryDesc'  => $s( 'cc_cat_necessary_desc',  'Technisch erforderliche Cookies für die Grundfunktionen der Website.' ),
+            '_catNecessaryDesc'  => $s( 'cc_cat_necessary_desc',  $necessary_desc ),
             '_catStatisticsLabel'=> $s( 'cc_cat_statistics_label', 'Statistik' ),
-            '_catStatisticsDesc' => $s( 'cc_cat_statistics_desc',  'Helfen uns zu verstehen, wie Besucher mit der Website interagieren.' ),
+            '_catStatisticsDesc' => $s( 'cc_cat_statistics_desc',  'Helfen uns zu verstehen, wie Besucher mit der Website interagieren (z.B. Google Analytics). Alle Daten werden anonymisiert erfasst.' ),
             '_catMarketingLabel' => $s( 'cc_cat_marketing_label', 'Marketing' ),
-            '_catMarketingDesc'  => $s( 'cc_cat_marketing_desc',  'Werden für personalisierte Werbung und Remarketing verwendet.' ),
+            '_catMarketingDesc'  => $s( 'cc_cat_marketing_desc',  'Werden für personalisierte Werbung, Remarketing und die Messung von Werbekampagnen verwendet (z.B. Meta Pixel, Google Ads).' ),
             '_catComfortLabel'   => $s( 'cc_cat_comfort_label', 'Komfort' ),
-            '_catComfortDesc'    => $s( 'cc_cat_comfort_desc',  'Ermöglichen eingebettete Inhalte wie YouTube-Videos oder Google Maps.' ),
+            '_catComfortDesc'    => $s( 'cc_cat_comfort_desc',  'Ermöglichen eingebettete Inhalte und Karten von Drittanbietern (z.B. YouTube-Videos, Google Maps).' ),
         );
     }
 
@@ -209,10 +205,8 @@ class MediaLab_Cookie_Consent {
             return ( $val !== null && $val !== false && $val !== '' ) ? (string) $val : $default;
         };
 
-        // Texte für aktuelle Sprache laden
         $t = $this->resolve_texts();
 
-        // texts-Objekt für JS (keine internen _cat* Schlüssel)
         $texts = array(
             'bannerTitle'   => $t['bannerTitle'],
             'bannerText'    => $t['bannerText'],
@@ -225,18 +219,15 @@ class MediaLab_Cookie_Consent {
             'privacyLabel'  => $t['privacyLabel'],
             'privacyUrl'    => $t['privacyUrl'],
             'alwaysActive'  => $t['alwaysActive'],
-            // Aliasse für JS-Kompatibilität
             'saveConsent'   => $t['saveConsent'],
             'essentialOnly' => $t['essentialOnly'],
             'openSettings'  => $t['openSettings'],
         );
 
-        // bannerTextUSA nur einschließen wenn nicht leer
         if ( ! empty( $t['bannerTextUSA'] ) ) {
             $texts['bannerTextUSA'] = $t['bannerTextUSA'];
         }
 
-        // Kategorien aufbauen (enabled/disabled global, Labels sprachspezifisch)
         $categories = array(
             'necessary' => array(
                 'label'       => $t['_catNecessaryLabel'] ?: $s( 'cc_cat_necessary_label', 'Notwendig' ),
@@ -286,7 +277,6 @@ class MediaLab_Cookie_Consent {
         if ( is_admin() ) return;
         if ( ! function_exists( 'get_field' ) ) return;
 
-        $acf      = true;
         $b        = fn( string $key, bool $default ): bool => (bool) ( get_field( $key, 'option' ) ?? $default );
         $snippets = array();
 
@@ -320,7 +310,6 @@ class MediaLab_Cookie_Consent {
     public function register_fields(): void {
         if ( ! function_exists( 'acf_add_local_field_group' ) ) return;
 
-        // ── Repeater-Sub-Fields (helper) ──────────────────────────────────────
         $lang_text_fields = $this->build_language_subfields();
 
         acf_add_local_field_group( array(
@@ -328,7 +317,6 @@ class MediaLab_Cookie_Consent {
             'title' => 'Cookie Consent',
             'fields' => array(
 
-                // ── Version ──────────────────────────────────────────────────
                 array(
                     'key'           => 'field_cc_version',
                     'label'         => 'Consent-Version',
@@ -339,7 +327,6 @@ class MediaLab_Cookie_Consent {
                     'wrapper'       => array( 'width' => '20' ),
                 ),
 
-                // ── Datenschutz-URL (global) ──────────────────────────────────
                 array(
                     'key'           => 'field_cc_privacy_url',
                     'label'         => 'Datenschutz-URL (Fallback)',
@@ -359,7 +346,6 @@ class MediaLab_Cookie_Consent {
                     'wrapper'       => array( 'width' => '40' ),
                 ),
 
-                // ── Immer-Aktiv-Text (global Fallback) ────────────────────────
                 array(
                     'key'           => 'field_cc_always_active',
                     'label'         => 'Text „Immer aktiv" (Fallback)',
@@ -387,32 +373,37 @@ class MediaLab_Cookie_Consent {
                     ) ) ),
                 ),
 
-                // Banner-Texte
-                array( 'key' => 'field_cc_banner_title', 'label' => 'Titel', 'name' => 'cc_banner_title', 'type' => 'text', 'default_value' => 'Wir verwenden Cookies', 'wrapper' => array( 'width' => '50' ),
+                array( 'key' => 'field_cc_banner_title', 'label' => 'Titel', 'name' => 'cc_banner_title', 'type' => 'text',
+                    'default_value' => 'Diese Website verwendet Cookies',
+                    'wrapper' => array( 'width' => '50' ),
                     'conditional_logic' => array( array( array( 'field' => 'field_cc_multilang_enabled', 'operator' => '!=', 'value' => '1' ) ) ),
                 ),
-                array( 'key' => 'field_cc_banner_text', 'label' => 'Text', 'name' => 'cc_banner_text', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Wir setzen Cookies ein, um Ihnen die bestmögliche Nutzung unserer Website zu ermöglichen.', 'wrapper' => array( 'width' => '50' ),
+                array( 'key' => 'field_cc_banner_text', 'label' => 'Text', 'name' => 'cc_banner_text', 'type' => 'textarea', 'rows' => 3,
+                    'default_value' => 'Wir verwenden Cookies und ähnliche Technologien, um unsere Website zu betreiben und Ihnen die bestmögliche Nutzung zu ermöglichen. Einige sind technisch notwendig, andere helfen uns, die Website zu verbessern.',
+                    'wrapper' => array( 'width' => '50' ),
                     'conditional_logic' => array( array( array( 'field' => 'field_cc_multilang_enabled', 'operator' => '!=', 'value' => '1' ) ) ),
                 ),
                 array( 'key' => 'field_cc_banner_text_usa', 'label' => 'Zusatztext USA/Drittstaaten (opt.)', 'name' => 'cc_banner_text_usa', 'type' => 'textarea', 'rows' => 2, 'default_value' => '', 'instructions' => 'Wird unterhalb des Haupttexts ausgegeben, wenn nicht leer.', 'wrapper' => array( 'width' => '100' ),
                     'conditional_logic' => array( array( array( 'field' => 'field_cc_multilang_enabled', 'operator' => '!=', 'value' => '1' ) ) ),
                 ),
-                array( 'key' => 'field_cc_accept_all',   'label' => 'Button „Alle akzeptieren"',      'name' => 'cc_accept_all',   'type' => 'text', 'default_value' => 'Alle akzeptieren', 'wrapper' => array( 'width' => '25' ),
+                array( 'key' => 'field_cc_accept_all',   'label' => 'Button „Alle akzeptieren"',      'name' => 'cc_accept_all',   'type' => 'text', 'default_value' => 'Alle akzeptieren',   'wrapper' => array( 'width' => '25' ),
                     'conditional_logic' => array( array( array( 'field' => 'field_cc_multilang_enabled', 'operator' => '!=', 'value' => '1' ) ) ),
                 ),
-                array( 'key' => 'field_cc_settings_btn', 'label' => 'Button „Einstellungen"',         'name' => 'cc_settings_btn', 'type' => 'text', 'default_value' => 'Einstellungen',    'wrapper' => array( 'width' => '25' ),
+                array( 'key' => 'field_cc_settings_btn', 'label' => 'Button „Einstellungen"',         'name' => 'cc_settings_btn', 'type' => 'text', 'default_value' => 'Einstellungen',      'wrapper' => array( 'width' => '25' ),
                     'conditional_logic' => array( array( array( 'field' => 'field_cc_multilang_enabled', 'operator' => '!=', 'value' => '1' ) ) ),
                 ),
-                array( 'key' => 'field_cc_decline_all',  'label' => 'Button „Ablehnen"',              'name' => 'cc_decline_all',  'type' => 'text', 'default_value' => 'Ablehnen',          'wrapper' => array( 'width' => '25' ),
+                array( 'key' => 'field_cc_decline_all',  'label' => 'Button „Ablehnen"',              'name' => 'cc_decline_all',  'type' => 'text', 'default_value' => 'Nur Notwendige',     'wrapper' => array( 'width' => '25' ),
                     'conditional_logic' => array( array( array( 'field' => 'field_cc_multilang_enabled', 'operator' => '!=', 'value' => '1' ) ) ),
                 ),
-                array( 'key' => 'field_cc_save_btn',     'label' => 'Button „Auswahl speichern"',     'name' => 'cc_save_btn',     'type' => 'text', 'default_value' => 'Auswahl speichern', 'wrapper' => array( 'width' => '25' ),
+                array( 'key' => 'field_cc_save_btn',     'label' => 'Button „Auswahl speichern"',     'name' => 'cc_save_btn',     'type' => 'text', 'default_value' => 'Auswahl speichern',  'wrapper' => array( 'width' => '25' ),
                     'conditional_logic' => array( array( array( 'field' => 'field_cc_multilang_enabled', 'operator' => '!=', 'value' => '1' ) ) ),
                 ),
-                array( 'key' => 'field_cc_modal_title',  'label' => 'Modal Titel',       'name' => 'cc_modal_title',  'type' => 'text',     'default_value' => 'Cookie-Einstellungen',                          'wrapper' => array( 'width' => '50' ),
+                array( 'key' => 'field_cc_modal_title',  'label' => 'Modal Titel',     'name' => 'cc_modal_title',  'type' => 'text',     'default_value' => 'Cookie-Einstellungen', 'wrapper' => array( 'width' => '50' ),
                     'conditional_logic' => array( array( array( 'field' => 'field_cc_multilang_enabled', 'operator' => '!=', 'value' => '1' ) ) ),
                 ),
-                array( 'key' => 'field_cc_modal_intro',  'label' => 'Einleitungstext',   'name' => 'cc_modal_intro',  'type' => 'textarea', 'rows' => 2, 'default_value' => 'Hier können Sie Ihre Cookie-Einstellungen jederzeit anpassen.', 'wrapper' => array( 'width' => '50' ),
+                array( 'key' => 'field_cc_modal_intro',  'label' => 'Einleitungstext', 'name' => 'cc_modal_intro',  'type' => 'textarea', 'rows' => 2,
+                    'default_value' => 'Hier können Sie Ihre Cookie-Einstellungen jederzeit anpassen. Notwendige Cookies können nicht deaktiviert werden, da sie für den Betrieb der Website erforderlich sind.',
+                    'wrapper' => array( 'width' => '50' ),
                     'conditional_logic' => array( array( array( 'field' => 'field_cc_multilang_enabled', 'operator' => '!=', 'value' => '1' ) ) ),
                 ),
 
@@ -442,7 +433,6 @@ class MediaLab_Cookie_Consent {
                     'wrapper'       => array( 'width' => '100' ),
                 ),
 
-                // ── Sprachen-Repeater ─────────────────────────────────────────
                 array(
                     'key'               => 'field_cc_languages',
                     'label'             => 'Sprachen',
@@ -459,7 +449,7 @@ class MediaLab_Cookie_Consent {
                 ),
 
                 // ════════════════════════════════════════════════════════════════
-                // KATEGORIEN (global ein/aus + einsprachige Labels)
+                // KATEGORIEN
                 // ════════════════════════════════════════════════════════════════
                 array(
                     'key' => 'field_cc_tab_cats', 'label' => ' ', 'name' => 'cc_tab_cats',
@@ -468,39 +458,43 @@ class MediaLab_Cookie_Consent {
                     'default_value' => '',
                 ),
 
-                // Notwendig (immer aktiv)
                 array( 'key' => 'field_cc_cat_necessary_label', 'label' => 'Notwendig – Bezeichnung (Fallback)',   'name' => 'cc_cat_necessary_label', 'type' => 'text', 'default_value' => 'Notwendig', 'wrapper' => array( 'width' => '50' ) ),
-                array( 'key' => 'field_cc_cat_necessary_desc',  'label' => 'Notwendig – Beschreibung (Fallback)',  'name' => 'cc_cat_necessary_desc',  'type' => 'textarea', 'rows' => 2, 'default_value' => 'Technisch erforderliche Cookies für die Grundfunktionen der Website.', 'wrapper' => array( 'width' => '50' ) ),
+                array( 'key' => 'field_cc_cat_necessary_desc',  'label' => 'Notwendig – Beschreibung (Fallback)',  'name' => 'cc_cat_necessary_desc',  'type' => 'textarea', 'rows' => 2,
+                    'default_value' => 'Technisch erforderliche Cookies für die Grundfunktionen der Website. Beinhaltet Sicherheitsfunktionen wie Cloudflare Turnstile (Spam-Schutz, berechtigtes Interesse).',
+                    'wrapper' => array( 'width' => '50' ) ),
 
-                // Statistik
-                array( 'key' => 'field_cc_cat_statistics_enabled', 'label' => 'Statistik-Kategorie aktivieren', 'name' => 'cc_cat_statistics_enabled', 'type' => 'true_false', 'ui' => 1, 'default_value' => 0, 'instructions' => 'Nur aktivieren wenn Statistik-Cookies verwendet werden.', 'wrapper' => array( 'width' => '100' ) ),
+                array( 'key' => 'field_cc_cat_statistics_enabled', 'label' => 'Statistik-Kategorie aktivieren', 'name' => 'cc_cat_statistics_enabled', 'type' => 'true_false', 'ui' => 1, 'default_value' => 0, 'instructions' => 'Nur aktivieren wenn Statistik-Cookies verwendet werden (z.B. Google Analytics).', 'wrapper' => array( 'width' => '100' ) ),
                 array( 'key' => 'field_cc_cat_statistics_label', 'label' => 'Statistik – Bezeichnung (Fallback)', 'name' => 'cc_cat_statistics_label', 'type' => 'text', 'default_value' => 'Statistik', 'wrapper' => array( 'width' => '50' ),
                     'conditional_logic' => array( array( array( 'field' => 'field_cc_cat_statistics_enabled', 'operator' => '==', 'value' => '1' ) ) ),
                 ),
-                array( 'key' => 'field_cc_cat_statistics_desc', 'label' => 'Statistik – Beschreibung (Fallback)', 'name' => 'cc_cat_statistics_desc', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Helfen uns zu verstehen, wie Besucher mit der Website interagieren.', 'wrapper' => array( 'width' => '50' ),
+                array( 'key' => 'field_cc_cat_statistics_desc', 'label' => 'Statistik – Beschreibung (Fallback)', 'name' => 'cc_cat_statistics_desc', 'type' => 'textarea', 'rows' => 2,
+                    'default_value' => 'Helfen uns zu verstehen, wie Besucher mit der Website interagieren (z.B. Google Analytics). Alle Daten werden anonymisiert erfasst.',
+                    'wrapper' => array( 'width' => '50' ),
                     'conditional_logic' => array( array( array( 'field' => 'field_cc_cat_statistics_enabled', 'operator' => '==', 'value' => '1' ) ) ),
                 ),
 
-                // Marketing
-                array( 'key' => 'field_cc_cat_marketing_enabled', 'label' => 'Marketing-Kategorie aktivieren', 'name' => 'cc_cat_marketing_enabled', 'type' => 'true_false', 'ui' => 1, 'default_value' => 0, 'instructions' => 'Nur aktivieren wenn Marketing-Cookies verwendet werden.', 'wrapper' => array( 'width' => '100' ) ),
+                array( 'key' => 'field_cc_cat_marketing_enabled', 'label' => 'Marketing-Kategorie aktivieren', 'name' => 'cc_cat_marketing_enabled', 'type' => 'true_false', 'ui' => 1, 'default_value' => 0, 'instructions' => 'Nur aktivieren wenn Marketing-Cookies verwendet werden (z.B. Meta Pixel, Google Ads).', 'wrapper' => array( 'width' => '100' ) ),
                 array( 'key' => 'field_cc_cat_marketing_label', 'label' => 'Marketing – Bezeichnung (Fallback)', 'name' => 'cc_cat_marketing_label', 'type' => 'text', 'default_value' => 'Marketing', 'wrapper' => array( 'width' => '50' ),
                     'conditional_logic' => array( array( array( 'field' => 'field_cc_cat_marketing_enabled', 'operator' => '==', 'value' => '1' ) ) ),
                 ),
-                array( 'key' => 'field_cc_cat_marketing_desc', 'label' => 'Marketing – Beschreibung (Fallback)', 'name' => 'cc_cat_marketing_desc', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Werden für personalisierte Werbung und Remarketing verwendet.', 'wrapper' => array( 'width' => '50' ),
+                array( 'key' => 'field_cc_cat_marketing_desc', 'label' => 'Marketing – Beschreibung (Fallback)', 'name' => 'cc_cat_marketing_desc', 'type' => 'textarea', 'rows' => 2,
+                    'default_value' => 'Werden für personalisierte Werbung, Remarketing und die Messung von Werbekampagnen verwendet (z.B. Meta Pixel, Google Ads).',
+                    'wrapper' => array( 'width' => '50' ),
                     'conditional_logic' => array( array( array( 'field' => 'field_cc_cat_marketing_enabled', 'operator' => '==', 'value' => '1' ) ) ),
                 ),
 
-                // Komfort
-                array( 'key' => 'field_cc_cat_comfort_enabled', 'label' => 'Komfort-Kategorie aktivieren', 'name' => 'cc_cat_comfort_enabled', 'type' => 'true_false', 'ui' => 1, 'default_value' => 0, 'instructions' => 'Nur aktivieren wenn Komfort-Cookies verwendet werden.', 'wrapper' => array( 'width' => '100' ) ),
+                array( 'key' => 'field_cc_cat_comfort_enabled', 'label' => 'Komfort-Kategorie aktivieren', 'name' => 'cc_cat_comfort_enabled', 'type' => 'true_false', 'ui' => 1, 'default_value' => 0, 'instructions' => 'Nur aktivieren wenn Komfort-Cookies verwendet werden (z.B. YouTube, Google Maps).', 'wrapper' => array( 'width' => '100' ) ),
                 array( 'key' => 'field_cc_cat_comfort_label', 'label' => 'Komfort – Bezeichnung (Fallback)', 'name' => 'cc_cat_comfort_label', 'type' => 'text', 'default_value' => 'Komfort', 'wrapper' => array( 'width' => '50' ),
                     'conditional_logic' => array( array( array( 'field' => 'field_cc_cat_comfort_enabled', 'operator' => '==', 'value' => '1' ) ) ),
                 ),
-                array( 'key' => 'field_cc_cat_comfort_desc', 'label' => 'Komfort – Beschreibung (Fallback)', 'name' => 'cc_cat_comfort_desc', 'type' => 'textarea', 'rows' => 2, 'default_value' => 'Ermöglichen eingebettete Inhalte wie YouTube-Videos oder Google Maps.', 'wrapper' => array( 'width' => '50' ),
+                array( 'key' => 'field_cc_cat_comfort_desc', 'label' => 'Komfort – Beschreibung (Fallback)', 'name' => 'cc_cat_comfort_desc', 'type' => 'textarea', 'rows' => 2,
+                    'default_value' => 'Ermöglichen eingebettete Inhalte und Karten von Drittanbietern (z.B. YouTube-Videos, Google Maps).',
+                    'wrapper' => array( 'width' => '50' ),
                     'conditional_logic' => array( array( array( 'field' => 'field_cc_cat_comfort_enabled', 'operator' => '==', 'value' => '1' ) ) ),
                 ),
 
                 // ════════════════════════════════════════════════════════════════
-                // CODE-SNIPPETS (sprachunabhängig)
+                // CODE-SNIPPETS
                 // ════════════════════════════════════════════════════════════════
                 array(
                     'key' => 'field_cc_tab_snippets', 'label' => ' ', 'name' => 'cc_tab_snippets',
@@ -511,14 +505,14 @@ class MediaLab_Cookie_Consent {
                               . '<strong>Body-Code:</strong> Noscript-Fallbacks für den &lt;body&gt;</p>',
                     'default_value' => '',
                 ),
-                array( 'key' => 'field_cc_snippet_necessary_head', 'label' => 'Notwendig – Head-Code',   'name' => 'cc_snippet_necessary_head',   'type' => 'textarea', 'rows' => 6, 'default_value' => '', 'placeholder' => '<!-- z.B. DSGVO-konformes Chat-Widget –>', 'instructions' => 'Wird <strong>immer</strong> geladen – unabhängig vom Consent.', 'wrapper' => array( 'width' => '50' ) ),
-                array( 'key' => 'field_cc_snippet_necessary_body', 'label' => 'Notwendig – Body-Code',   'name' => 'cc_snippet_necessary_body',   'type' => 'textarea', 'rows' => 4, 'default_value' => '', 'placeholder' => '<!-- Noscript Fallback –>', 'wrapper' => array( 'width' => '50' ) ),
-                array( 'key' => 'field_cc_snippet_statistics_head', 'label' => 'Statistik – Head-Code',  'name' => 'cc_snippet_statistics_head',  'type' => 'textarea', 'rows' => 6, 'default_value' => '', 'placeholder' => "<!-- Google Analytics 4 -->\n<script async src=\"https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX\"></script>", 'wrapper' => array( 'width' => '50' ) ),
-                array( 'key' => 'field_cc_snippet_statistics_body', 'label' => 'Statistik – Body-Code',  'name' => 'cc_snippet_statistics_body',  'type' => 'textarea', 'rows' => 4, 'default_value' => '', 'placeholder' => '<!-- Noscript Fallback –>', 'wrapper' => array( 'width' => '50' ) ),
-                array( 'key' => 'field_cc_snippet_marketing_head',  'label' => 'Marketing – Head-Code',  'name' => 'cc_snippet_marketing_head',   'type' => 'textarea', 'rows' => 6, 'default_value' => '', 'placeholder' => "<!-- Meta Pixel Code -->\n<script>!function(f,b,e,v,n,t,s)...</script>", 'wrapper' => array( 'width' => '50' ) ),
-                array( 'key' => 'field_cc_snippet_marketing_body',  'label' => 'Marketing – Body-Code',  'name' => 'cc_snippet_marketing_body',   'type' => 'textarea', 'rows' => 4, 'default_value' => '', 'placeholder' => '<!-- Noscript Fallback –>', 'wrapper' => array( 'width' => '50' ) ),
-                array( 'key' => 'field_cc_snippet_comfort_head',    'label' => 'Komfort – Head-Code',    'name' => 'cc_snippet_comfort_head',     'type' => 'textarea', 'rows' => 6, 'default_value' => '', 'placeholder' => '<!-- z.B. YouTube API, Google Maps API –>', 'wrapper' => array( 'width' => '50' ) ),
-                array( 'key' => 'field_cc_snippet_comfort_body',    'label' => 'Komfort – Body-Code',    'name' => 'cc_snippet_comfort_body',     'type' => 'textarea', 'rows' => 4, 'default_value' => '', 'placeholder' => '<!-- Noscript Fallback –>', 'wrapper' => array( 'width' => '50' ) ),
+                array( 'key' => 'field_cc_snippet_necessary_head',  'label' => 'Notwendig – Head-Code',  'name' => 'cc_snippet_necessary_head',  'type' => 'textarea', 'rows' => 6, 'default_value' => '', 'placeholder' => '<!-- z.B. DSGVO-konformes Chat-Widget –>', 'instructions' => 'Wird <strong>immer</strong> geladen – unabhängig vom Consent.', 'wrapper' => array( 'width' => '50' ) ),
+                array( 'key' => 'field_cc_snippet_necessary_body',  'label' => 'Notwendig – Body-Code',  'name' => 'cc_snippet_necessary_body',  'type' => 'textarea', 'rows' => 4, 'default_value' => '', 'placeholder' => '<!-- Noscript Fallback –>', 'wrapper' => array( 'width' => '50' ) ),
+                array( 'key' => 'field_cc_snippet_statistics_head', 'label' => 'Statistik – Head-Code',  'name' => 'cc_snippet_statistics_head', 'type' => 'textarea', 'rows' => 6, 'default_value' => '', 'placeholder' => "<!-- Google Analytics 4 -->\n<script async src=\"https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX\"></script>", 'wrapper' => array( 'width' => '50' ) ),
+                array( 'key' => 'field_cc_snippet_statistics_body', 'label' => 'Statistik – Body-Code',  'name' => 'cc_snippet_statistics_body', 'type' => 'textarea', 'rows' => 4, 'default_value' => '', 'placeholder' => '<!-- Noscript Fallback –>', 'wrapper' => array( 'width' => '50' ) ),
+                array( 'key' => 'field_cc_snippet_marketing_head',  'label' => 'Marketing – Head-Code',  'name' => 'cc_snippet_marketing_head',  'type' => 'textarea', 'rows' => 6, 'default_value' => '', 'placeholder' => "<!-- Meta Pixel Code -->\n<script>!function(f,b,e,v,n,t,s)...</script>", 'wrapper' => array( 'width' => '50' ) ),
+                array( 'key' => 'field_cc_snippet_marketing_body',  'label' => 'Marketing – Body-Code',  'name' => 'cc_snippet_marketing_body',  'type' => 'textarea', 'rows' => 4, 'default_value' => '', 'placeholder' => '<!-- Noscript Fallback –>', 'wrapper' => array( 'width' => '50' ) ),
+                array( 'key' => 'field_cc_snippet_comfort_head',    'label' => 'Komfort – Head-Code',    'name' => 'cc_snippet_comfort_head',    'type' => 'textarea', 'rows' => 6, 'default_value' => '', 'placeholder' => '<!-- z.B. YouTube API, Google Maps API –>', 'wrapper' => array( 'width' => '50' ) ),
+                array( 'key' => 'field_cc_snippet_comfort_body',    'label' => 'Komfort – Body-Code',    'name' => 'cc_snippet_comfort_body',    'type' => 'textarea', 'rows' => 4, 'default_value' => '', 'placeholder' => '<!-- Noscript Fallback –>', 'wrapper' => array( 'width' => '50' ) ),
 
             ),
             'location' => array( array( array(
@@ -532,11 +526,9 @@ class MediaLab_Cookie_Consent {
         ) );
     }
 
-    // ─── Repeater Sub-Fields aufbauen ─────────────────────────────────────────
+    // ─── Repeater Sub-Fields ──────────────────────────────────────────────────
 
     /**
-     * Gibt alle Sub-Fields für den cc_languages Repeater zurück.
-     *
      * @return array<int, array<string, mixed>>
      */
     private function build_language_subfields(): array {
@@ -547,33 +539,28 @@ class MediaLab_Cookie_Consent {
         );
 
         return array(
-            // Sprachcode + Label
-            array( 'key' => 'field_cc_lang_code',  'label' => 'Sprachcode',   'name' => 'cc_lang_code',  'type' => 'text', 'required' => 1, 'placeholder' => 'de', 'instructions' => 'z.B. de, en, fr, it, es', 'wrapper' => array( 'width' => '20' ) ),
-            array( 'key' => 'field_cc_lang_name',  'label' => 'Bezeichnung',  'name' => 'cc_lang_name',  'type' => 'text', 'required' => 0, 'placeholder' => 'Deutsch', 'instructions' => 'Nur zur internen Orientierung.', 'wrapper' => array( 'width' => '30' ) ),
-            array( 'key' => 'field_cc_lang_privacy_url',   'label' => 'Datenschutz-URL',      'name' => 'cc_lang_privacy_url',   'type' => 'text', 'placeholder' => '/datenschutz', 'wrapper' => array( 'width' => '25' ) ),
+            array( 'key' => 'field_cc_lang_code',  'label' => 'Sprachcode',  'name' => 'cc_lang_code',  'type' => 'text', 'required' => 1, 'placeholder' => 'de', 'instructions' => 'z.B. de, en, fr, it, es', 'wrapper' => array( 'width' => '20' ) ),
+            array( 'key' => 'field_cc_lang_name',  'label' => 'Bezeichnung', 'name' => 'cc_lang_name',  'type' => 'text', 'required' => 0, 'placeholder' => 'Deutsch', 'instructions' => 'Nur zur internen Orientierung.', 'wrapper' => array( 'width' => '30' ) ),
+            array( 'key' => 'field_cc_lang_privacy_url',   'label' => 'Datenschutz-URL',       'name' => 'cc_lang_privacy_url',   'type' => 'text', 'placeholder' => '/datenschutz', 'wrapper' => array( 'width' => '25' ) ),
             array( 'key' => 'field_cc_lang_privacy_label', 'label' => 'Datenschutz Link-Text', 'name' => 'cc_lang_privacy_label', 'type' => 'text', 'placeholder' => 'Datenschutzerklärung', 'wrapper' => array( 'width' => '25' ) ),
 
-            // Banner
             $sep( 'Banner' ),
-            array( 'key' => 'field_cc_lang_banner_title',   'label' => 'Titel',                  'name' => 'cc_lang_banner_title',    'type' => 'text',     'default_value' => '', 'wrapper' => array( 'width' => '50' ) ),
-            array( 'key' => 'field_cc_lang_banner_text',    'label' => 'Text',                   'name' => 'cc_lang_banner_text',     'type' => 'textarea', 'rows' => 3, 'default_value' => '', 'wrapper' => array( 'width' => '50' ) ),
-            array( 'key' => 'field_cc_lang_banner_text_usa','label' => 'Zusatztext USA (opt.)',   'name' => 'cc_lang_banner_text_usa', 'type' => 'textarea', 'rows' => 2, 'default_value' => '', 'instructions' => 'Leer lassen wenn nicht benötigt.', 'wrapper' => array( 'width' => '100' ) ),
+            array( 'key' => 'field_cc_lang_banner_title',    'label' => 'Titel',               'name' => 'cc_lang_banner_title',    'type' => 'text',     'default_value' => '', 'wrapper' => array( 'width' => '50' ) ),
+            array( 'key' => 'field_cc_lang_banner_text',     'label' => 'Text',                'name' => 'cc_lang_banner_text',     'type' => 'textarea', 'rows' => 3, 'default_value' => '', 'wrapper' => array( 'width' => '50' ) ),
+            array( 'key' => 'field_cc_lang_banner_text_usa', 'label' => 'Zusatztext USA (opt.)','name' => 'cc_lang_banner_text_usa', 'type' => 'textarea', 'rows' => 2, 'default_value' => '', 'instructions' => 'Leer lassen wenn nicht benötigt.', 'wrapper' => array( 'width' => '100' ) ),
 
-            // Buttons
             $sep( 'Buttons' ),
-            array( 'key' => 'field_cc_lang_accept_all',  'label' => 'Alle akzeptieren',   'name' => 'cc_lang_accept_all',  'type' => 'text', 'default_value' => '', 'wrapper' => array( 'width' => '25' ) ),
-            array( 'key' => 'field_cc_lang_decline_all', 'label' => 'Ablehnen',           'name' => 'cc_lang_decline_all', 'type' => 'text', 'default_value' => '', 'wrapper' => array( 'width' => '25' ) ),
-            array( 'key' => 'field_cc_lang_settings_btn','label' => 'Einstellungen',      'name' => 'cc_lang_settings_btn','type' => 'text', 'default_value' => '', 'wrapper' => array( 'width' => '25' ) ),
+            array( 'key' => 'field_cc_lang_accept_all',  'label' => 'Alle akzeptieren',       'name' => 'cc_lang_accept_all',  'type' => 'text', 'default_value' => '', 'wrapper' => array( 'width' => '25' ) ),
+            array( 'key' => 'field_cc_lang_decline_all', 'label' => 'Nur Notwendige',         'name' => 'cc_lang_decline_all', 'type' => 'text', 'default_value' => '', 'wrapper' => array( 'width' => '25' ) ),
+            array( 'key' => 'field_cc_lang_settings_btn','label' => 'Einstellungen',          'name' => 'cc_lang_settings_btn','type' => 'text', 'default_value' => '', 'wrapper' => array( 'width' => '25' ) ),
             array( 'key' => 'field_cc_lang_save_consent','label' => 'Einwilligung speichern', 'name' => 'cc_lang_save_consent','type' => 'text', 'default_value' => '', 'wrapper' => array( 'width' => '25' ) ),
 
-            // Modal
             $sep( 'Einstellungs-Modal' ),
-            array( 'key' => 'field_cc_lang_modal_title', 'label' => 'Modal Titel',       'name' => 'cc_lang_modal_title', 'type' => 'text',     'default_value' => '', 'wrapper' => array( 'width' => '50' ) ),
-            array( 'key' => 'field_cc_lang_modal_intro', 'label' => 'Einleitungstext',   'name' => 'cc_lang_modal_intro', 'type' => 'textarea', 'rows' => 2, 'default_value' => '', 'wrapper' => array( 'width' => '50' ) ),
-            array( 'key' => 'field_cc_lang_save_btn',    'label' => 'Auswahl speichern', 'name' => 'cc_lang_save_btn',    'type' => 'text', 'default_value' => '', 'wrapper' => array( 'width' => '50' ) ),
+            array( 'key' => 'field_cc_lang_modal_title',  'label' => 'Modal Titel',       'name' => 'cc_lang_modal_title',  'type' => 'text',     'default_value' => '', 'wrapper' => array( 'width' => '50' ) ),
+            array( 'key' => 'field_cc_lang_modal_intro',  'label' => 'Einleitungstext',   'name' => 'cc_lang_modal_intro',  'type' => 'textarea', 'rows' => 2, 'default_value' => '', 'wrapper' => array( 'width' => '50' ) ),
+            array( 'key' => 'field_cc_lang_save_btn',     'label' => 'Auswahl speichern', 'name' => 'cc_lang_save_btn',     'type' => 'text', 'default_value' => '', 'wrapper' => array( 'width' => '50' ) ),
             array( 'key' => 'field_cc_lang_always_active','label' => '„Immer aktiv"-Text','name' => 'cc_lang_always_active','type' => 'text', 'default_value' => '', 'wrapper' => array( 'width' => '50' ) ),
 
-            // Kategorien
             $sep( 'Kategorie-Bezeichnungen' ),
             array( 'key' => 'field_cc_lang_cat_necessary_label',  'label' => 'Notwendig – Bezeichnung',   'name' => 'cc_lang_cat_necessary_label',  'type' => 'text',     'default_value' => '', 'wrapper' => array( 'width' => '50' ) ),
             array( 'key' => 'field_cc_lang_cat_necessary_desc',   'label' => 'Notwendig – Beschreibung',  'name' => 'cc_lang_cat_necessary_desc',   'type' => 'textarea', 'rows' => 2, 'default_value' => '', 'wrapper' => array( 'width' => '50' ) ),

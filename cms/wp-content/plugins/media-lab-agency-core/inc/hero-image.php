@@ -389,15 +389,23 @@ function media_lab_get_hero_image(?int $post_id = null) : ?array {
     if (!$post_id) return null;
 
     // Explizit deaktiviert?
-    // ACF gibt für eine noch nie gespeicherte true_false-Field 'false' zurück –
-    // NICHT den default_value (1). false/null bedeutet: Feld unberührt → anzeigen.
-    // Nur ausblenden wenn der User das Feld explizit auf 0 gesetzt hat.
-    $show = get_field('hero_image_show', $post_id);
-    if ($show === 0 || $show === '0') return null;
+    // get_post_meta() gibt den rohen DB-Wert zurück:
+    //   ''  = Feld wurde noch nie gespeichert → Hero anzeigen (default_value greift)
+    //   '0' = User hat Toggle explizit auf OFF gestellt → ausblenden
+    //   '1' = User hat Toggle explizit auf ON gestellt → anzeigen
+    // get_field() allein kann '0' und '' nicht unterscheiden (beides → false).
+    $show_raw = get_post_meta($post_id, 'hero_image_show', true);
+    if ($show_raw === '0') return null;
 
     // Bilder – _medialab_resolve_image() normalisiert Array/ID/false sicher zu Array oder null
+    // Fallback-Kette Desktop: seitenspezifisch → globale Option → Featured Image
     $desktop = _medialab_resolve_image(get_field('hero_image_desktop', $post_id))
             ?? _medialab_resolve_image(get_field('hero_fallback_desktop', 'option'));
+
+    if (!$desktop && has_post_thumbnail($post_id)) {
+        $desktop = _medialab_resolve_image(get_post_thumbnail_id($post_id));
+    }
+
     $mobile  = _medialab_resolve_image(get_field('hero_image_mobile', $post_id))
             ?? _medialab_resolve_image(get_field('hero_fallback_mobile', 'option'))
             ?? $desktop;
@@ -443,7 +451,10 @@ function media_lab_get_hero_image(?int $post_id = null) : ?array {
         'btn2_url'   => $btn2_url,
         'btn2_style' => $btn2_style,
         'align'      => in_array($align, ['left', 'center', 'right'], true) ? $align : 'left',
-        'height'     => in_array($height, ['sm', 'md', 'lg', 'xl'], true) ? $height : 'md',
+        // Numerische Höhe (Pixel-Wert) wird direkt durchgereicht; named heights gegen Whitelist.
+        'height'     => (is_numeric($height) && (int)$height > 0)
+                            ? (string)(int)$height
+                            : (in_array($height, ['sm', 'md', 'lg', 'xl'], true) ? $height : 'md'),
         'vpos'       => in_array($vpos, ['top', 'middle', 'bottom'], true) ? $vpos : 'bottom',
         'opacity'    => max(0, min(90, $opacity)),
     ];

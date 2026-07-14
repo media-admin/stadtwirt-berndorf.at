@@ -19,8 +19,15 @@ class MLT_Report_Mailer {
     }
 
     public function send() {
-        $to = get_option( 'mlt_report_email', get_option( 'admin_email' ) );
-        if ( ! is_email( $to ) ) return;
+        // Mehrere Empfänger aus dynamischer Liste holen (inc/report-recipients.php)
+        $to = mlt_get_report_recipients();
+
+        // Fallback: Admin-E-Mail wenn noch keine Empfänger konfiguriert
+        if ( empty( $to ) ) {
+            $admin = get_option( 'admin_email' );
+            if ( ! is_email( $admin ) ) return;
+            $to = [ $admin ];
+        }
 
         $data = $this->collect_data();
         $html = MLT_Report_Template::build( $data );
@@ -28,9 +35,9 @@ class MLT_Report_Mailer {
         /**
          * Filter: Report-HTML vor dem Versand anpassen.
          *
-         * @param string $html  Fertiges HTML
-         * @param array  $data  Rohdaten (gsc_overview, gsc_queries, gsc_pages, analytics, analytics_sources)
-         * @param string $to    Empfänger
+         * @param string   $html  Fertiges HTML
+         * @param array    $data  Rohdaten (gsc_overview, gsc_queries, gsc_pages, analytics, analytics_sources)
+         * @param string[] $to    Empfänger-Array
          */
         $html = apply_filters( 'mlt_weekly_report_html', $html, $data, $to );
 

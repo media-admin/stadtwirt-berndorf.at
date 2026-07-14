@@ -3,12 +3,7 @@
  * MLT_GSC_API
  *
  * Google Search Console API – OAuth2 + Search Analytics Datenabruf.
- *
- * Setup:
- *  1. Google Cloud Console → Projekt → APIs & Dienste → OAuth2-Credentials
- *  2. Authorized Redirect URI: {admin_url}admin.php?page=media-lab-seo&mlt_gsc_callback=1
- *  3. Client ID + Secret + Property URL in SEO Toolkit → Einstellungen eintragen
- *  4. "Mit Google verbinden" klicken
+ * Datenabruf-Methoden akzeptieren jetzt $start/$end als Parameter.
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
@@ -37,16 +32,13 @@ class MLT_GSC_API {
     // ── OAuth-Flow ────────────────────────────────────────────────────────────
 
     public function get_auth_url() : string {
-        $client_id    = get_option( self::OPT_CLIENT_ID, '' );
-        $redirect_uri = $this->get_redirect_uri();
-
         return add_query_arg( [
-            'client_id'             => rawurlencode( $client_id ),
-            'redirect_uri'          => rawurlencode( $redirect_uri ),
-            'response_type'         => 'code',
-            'scope'                 => rawurlencode( 'https://www.googleapis.com/auth/webmasters.readonly' ),
-            'access_type'           => 'offline',
-            'prompt'                => 'consent',
+            'client_id'     => rawurlencode( get_option( self::OPT_CLIENT_ID, '' ) ),
+            'redirect_uri'  => rawurlencode( $this->get_redirect_uri() ),
+            'response_type' => 'code',
+            'scope'         => rawurlencode( 'https://www.googleapis.com/auth/webmasters.readonly' ),
+            'access_type'   => 'offline',
+            'prompt'        => 'consent',
         ], 'https://accounts.google.com/o/oauth2/v2/auth' );
     }
 
@@ -54,10 +46,9 @@ class MLT_GSC_API {
         if ( ! isset( $_GET['mlt_gsc_callback'], $_GET['code'] ) ) return;
         if ( ! current_user_can( 'manage_options' ) ) return;
 
-        $code     = sanitize_text_field( $_GET['code'] );
         $response = wp_remote_post( 'https://oauth2.googleapis.com/token', [
             'body' => [
-                'code'          => $code,
+                'code'          => sanitize_text_field( $_GET['code'] ),
                 'client_id'     => get_option( self::OPT_CLIENT_ID ),
                 'client_secret' => get_option( self::OPT_CLIENT_SECRET ),
                 'redirect_uri'  => $this->get_redirect_uri(),
@@ -115,7 +106,9 @@ class MLT_GSC_API {
     }
 
     public function is_configured() : bool {
-        return get_option( self::OPT_CLIENT_ID ) && get_option( self::OPT_CLIENT_SECRET ) && get_option( self::OPT_PROPERTY_URL );
+        return get_option( self::OPT_CLIENT_ID )
+            && get_option( self::OPT_CLIENT_SECRET )
+            && get_option( self::OPT_PROPERTY_URL );
     }
 
     // ── Access Token holen / refreshen ────────────────────────────────────────
@@ -123,12 +116,10 @@ class MLT_GSC_API {
     private function get_access_token() : string {
         $expiry = (int) get_option( self::OPT_TOKEN_EXPIRY, 0 );
 
-        // Token noch gültig?
         if ( $expiry > time() + 60 ) {
             return $this->decrypt( get_option( self::OPT_ACCESS_TOKEN, '' ) );
         }
 
-        // Refresh
         $refresh = $this->decrypt( get_option( self::OPT_REFRESH_TOKEN, '' ) );
         if ( ! $refresh ) return '';
 
@@ -155,19 +146,63 @@ class MLT_GSC_API {
     // ── Datenabruf ────────────────────────────────────────────────────────────
 
     /**
-     * Übersicht: Klicks, Impressionen, CTR, Ø Position
-     * Zeitraum: letzte 28 Tage
+     * Hilfsmethode: Default-Datumsbereich aus URL-Parametern oder Settings.
+     *
+     * @return array{ start: string, end: string }
      */
-    public function get_overview( bool $force = false ) : array {
-        $cache_key = 'mlt_gsc_overview';
+    public static function get_active_range() : array {
+        // URL-Parameter überschreiben alles (nur im Admin, sanitized)
+        if ( is_admin() && isset( $_GET['mlt_start'], $_GET['mlt_end'] ) ) {
+            $start = sanitize_text_field( $_GET['mlt_start'] );
+            $end   = sanitize_text_field( $_GET['mlt_end'] );
+
+            // Format-Validierung Y-m-d
+            if ( preg_match( '/^\d{4}-\d{2}-\d{2}$/', $start ) &&
+                 preg_match( '/^\d{4}-\d{2}-\d{2}$/', $end ) ) {
+                return compact( 'start', 'end' );
+            }
+        }
+
+        // Shortcut-Parameter (z.B. ?mlt_range=90)
+        if ( is_admin() && isset( $_GET['mlt_range'] ) ) {
+            $days = (int) $_GET['mlt_range'];
+            if ( in_array( $days, [ 7, 28, 90, 365 ], true ) ) {
+                return [
+                    'start' => gmdate( 'Y-m-d', strtotime( "-{$days} days" ) ),
+                    'end'   => gmdate( 'Y-m-d', strtotime( '-2 days' ) ),
+                ];
+            }
+        }
+
+        // Default aus Einstellungen
+        $default_days = (int) get_option( 'mlt_default_range', 28 );
+        return [
+            'start' => gmdate( 'Y-m-d', strtotime( "-{$default_days} days" ) ),
+            'end'   => gmdate( 'Y-m-d', strtotime( '-2 days' ) ),
+        ];
+    }
+
+    /**
+     * Übersicht: Klicks, Impressionen, CTR, Ø Position
+     *
+     * @param string $start  Y-m-d
+     * @param string $end    Y-m-d
+     * @param bool   $force  Cache ignorieren
+     */
+    public function get_overview( string $start = '', string $end = '', bool $force = false ) : array {
+        if ( ! $start || ! $end ) {
+            [ 'start' => $start, 'end' => $end ] = self::get_active_range();
+        }
+
+        $cache_key = 'mlt_gsc_overview_' . md5( $start . $end );
         if ( ! $force ) {
             $cached = get_transient( $cache_key );
             if ( $cached !== false ) return $cached;
         }
 
         $data = $this->query_api( [
-            'startDate'  => gmdate( 'Y-m-d', strtotime( '-28 days' ) ),
-            'endDate'    => gmdate( 'Y-m-d', strtotime( '-2 days' ) ),
+            'startDate'  => $start,
+            'endDate'    => $end,
             'dimensions' => [],
             'rowLimit'   => 1,
         ] );
@@ -189,18 +224,27 @@ class MLT_GSC_API {
     }
 
     /**
-     * Top Keywords (letzte 28 Tage, max. 10)
+     * Top Keywords
+     *
+     * @param int    $limit
+     * @param string $start  Y-m-d
+     * @param string $end    Y-m-d
+     * @param bool   $force
      */
-    public function get_top_queries( int $limit = 10, bool $force = false ) : array {
-        $cache_key = 'mlt_gsc_queries_' . $limit;
+    public function get_top_queries( int $limit = 10, string $start = '', string $end = '', bool $force = false ) : array {
+        if ( ! $start || ! $end ) {
+            [ 'start' => $start, 'end' => $end ] = self::get_active_range();
+        }
+
+        $cache_key = 'mlt_gsc_queries_' . md5( $limit . $start . $end );
         if ( ! $force ) {
             $cached = get_transient( $cache_key );
             if ( $cached !== false ) return $cached;
         }
 
         $data = $this->query_api( [
-            'startDate'  => gmdate( 'Y-m-d', strtotime( '-28 days' ) ),
-            'endDate'    => gmdate( 'Y-m-d', strtotime( '-2 days' ) ),
+            'startDate'  => $start,
+            'endDate'    => $end,
             'dimensions' => [ 'query' ],
             'rowLimit'   => $limit,
             'orderBy'    => [ [ 'fieldName' => 'clicks', 'sortOrder' => 'DESCENDING' ] ],
@@ -222,18 +266,27 @@ class MLT_GSC_API {
     }
 
     /**
-     * Top Seiten (letzte 28 Tage, max. 10)
+     * Top Seiten
+     *
+     * @param int    $limit
+     * @param string $start  Y-m-d
+     * @param string $end    Y-m-d
+     * @param bool   $force
      */
-    public function get_top_pages( int $limit = 10, bool $force = false ) : array {
-        $cache_key = 'mlt_gsc_pages_' . $limit;
+    public function get_top_pages( int $limit = 10, string $start = '', string $end = '', bool $force = false ) : array {
+        if ( ! $start || ! $end ) {
+            [ 'start' => $start, 'end' => $end ] = self::get_active_range();
+        }
+
+        $cache_key = 'mlt_gsc_pages_' . md5( $limit . $start . $end );
         if ( ! $force ) {
             $cached = get_transient( $cache_key );
             if ( $cached !== false ) return $cached;
         }
 
         $data = $this->query_api( [
-            'startDate'  => gmdate( 'Y-m-d', strtotime( '-28 days' ) ),
-            'endDate'    => gmdate( 'Y-m-d', strtotime( '-2 days' ) ),
+            'startDate'  => $start,
+            'endDate'    => $end,
             'dimensions' => [ 'page' ],
             'rowLimit'   => $limit,
             'orderBy'    => [ [ 'fieldName' => 'clicks', 'sortOrder' => 'DESCENDING' ] ],
@@ -262,9 +315,8 @@ class MLT_GSC_API {
 
         if ( ! $token || ! $property ) return [];
 
-        $property_encoded = rawurlencode( $property );
         $response = wp_remote_post(
-            "https://searchconsole.googleapis.com/webmasters/v3/sites/{$property_encoded}/searchAnalytics/query",
+            'https://searchconsole.googleapis.com/webmasters/v3/sites/' . rawurlencode( $property ) . '/searchAnalytics/query',
             [
                 'headers' => [
                     'Authorization' => 'Bearer ' . $token,
@@ -279,7 +331,7 @@ class MLT_GSC_API {
         return json_decode( wp_remote_retrieve_body( $response ), true ) ?? [];
     }
 
-    // ── Verschlüsselung für Tokens ────────────────────────────────────────────
+    // ── Verschlüsselung ───────────────────────────────────────────────────────
 
     private function encrypt( string $value ) : string {
         if ( ! $value ) return '';

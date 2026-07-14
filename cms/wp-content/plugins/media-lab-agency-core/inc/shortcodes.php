@@ -1278,12 +1278,22 @@ function faq_accordion_shortcode($atts) {
     ), $atts);
     
     $args = array(
-        'post_type' => 'faq',
+        'post_type'      => 'faq',
         'posts_per_page' => intval($atts['limit']),
-        'orderby' => 'meta_value_num',
-        'meta_key' => 'display_order',
-        'order' => 'ASC',
-        'post_status' => 'publish',
+        'post_status'    => 'publish',
+        'orderby'        => 'date',
+        'order'          => 'ASC',
+        'meta_query'     => array(
+            'relation' => 'OR',
+            array(
+                'key'     => 'display_order',
+                'compare' => 'EXISTS',
+            ),
+            array(
+                'key'     => 'display_order',
+                'compare' => 'NOT EXISTS',
+            ),
+        ),
     );
     
     if (!empty($atts['category'])) {
@@ -1308,7 +1318,7 @@ function faq_accordion_shortcode($atts) {
     while ($faqs->have_posts()) {
         $faqs->the_post();
         $question = get_the_title();
-        $answer = get_field('answer');
+        $answer = get_the_content(); // vorher: $answer = get_field('answer');
         
         $output .= '<div class="faq-item">';
         $output .= '<button class="faq-question" aria-expanded="false">';

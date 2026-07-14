@@ -6,11 +6,14 @@
   "description": "Call-to-Action Banner mit Titel, Text und Button. Fullwidth-fähig.",
   "category": "design",
   "icon": "megaphone",
-  "keywords": ["cta", "banner", "call-to-action", "button", "fullwidth"],
+  "keywords": [
+    "cta",
+    "banner",
+    "call-to-action",
+    "button",
+    "fullwidth"
+  ],
   "textdomain": "media-lab-agency-core",
-  "editorScript": "file:../../assets/dist/js/blocks.js",
-  "editorStyle":  "file:../../assets/dist/css/blocks-editor.css",
-  "style":        "file:../../assets/dist/css/blocks.css",
   "attributes": {
     "title": {
       "type": "string",
@@ -43,8 +46,14 @@
   },
   "supports": {
     "anchor": true,
-    "align": ["full", "wide"],
-    "spacing": { "padding": true, "margin": true }
+    "align": [
+      "full",
+      "wide"
+    ],
+    "spacing": {
+      "padding": true,
+      "margin": true
+    }
   },
   "example": {
     "attributes": {

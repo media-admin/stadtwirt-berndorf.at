@@ -10,9 +10,10 @@
  *      - Entfernt: alle on*-Handler, javascript:-URLs, data:-URLs in Attributen
  *      - Entfernt: XML-Processing-Instructions, Kommentare mit Code
  *
- * Upgrade-Pfad (empfohlen für Agenturen mit vielen SVG-Uploads):
- *   composer require enshrined/svg-sanitize
- *   Dann MediaLab_SVG_Sanitizer::sanitize() durch Sanitizer::sanitize() ersetzen.
+ * Fix 1.0.1: $allowed_tags auf Lowercase normalisiert –
+ *   strtolower($child->localName) ergab z.B. "radialgradient",
+ *   aber die Allowlist hatte "radialGradient" → Gradient-Elemente
+ *   wurden fälschlicherweise entfernt, SVG-Farbverläufe unsichtbar.
  */
 
 if (!defined('ABSPATH')) exit;
@@ -59,7 +60,6 @@ add_filter('wp_handle_upload_prefilter', function ($file) {
         return $file;
     }
 
-    // Nochmals sicherstellen: nur Administratoren
     if (!current_user_can('administrator')) {
         $file['error'] = 'SVG-Uploads sind nur für Administratoren erlaubt.';
         return $file;
@@ -89,48 +89,56 @@ class MediaLab_SVG_Sanitizer {
 
     /**
      * Erlaubte SVG-Tags (Allowlist)
-     * Alles was nicht hier drin ist wird entfernt.
+     *
+     * WICHTIG: Alle Einträge müssen lowercase sein, da der Vergleich
+     * strtolower($child->localName) verwendet. CamelCase-Einträge wie
+     * "radialGradient" würden nie matchen → Elemente fälschlich entfernt.
      */
     private static $allowed_tags = [
-        'svg', 'g', 'defs', 'title', 'desc', 'metadata',
+        // Struktur
+        'svg', 'g', 'defs', 'title', 'desc', 'metadata', 'symbol', 'use', 'switch',
+
+        // Formen
         'path', 'rect', 'circle', 'ellipse', 'line', 'polyline', 'polygon',
-        'text', 'tspan', 'textPath',
-        'linearGradient', 'radialGradient', 'stop',
-        'clipPath', 'mask', 'pattern', 'symbol', 'marker',
-        'filter', 'feBlend', 'feColorMatrix', 'feComposite', 'feConvolveMatrix',
-        'feDiffuseLighting', 'feDisplacementMap', 'feDistantLight', 'feFlood',
-        'feGaussianBlur', 'feImage', 'feMerge', 'feMergeNode', 'feMorphology',
-        'feOffset', 'fePointLight', 'feSpecularLighting', 'feSpotLight',
-        'feTile', 'feTurbulence',
-        'image', 'a', 'switch', 'use',
+
+        // Text
+        'text', 'tspan', 'textpath',
+
+        // Farbverläufe & Farben (lowercase – fix für strtolower-Vergleich)
+        'lineargradient', 'radialgradient', 'stop',
+
+        // Masken & Clipping (lowercase)
+        'clippath', 'mask', 'pattern', 'marker',
+
+        // Filter (lowercase)
+        'filter',
+        'feblend', 'fecolormatrix', 'fecomposite', 'feconvolvematrix',
+        'fediffuselighting', 'fedisplacementmap', 'fedistantlight', 'feflood',
+        'fegaussianblur', 'feimage', 'femerge', 'femergenode', 'femorphology',
+        'feoffset', 'fepointlight', 'fespecularlighting', 'fespotlight',
+        'fetile', 'feturbulence',
+
+        // Sonstiges
+        'image', 'a',
     ];
 
     /**
      * Verbotene Tags – werden komplett mit Inhalt entfernt
      */
     private static $forbidden_tags = [
-        'script', 'style',  // XSS
-        'foreignObject',     // HTML-Injection
-        'animate', 'animateMotion', 'animateTransform', 'set', // CSS-Animations mit JS-Payload
+        'script', 'style',
+        'foreignobject',     // lowercase für strtolower-Konsistenz
+        'animate', 'animatemotion', 'animatetransform', 'set',
         'handler', 'listener',
     ];
 
     /**
-     * Erlaubte Protokolle in href/xlink:href/src
-     */
-    private static $allowed_protocols = ['http', 'https', 'data:image/', '#'];
-
-    /**
      * Haupt-Methode
-     *
-     * @param string $svg Raw SVG content
-     * @return string|false Sanitierter SVG oder false bei ungültigem Dokument
      */
     public static function sanitize(string $svg) {
-        // PHP-Tags entfernen (Sicherheit vor <?php-Injection)
+        // PHP-Tags entfernen
         $svg = preg_replace('/<\?(?!xml).*?\?>/s', '', $svg);
 
-        // XML laden
         $previous_errors = libxml_use_internal_errors(true);
         $dom = new DOMDocument();
         $loaded = $dom->loadXML($svg, LIBXML_NONET | LIBXML_DTDLOAD | LIBXML_DTDATTR);
@@ -141,30 +149,20 @@ class MediaLab_SVG_Sanitizer {
             return false;
         }
 
-        // Root-Element muss <svg> sein
         $root = $dom->documentElement;
         if (!$root || strtolower($root->nodeName) !== 'svg') {
             return false;
         }
 
-        // XML-Processing-Instructions entfernen
         self::remove_processing_instructions($dom);
-
-        // Rekursiv alle Knoten bereinigen
         self::clean_node($dom->documentElement);
 
-        // Serialisieren
         $clean = $dom->saveXML($dom->documentElement);
-
-        // Finale Regex-Bereinigung für Edge Cases
         $clean = self::final_cleanup($clean);
 
         return $clean;
     }
 
-    /**
-     * Processing-Instructions entfernen (<?xml-stylesheet type="text/css" ...?>)
-     */
     private static function remove_processing_instructions(DOMDocument $dom): void {
         $xpath = new DOMXPath($dom);
         foreach ($xpath->query('//processing-instruction()') as $node) {
@@ -172,14 +170,10 @@ class MediaLab_SVG_Sanitizer {
         }
     }
 
-    /**
-     * Einzelnen Knoten und seine Kinder bereinigen
-     */
     private static function clean_node(DOMNode $node): void {
         $to_remove = [];
 
         foreach ($node->childNodes as $child) {
-            // Kommentare entfernen (können conditional IE-Code enthalten)
             if ($child->nodeType === XML_COMMENT_NODE) {
                 $to_remove[] = $child;
                 continue;
@@ -189,24 +183,20 @@ class MediaLab_SVG_Sanitizer {
                 continue;
             }
 
+            // Lowercase-Vergleich – konsistent mit $allowed_tags und $forbidden_tags
             $tag = strtolower($child->localName);
 
-            // Verbotene Tags komplett entfernen (inkl. Kinder)
             if (in_array($tag, self::$forbidden_tags, true)) {
                 $to_remove[] = $child;
                 continue;
             }
 
-            // Nicht in Allowlist → entfernen
             if (!in_array($tag, self::$allowed_tags, true)) {
                 $to_remove[] = $child;
                 continue;
             }
 
-            // Attribute bereinigen
             self::clean_attributes($child);
-
-            // Rekursiv
             self::clean_node($child);
         }
 
@@ -215,9 +205,6 @@ class MediaLab_SVG_Sanitizer {
         }
     }
 
-    /**
-     * Attribute eines Elements bereinigen
-     */
     private static function clean_attributes(DOMElement $element): void {
         $to_remove = [];
 
@@ -225,19 +212,16 @@ class MediaLab_SVG_Sanitizer {
             $name  = strtolower($attr->localName);
             $value = $attr->value;
 
-            // on*-Event-Handler entfernen (onclick, onload, onmouseover, ...)
             if (strpos($name, 'on') === 0) {
                 $to_remove[] = $attr->name;
                 continue;
             }
 
-            // Verbotene Attribute
             if (in_array($name, ['formaction', 'action', 'method', 'srcdoc'], true)) {
                 $to_remove[] = $attr->name;
                 continue;
             }
 
-            // URL-Attribute prüfen
             if (in_array($name, ['href', 'xlink:href', 'src', 'action', 'formaction'], true)) {
                 if (!self::is_safe_url($value)) {
                     $to_remove[] = $attr->name;
@@ -245,20 +229,17 @@ class MediaLab_SVG_Sanitizer {
                 }
             }
 
-            // CSS-Werte in style-Attribut prüfen
             if ($name === 'style') {
                 $clean_style = self::sanitize_style($value);
                 $element->setAttribute('style', $clean_style);
                 continue;
             }
 
-            // javascript: in beliebigen Attributen
             if (preg_match('/javascript\s*:/i', $value)) {
                 $to_remove[] = $attr->name;
                 continue;
             }
 
-            // expression() in CSS-Werten (IE-Legacy-XSS)
             if (preg_match('/expression\s*\(/i', $value)) {
                 $to_remove[] = $attr->name;
                 continue;
@@ -269,7 +250,6 @@ class MediaLab_SVG_Sanitizer {
             $element->removeAttribute($attr_name);
         }
 
-        // <use> href nur auf interne Referenzen (#id) beschränken
         if (strtolower($element->localName) === 'use') {
             foreach (['href', 'xlink:href'] as $attr) {
                 $val = $element->getAttribute($attr);
@@ -280,11 +260,7 @@ class MediaLab_SVG_Sanitizer {
         }
     }
 
-    /**
-     * Style-Attribut bereinigen
-     */
     private static function sanitize_style(string $style): string {
-        // javascript: und expression() entfernen
         $style = preg_replace('/javascript\s*:/i', '', $style);
         $style = preg_replace('/expression\s*\(/i', '', $style);
         $style = preg_replace('/url\s*\(\s*["\']?\s*javascript/i', '', $style);
@@ -292,24 +268,18 @@ class MediaLab_SVG_Sanitizer {
         return $style;
     }
 
-    /**
-     * URL-Sicherheitsprüfung
-     */
     private static function is_safe_url(string $url): bool {
         $url = trim($url);
 
-        // Interne Referenzen (#id) immer erlaubt
         if (strpos($url, '#') === 0) {
             return true;
         }
 
-        // javascript: und vbscript: blockieren
         $normalized = strtolower(preg_replace('/[\x00-\x1f\s]/u', '', $url));
         if (preg_match('/^(javascript|vbscript|data(?!:image\/))/i', $normalized)) {
             return false;
         }
 
-        // data: nur für Bilder erlauben (data:image/png;base64,...)
         if (preg_match('/^data:/i', $url)) {
             return (bool) preg_match('/^data:image\/(png|jpg|jpeg|gif|webp|svg\+xml);base64,/i', $url);
         }
@@ -317,17 +287,10 @@ class MediaLab_SVG_Sanitizer {
         return true;
     }
 
-    /**
-     * Finale Regex-Bereinigung für Edge Cases die DOMDocument durchlässt
-     */
     private static function final_cleanup(string $svg): string {
-        // Nochmals on*-Handler (DOMDocument kann manches durchlassen)
         $svg = preg_replace('/\bon\w+\s*=\s*(["\'])[^"\']*\1/i', '', $svg);
         $svg = preg_replace('/\bon\w+\s*=\s*[^\s>]+/i', '', $svg);
-
-        // javascript: in allen Attributen
         $svg = preg_replace('/(\w+\s*=\s*["\'][^"\']*)\bjavascript\s*:[^"\']*(["\'])/i', '$1$2', $svg);
-
         return $svg;
     }
 }

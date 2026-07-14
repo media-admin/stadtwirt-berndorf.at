@@ -3,18 +3,68 @@
   "apiVersion": 3,
   "name": "medialab/slider",
   "title": "Slider",
-  "description": "Swiper-Slider mit konfigurierbaren Folien.",
+  "description": "Swiper-Slider mit Folien als Kind-Blöcke (medialab/slide) – direkt im Editor-Canvas hinzufügen, sortieren und bearbeiten.",
   "category": "design",
   "icon": "slides",
+  "keywords": [
+    "slider",
+    "swiper",
+    "carousel",
+    "karussell"
+  ],
   "textdomain": "media-lab-agency-core",
-  "acf": {
-    "mode": "preview",
-    "renderTemplate": "render.php"
+  "attributes": {
+    "autoplay": {
+      "type": "boolean",
+      "default": false
+    },
+    "autoplayDelay": {
+      "type": "number",
+      "default": 4000
+    },
+    "loop": {
+      "type": "boolean",
+      "default": true
+    },
+    "navigation": {
+      "type": "boolean",
+      "default": true
+    },
+    "pagination": {
+      "type": "string",
+      "default": "bullets"
+    },
+    "effect": {
+      "type": "string",
+      "default": "slide"
+    },
+    "speed": {
+      "type": "number",
+      "default": 600
+    },
+    "slidesPerView": {
+      "type": "number",
+      "default": 1
+    },
+    "spaceBetween": {
+      "type": "number",
+      "default": 0
+    },
+    "centered": {
+      "type": "boolean",
+      "default": false
+    }
   },
   "supports": {
     "anchor": true,
-    "align": ["wide", "full"],
-    "spacing": { "margin": true, "padding": true }
+    "align": [
+      "wide",
+      "full"
+    ],
+    "spacing": {
+      "margin": true,
+      "padding": true
+    }
   },
   "example": {}
 }

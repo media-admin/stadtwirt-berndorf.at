@@ -1,100 +1,73 @@
 /* =============================================================================
-   Media Lab – Post Order: Drag & Drop + Arrow Buttons
+   Drag & Drop Post Order – Admin Styles
    ============================================================================= */
 
-/* ── Status-Notice ─────────────────────────────────────────────────────────── */
-
-#medialab-order-notice {
-    display: none;
-    margin: 8px 0 16px;
+/* Title-Spalte: Flex damit Handle und Titel sauber nebeneinander sitzen */
+#the-list td.column-title {
+	display: flex;
+	align-items: center;
 }
 
-/* ── Controls-Wrapper (Handle + Buttons) ───────────────────────────────────── */
-
-.ml-order-controls {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    margin-right: 8px;
-    vertical-align: middle;
+/* Handle-Icon */
+.medialab-drag-handle {
+	display: flex;
+	align-items: center;
+	flex-shrink: 0;
+	margin-right: 6px;
+	color: #999;
+	cursor: grab;
+	font-size: 18px;
+	line-height: 1;
+	user-select: none;
+	transition: color 0.15s ease;
 }
 
-/* ── Drag-Handle ───────────────────────────────────────────────────────────── */
-
-.ml-drag-handle {
-    display: inline-block;
-    color: #a7aaad;
-    cursor: grab;
-    font-size: 16px;
-    line-height: 1;
-    padding: 2px 3px;
-    border-radius: 2px;
-    user-select: none;
-    transition: color 0.15s, background 0.15s;
+.medialab-drag-handle:hover {
+	color: #2271b1;
 }
 
-.ml-drag-handle:hover {
-    color: #2271b1;
-    background: #f0f6fc;
+.medialab-drag-handle:active {
+	cursor: grabbing;
 }
 
-.ml-drag-handle:active {
-    cursor: grabbing;
-}
-
-/* ── Pfeil-Buttons ─────────────────────────────────────────────────────────── */
-
-.ml-arrow-btns {
-    display: inline-flex;
-    gap: 2px;
-}
-
-.ml-arrow-btns .button {
-    padding: 0 6px;
-    min-height: 24px;
-    line-height: 22px;
-    font-size: 10px;
-    color: #646970;
-    background: #fff;
-    border-color: #c3c4c7;
-    box-shadow: none;
-}
-
-.ml-arrow-btns .button:hover {
-    color: #2271b1;
-    border-color: #2271b1;
-    background: #f0f6fc;
-}
-
-.ml-arrow-btns .button:focus {
-    color: #2271b1;
-    border-color: #2271b1;
-    box-shadow: 0 0 0 2px #2271b11a;
-    outline: none;
-}
-
-/* Deaktivierter Zustand – erstes/letztes Element */
-.ml-arrow-btns .button:disabled {
-    opacity: .3;
-    cursor: not-allowed;
-    pointer-events: none;
-}
-
-/* ── Drag-Zustände der Tabellenzeile ───────────────────────────────────────── */
-
-/* Aktive Zeile während Drag */
+/* Aktive Zeile beim Drag */
 #the-list tr.ui-sortable-helper {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, .15);
-    outline: 2px solid #2271b1;
-    background: #fff;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
+	background: #fff;
+	outline: 2px solid #2271b1;
 }
 
-/* Placeholder während Drag */
-#the-list tr.ml-sort-placeholder td {
-    background: #e8f3fc;
+/* Placeholder-Zeile */
+#the-list .medialab-sort-placeholder {
+	background: #f0f6fc;
+	border: 2px dashed #2271b1;
+	visibility: visible !important;
 }
 
-#the-list tr.ml-sort-placeholder {
-    outline: 2px dashed #2271b1;
-    visibility: visible !important;
+#the-list .medialab-sort-placeholder td {
+	display: none;
+}
+
+/* Status-Notice */
+#medialab-order-notice {
+	margin: 10px 0;
+}
+
+/* =============================================================================
+   Einstellungsseite – Post Order
+   ============================================================================= */
+.medialab-post-order-table td,
+.medialab-post-order-table th {
+	vertical-align: middle;
+	padding: 10px 12px;
+}
+
+.medialab-post-order-table input[type="checkbox"] {
+	width: 18px;
+	height: 18px;
+	cursor: pointer;
+}
+
+.medialab-post-order-table input[type="checkbox"]:disabled {
+	cursor: default;
 }

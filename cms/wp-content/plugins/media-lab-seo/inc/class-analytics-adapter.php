@@ -6,8 +6,12 @@
  * Liefert Seitenaufrufe, Nutzer und Traffic-Quellen für das SEO-Dashboard
  * und den wöchentlichen Report.
  *
- * Verfügbare Adapter: GA4 Data API, Matomo
- * Eigener Adapter: add_filter('mlt_analytics_adapter', fn($adapter) => new MyAdapter())
+ * GA4-Adapter: OAuth User-Login (MLT_GA4_API) als primäre Methode.
+ *              Service Account JSON als Fallback für bestehende Setups.
+ * Matomo-Adapter: API-Token (unverändert).
+ *
+ * Eigener Adapter:
+ *   add_filter('mlt_analytics_adapter', fn($adapter) => new MyAdapter())
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
@@ -32,20 +36,75 @@ interface MLT_Analytics_Adapter_Interface {
 
 class MLT_GA4_Data_Adapter implements MLT_Analytics_Adapter_Interface {
 
-    private string $property_id;
-    private string $service_account_json;
+    /**
+     * Gibt an, welche Methode aktiv ist.
+     * 'oauth'           → MLT_GA4_API (User-Login)
+     * 'service_account' → Legacy Service Account JSON
+     * 'none'            → nicht konfiguriert
+     */
+    private string $mode = 'none';
+
+    private ?MLT_GA4_API $oauth_api    = null;
+    private string $sa_property_id     = '';
+    private string $sa_json            = '';
 
     public function __construct() {
-        $this->property_id          = get_option( 'mlt_ga4_property_id', '' );
-        $this->service_account_json = get_option( 'mlt_ga4_service_account_json', '' );
+        // OAuth prüfen (primär)
+        $ga4 = MLT_GA4_API::instance();
+        if ( $ga4->is_connected() ) {
+            $this->mode      = 'oauth';
+            $this->oauth_api = $ga4;
+            return;
+        }
+
+        // Service Account als Fallback (Legacy)
+        $sa_id   = get_option( 'mlt_ga4_property_id', '' );
+        $sa_json = get_option( 'mlt_ga4_service_account_json', '' );
+        if ( $sa_id && $sa_json ) {
+            $this->mode          = 'service_account';
+            $this->sa_property_id = $sa_id;
+            $this->sa_json        = $sa_json;
+        }
     }
 
     public function is_available() : bool {
-        return ! empty( $this->property_id ) && ! empty( $this->service_account_json );
+        return $this->mode !== 'none';
     }
 
     public function get_overview( string $start, string $end ) : array {
-        $response = $this->run_report( [
+        if ( $this->mode === 'oauth' ) {
+            return $this->oauth_api->get_overview( $start, $end );
+        }
+        if ( $this->mode === 'service_account' ) {
+            return $this->sa_run_overview( $start, $end );
+        }
+        return [ 'pageviews' => 0, 'sessions' => 0, 'users' => 0 ];
+    }
+
+    public function get_sources( string $start, string $end, int $limit = 5 ) : array {
+        if ( $this->mode === 'oauth' ) {
+            return $this->oauth_api->get_sources( $start, $end, $limit );
+        }
+        if ( $this->mode === 'service_account' ) {
+            return $this->sa_run_sources( $start, $end, $limit );
+        }
+        return [];
+    }
+
+    public function get_top_pages( string $start, string $end, int $limit = 10 ) : array {
+        if ( $this->mode === 'oauth' ) {
+            return $this->oauth_api->get_top_pages( $start, $end, $limit );
+        }
+        if ( $this->mode === 'service_account' ) {
+            return $this->sa_run_top_pages( $start, $end, $limit );
+        }
+        return [];
+    }
+
+    // ── Service Account – Methoden (Legacy-Fallback) ──────────────────────────
+
+    private function sa_run_overview( string $start, string $end ) : array {
+        $response = $this->sa_run_report( [
             'dateRanges' => [ [ 'startDate' => $start, 'endDate' => $end ] ],
             'metrics'    => [
                 [ 'name' => 'screenPageViews' ],
@@ -66,8 +125,8 @@ class MLT_GA4_Data_Adapter implements MLT_Analytics_Adapter_Interface {
         ];
     }
 
-    public function get_sources( string $start, string $end, int $limit = 5 ) : array {
-        $response = $this->run_report( [
+    private function sa_run_sources( string $start, string $end, int $limit ) : array {
+        $response = $this->sa_run_report( [
             'dateRanges' => [ [ 'startDate' => $start, 'endDate' => $end ] ],
             'dimensions' => [ [ 'name' => 'sessionSource' ] ],
             'metrics'    => [ [ 'name' => 'sessions' ] ],
@@ -85,8 +144,8 @@ class MLT_GA4_Data_Adapter implements MLT_Analytics_Adapter_Interface {
         return $rows;
     }
 
-    public function get_top_pages( string $start, string $end, int $limit = 10 ) : array {
-        $response = $this->run_report( [
+    private function sa_run_top_pages( string $start, string $end, int $limit ) : array {
+        $response = $this->sa_run_report( [
             'dateRanges' => [ [ 'startDate' => $start, 'endDate' => $end ] ],
             'dimensions' => [ [ 'name' => 'pagePath' ] ],
             'metrics'    => [ [ 'name' => 'screenPageViews' ] ],
@@ -104,11 +163,11 @@ class MLT_GA4_Data_Adapter implements MLT_Analytics_Adapter_Interface {
         return $rows;
     }
 
-    private function run_report( array $body ) : array {
-        $token = $this->get_access_token();
+    private function sa_run_report( array $body ) : array {
+        $token = $this->sa_get_access_token();
         if ( ! $token ) return [];
 
-        $property_id = preg_replace( '/\D/', '', $this->property_id );
+        $property_id = preg_replace( '/\D/', '', $this->sa_property_id );
         $response    = wp_remote_post(
             "https://analyticsdata.googleapis.com/v1beta/properties/{$property_id}:runReport",
             [
@@ -125,11 +184,11 @@ class MLT_GA4_Data_Adapter implements MLT_Analytics_Adapter_Interface {
         return json_decode( wp_remote_retrieve_body( $response ), true ) ?? [];
     }
 
-    private function get_access_token() : string {
-        $cached = get_transient( 'mlt_ga4_access_token' );
+    private function sa_get_access_token() : string {
+        $cached = get_transient( 'mlt_ga4_sa_access_token' );
         if ( $cached ) return $cached;
 
-        $credentials = json_decode( $this->service_account_json, true );
+        $credentials = json_decode( $this->sa_json, true );
         if ( ! $credentials ) return '';
 
         $now     = time();
@@ -165,7 +224,7 @@ class MLT_GA4_Data_Adapter implements MLT_Analytics_Adapter_Interface {
         $token = $body['access_token'] ?? '';
 
         if ( $token ) {
-            set_transient( 'mlt_ga4_access_token', $token, (int) ( $body['expires_in'] ?? 3600 ) - 60 );
+            set_transient( 'mlt_ga4_sa_access_token', $token, (int) ( $body['expires_in'] ?? 3600 ) - 60 );
         }
 
         return $token;
@@ -198,17 +257,17 @@ class MLT_Matomo_Adapter implements MLT_Analytics_Adapter_Interface {
         ] );
 
         return [
-            'pageviews' => (int) ( $data['nb_pageviews']       ?? 0 ),
-            'sessions'  => (int) ( $data['nb_visits']          ?? 0 ),
-            'users'     => (int) ( $data['nb_uniq_visitors']   ?? 0 ),
+            'pageviews' => (int) ( $data['nb_pageviews']     ?? 0 ),
+            'sessions'  => (int) ( $data['nb_visits']        ?? 0 ),
+            'users'     => (int) ( $data['nb_uniq_visitors'] ?? 0 ),
         ];
     }
 
     public function get_sources( string $start, string $end, int $limit = 5 ) : array {
         $data = $this->call_api( [
-            'method'    => 'Referrers.getAll',
-            'date'      => $start . ',' . $end,
-            'period'    => 'range',
+            'method'       => 'Referrers.getAll',
+            'date'         => $start . ',' . $end,
+            'period'       => 'range',
             'filter_limit' => $limit,
         ] );
 
@@ -242,9 +301,9 @@ class MLT_Matomo_Adapter implements MLT_Analytics_Adapter_Interface {
 
     private function call_api( array $params ) : array {
         $query = http_build_query( array_merge( [
-            'module'  => 'API',
-            'format'  => 'JSON',
-            'idSite'  => $this->site_id,
+            'module'     => 'API',
+            'format'     => 'JSON',
+            'idSite'     => $this->site_id,
             'token_auth' => $this->token,
         ], $params ) );
 

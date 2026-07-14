@@ -1,0 +1,139 @@
+/**
+ * WP Login – Button-Style aus Theme-Variablen
+ */
+
+:root {
+	--color-primary:      #c0392b;
+	--color-primary-dark: #96281b;
+	--color-primary-text: #ffffff;
+	--border-radius-btn:  4px;
+	--font-family-base:   -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* ── Layout ──────────────────────────────────────────────────────────────── */
+body.login {
+	font-family: var(--font-family-base);
+}
+
+body.login #login {
+	width:      320px !important;
+	max-width:  none !important;
+	padding:    26px 24px 46px !important;
+	box-sizing: content-box !important;
+}
+
+/* ── forgetmenot + Submit: eine Zeile via JS-Wrapper (.mlt-login-row) ─────── */
+body.login .mlt-login-row {
+	display:         flex !important;
+	align-items:     center !important;
+	justify-content: space-between !important;
+	margin-top:      16px !important;
+}
+
+body.login .mlt-login-row p {
+	display: flex !important;
+	align-items: center !important;
+	margin:  0 !important;
+	padding: 0 !important;
+	float:   none !important;
+}
+
+body.login #loginform .forgetmenot label,
+body.login .mlt-login-row .forgetmenot label {
+	display:        flex !important;
+	flex-direction: row !important;
+	align-items:    center !important;
+	gap:            6px !important;
+	margin:         0 !important;
+}
+
+body.login #loginform .forgetmenot input[type="checkbox"],
+body.login .mlt-login-row .forgetmenot input[type="checkbox"] {
+	margin:         0 6px 0 0 !important;
+	flex-shrink:    0 !important;
+	position:       static !important;
+	float:          none !important;
+	vertical-align: middle !important;
+}
+
+/* Originale <p>-Elemente ausblenden sobald Wrapper existiert */
+body.login #loginform > p.forgetmenot,
+body.login #loginform > p.submit {
+	display: none !important;
+}
+
+/* ── Primary Button: Anmelden ────────────────────────────────────────────── */
+body.login #wp-submit,
+body.login .button-primary {
+	background:    var(--color-primary) !important;
+	border-color:  var(--color-primary-dark) !important;
+	color:         var(--color-primary-text) !important;
+	border-radius: var(--border-radius-btn) !important;
+	box-shadow:    none !important;
+	text-shadow:   none !important;
+	font-family:   var(--font-family-base) !important;
+	padding:       0 16px !important;
+	height:        36px !important;
+	line-height:   36px !important;
+	transition:    background 0.2s ease, border-color 0.2s ease !important;
+}
+
+body.login #wp-submit:hover,
+body.login #wp-submit:focus,
+body.login .button-primary:hover,
+body.login .button-primary:focus {
+	background:     var(--color-primary-dark) !important;
+	border-color:   var(--color-primary-dark) !important;
+	box-shadow:     none !important;
+	outline:        2px solid var(--color-primary) !important;
+	outline-offset: 2px !important;
+}
+
+/* ── Sprach-Switcher: zentriert + Button angeglichen ─────────────────────── */
+body.login .language-switcher {
+	display:         flex !important;
+	align-items:     center !important;
+	justify-content: center !important;
+	gap:             8px !important;
+	width:           100% !important;
+}
+
+body.login .language-switcher select {
+	font-family: var(--font-family-base) !important;
+}
+
+body.login .language-switcher .button,
+body.login #language-switcher-locales + .button {
+	background:    var(--color-primary) !important;
+	border-color:  var(--color-primary-dark) !important;
+	color:         var(--color-primary-text) !important;
+	border-radius: var(--border-radius-btn) !important;
+	box-shadow:    none !important;
+	text-shadow:   none !important;
+	font-family:   var(--font-family-base) !important;
+	padding:       0 16px !important;
+	height:        36px !important;
+	line-height:   36px !important;
+	white-space:   nowrap !important;
+	transition:    background 0.2s ease !important;
+}
+
+body.login .language-switcher .button:hover,
+body.login .language-switcher .button:focus,
+body.login #language-switcher-locales + .button:hover,
+body.login #language-switcher-locales + .button:focus {
+	background:   var(--color-primary-dark) !important;
+	border-color: var(--color-primary-dark) !important;
+	box-shadow:   none !important;
+	color:        var(--color-primary-text) !important;
+}
+
+/* ── Links ───────────────────────────────────────────────────────────────── */
+body.login a {
+	color: var(--color-primary) !important;
+}
+
+body.login a:hover,
+body.login a:focus {
+	color: var(--color-primary-dark) !important;
+}

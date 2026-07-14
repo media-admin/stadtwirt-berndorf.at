@@ -3,7 +3,7 @@
  * Plugin Name: Media Lab Agency Core
  * Plugin URI: https://github.com/media-admin/media-lab-starter-kit
  * Description: Core functionality for Media Lab agency websites. Provides shortcodes, security features, and admin customizations.
- * Version:           1.12.0
+ * Version:           1.16.0
  * Author: Media Lab
  * Author URI: https://medialab.at
  * Text Domain: media-lab-core
@@ -14,7 +14,7 @@
 
 if (!defined('ABSPATH')) { exit; }
 
-define('MEDIALAB_CORE_VERSION', '1.12.0');
+define('MEDIALAB_CORE_VERSION', '1.16.0');
 define('MEDIALAB_CORE_FILE', __FILE__);
 define('MEDIALAB_CORE_PATH', plugin_dir_path(__FILE__));
 define('MEDIALAB_CORE_URL', plugin_dir_url(__FILE__));
@@ -39,6 +39,7 @@ function medialab_core_init() {
     require_once MEDIALAB_CORE_PATH . 'inc/notifications-shortcodes.php';
     require_once MEDIALAB_CORE_PATH . 'inc/acf-fields-gmap.php';
     require_once MEDIALAB_CORE_PATH . 'inc/top-header-order.php';
+    require_once MEDIALAB_CORE_PATH . 'inc/login-style.php';
 
     // ── ACF Options + Fields ──────────────────────────────
     require_once MEDIALAB_CORE_PATH . 'inc/acf-settings.php';
@@ -62,7 +63,15 @@ function medialab_core_init() {
     require_once MEDIALAB_CORE_PATH . 'inc/white-label.php';
     require_once MEDIALAB_CORE_PATH . 'inc/maintenance.php';
     require_once MEDIALAB_CORE_PATH . 'inc/cookie-consent.php';
+    require_once MEDIALAB_CORE_PATH . 'inc/consent-tracker.php';
     require_once MEDIALAB_CORE_PATH . 'inc/hcaptcha.php';
+    require_once MEDIALAB_CORE_PATH . 'inc/honeypot.php';
+    require_once MEDIALAB_CORE_PATH . 'inc/turnstile.php';
+    require_once MEDIALAB_CORE_PATH . 'inc/class-mla-security-scanner.php';
+    MLA_Security_Scanner::instance();
+
+    require_once MEDIALAB_CORE_PATH . 'inc/smtp-oauth.php';
+    $GLOBALS['medialab_smtp_oauth'] = new MediaLab_SMTP_OAuth();
 
     // ── Dark Mode Toggle — since 1.12.0 ───────────────────
     require_once MEDIALAB_CORE_PATH . 'inc/dark-mode.php';
@@ -71,7 +80,25 @@ function medialab_core_init() {
 }
 add_action('plugins_loaded', 'medialab_core_init', 5);
 
-function medialab_core_activate() { flush_rewrite_rules(); }
+/**
+ * Stellt sicher, dass die Consent-Log-Tabelle existiert – auch bei
+ * Plugin-Updates ohne erneute Aktivierung (z.B. via FTP/Git-Deploy).
+ */
+function medialab_core_maybe_upgrade() {
+    if ( get_option( 'medialab_core_db_version' ) === MEDIALAB_CORE_VERSION ) return;
+
+    require_once MEDIALAB_CORE_PATH . 'inc/consent-tracker.php';
+    MediaLab_Consent_Tracker::create_table();
+
+    update_option( 'medialab_core_db_version', MEDIALAB_CORE_VERSION );
+}
+add_action('plugins_loaded', 'medialab_core_maybe_upgrade', 6);
+
+function medialab_core_activate() {
+    require_once MEDIALAB_CORE_PATH . 'inc/consent-tracker.php';
+    MediaLab_Consent_Tracker::create_table();
+    flush_rewrite_rules();
+}
 register_activation_hook(__FILE__, 'medialab_core_activate');
 
 function medialab_core_deactivate() {
