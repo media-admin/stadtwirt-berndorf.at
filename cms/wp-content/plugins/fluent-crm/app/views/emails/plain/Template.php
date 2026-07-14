@@ -15,7 +15,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 <?php do_action('fluent_crm/email_header', 'plain'); ?>
-<?php include(FLUENTCRM_PLUGIN_PATH.'app/views/emails/common-style.php'); ?>
+<?php include(FLUENTCRM_PLUGIN_PATH.'app/Views/emails/common-style.php'); ?>
 </head>
 <body class="fc_plain_template" style="background: none no-repeat center/cover;height: 100%;margin: 0;padding: 0;width: 100%;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;background-image: none;background-repeat: no-repeat;background-position: center;background-size: cover;">
 <?php if ($preHeader): ?><span class="fcPreviewText" style="display:none; font-size:0px; line-height:0px; max-height:0px; max-width:0px; opacity:0; overflow:hidden; visibility:hidden; mso-hide:all;"><?php echo esc_attr($preHeader); ?></span><?php endif; ?>
@@ -50,7 +50,7 @@
 <table align="left" border="0" cellpadding="0" cellspacing="0" style="max-width: 100%;min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color:inherit;" width="100%" class="fcTextContentContainer">
 <tbody class="mcnTextBlockOuter">
 <tr>
-<td class="fc_email_body" align="left" valign="top" style="padding-top: 20px;padding-right: 20px;padding-bottom: 10px;padding-left: 20px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;word-break: break-word;font-size: 16px;line-height: 180%;text-align: left;color:inherit;">
+<td class="fc_email_body" align="left" valign="top" style="padding-top: 20px;padding-right: 20px;padding-bottom: 10px;padding-left: 20px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;word-break: break-word;font-size: 16px;line-height: 160%;text-align: left;color:inherit;">
     <div>
         <?php echo $email_body; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
     </div>

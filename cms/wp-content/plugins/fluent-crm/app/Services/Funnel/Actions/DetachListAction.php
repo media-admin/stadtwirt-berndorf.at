@@ -49,15 +49,17 @@ class DetachListAction extends BaseAction
     public function handle($subscriber, $sequence, $funnelSubscriberId, $funnelMetric)
     {
         if (empty($sequence->settings['lists']) || !is_array($sequence->settings['lists'])) {
-            FunnelHelper::changefunnelSubSequenceStatus($funnelSubscriberId, $sequence->id, 'skipped');
+            FunnelHelper::changeFunnelSubSequenceStatus($funnelSubscriberId, $sequence->id, 'skipped');
             return;
         }
 
         $lists = $sequence->settings['lists'];
 
         $renewedSubscriber = Subscriber::where('id', $subscriber->id)->first();
+        if (!$renewedSubscriber) {
+            FunnelHelper::changeFunnelSubSequenceStatus($funnelSubscriberId, $sequence->id, 'skipped');
+            return;
+        }
         $renewedSubscriber->detachLists($lists);
-
-        //FunnelHelper::changefunnelSubSequenceStatus($funnelSubscriberId, $sequence->id);
     }
 }

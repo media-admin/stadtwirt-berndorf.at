@@ -7,7 +7,7 @@ use FluentCrm\App\Services\CrmMigrator\ConvertKitMigrator;
 use FluentCrm\App\Services\CrmMigrator\DripMigrator;
 use FluentCrm\App\Services\CrmMigrator\MailChimpMigrator;
 use FluentCrm\App\Services\CrmMigrator\MailerLiteMigrator;
-use FluentCrm\Framework\Request\Request;
+use FluentCrm\Framework\Http\Request\Request;
 
 /**
  *  MigratorController - REST API Handler Class

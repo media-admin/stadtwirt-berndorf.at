@@ -1024,7 +1024,9 @@ class PaymentHelper
         }
 
         $customText = '';
-        if ($hasSignupFee) {
+        if ($hasSignupFee && isset($plan['bill_times']) && $plan['bill_times'] == 1) {
+            $customText = $cases['onetime_only'];
+        } else if ($hasSignupFee) {
             $customText = $cases['has_signup_fee'];
         } else if ($hasTrial) {
             if (ArrayHelper::get($plan, 'bill_times') == 1) {

@@ -16,7 +16,15 @@ class FunnelMetric extends Model
 {
     protected $table = 'fc_funnel_metrics';
 
-    protected $guarded = ['id'];
+    protected $fillable = [
+        'funnel_id',
+        'sequence_id',
+        'subscriber_id',
+        'benchmark_value',
+        'benchmark_currency',
+        'status',
+        'notes'
+    ];
 
     public function scopeStatus($query, $status = 'completed')
     {

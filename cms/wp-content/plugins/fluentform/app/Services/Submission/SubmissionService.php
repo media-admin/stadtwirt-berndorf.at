@@ -355,7 +355,14 @@ class SubmissionService
 
             $message = 'Selected entries successfully marked as ' . $statuses[$actionType];
         } elseif ('other.delete_permanently' == $actionType) {
-            $this->deleteEntries($submissionIds, $formId);
+            $ownedIds = $this->model->where('form_id', $formId)
+                ->whereIn('id', $submissionIds)
+                ->pluck('id')
+                ->all();
+
+            if ($ownedIds) {
+                $this->deleteEntries($ownedIds, $formId);
+            }
 
             $message = __('Selected entries successfully deleted', 'fluentform');
         } elseif ('other.make_favorite' == $actionType) {
@@ -392,7 +399,7 @@ class SubmissionService
 
         $this->deleteFiles($submissionIds, $formId);
 
-        Submission::remove($submissionIds);
+        Submission::remove($submissionIds, $formId);
 
         do_action('fluentform/after_deleting_submissions', $submissionIds, $formId);
 

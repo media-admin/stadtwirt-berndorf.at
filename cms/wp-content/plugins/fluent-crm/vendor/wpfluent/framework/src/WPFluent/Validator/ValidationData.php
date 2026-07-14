@@ -3,9 +3,16 @@
 namespace FluentCrm\Framework\Validator;
 
 use FluentCrm\Framework\Support\Arr;
+use FluentCrm\Framework\Support\Helper;
 
 class ValidationData
 {
+    /**
+     * Gather all data
+     * @param  string $attribute
+     * @param  array $masterData
+     * @return array
+     */
     public static function initializeAndGatherData($attribute, $masterData)
     {
         $data = Arr::dot(static::initializeAttributeOnData($attribute, $masterData));
@@ -29,11 +36,11 @@ class ValidationData
 
         $data = static::extractDataFromPath($explicitPath, $masterData);
 
-        if (! mb_strpos($attribute, '*') !== false || substr($attribute, -1) === '*') {
+        if (mb_strpos($attribute, '*') !== false || substr($attribute, -1) === '*') {
             return $data;
         }
 
-        return static::data_set($data, $attribute, null, true);
+        return Helper::dataSet($data, $attribute, null, true);
     }
 
     /**
@@ -105,66 +112,5 @@ class ValidationData
     public static function getLeadingExplicitAttributePath($attribute)
     {
         return rtrim(explode('*', $attribute)[0], '.') ?: null;
-    }
-
-    /**
-     * Set an item on an array or object using dot notation.
-     *
-     * @param mixed $target
-     * @param string|array $key
-     * @param mixed $value
-     * @param bool $overwrite
-     *
-     * @return mixed
-     */
-    function data_set(&$target, $key, $value, $overwrite = true)
-    {
-        $segments = is_array($key) ? $key : explode('.', $key);
-
-        if (($segment = array_shift($segments)) === '*') {
-            if (! Arr::accessible($target)) {
-                $target = [];
-            }
-
-            if ($segments) {
-                foreach ($target as &$inner) {
-                    static::data_set($inner, $segments, $value, $overwrite);
-                }
-            } elseif ($overwrite) {
-                foreach ($target as &$inner) {
-                    $inner = $value;
-                }
-            }
-        } elseif (Arr::accessible($target)) {
-            if ($segments) {
-                if (! Arr::exists($target, $segment)) {
-                    $target[$segment] = [];
-                }
-
-                static::data_set($target[$segment], $segments, $value, $overwrite);
-            } elseif ($overwrite || ! Arr::exists($target, $segment)) {
-                $target[$segment] = $value;
-            }
-        } elseif (is_object($target)) {
-            if ($segments) {
-                if (! isset($target->{$segment})) {
-                    $target->{$segment} = [];
-                }
-
-                static::data_set($target->{$segment}, $segments, $value, $overwrite);
-            } elseif ($overwrite || ! isset($target->{$segment})) {
-                $target->{$segment} = $value;
-            }
-        } else {
-            $target = [];
-
-            if ($segments) {
-                static::data_set($target[$segment], $segments, $value, $overwrite);
-            } elseif ($overwrite) {
-                $target[$segment] = $value;
-            }
-        }
-
-        return $target;
     }
 }

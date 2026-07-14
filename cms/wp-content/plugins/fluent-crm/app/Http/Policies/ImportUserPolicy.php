@@ -2,7 +2,7 @@
 
 namespace FluentCrm\App\Http\Policies;
 
-use FluentCrm\Framework\Request\Request;
+use FluentCrm\Framework\Http\Request\Request;
 
 /**
  *  ImportUserPolicy - Import Contact Policy
@@ -13,7 +13,7 @@ class ImportUserPolicy extends BasePolicy {
     /**
      * Check user permission for any method
      *
-     * @param \FluentCrm\Framework\Request\Request $request
+     * @param \FluentCrm\Framework\Http\Request\Request $request
      *
      * @return Boolean
      */

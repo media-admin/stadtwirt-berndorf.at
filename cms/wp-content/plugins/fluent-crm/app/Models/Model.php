@@ -2,8 +2,8 @@
 
 namespace FluentCrm\App\Models;
 
-use FluentCrm\Framework\Database\Orm\DateTime;
 use FluentCrm\Framework\Database\Orm\Model as BaseModel;
+use FluentCrm\Framework\Support\Str;
 
 class Model extends BaseModel
 {
@@ -30,16 +30,39 @@ class Model extends BaseModel
     /**
      * Get a fresh timestamp for the model.
      *
-     * @return \FluentCrm\Framework\Database\Orm\DateTime
+     * @return \DateTime
      */
     public function freshTimestamp()
     {
-        return new \DateTime(current_time('mysql'));
+        return new \FluentCrm\Framework\Support\DateTime(current_time('mysql'));
+    }
+
+    protected function serializeDate(\DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d H:i:s');
     }
 
     public function getTimezone()
     {
-        return '';
+        return wp_timezone();
+    }
+
+    protected function asDateTime($value)
+    {
+        if (is_string($value) && Str::contains($value, 'T')) {
+            return new \FluentCrm\Framework\Support\DateTime($value);
+        }
+
+        return parent::asDateTime($value);
+    }
+
+    protected function originalIsNumericallyEquivalent($key)
+    {
+        $current = $this->attributes[$key];
+
+        $original = $this->original[$key];
+
+        return is_numeric($current) && is_numeric($original) && strcmp((string) $current, (string) $original) === 0;
     }
 
 }

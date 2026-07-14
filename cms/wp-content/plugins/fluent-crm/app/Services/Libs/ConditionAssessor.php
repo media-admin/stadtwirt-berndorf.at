@@ -62,8 +62,8 @@ class ConditionAssessor
             $sourceValue = Arr::get($inputs, $conditional['data_key']);
             $dataValue = $conditional['data_value'];
 
-            if ($conditional['data_key'] === 'order_status' && !strpos('wc-', $sourceValue)) {
-                $sourceValue = str_replace($sourceValue, 'wc-' . $sourceValue, $sourceValue);
+            if ($conditional['data_key'] === 'order_status' && !Str::startsWith($sourceValue, 'wc-')) {
+                $sourceValue = 'wc-' . $sourceValue;
             }
 
             switch ($conditional['operator']) {
@@ -181,7 +181,10 @@ class ConditionAssessor
 
                     return strtotime($sourceValue) > strtotime($dataValue);
                 case 'date_equal':
-                    return gmdate('YMD', strtotime($sourceValue)) == gmdate('YMD', strtotime($dataValue));
+                    if (!$sourceValue || $sourceValue == '0000-00-00') {
+                        return false;
+                    }
+                    return gmdate('Ymd', strtotime($sourceValue)) == gmdate('Ymd', strtotime($dataValue));
                 case 'days_before':
                     if (!$sourceValue || $sourceValue == '0000-00-00') {
                         return false;

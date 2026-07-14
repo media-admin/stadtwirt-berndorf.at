@@ -110,7 +110,7 @@ class PaymentAction
             }
         }
 
-        if ($couponField) {
+        if ($couponField && $this->isCouponFieldVisible($couponField)) {
             $couponCodes = ArrayHelper::get($this->data, '__ff_all_applied_coupons', '');
             if ($couponCodes) {
                 $couponCodes = \json_decode($couponCodes, true);
@@ -143,6 +143,72 @@ class PaymentAction
 
         $conditionFeed = ['conditionals' => $conditionSettings];
         return ConditionAssesor::evaluate($conditionFeed, $this->data);
+    }
+
+    public function isFieldConditionPass($field)
+    {
+        $conditionSettings = ArrayHelper::get($field, 'settings.conditional_logics', []);
+        if (
+            !$conditionSettings ||
+            !ArrayHelper::isTrue($conditionSettings, 'status')
+        ) {
+            return true;
+        }
+
+        $conditionFeed = ['conditionals' => $conditionSettings];
+        return ConditionAssesor::evaluate($conditionFeed, $this->data);
+    }
+
+    /**
+     * Visible only when the coupon field's own conditions and every ancestor
+     * container's conditions pass — so a coupon inside a hidden container is
+     * not honored.
+     */
+    public function isCouponFieldVisible($couponField)
+    {
+        if (!$this->isFieldConditionPass($couponField)) {
+            return false;
+        }
+
+        $formFields = $this->form->form_fields;
+        if (is_string($formFields)) {
+            $formFields = json_decode($formFields, true);
+        }
+        $couponName = ArrayHelper::get($couponField, 'attributes.name');
+        $ancestors = $this->getFieldAncestorContainers(ArrayHelper::get($formFields, 'fields', []), $couponName);
+
+        foreach ((array) $ancestors as $container) {
+            if (!$this->isFieldConditionPass($container)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Return the ancestor container fields wrapping $targetName (containers nest
+     * children under columns[].fields[]), or null if not found in this branch.
+     */
+    public function getFieldAncestorContainers($fields, $targetName, $ancestors = [])
+    {
+        foreach ($fields as $field) {
+            if (ArrayHelper::get($field, 'attributes.name') === $targetName) {
+                return $ancestors;
+            }
+            foreach (ArrayHelper::get($field, 'columns', []) as $column) {
+                $found = $this->getFieldAncestorContainers(
+                    ArrayHelper::get($column, 'fields', []),
+                    $targetName,
+                    array_merge($ancestors, [$field])
+                );
+                if (!is_null($found)) {
+                    return $found;
+                }
+            }
+        }
+
+        return null;
     }
 
     public function draftFormEntry()

@@ -37,7 +37,8 @@ class FunnelMetrics
                 INDEX `{$indexPrefix}_m_idx` (`funnel_id` ASC),
                 INDEX `{$indexPrefix}_ms__idx` (`subscriber_id` ASC),
                 KEY `sequence_id` (`sequence_id`),
-                KEY `status` (`status`)
+                KEY `status` (`status`),
+                UNIQUE KEY `funnel_seq_subscriber_unique` (`funnel_id`, `sequence_id`, `subscriber_id`)
             ) $charsetCollate;";
             dbDelta($sql);
         } else {
@@ -56,6 +57,12 @@ class FunnelMetrics
                 // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
                 $wpdb->query($indexSql);
             }
+
+            // Composite unique index for idempotency enforcement. The sweep +
+            // dedupe + ADD UNIQUE KEY convergence lives in one place —
+            // DbPerformanceService, shared with the runtime index health-check /
+            // repair path — so the two can never drift.
+            \FluentCrm\App\Services\DbPerformanceService::ensureCriticalIndex('funnel_seq_subscriber_unique');
         }
     }
 }

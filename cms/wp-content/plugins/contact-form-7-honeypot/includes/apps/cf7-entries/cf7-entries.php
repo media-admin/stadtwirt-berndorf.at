@@ -109,11 +109,27 @@ if ( ! class_exists( 'CF7Apps_Entries_App' ) && class_exists( 'CF7Apps_App' ) ) 
 			$data = array();
 
 			$posted_data = $submission->get_posted_data();
+			$form_tags   = $form->scan_form_tags();
 
-			foreach ( $form->scan_form_tags() as $form_tag ) {
-				if ( ! empty( $form_tag['name'] ) ) {
-					$data[ $form_tag['name'] ] = $posted_data[ $form_tag['name'] ];
+			foreach ( $form_tags as $form_tag ) {
+				$field_name = is_object( $form_tag ) ? $form_tag->name : ( $form_tag['name'] ?? '' );
+
+				if ( empty( $field_name ) ) {
+					continue;
 				}
+
+				$do_not_store = $form->scan_form_tags(
+					array(
+						'name'    => $field_name,
+						'feature' => 'do-not-store',
+					)
+				);
+
+				if ( ! empty( $do_not_store ) || ! array_key_exists( $field_name, $posted_data ) ) {
+					continue;
+				}
+
+				$data[ $field_name ] = $posted_data[ $field_name ];
 			}
 
 			$entry = new CF7Apps_Form_Entries();
@@ -123,11 +139,64 @@ if ( ! class_exists( 'CF7Apps_Entries_App' ) && class_exists( 'CF7Apps_App' ) ) 
 			// Use the latest form title from the database to avoid stale names like "Untitled".
 			$form_title = get_the_title( $form->id() );
 			$entry->form_name = $form_title ? $form_title : $form->name();
-			$entry->email     = $submission->get_posted_data( 'your-email' ) ?: $submission->get_posted_data( 'email' );
+			$entry->email     = $this->find_submission_email( $form_tags, $posted_data );
 			$entry->date_time = current_time( 'timestamp' );
 			$entry->data      = $data;
 
 			$entry->save();
+		}
+
+		/**
+		 * Find the first valid email from a Contact Form 7 submission.
+		 *
+		 * @since 3.5.0
+		 *
+		 * @param array $form_tags   Form tag definitions.
+		 * @param array $posted_data Submitted form data.
+		 * @return string
+		 */
+		private function find_submission_email( $form_tags, $posted_data ) {
+			// Prefer explicit CF7 email fields first.
+			foreach ( $form_tags as $form_tag ) {
+				if ( empty( $form_tag['name'] ) ) {
+					continue;
+				}
+
+				$is_email_tag = ( isset( $form_tag['basetype'] ) && 'email' === $form_tag['basetype'] ) ||
+					( isset( $form_tag['type'] ) && 0 === strpos( $form_tag['type'], 'email' ) );
+
+				if ( ! $is_email_tag || ! isset( $posted_data[ $form_tag['name'] ] ) ) {
+					continue;
+				}
+
+				$email_value = $posted_data[ $form_tag['name'] ];
+				if ( is_array( $email_value ) ) {
+					$email_value = reset( $email_value );
+				}
+
+				if ( is_scalar( $email_value ) ) {
+					$email_value = trim( (string) $email_value );
+					if ( is_email( $email_value ) ) {
+						return sanitize_email( $email_value );
+					}
+				}
+			}
+
+			// Fallback: pick the first valid email from any submitted value.
+			foreach ( $posted_data as $posted_value ) {
+				if ( is_array( $posted_value ) ) {
+					$posted_value = reset( $posted_value );
+				}
+
+				if ( is_scalar( $posted_value ) ) {
+					$posted_value = trim( (string) $posted_value );
+					if ( is_email( $posted_value ) ) {
+						return sanitize_email( $posted_value );
+					}
+				}
+			}
+
+			return '';
 		}
 
 		/**

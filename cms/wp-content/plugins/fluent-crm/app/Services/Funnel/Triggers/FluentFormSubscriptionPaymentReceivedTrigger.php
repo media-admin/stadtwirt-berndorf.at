@@ -210,7 +210,7 @@ class FluentFormSubscriptionPaymentReceivedTrigger extends BaseTrigger
         foreach ($otherFields as $otherField) {
             if (!empty($otherField['field_key']) && !empty($otherField['field_value'])) {
                 $key = $otherField['field_key'];
-                if (strpos($key, '.')) {
+                if (strpos($key, '.') !== false) {
                     $customValues[str_replace('custom.', '', $key)] = $otherField['field_value'];
                 } else {
                     $customValues[$key] = $otherField['field_value'];

@@ -475,4 +475,15 @@ class SQLiteGrammar extends Grammar
 
         return 'json_extract('.$field.$path.')';
     }
+
+    /**
+     * SQLite under WordPress does not support SAVEPOINTs via the SQL
+     * translation layer, so nested partial rollbacks are not available.
+     *
+     * @return bool
+     */
+    public function supportsSavepoints()
+    {
+        return false;
+    }
 }

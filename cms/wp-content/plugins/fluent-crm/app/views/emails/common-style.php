@@ -16,6 +16,14 @@ $pSize       = $config['paragraph_font_size'];
 $pFontFamily = $config['paragraph_font_family'];
 $pLHeight    = $config['paragraph_line_height'];
 
+$sanitizeFontStack = function ($fontStack) {
+    $fontStack = wp_strip_all_tags((string)$fontStack);
+    return preg_replace('/[^a-zA-Z0-9,\s\-_"\'\.]/', '', $fontStack);
+};
+$hFontCss = $sanitizeFontStack($hFont);
+$mainFontCss = $sanitizeFontStack($mainFont);
+$pFontFamilyCss = $sanitizeFontStack($pFontFamily);
+
 $alignLeft = 'left';
 $alignRight = 'right';
 if(fluentcrm_is_rtl()) {
@@ -47,8 +55,8 @@ if(fluentcrm_is_rtl()) {
     .fc_email_body {
         background: <?php echo esc_attr($contentBg); ?>;
         background-color: <?php echo esc_attr($contentBg); ?>;
-        <?php if($mainFont): ?>
-            font-family: <?php echo esc_attr($mainFont); ?>;
+        <?php if($mainFontCss): ?>
+            font-family: <?php echo $mainFontCss; ?>;
         <?php endif; ?>
         padding-left: <?php echo esc_attr($contentPadding); ?>px !important;
         padding-right: <?php echo esc_attr($contentPadding); ?>px !important;
@@ -82,9 +90,9 @@ if(fluentcrm_is_rtl()) {
         text-decoration: underline;
     }
 
-    <?php if($mainFont): ?>
+    <?php if($mainFontCss): ?>
     #templateFooter {
-        font-family: <?php echo esc_attr($mainFont); ?>;
+        font-family: <?php echo $mainFontCss; ?>;
     }
     <?php endif; ?>
 
@@ -94,8 +102,8 @@ if(fluentcrm_is_rtl()) {
         <?php if($hColor) : ?>
         color: <?php echo esc_attr($mainColor); ?>;
         <?php endif; ?>
-        <?php if($mainFont): ?>
-        font-family: <?php echo esc_attr($mainFont); ?>;
+        <?php if($mainFontCss): ?>
+        font-family: <?php echo $mainFontCss; ?>;
         <?php endif; ?>
     }
 
@@ -106,16 +114,16 @@ if(fluentcrm_is_rtl()) {
         <?php if ($pSize): ?>
         font-size: <?php echo esc_attr($pSize) ?>px;
         <?php endif; ?>
-        <?php if ($pFontFamily): ?>
-        font-family: <?php echo esc_attr($pFontFamily) ?>;
+        <?php if ($pFontFamilyCss): ?>
+        font-family: <?php echo $pFontFamilyCss ?>;
         <?php endif; ?>
         <?php if ($pLHeight): ?>
         line-height: <?php echo esc_attr($pLHeight) ?>px;
         <?php endif; ?>
     }
     .fcTextContentBody h1, .fcTextContentBody h2, .fcTextContentBody h3, .fcTextContentBody h4, .fcTextContentBody h5, .fcTextContentBody h6 {
-        <?php if($hFont): ?>
-        font-family: <?php echo esc_attr($hFont); ?>;
+        <?php if($hFontCss): ?>
+        font-family: <?php echo $hFontCss; ?>;
         <?php endif; ?>
         <?php if($hColor): ?>
         color: <?php echo esc_attr($hColor); ?>;
@@ -406,12 +414,12 @@ if(fluentcrm_is_rtl()) {
     }
     h5,h6 {
         margin: 7px 0;
-        line-height: 180%;
+        line-height: 160%;
     }
 
     #templateHeader .fcTextContent, #templateHeader .fcTextContent p {
         font-size: 16px;
-        line-height: 180%;
+        line-height: 160%;
         text-align: <?php echo esc_attr($alignLeft); ?>;
     }
 
@@ -427,7 +435,7 @@ if(fluentcrm_is_rtl()) {
 
     #templateBody .fcTextContent, #templateBody .fcTextContent p {
         font-size: 16px;
-        line-height: 180%;
+        line-height: 160%;
         text-align: <?php echo esc_attr($alignLeft); ?>;
     }
 
@@ -573,6 +581,15 @@ if(fluentcrm_is_rtl()) {
         }
     }
 
+    @media only screen and (max-width: 600px) {
+        .fc_woo_product_stack_mobile .fce_column {
+            display: block !important;
+            width: 100% !important;
+            padding-right: 0 !important;
+            padding-left: 0 !important;
+        }
+    }
+
 
     @media only screen and (max-width: 480px) {
         body, table, td, p, a, li, blockquote {
@@ -677,7 +694,7 @@ if(fluentcrm_is_rtl()) {
     .fc_latest_post_item .fc_latest_post_content .description {
         margin: 0 0 15px 0;
         font-size: 15px;
-        line-height: 180%;
+        line-height: 160%;
     }
     .fc_latest_post_item .fc_latest_post_content .fc_latest_post_btn {
         display: inline-block;
@@ -790,10 +807,26 @@ if(fluentcrm_is_rtl()) {
         /*color: #37454e;*/
         margin-bottom: 10px;
     }
+    .fcw_p_price .screen-reader-text,
+    .fc_woo_product .fc_woo_product_info .price .screen-reader-text {
+        border: 0;
+        clip: rect(1px, 1px, 1px, 1px);
+        clip-path: inset(50%);
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+        padding: 0;
+        position: absolute;
+        width: 1px;
+        white-space: nowrap;
+    }
     .fc_woo_product .fc_woo_product_info .price del {
-        opacity: 0.4;
+        color: #9aa3aa;
+        text-decoration-thickness: 1px;
+        margin-right: 8px;
     }
     .fc_woo_product .fc_woo_product_info .price ins {
+        font-weight: 600;
         text-decoration: none;
     }
     .fc_woo_product .fc_woo_product_info .add-to-cart-btn {
@@ -951,28 +984,28 @@ if(fluentcrm_is_rtl()) {
     @media only screen and (max-width: 480px) {
         table.fcBoxedTextContentContainer td.fcTextContent, td.fcBoxedTextContentContainer td.fcTextContent p {
             font-size: 14px !important;
-            line-height: 180% !important;
+            line-height: 160% !important;
         }
     }
 
     @media only screen and (max-width: 480px) {
         td#templateHeader td.fcTextContent, td#templateHeader td.fcTextContent p {
             font-size: 16px !important;
-            line-height: 180% !important;
+            line-height: 160% !important;
         }
     }
 
     @media only screen and (max-width: 480px) {
         td#templateBody td.fcTextContent, td#templateBody td.fcTextContent p {
             font-size: 16px !important;
-            line-height: 180% !important;
+            line-height: 160% !important;
         }
     }
 
     @media only screen and (max-width: 480px) {
         td#templateFooter td.fcTextContent, td#templateFooter td.fcTextContent p {
             font-size: 14px !important;
-            line-height: 180% !important;
+            line-height: 160% !important;
         }
     }
 </style>

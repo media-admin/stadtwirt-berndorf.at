@@ -43,12 +43,13 @@ class RoleBasedTagging
     {
         return [
             'title'     => __('WP User Role Based Tag Mapping', 'fluent-crm'),
-            'sub_title' => __('Assign or Remove tags when a contact assign to a user role.', 'fluent-crm'),
+            'sub_title' => __('Assign or remove tags when a contact is assigned to a user role.', 'fluent-crm'),
             'fields'    => [
                 'status'       => [
                     'type'           => 'inline-checkbox',
                     'label'          => '',
                     'checkbox_label' => __('Enable Role Based Tag Mapping', 'fluent-crm'),
+                    'checkbox_description' => __('Assign or remove tags when a contact is assigned to a user role.', 'fluent-crm'),
                     'true_label'     => 'yes',
                     'false_label'    => 'no'
                 ],

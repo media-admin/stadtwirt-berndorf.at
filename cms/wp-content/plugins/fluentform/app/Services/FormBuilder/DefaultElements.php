@@ -848,6 +848,7 @@ $fluentformDefaultElements = [
                 'calc_value_status'  => false,
                 'enable_image_input' => false,
                 'values_visible'     => false,
+                'enable_option_groups' => 'no',
                 'enable_select_2'    => 'no',
                 'validation_rules'   => [
                     'required' => [
@@ -1017,6 +1018,7 @@ $fluentformDefaultElements = [
                 ],
                 'calc_value_status'  => false,
                 'enable_image_input' => false,
+                'enable_option_groups' => 'no',
                 'randomize_options'  => 'no',
                 'validation_rules'   => [
                     'required' => [
@@ -1132,6 +1134,12 @@ $fluentformDefaultElements = [
                 'file_location_type'   => 'follow_global_settings',
                 'help_message'         => '',
                 'upload_bttn_ui'       => '',
+                'enable_crop'          => 'no',
+                'crop_mode'            => 'ratio',
+                'crop_ratio'           => 'free',
+                'enforce_image_dimensions' => 'no',
+                'crop_width'           => '',
+                'crop_height'          => '',
                 'validation_rules'     => [
                     'required' => [
                         'value'   => false,
@@ -1292,6 +1300,11 @@ $fluentformDefaultElements = [
             'settings' => [
                 'label'              => __('Ratings', 'fluentform'),
                 'show_text'          => 'no',
+                'icon_source'        => 'preset',
+                'icon_type'          => 'star',
+                'custom_icon_svg'    => '',
+                'inactive_color'     => \FluentForm\App\Services\FormBuilder\RatingIcon::DEFAULT_INACTIVE_COLOR,
+                'active_color'       => \FluentForm\App\Services\FormBuilder\RatingIcon::DEFAULT_ACTIVE_COLOR,
                 'help_message'       => '',
                 'label_placement'    => '',
                 'admin_field_label'  => '',
@@ -1843,6 +1856,18 @@ if (! defined('FLUENTFORMPRO')) {
             'title'      => __('Range Slider', 'fluentform'),
             'icon_class' => 'dashicons dashicons-leftright',
             'template'   => 'inputSlider',
+        ],
+    ];
+    $fluentformDefaultElements['advanced']['input_ranking'] = [
+        'index'          => 21,
+        'element'        => 'input_ranking',
+        'attributes'     => [],
+        'settings'       => [],
+        'options'        => [],
+        'editor_options' => [
+            'title'      => __('Ranking Field', 'fluentform'),
+            'icon_class' => 'dashicons dashicons-sort',
+            'template'   => 'rankingField',
         ],
     ];
     $fluentformDefaultElements['advanced']['color-picker'] = [

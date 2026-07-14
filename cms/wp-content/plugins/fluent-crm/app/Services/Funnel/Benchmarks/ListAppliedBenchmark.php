@@ -87,8 +87,16 @@ class ListAppliedBenchmark extends BaseBenchMark
         $subscriber = $originalArgs[1];
         $settings = $benchMark->settings;
 
-        $subscriberLists = $subscriber->lists->pluck('id')->toArray();
         $benchmarkLists = Arr::get($settings, 'lists', []);
+
+        // Gate on the lists actually applied in this event. Without this a contact
+        // who already belongs to the benchmark list would advance past the benchmark
+        // on any unrelated list-add event.
+        if (!$benchmarkLists || !array_intersect((array) $listIds, $benchmarkLists)) {
+            return;
+        }
+
+        $subscriberLists = $subscriber->lists->pluck('id')->toArray();
 
         if (!$this->isListMatched($subscriberLists, $benchmarkLists, $settings)) {
             return; // not matched based on condition

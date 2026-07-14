@@ -7,19 +7,36 @@ use FluentCrm\Framework\Database\Orm\Collection;
 class HasMany extends HasOneOrMany
 {
     /**
+     * Convert the relationship to a "has one" relationship.
+     *
+     * @return \FluentCrm\Framework\Database\Orm\Relations\HasOne
+     */
+    public function one()
+    {
+        return HasOne::noConstraints(fn () => new HasOne(
+            $this->getQuery(),
+            $this->parent,
+            $this->foreignKey,
+            $this->localKey
+        ));
+    }
+    
+    /**
      * Get the results of the relationship.
      *
      * @return mixed
      */
     public function getResults()
     {
-        return $this->query->get();
+        return ! is_null($this->getParentKey())
+                ? $this->query->get()
+                : $this->related->newCollection();
     }
 
     /**
      * Initialize the relation on a set of models.
      *
-     * @param  array   $models
+     * @param  array  $models
      * @param  string  $relation
      * @return array
      */
@@ -35,7 +52,7 @@ class HasMany extends HasOneOrMany
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param  array   $models
+     * @param  array  $models
      * @param  \FluentCrm\Framework\Database\Orm\Collection  $results
      * @param  string  $relation
      * @return array

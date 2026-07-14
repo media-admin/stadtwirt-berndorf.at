@@ -96,6 +96,20 @@ class Submission extends Model
         return $this->hasMany(OrderItem::class, 'submission_id', 'id');
     }
 
+    /**
+     * Returns the column the entries listing should be sorted by.
+     * Defaults to created_at so imported entries respect their original
+     * submission date. Site owners can switch back to legacy id-based
+     * ordering via the fluentform/entries_default_sort_column filter.
+     */
+    public static function getSortColumn()
+    {
+        $column = apply_filters('fluentform/entries_default_sort_column', 'created_at');
+        $allowed = ['id', 'created_at'];
+
+        return in_array($column, $allowed, true) ? $column : 'created_at';
+    }
+
     public function customQuery($attributes = [], $searchExtender = null)
     {
         $entryType = Arr::get($attributes, 'entry_type');
@@ -122,7 +136,16 @@ class Submission extends Model
             $wheres[] = ['payment_status', $paymentStatuses];
         }
 
-        $query = $this->orderBy('fluentform_submissions.id', $sortBy)
+        // Sort by submission date so imported entries (which get new auto-increment ids
+        // but carry their original created_at) interleave correctly with native ones.
+        // Tie-break on id to keep pagination stable for rows sharing a timestamp.
+        // Filter lets site owners revert to legacy id-based ordering if needed.
+        $sortColumn = self::getSortColumn();
+        $query = $this->orderBy('fluentform_submissions.' . $sortColumn, $sortBy);
+        if ('id' !== $sortColumn) {
+            $query = $query->orderBy('fluentform_submissions.id', $sortBy);
+        }
+        $query = $query
             ->when($formId, function ($q) use ($formId) {
                 return $q->where('fluentform_submissions.form_id', $formId);
             })
@@ -230,7 +253,28 @@ class Submission extends Model
 
         $query = $this->customQuery($attributes);
 
-        $submission = $query->select($columns)->where('id', $operator, $entryId)->first();
+        // Adjacency must match customQuery's sort order. Compare on the same
+        // (sortColumn, id) row-tuple the listing orders by, so Next/Prev walk
+        // in display order regardless of which sort column the filter selects.
+        // When sortColumn is id the tuple degenerates to a simple id compare.
+        $sortColumn = self::getSortColumn();
+        // Re-assert whitelist; $sortColumn is interpolated into whereRaw below.
+        if (!in_array($sortColumn, ['id', 'created_at'], true)) {
+            $sortColumn = 'created_at';
+        }
+        $current = static::select(['id', $sortColumn])->find($entryId);
+        if (!$current) {
+            return apply_filters('fluentform/next_submission', null, $entryId, $attributes);
+        }
+
+        global $wpdb;
+        $table = $wpdb->prefix . 'fluentform_submissions';
+        $submission = $query->select($columns)
+            ->whereRaw(
+                "({$table}.{$sortColumn}, {$table}.id) {$operator} (?, ?)",
+                [$current->{$sortColumn}, $entryId]
+            )
+            ->first();
 
         return apply_filters('fluentform/next_submission', $submission, $entryId, $attributes);
     }
@@ -274,8 +318,23 @@ class Submission extends Model
         $this->where('id', $id)->update($data);
     }
 
-    public static function remove($submissionIds)
+    public static function remove($submissionIds, $formId = null)
     {
+        // Fail-closed scope guard: $formId scopes every delete to its owning form;
+        // a missing scope throws rather than ever deleting unscoped.
+        if (empty($formId)) {
+            throw new \InvalidArgumentException('Submission::remove() requires a form id to scope the deletion.');
+        }
+
+        $submissionIds = static::where('form_id', $formId)
+            ->whereIn('id', (array) $submissionIds)
+            ->pluck('id')
+            ->all();
+
+        if (!$submissionIds) {
+            return;
+        }
+
         static::whereIn('id', $submissionIds)->delete();
 
         SubmissionMeta::whereIn('response_id', $submissionIds)->delete();

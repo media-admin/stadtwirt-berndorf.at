@@ -21,8 +21,8 @@
         }
     ],
     "require": {
-        "wpfluent/framework": "^1.0",
-        "woocommerce/action-scheduler": "3.7.0"
+        "wpfluent/framework": "^2.10",
+        "woocommerce/action-scheduler": "3.9.3"
     },
     "autoload": {
         "psr-4": {
@@ -33,13 +33,17 @@
         "classmap": [
             "database/"
         ],
+        "exclude-from-classmap": [
+            "/app/Services/Libs/Emogrifier/scoped-vendor/",
+            "/app/Services/Libs/csv/src/"
+        ],
         "files": [
             "boot/globals.php"
         ]
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.0.x-dev"
+            "dev-master": "2.0.x-dev"
         },
         "wpfluent": {
             "namespace": {

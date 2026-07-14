@@ -222,7 +222,8 @@ class ActiveCampaign
         /* If invalid content type, API URL is invalid. */
         if (is_wp_error($response))
             return $response;
-        if (strpos($response['headers']['content-type'], 'application/json') != 0 && strpos($response['headers']['content-type'], 'application/json') > 0) {
+        $contentType = isset($response['headers']['content-type']) ? (string) $response['headers']['content-type'] : '';
+        if (strpos($contentType, 'application/json') === false) {
             return new \WP_Error('error', 'Invalid API URL');
         }
 

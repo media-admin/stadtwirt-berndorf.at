@@ -76,6 +76,20 @@ class ReportHelper
             $reports[$reportKey]['label'] = $inputLabels[$reportKey];
             $reports[$reportKey]['element'] = Arr::get($inputs, $reportKey, []);
             $reports[$reportKey]['options'] = $formInputs[$reportKey]['options'];
+
+            // Per-element override hook. Safe with no listener (default
+            // payload is returned unchanged). Pro hooks the ranking
+            // variant; third-party fields can extend the same pattern.
+            $element = $reports[$reportKey]['element'];
+            if (is_string($element) && $element !== '') {
+                $reports[$reportKey] = apply_filters(
+                    'fluentform/reports/format_field_' . $element,
+                    $reports[$reportKey],
+                    array_merge($formInputs[$reportKey], ['name' => $reportKey]),
+                    $form->id,
+                    $statuses
+                );
+            }
         }
 
         return [

@@ -63,7 +63,11 @@ class Cleanup
      */
     public function deleteCampaignAssets($campaignId)
     {
-        CampaignEmail::where('id', $campaignId)->delete();
+        // Idempotent backstop — Campaign::deleteCampaignData() already removes
+        // these in the normal delete flow, but we keep this here so any
+        // future caller that fires fluent_crm/campaign_deleted without
+        // running deleteCampaignData() first still gets a clean teardown.
+        CampaignEmail::where('campaign_id', $campaignId)->delete();
         CampaignUrlMetric::where('campaign_id', $campaignId)->delete();
     }
 
@@ -94,27 +98,43 @@ class Cleanup
      */
     public function handleUnsubscribe($subscriber)
     {
-        CampaignEmail::where('subscriber_id', $subscriber->id)
-            ->whereIn('status', ['pending', 'scheduled', 'draft', 'processing', 'scheduling'])
-            ->update([
-                'status' => 'cancelled'
-            ]);
-
-        FunnelSubscriber::where('subscriber_id', $subscriber->id)
-            ->where('status', 'active')
-            ->whereDoesntHave('funnel', function ($query) {
-                $query->where('trigger_name', 'fluent_crm/subscriber_status_changed');
-            })
-            ->update([
-                'status' => 'cancelled'
-            ]);
-        
-        if (defined('FLUENTCAMPAIGN')) {
-            \FluentCampaign\App\Models\SequenceTracker::where('subscriber_id', $subscriber->id)
-                ->where('status', 'active')
+        // Per-statement try/catch: a row-lock deadlock against the mailer
+        // workers on the CampaignEmail update should not also block the
+        // FunnelSubscriber / SequenceTracker cancellations. The next status
+        // transition (or a manual retry) will reconcile any rows we miss.
+        try {
+            CampaignEmail::where('subscriber_id', $subscriber->id)
+                ->whereIn('status', ['pending', 'scheduled', 'draft', 'processing', 'scheduling'])
                 ->update([
                     'status' => 'cancelled'
                 ]);
+        } catch (\Exception $e) {
+            Helper::debugLog('handleUnsubscribe', 'CampaignEmail cancel deferred: ' . $e->getMessage(), 'extended');
+        }
+
+        try {
+            FunnelSubscriber::where('subscriber_id', $subscriber->id)
+                ->where('status', 'active')
+                ->whereDoesntHave('funnel', function ($query) {
+                    $query->where('trigger_name', 'fluent_crm/subscriber_status_changed');
+                })
+                ->update([
+                    'status' => 'cancelled'
+                ]);
+        } catch (\Exception $e) {
+            Helper::debugLog('handleUnsubscribe', 'FunnelSubscriber cancel deferred: ' . $e->getMessage(), 'extended');
+        }
+
+        if (defined('FLUENTCAMPAIGN')) {
+            try {
+                \FluentCampaign\App\Models\SequenceTracker::where('subscriber_id', $subscriber->id)
+                    ->where('status', 'active')
+                    ->update([
+                        'status' => 'cancelled'
+                    ]);
+            } catch (\Exception $e) {
+                Helper::debugLog('handleUnsubscribe', 'SequenceTracker cancel deferred: ' . $e->getMessage(), 'extended');
+            }
         }
     }
 
@@ -194,7 +214,7 @@ class Cleanup
 
         $data = [
             'group_id'    => 'fluent-crm-contact',
-            'group_label' => __('Fluent CRM Data', 'fluent-crm'),
+            'group_label' => __('FluentCRM Data', 'fluent-crm'),
             'item_id'     => 'crm-contact',
             'data'        => []
         ];
@@ -258,7 +278,7 @@ class Cleanup
 
         $hash = md5(wp_generate_uuid4() . '_' . $contact->id . '_' . '_' . time() . '__' . $contact->id);
         $exist->value = $hash;
-        $exist->updated_at = gmdate('Y-m-d H:i:s');
+        $exist->updated_at = current_time('mysql');
         $exist->save();
 
         return true;
@@ -273,7 +293,8 @@ class Cleanup
         // We will create email body and then cache it for future use
         $rawTemplates = [
             'raw_html',
-            'visual_builder'
+            'visual_builder',
+            'raw_classic'
         ];
 
         if (in_array($campaign->design_template, $rawTemplates)) {

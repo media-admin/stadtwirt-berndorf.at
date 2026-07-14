@@ -2,7 +2,7 @@
 
 namespace FluentCrm\App\Http\Policies;
 
-use FluentCrm\Framework\Request\Request;
+use FluentCrm\Framework\Http\Request\Request;
 
 /**
  *  ListPolicy - REST API Permission Policy
@@ -16,7 +16,7 @@ class ListPolicy extends BasePolicy
 {
     /**
      * Check user permission for any method
-     * @param  \FluentCrm\Framework\Request\Request $request
+     * @param  \FluentCrm\Framework\Http\Request\Request $request
      * @return Boolean
      */
     public function verifyRequest(Request $request)
@@ -27,7 +27,7 @@ class ListPolicy extends BasePolicy
 
     /**
      * Check user permission for delete lists
-     * @param  \FluentCrm\Framework\Request\Request $request
+     * @param  \FluentCrm\Framework\Http\Request\Request $request
      * @return Boolean
      */
     public function remove(Request $request)

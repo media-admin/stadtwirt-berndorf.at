@@ -61,6 +61,9 @@ class ActivityLog extends Model
     public function getActivityByEmailAttribute()
     {
         $user = User::where('ID', $this->activity_by)->first();
+        if (!$user) {
+            return null;
+        }
         return $user->display_name . ' (' . $user->user_email . ')';
     }
 

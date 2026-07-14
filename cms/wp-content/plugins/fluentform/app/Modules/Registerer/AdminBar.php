@@ -176,7 +176,7 @@ class AdminBar
         }
         $items['fluent_forms_community'] = [
             'title'  => esc_html__( 'Community', 'fluentform' ),
-            'url'   => 'https://www.facebook.com/groups/fluentforms/',
+            'url'   => 'https://community.wpmanageninja.com/portal/space/fluent-forms/home',
             'meta'   => true
         ];
         $items['fluent_forms_doc'] = [

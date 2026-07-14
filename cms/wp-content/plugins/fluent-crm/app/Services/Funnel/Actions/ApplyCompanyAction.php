@@ -54,6 +54,10 @@ class ApplyCompanyAction extends BaseAction
         $company = $sequence->settings['company'];
 
         $renewedSubscriber = Subscriber::where('id', $subscriber->id)->first();
+        if (!$renewedSubscriber) {
+            FunnelHelper::changeFunnelSubSequenceStatus($funnelSubscriberId, $sequence->id, 'skipped');
+            return;
+        }
         $renewedSubscriber->attachCompanies([$company]);
     }
 }

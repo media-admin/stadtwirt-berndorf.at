@@ -97,10 +97,12 @@ return function ($file) {
     (new FluentConversational)->boot();
     (new FormsMigrator())->boot();
     
-    /* Plugin Meta Links */
-    
-    add_filter('plugin_row_meta', 'fluentform_plugin_row_meta', 10, 2);
-    
+    /* Plugin Meta Links — registered on init to avoid early textdomain loading (WP 6.7+) */
+
+    add_action('init', function () {
+        add_filter('plugin_row_meta', 'fluentform_plugin_row_meta', 10, 2);
+    });
+
     function fluentform_plugin_row_meta($links, $file)
     {
         if ('fluentform/fluentform.php' == $file) {

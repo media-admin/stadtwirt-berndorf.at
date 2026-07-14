@@ -3,13 +3,13 @@
 namespace FluentCrm\App\Http\Controllers;
 
 use FluentCrm\App\Models\ActivityLog;
-use FluentCrm\Framework\Request\Request;
+use FluentCrm\Framework\Http\Request\Request;
 
 class ActivityLogController extends Controller
 {
     /**
      * Get all the System Logs
-     * @param \FluentCrm\Framework\Request\Request $request
+     * @param \FluentCrm\Framework\Http\Request\Request $request
      * @return array || \WP_REST_Response
      */
     public function index(Request $request)

@@ -2,6 +2,8 @@
 
 namespace FluentCrm\App\Services\Funnel;
 
+use FluentCrm\App\Services\Helper;
+
 class ProFunnelItems
 {
     public function __construct()
@@ -271,7 +273,7 @@ class ProFunnelItems
             ];
         }
 
-        if (class_exists('\Easy_Digital_Downloads')) {
+        if (Helper::isEdd3()) {
             $triggers['edd_update_payment_status'] = [
                 'category'    => 'Easy Digital Downloads',
                 'label'       => 'Edd - New Order Success',
@@ -324,7 +326,10 @@ class ProFunnelItems
                 'label'       => 'SureCart - New Order Success',
                 'icon'        => 'el-icon-shopping-cart-full',
                 'description' => 'This funnel will start when new order payment is successful',
-                'disabled'    => true
+                'disabled'    => true,
+                'svg' => '<svg width="16px" height="16px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 137 137" fill="none">
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M68.5 137C106.332 137 137 106.332 137 68.5C137 30.6685 106.332 0 68.5 0C30.6685 0 0 30.6685 0 68.5C0 106.332 30.6685 137 68.5 137ZM68.795 34.25C63.2947 34.25 55.6831 37.3955 51.7938 41.2756L41.2306 51.8141H93.8817L111.487 34.25H68.795ZM85.1174 95.7244C81.2282 99.6045 73.6165 102.75 68.1163 102.75H25.4242L43.0295 85.1859H95.6806L85.1174 95.7244ZM102.229 60.5962H32.4471L29.1508 63.8895C21.3458 70.9151 23.6606 76.4039 34.5912 76.4039H104.563L107.86 73.1106C115.589 66.1263 113.16 60.5962 102.229 60.5962Z" fill="#008156"/>
+<script xmlns=""/></svg>'
             ];
 
             $triggers['fluent_surecart_purchase_refund_wrap'] = [
@@ -332,7 +337,10 @@ class ProFunnelItems
                 'label'       => 'SureCart - Order Revoked',
                 'icon'        => 'el-icon-sold-out',
                 'description' => 'This funnel will start when order will be revoked',
-                'disabled'    => true
+                'disabled'    => true,
+                'svg' => '<svg width="16px" height="16px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 137 137" fill="none">
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M68.5 137C106.332 137 137 106.332 137 68.5C137 30.6685 106.332 0 68.5 0C30.6685 0 0 30.6685 0 68.5C0 106.332 30.6685 137 68.5 137ZM68.795 34.25C63.2947 34.25 55.6831 37.3955 51.7938 41.2756L41.2306 51.8141H93.8817L111.487 34.25H68.795ZM85.1174 95.7244C81.2282 99.6045 73.6165 102.75 68.1163 102.75H25.4242L43.0295 85.1859H95.6806L85.1174 95.7244ZM102.229 60.5962H32.4471L29.1508 63.8895C21.3458 70.9151 23.6606 76.4039 34.5912 76.4039H104.563L107.86 73.1106C115.589 66.1263 113.16 60.5962 102.229 60.5962Z" fill="#008156"/>
+<script xmlns=""/></svg>'
             ];
         }
 
@@ -461,7 +469,7 @@ class ProFunnelItems
             ]
         ];
 
-        if (class_exists('\Easy_Digital_Downloads')) {
+        if (Helper::isEdd3()) {
             $blocks['edd_update_payment_status_benchmark'] = [
                 'is_pro'      => true,
                 'type'        => 'conditional',
@@ -621,7 +629,7 @@ class ProFunnelItems
                 'disabled'    => true
             ],
 
-            'fluent_crm/contact_birthday'      => [
+            'fluentcrm_contact_birthday'      => [
                 'category'    => 'CRM',
                 'label'       => 'Contact\'s Birthday',
                 'icon'        => '', // 'fc-icon-tag_applied',
@@ -637,7 +645,7 @@ class ProFunnelItems
                 'disabled'    => true
             ],
 
-            'fluent_crm/company_applied'      => [
+            'fluentcrm_contact_added_to_companies'      => [
                 'category'    => 'CRM',
                 'label'       => 'Company Applied',
                 'icon'        => '', // 'fc-icon-tag_applied',
@@ -645,7 +653,7 @@ class ProFunnelItems
                 'disabled'    => true
             ],
 
-            'fluent_crm/company_removed'      => [
+            'fluentcrm_contact_removed_from_companies'      => [
                 'category'    => 'CRM',
                 'label'       => 'Company Removed',
                 'icon'        => '', // 'fc-icon-tag_applied',
@@ -653,7 +661,7 @@ class ProFunnelItems
                 'disabled'    => true
             ],
 
-            'user_login'      => [
+            'wp_login'      => [
                 'category'    => 'WordPress Triggers',
                 'label'       => 'User Login',
                 'icon'        => 'fc-icon-wp_new_user_signup',

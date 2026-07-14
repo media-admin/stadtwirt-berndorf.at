@@ -74,13 +74,20 @@ class SubscriberNote extends Model
             return false;
         }
 
-        $user = get_user_by('ID', $this->created_by);
+        $user = User::find($this->created_by);
+
+        if (!$user) {
+            return false;
+        }
+
+        if (!$user) {
+            return false;
+        }
 
         return [
             'ID'           => $user->ID,
-            'first_name'   => $user->first_name,
-            'last_name'    => $user->last_name,
-            'display_name' => $user->display_name
+            'display_name' => $user->display_name,
+            'photo'        => $user->photo
         ];
     }
 }

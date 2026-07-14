@@ -188,17 +188,35 @@ class PermissionManager
         }
 
         $allPermissions = self::pluginPermissions();
-        foreach ($allPermissions as $permission) {
-            $user->remove_cap($permission);
+
+        // Remove any lingering WP caps from the old permission system
+        foreach ($allPermissions as $cap) {
+            $user->remove_cap($cap);
         }
 
-        $permissions = array_intersect($allPermissions, $permissions);
-
-        foreach ($permissions as $permission) {
-            $user->add_cap($permission);
-        }
+        // Validate and store in meta (new permission system)
+        $permissions = array_values(array_intersect($allPermissions, $permissions));
+        fluentcrm_update_meta($user->ID, 'FluentCrm\App\Models\User', 'manager_permissions', $permissions);
 
         return $user;
+    }
+
+    public static function deleteManagerPermissions($userId)
+    {
+        $user = is_numeric($userId) ? get_user_by('ID', $userId) : $userId;
+
+        if (!$user) {
+            return false;
+        }
+
+        // Remove WP caps (cleanup)
+        foreach (self::pluginPermissions() as $cap) {
+            $user->remove_cap($cap);
+        }
+
+        fluentcrm_delete_meta($user->ID, 'FluentCrm\App\Models\User', 'manager_permissions');
+
+        return true;
     }
 
     public static function getUserPermissions($user = false)
@@ -217,7 +235,15 @@ class PermissionManager
             $pluginPermission[] = 'administrator';
             $permissions = $pluginPermission;
         } else {
-            $permissions = array_values(array_intersect(array_keys($user->allcaps), $pluginPermission));
+            $metaModel = fluentcrm_get_meta($user->ID, 'FluentCrm\App\Models\User', 'manager_permissions');
+
+            if ($metaModel !== null) {
+                // Meta row exists — authoritative even when value is an empty array
+                $permissions = is_array($metaModel->value) ? $metaModel->value : [];
+            } else {
+                // No meta row yet — migrate from WP caps on the spot
+                $permissions = self::migrateUserFromWpCaps($user);
+            }
         }
 
         /**
@@ -234,11 +260,36 @@ class PermissionManager
         return array_values($permissions);
     }
 
+    /**
+     * Reads WP caps for a user, writes them to meta, removes the old caps.
+     * Called once per user — subsequent calls hit meta directly.
+     */
+    private static function migrateUserFromWpCaps($user)
+    {
+        $allPermissions = self::pluginPermissions();
+
+        $legacyPermissions = array_values(array_intersect(array_keys($user->allcaps), $allPermissions ));
+
+        if(!$legacyPermissions) {
+            return [];
+        }
+
+
+        foreach ($legacyPermissions as $cap) {
+            $user->remove_cap($cap);
+        }
+
+        // Always write a meta row so next call skips this path even when $found is empty
+        fluentcrm_update_meta($user->ID, 'FluentCrm\App\Models\User', 'manager_permissions', $legacyPermissions);
+
+        return $legacyPermissions;
+    }
+
     public static function currentUserPermissions($cached = true)
     {
-        static $permissions;
+        static $permissions = null;
 
-        if ($permissions && $cached) {
+        if ($cached && $permissions !== null) {
             return $permissions;
         }
 
@@ -263,10 +314,6 @@ class PermissionManager
             return apply_filters('fluentcrm_current_admin_can', true, $permission);
         }
 
-        if (defined('FLUENTCAMPAIGN')) {
-            return current_user_can($permission);
-        }
-
-        return false;
+        return in_array($permission, self::currentUserPermissions());
     }
 }

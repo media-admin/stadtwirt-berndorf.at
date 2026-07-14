@@ -30,14 +30,14 @@ const MenuBar = (props) => {
             case 'Spam Protection':
                 return (
                     <>
-                        <img src={`${CF7Apps.assetsURL}/images/spam-protection.png`} width="23px" alt={menu} /> { menu }
+                        <img src={`${CF7Apps.assetsURL}/images/spam-protection.png`} width="23px" alt={menu} /> { expanded ? menu : null }
                     </>
                 );
 
             case 'General':
                 return (
                     <>
-                        <img style={ { marginTop: '-7px' } } src={`${ CF7Apps.assetsURL }/images/general.png`} width={'23px'} alt={ menu } /> { menu }
+                        <img style={ { marginTop: '-7px' } } src={`${ CF7Apps.assetsURL }/images/general.png`} width={'23px'} alt={ menu } /> { expanded ? menu : null }
                     </>
                 );
                 break;
@@ -45,7 +45,7 @@ const MenuBar = (props) => {
             case 'Integration':
                 return (
                     <>
-                        <img style={ { marginTop: '-7px' } } src={`${ CF7Apps.assetsURL }/images/spam-protection.png`} width={'23px'} alt={ menu } /> { menu }
+                        <img style={ { marginTop: '-7px' } } src={`${ CF7Apps.assetsURL }/images/integration.png`} width={'23px'} alt={ menu } /> { expanded ? menu : null }
                     </>
                 );
                 break;
@@ -100,24 +100,24 @@ const MenuBar = (props) => {
                     <CF7AppsSkeletonLoader count={1} height={20} />
                 </div>
                 :
-                <div style={ { display: expanded ? 'block' : 'none' } }>
+                <div>
                     <div className="cf7apps-menu-container">
                         {
                             Object.keys(menuItems).map((parentMenu, parentIndex) => {
                                 return (
                                     <Accordion key={parentIndex} defaultExpanded className="cf7apps-menu-accordion">
                                         <AccordionSummary
-                                            expandIcon={ <ExpandMore /> }
+                                            expandIcon={ expanded ? <ExpandMore /> : null }
                                             >
                                                 <Typography component="span" className="cf7apps-menu-heading">
                                                     { getParentMenu(parentMenu) }
                                                 </Typography>
                                             </AccordionSummary>
-                                            <AccordionDetails className="cf7apps-menu-routes-container">
+                                            <AccordionDetails className="cf7apps-menu-routes-container" style={{ display: expanded ? 'block' : 'none' }}>
                                                 {
                                                     Object.entries(menuItems[parentMenu]).map(([route, subMenu], subMenuIndex) => {
                                                         return (
-                                                            <div className='cf7apps-menu-route'>
+                                                            <div className='cf7apps-menu-route' key={subMenuIndex}>
                                                                 <NavLink to={`/settings/${route}`}>{ subMenu }</NavLink>
                                                             </div>
                                                         )

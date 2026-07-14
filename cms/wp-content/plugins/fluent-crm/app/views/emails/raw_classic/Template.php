@@ -15,7 +15,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
     <?php do_action('fluent_crm/email_header', 'raw_classic'); ?>
-    <?php include(FLUENTCRM_PLUGIN_PATH.'app/views/emails/classic-style.php'); ?>
+    <?php include(FLUENTCRM_PLUGIN_PATH.'app/Views/emails/classic-style.php'); ?>
 
 </head>
 <body class="fc_classic_template"

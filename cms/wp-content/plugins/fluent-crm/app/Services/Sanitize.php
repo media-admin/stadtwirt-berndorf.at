@@ -34,7 +34,84 @@ class Sanitize
             }
         }
 
+        if (!empty($data['settings']) && is_array($data['settings'])) {
+            $data['settings'] = self::sanitizeCampaignSettings($data['settings']);
+        }
+
         return $data;
+    }
+
+    private static function sanitizeCampaignSettings($settings)
+    {
+        if (!is_array($settings)) {
+            return [];
+        }
+
+        $footerSettings = Arr::get($settings, 'footer_settings');
+        if (is_array($footerSettings)) {
+            $settings['footer_settings'] = self::sanitizeFooterSettings($footerSettings);
+        }
+
+        return $settings;
+    }
+
+    private static function sanitizeFooterSettings($footerSettings)
+    {
+        $fontSize = intval(Arr::get($footerSettings, 'font_size', 13));
+        $footerPadding = intval(Arr::get($footerSettings, 'footer_padding', 20));
+        $fontColor = sanitize_hex_color(Arr::get($footerSettings, 'font_color', '#202020')) ?: '#202020';
+        $backgroundColor = Arr::get($footerSettings, 'background_color', 'transparent');
+        $backgroundColor = ($backgroundColor === 'transparent')
+            ? 'transparent'
+            : (sanitize_hex_color($backgroundColor) ?: 'transparent');
+
+        return [
+            'disable_footer'   => Arr::get($footerSettings, 'disable_footer') === 'yes' ? 'yes' : 'no',
+            'custom_footer'    => Arr::get($footerSettings, 'custom_footer') === 'yes' ? 'yes' : 'no',
+            'footer_content'   => self::sanitizeFooterHtml(Arr::get($footerSettings, 'footer_content', '')),
+            'font_size'        => min(24, max(8, $fontSize)),
+            'font_color'       => $fontColor,
+            'background_color' => $backgroundColor,
+            'footer_padding'   => min(80, max(0, $footerPadding))
+        ];
+    }
+
+    public static function sanitizeFooterHtml($footerHtml)
+    {
+        if (!is_scalar($footerHtml)) {
+            return '';
+        }
+
+        $footerHtml = (string) $footerHtml;
+        if ($footerHtml === '') {
+            return '';
+        }
+
+        $allowedTags = wp_kses_allowed_html('post');
+        $styleAllowedTags = [
+            'a', 'p', 'div', 'span', 'img', 'ul', 'ol', 'li',
+            'strong', 'em', 'b', 'i', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+            'table', 'tbody', 'thead', 'tfoot', 'tr', 'td', 'th', 'blockquote'
+        ];
+
+        foreach ($styleAllowedTags as $tagName) {
+            if (!isset($allowedTags[$tagName])) {
+                $allowedTags[$tagName] = [];
+            }
+            $allowedTags[$tagName]['style'] = [];
+        }
+
+        if (isset($allowedTags['a'])) {
+            $allowedTags['a']['target'] = [];
+            $allowedTags['a']['rel'] = [];
+        }
+
+        if (isset($allowedTags['img'])) {
+            $allowedTags['img']['loading'] = [];
+            $allowedTags['img']['decoding'] = [];
+        }
+
+        return wp_kses($footerHtml, $allowedTags);
     }
 
     public static function contact($data)
@@ -80,6 +157,12 @@ class Sanitize
             $status = $data['status'];
             if (!in_array($status, fluentcrm_subscriber_statuses())) {
                 unset($data['status']);
+            }
+        }
+
+        if (isset($data['contact_type'])) {
+            if (!array_key_exists($data['contact_type'], fluentcrm_contact_types())) {
+                unset($data['contact_type']);
             }
         }
 

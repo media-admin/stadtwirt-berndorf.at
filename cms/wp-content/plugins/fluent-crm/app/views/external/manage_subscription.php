@@ -25,7 +25,7 @@
     </div>
     <div class="fluentcrm_un_form_wrapper">
         <h3><?php esc_html_e('Update your preferences', 'fluent-crm'); ?></h3>
-        <?php require_once FLUENTCRM_PLUGIN_PATH.'app/views/external/manage_subscription_form.php'; ?>
+        <?php require_once FLUENTCRM_PLUGIN_PATH.'app/Views/external/manage_subscription_form.php'; ?>
     </div>
 </div>
 <?php

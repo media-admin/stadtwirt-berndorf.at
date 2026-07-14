@@ -10,6 +10,7 @@ namespace FluentCrm\App\Hooks\Handlers;
 
 use FluentCrm\App\Services\PermissionManager;
 use FluentCrm\App\Services\TransStrings;
+use FluentCrm\App\Vite;
 use FluentCrm\Framework\Support\Arr;
 
 /**
@@ -53,28 +54,57 @@ class SetupWizard
     {
         add_filter('user_can_richedit', '__return_true');
 
+        if (!function_exists('media_handle_upload')) {
+            require_once(ABSPATH . 'wp-admin/includes/image.php');
+            require_once(ABSPATH . 'wp-admin/includes/file.php');
+            require_once(ABSPATH . 'wp-admin/includes/media.php');
+        }
+        
+
         if (current_user_can('upload_files')) {
             wp_enqueue_script('media-upload');
         }
         add_thickbox();
 
         wp_enqueue_editor();
-        wp_enqueue_media();
+        
+
+        if (function_exists('wp_enqueue_media')) {
+            wp_enqueue_media();
+        }
+
+
+        // Inject Vite HMR client — mirrors AdminMenu::loadCssJs().
+        // Without this, Vue <style> blocks are not applied in dev mode.
+        add_action('admin_head', function () {
+            Vite::injectViteClient();
+        }, 1);
+
+        // style.css is the merged bundle of all Vue component CSS + Element Plus CSS,
+        // produced by vite.config.mjs's mergeCssChunksPlugin. The manifest is
+        // stripped of references to the merged files at build time
+        // (moveManifestPlugin), so Vite::enqueueScript's auto-enqueue won't
+        // pick it up — load it explicitly here. In dev mode, Vite HMR
+        // injects the styles via the client above.
+        if (!Vite::underDevelopment()) {
+            wp_enqueue_style(
+                'fluentcrm_vendor',
+                fluentCrmMix('admin/css/style.css'),
+                [],
+                FLUENTCRM_PLUGIN_VERSION
+            );
+        }
 
         wp_enqueue_style(
             'fluentcrm-setup',
-            fluentCrmMix('admin/css/setup-wizard.css'), ['dashicons']
+            fluentCrmMix('admin/css/setup-wizard.css'),
+            ['dashicons']
         );
 
-        wp_register_script(
-            'fluentcrm-boot',
-            fluentCrmMix('admin/js/boot.js'), ['jquery'], gmdate('Ymd'), true
-        );
-
-        wp_register_script(
-            'fluentcrm-setup',
-            fluentCrmMix('admin/js/setup-wizard.js'), ['fluentcrm-boot'], gmdate('Ymd'), true
-        );
+        // Use Vite::enqueueScript so handles are added to $moduleScripts,
+        // ensuring type="module" is applied correctly in both dev and production.
+        Vite::enqueueScript('fluentcrm-boot', 'admin/boot.js', ['jquery'], FLUENTCRM_PLUGIN_VERSION, true);
+        Vite::enqueueScript('fluentcrm-setup', 'admin/setup-wizard.js', ['fluentcrm-boot'], FLUENTCRM_PLUGIN_VERSION, true);
 
         wp_enqueue_script('lodash');
 
@@ -97,7 +127,7 @@ class SetupWizard
                 'first_name' => $currentUser->first_name,
                 'last_name' => $currentUser->last_name,
                 'email' => $currentUser->user_email,
-                'avatar' => get_avatar($currentUser->user_email, 128),
+                'avatar' => fluentcrmGetAvatarHtml($currentUser->user_email, $currentUser->display_name, 128),
                 'user_id' => $currentUser->ID
             ],
         ]);

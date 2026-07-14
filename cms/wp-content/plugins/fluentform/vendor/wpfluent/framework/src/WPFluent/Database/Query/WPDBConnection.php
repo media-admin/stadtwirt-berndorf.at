@@ -306,6 +306,15 @@ class WPDBConnection implements ConnectionInterface
         $query = str_replace(['%', '?'], ['%%', '%s'], $query);
 
         if ($this->wpdb->dbh instanceof \mysqli) {
+            // wpdb->prepare() casts null to '' for %s, which on TIMESTAMP
+            // columns becomes 0000-00-00 00:00:00. Splice literal NULL into
+            // the SQL for null bindings before prepare() ever sees them.
+            [$query, $bindings] = $this->spliceNullBindings($query, $bindings, '%s');
+
+            if (empty($bindings)) {
+                return $query;
+            }
+
             return $this->wpdb->prepare($query, ...$bindings);
         }
 
@@ -317,6 +326,51 @@ class WPDBConnection implements ConnectionInterface
         }, $bindings);
 
         return vsprintf($query, $bindings);
+    }
+
+    /**
+     * Replace placeholder occurrences whose binding is null with the
+     * literal SQL keyword NULL, returning the rewritten query and the
+     * remaining (non-null) bindings re-indexed.
+     *
+     * @param  string  $query
+     * @param  array   $bindings
+     * @param  string  $placeholder  '%s' for wpdb->prepare path, '?' for mysqli native prepare
+     * @return array{0:string,1:array}
+     *
+     * @phpstan-ignore-next-line
+     */
+    protected function spliceNullBindings(string $query, array $bindings, string $placeholder): array
+    {
+        $bindings = array_values($bindings);
+
+        if (empty($bindings) || strpos($query, $placeholder) === false) {
+            return [$query, $bindings];
+        }
+
+        $parts = explode($placeholder, $query);
+        $last  = count($parts) - 1;
+        $rebuilt = '';
+        $kept = [];
+
+        foreach ($parts as $idx => $part) {
+            $rebuilt .= $part;
+
+            if ($idx === $last) {
+                continue;
+            }
+
+            if (array_key_exists($idx, $bindings) && $bindings[$idx] === null) {
+                $rebuilt .= 'NULL';
+            } else {
+                $rebuilt .= $placeholder;
+                if (array_key_exists($idx, $bindings)) {
+                    $kept[] = $bindings[$idx];
+                }
+            }
+        }
+
+        return [$rebuilt, $kept];
     }
 
     /**
@@ -342,6 +396,10 @@ class WPDBConnection implements ConnectionInterface
         $preparedQuery = str_replace('%', '%%', $preparedQuery);
 
         $bindings = $this->prepareBindings($bindings);
+
+        // mysqli's bind_param can't bind null with type 's' (becomes '').
+        // Replace null bindings with literal NULL in the SQL itself.
+        [$preparedQuery, $bindings] = $this->spliceNullBindings($preparedQuery, $bindings, '?');
 
         $this->wpdb->flush();
         $this->wpdb->insert_id = 0;
@@ -726,6 +784,8 @@ class WPDBConnection implements ConnectionInterface
      * Get the server version for the connection.
      *
      * @return string
+     *
+     * @phpstan-ignore-next-line
      */
     public function getServerVersion(): string
     {

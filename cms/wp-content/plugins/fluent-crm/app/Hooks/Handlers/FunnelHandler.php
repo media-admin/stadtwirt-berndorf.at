@@ -44,10 +44,55 @@ class FunnelHandler
 {
     private $settingsKey = 'fluentcrm_funnel_settings';
 
+    private $lockKey = '_fc_funnel_processor_lock';
+
+    private $lockTimeout = 90;
+
     protected $funnelFired = false;
 
-    public function handle()
+    private $registeredFunnelTriggers = [];
+
+    private $registeredTriggerFallbacks = [];
+
+    private $funnelItemsRegistered = false;
+
+    public function register()
     {
+        /*
+         * Core funnel items must register before the early active-trigger pass
+         * so their fluentcrm_funnel_arg_num_* filters are available at init
+         * priority 2. This lets core events fired by other init priority 10
+         * callbacks, such as LifterLMS user registration, enter funnels.
+         *
+         * Pro integrations can register trigger arg-count filters before init priority 2.
+         * Register those ready triggers early so events fired during init priority 10,
+         * such as EDD manual order status updates, are not missed.
+         *
+         * The fallback pass at priority 20 preserves the existing behavior for triggers
+         * whose arg-count filters are not available during the early pass.
+         */
+        add_action('init', [$this, 'registerFunnelItems'], 1);
+        add_action('init', [$this, 'registerEarlyActiveTriggers'], 2);
+        add_action('init', [$this, 'handle'], 10);
+        add_action('init', [$this, 'registerActiveTriggers'], 20);
+    }
+
+    /**
+     * Register core funnel actions, benchmarks, triggers, and free Pro placeholders once.
+     *
+     * This runs before registerEarlyActiveTriggers() so core trigger arg-count filters
+     * are present when active funnel listeners are attached before other init@10 callbacks.
+     *
+     * @return void
+     */
+    public function registerFunnelItems()
+    {
+        if ($this->funnelItemsRegistered) {
+            return;
+        }
+
+        $this->funnelItemsRegistered = true;
+
         $this->initBlockActions();
         $this->initBenchMarkBlocks();
         $this->initTriggers();
@@ -55,35 +100,93 @@ class FunnelHandler
         if (!defined('FLUENTCAMPAIGN_DIR_FILE')) {
             new \FluentCrm\App\Services\Funnel\ProFunnelItems();
         }
+    }
 
+    public function registerEarlyActiveTriggers()
+    {
+        $this->registerActiveTriggers(true);
+    }
+
+    public function registerActiveTriggers($onlyRegisteredArgFilters = false)
+    {
         $triggers = get_option($this->settingsKey, []);
-
         $triggers = array_unique($triggers);
 
-        if ($triggers) {
-            foreach ($triggers as $triggerName) {
-                /**
-                 * Determine the number of arguments passed to the funnel trigger in FluentCRM.
-                 *
-                 * This filter allows you to modify the number of arguments that are passed to the funnel trigger
-                 * based on the trigger name.
-                 *
-                 * @since 2.5.6
-                 * 
-                 * @param int $argNum The number of arguments to pass to the funnel trigger. Default is 1.
-                 */
-                $argNum = apply_filters('fluentcrm_funnel_arg_num_' . $triggerName, 1);
-                add_action($triggerName, function () use ($triggerName, $argNum) {
-                    $this->mapTriggers($triggerName, func_get_args(), $argNum);
-                }, 10, $argNum);
+        if (!$triggers) {
+            return;
+        }
+
+        foreach ($triggers as $triggerName) {
+            if ($this->shouldSkipEddTriggerRegistration($triggerName)) {
+                continue;
             }
 
-            if (in_array('edd_update_payment_status', $triggers)) {
-                add_action('edd_complete_purchase', function ($paymentId) {
-                    $this->mapTriggers('edd_update_payment_status', [$paymentId, 'publish', 'pending'], 3);
-                });
+            if (isset($this->registeredFunnelTriggers[$triggerName])) {
+                continue;
             }
+
+            /*
+             * Early registration is only safe when the trigger's arg-count filter is
+             * already registered. Otherwise the priority 20 pass will register it
+             * after handle() has initialized the core trigger filters.
+             */
+            $argNumFilterName = 'fluentcrm_funnel_arg_num_' . $triggerName;
+            if ($onlyRegisteredArgFilters && !has_filter($argNumFilterName)) {
+                continue;
+            }
+
+            $argNum = apply_filters($argNumFilterName, 1);
+            add_action($triggerName, function () use ($triggerName, $argNum) {
+                $this->mapTriggers($triggerName, func_get_args(), $argNum);
+            }, 10, $argNum);
+
+            $this->registeredFunnelTriggers[$triggerName] = true;
         }
+
+        /*
+         * EDD also exposes edd_complete_purchase after a successful payment.
+         * Keep the existing fallback, but attach it only once and only after the
+         * main EDD payment-status trigger has been registered.
+         */
+        if (
+            isset($this->registeredFunnelTriggers['edd_update_payment_status']) &&
+            empty($this->registeredTriggerFallbacks['edd_complete_purchase'])
+        ) {
+            add_action('edd_complete_purchase', function ($paymentId) {
+                $this->mapTriggers('edd_update_payment_status', [$paymentId, 'complete', 'pending'], 3);
+            });
+
+            $this->registeredTriggerFallbacks['edd_complete_purchase'] = true;
+        }
+    }
+
+    /**
+     * Skip stored EDD automation hooks when the active EDD install is unsupported.
+     *
+     * Existing EDD funnel data should remain stored, but EDD runtime dispatch must
+     * not be registered unless the site is running EDD 3 or newer.
+     *
+     * @param string $triggerName
+     * @return bool
+     */
+    private function shouldSkipEddTriggerRegistration($triggerName)
+    {
+        if (Helper::isEdd3()) {
+            return false;
+        }
+
+        return in_array($triggerName, [
+            'edd_update_payment_status',
+            'edd_sl_post_set_status',
+            'edd_recurring_add_subscription_payment',
+            'edd_subscription_status_change',
+            'edd_fc_order_refunded_simulation'
+        ], true);
+    }
+
+    public function handle()
+    {
+        $this->registerFunnelItems();
 
         add_action('fluent_crm_process_automation', function () {
             if ($this->funnelFired) {
@@ -91,14 +194,16 @@ class FunnelHandler
             }
 
             $this->funnelFired = true;
-            $lastProcessor = get_option('_fc_last_funnel_processor');
-            if ($lastProcessor && (time() - $lastProcessor) < 60) {
-                return; // We want to run the processor only once per 60 seconds
+
+            if (!$this->acquireFunnelProcessorLock()) {
+                return;
             }
 
-            update_option('_fc_last_funnel_processor', time(), 'no');
-            (new FunnelProcessor())->followUpSequenceActions();
-            update_option('_fc_last_funnel_processor', false, 'no');
+            try {
+                (new FunnelProcessor())->followUpSequenceActions();
+            } finally {
+                $this->releaseFunnelProcessorLock();
+            }
         });
     }
 
@@ -141,6 +246,23 @@ class FunnelHandler
         }
     }
 
+    /**
+     * Claim the funnel-processor lock so two runners can't process the same
+     * queue concurrently. Backed by an atomic conditional UPDATE on wp_options
+     * (Helper::acquireDbLock) on every environment — not wp_cache_add(), which
+     * is not atomic under all object-cache drop-ins (e.g. LiteSpeed) and would
+     * let concurrent runners all acquire the lock. See Helper::acquireDbLock().
+     */
+    private function acquireFunnelProcessorLock()
+    {
+        return Helper::acquireDbLock($this->lockKey, $this->lockTimeout);
+    }
+
+    private function releaseFunnelProcessorLock()
+    {
+        Helper::releaseDbLock($this->lockKey);
+    }
+
     public function resetFunnelIndexes()
     {
         $funnels = Funnel::select('trigger_name')
@@ -173,7 +295,7 @@ class FunnelHandler
     {
         new UserRegistrationTrigger();
         new FluentFormSubmissionTrigger();
-        if (defined('FLUENTFORMPRO'))  {
+        if (defined('FLUENTFORMPRO')) {
             new FluentFormSubscriptionPaymentReceivedTrigger();
             new FluentFormSubscriptionCancelledTrigger();
         }
@@ -220,13 +342,14 @@ class FunnelHandler
                 continue;
             }
 
-            $sequencePoints = new SequencePoints($funnel, $funnelSubscriber);
-            $funnelProcessorClass->processSequencePoints($sequencePoints, $subscriber, $funnelSubscriber);
+            $funnelProcessorClass->resumeFunnelSubscriber($funnel, $subscriber, $funnelSubscriber);
         }
     }
 
     public function saveSequences()
     {
+        check_ajax_referer('fluentcrm_ajax_nonce', '_nonce');
+
         $hasPermission = PermissionManager::currentUserCan('fcrm_write_funnels');
 
         if (!$hasPermission) {
@@ -250,6 +373,8 @@ class FunnelHandler
 
     public function exportFunnel()
     {
+        check_ajax_referer('fluentcrm_ajax_nonce', '_nonce');
+
         $permission = 'manage_options';
         if (!current_user_can($permission)) {
             die('You do not have permission');
@@ -262,9 +387,9 @@ class FunnelHandler
          *
          * The dynamic portion of the hook name, `$funnel->trigger_name`, refers to the trigger name of the funnel.
          *
+         * @param object $funnel The funnel object containing the editor details.
          * @since 2.0.0
          *
-         * @param object $funnel The funnel object containing the editor details.
          */
         $funnel = apply_filters('fluentcrm_funnel_editor_details_' . $funnel->trigger_name, $funnel);
 
@@ -283,6 +408,8 @@ class FunnelHandler
 
     public function saveEmailAction()
     {
+        check_ajax_referer('fluentcrm_ajax_nonce', '_nonce');
+
         $hasPermission = PermissionManager::currentUserCan('fcrm_write_funnels');
 
         if (!$hasPermission) {
@@ -295,7 +422,7 @@ class FunnelHandler
         $funnelId = $request->get('funnel_id');
         $funnel = Funnel::findOrFail($funnelId);
 
-        $settings = json_decode(wp_unslash($request->getJson('action_data')), true);
+        $settings = Helper::parseArrayOrJson($request->get('action_data'));
 
         $settings['action_name'] = 'send_custom_email';
 
@@ -341,6 +468,8 @@ class FunnelHandler
 
     public function saveCampaignEmail()
     {
+        check_ajax_referer('fluentcrm_ajax_nonce', '_nonce');
+
         $hasPermission = PermissionManager::currentUserCan('fcrm_manage_emails');
 
         if (!$hasPermission) {
@@ -352,7 +481,7 @@ class FunnelHandler
         $request = FluentCrm('request');
         $id = $request->get('campaign_id');
 
-        $data = json_decode(wp_unslash($request->getJson('action_data')), true);
+        $data = Helper::parseArrayOrJson($request->get('action_data'));
 
         if (empty($data)) {
             wp_send_json([

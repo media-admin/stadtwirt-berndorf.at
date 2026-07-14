@@ -44,7 +44,7 @@ abstract class BaseBenchMark
          *
          * @return array The filtered sequence data.
          */
-        apply_filters('fluentcrm_funnel_sequence_saving_' . $this->triggerName, function ($sequence) {
+        add_filter('fluentcrm_funnel_sequence_saving_' . $this->triggerName, function ($sequence) {
             $sequence['type'] = 'benchmark';
             return $sequence;
         });

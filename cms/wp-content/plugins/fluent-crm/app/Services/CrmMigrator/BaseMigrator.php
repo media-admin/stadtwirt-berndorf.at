@@ -200,4 +200,14 @@ abstract class BaseMigrator
 
         return $list->id;
     }
+
+    public function getInfoIcon()
+    {
+        $infoSvg = '<span class="fc-inline-help-icon" aria-hidden="true" style="display:inline-flex;vertical-align:middle">'
+            . '<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">'
+            . '<path d="M8 1.333a6.667 6.667 0 1 0 0 13.334A6.667 6.667 0 0 0 8 1.333zm0 2a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm1.333 9.334H6.667v-1.333h1.333V7.333H6.667V6h2.666v5.333h1.333v1.334z"/>'
+            . '</svg></span>';
+
+        return $infoSvg;
+    }
 }

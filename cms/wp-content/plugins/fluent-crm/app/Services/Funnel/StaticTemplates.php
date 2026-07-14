@@ -9,13 +9,13 @@ class StaticTemplates
         return [
             [
                 'id'          => 1,
-                'label'       => 'Welcome Email',
-                'description' => 'Send a welcome email to new subscribers',
+                'label'       => __('Welcome Email', 'fluent-crm'),
+                'description' => __('Send a welcome email to new subscribers', 'fluent-crm'),
                 'category'    => 'email',
                 'icon'        => 'el-icon-message',
                 'disabled'    => false,
                 'depends_on'    => ['crm', 'email'],
-                'ribbon'      => 'Free',
+                'ribbon'      => __('Free', 'fluent-crm'),
                 'funnel_data' => [
                     "id"              => 20,
                     "type"            => "funnels",
@@ -34,28 +34,28 @@ class StaticTemplates
                     "created_at"      => "2024-07-03 11:10:24",
                     "updated_at"      => "2024-07-03 17:56:07",
                     "settingsFields"  => [
-                        "title"     => "List Applied",
-                        "sub_title" => "This will run when selected lists have been applied to a contact",
+                        "title"     => __("List Applied", 'fluent-crm'),
+                        "sub_title" => __("This will run when selected lists have been applied to a contact", 'fluent-crm'),
                         "fields"    => [
                             "lists"       => [
                                 "type"        => "option_selectors",
                                 "option_key"  => "lists",
                                 "is_multiple" => true,
-                                "label"       => "Select Lists",
-                                "placeholder" => "Select List",
+                                "label"       => __("Select Lists", 'fluent-crm'),
+                                "placeholder" => __("Select List", 'fluent-crm'),
                                 "creatable"   => true,
                             ],
                             "select_type" => [
-                                "label"      => "Run When",
+                                "label"      => __("Run When", 'fluent-crm'),
                                 "type"       => "radio",
                                 "options"    => [
                                     [
                                         "id"    => "any",
-                                        "title" => "contact added in any of the selected lists",
+                                        "title" => __("contact added in any of the selected lists", 'fluent-crm'),
                                     ],
                                     [
                                         "id"    => "all",
-                                        "title" => "contact added in all of the selected lists",
+                                        "title" => __("contact added in all of the selected lists", 'fluent-crm'),
                                     ],
                                 ],
                                 "dependency" => [
@@ -71,8 +71,8 @@ class StaticTemplates
                         "run_multiple" => [
                             "type"        => "yes_no_check",
                             "label"       => "",
-                            "check_label" => "Restart the Automation Multiple times for a contact for this event. (Only enable if you want to restart automation for the same contact)",
-                            "inline_help" => "If you enable, then it will restart the automation for a contact if the contact already in the automation. Otherwise, It will just skip if already exist",
+                            "check_label" => __("Restart the Automation Multiple times for a contact for this event. (Only enable if you want to restart automation for the same contact)", 'fluent-crm'),
+                            "inline_help" => __("If you enable, then it will restart the automation for a contact if the contact already in the automation. Otherwise, It will just skip if already exist", 'fluent-crm'),
                         ],
                     ],
                     "sequences"       => [
@@ -83,8 +83,8 @@ class StaticTemplates
                             "action_name"    => "add_contact_to_company",
                             "condition_type" => null,
                             "type"           => "action",
-                            "title"          => "Apply Company",
-                            "description"    => "Add contact to the selected company",
+                            "title"          => __("Apply Company", 'fluent-crm'),
+                            "description"    => __("Add contact to the selected company", 'fluent-crm'),
                             "status"         => "published",
                             "conditions"     => [
                             ],
@@ -106,8 +106,8 @@ class StaticTemplates
                             "action_name"    => "fluentcrm_wait_times",
                             "condition_type" => null,
                             "type"           => "action",
-                            "title"          => "Wait X Days/Hours",
-                            "description"    => "Wait defined timespan before execute the next action",
+                            "title"          => __("Wait X Days/Hours", 'fluent-crm'),
+                            "description"    => __("Wait defined timespan before execute the next action", 'fluent-crm'),
                             "status"         => "published",
                             "conditions"     => [
                             ],

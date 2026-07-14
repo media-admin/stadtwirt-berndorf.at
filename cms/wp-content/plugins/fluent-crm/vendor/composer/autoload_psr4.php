@@ -6,8 +6,7 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
-    'WPFluent\\' => array($vendorDir . '/wpfluent/framework/src/WPFluent'),
     'FluentCrm\\Includes\\' => array($baseDir . '/includes'),
-    'FluentCrm\\Framework\\' => array($vendorDir . '/wpfluent/framework/src/WPFluent'),
+    'FluentCrm\\Framework\\' => array($vendorDir . '/wpfluent/framework/src/WPFluent', $vendorDir . '/wpfluent/framework/src/WPFluent'),
     'FluentCrm\\App\\' => array($baseDir . '/app'),
 );

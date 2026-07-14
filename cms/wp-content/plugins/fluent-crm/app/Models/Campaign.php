@@ -84,7 +84,61 @@ class Campaign extends Model
 
     public function getSettingsAttribute($settings)
     {
-        return \maybe_unserialize($settings);
+        $settings = \maybe_unserialize($settings);
+        $settings = is_array($settings) ? $settings : [];
+        $templateConfig = Arr::get($settings, 'template_config', []);
+
+        $defaultConfig = Helper::getTemplateConfig($this->design_template, false);
+        $templateConfig = wp_parse_args($templateConfig, $defaultConfig);
+        $templateConfig['design_template'] = $this->design_template;
+        $footerDefaults = [
+            'disable_footer' => 'no',
+            'custom_footer'  => 'no',
+            'footer_content' => '',
+            'font_size'      => 13,
+            'font_color'     => '#202020',
+            'background_color' => 'transparent',
+            'footer_padding' => 20
+        ];
+
+        $footerSettings = Arr::get($settings, 'footer_settings', []);
+        $footerSettings = is_array($footerSettings) ? $footerSettings : [];
+
+        // Backward compatibility: older imports may only carry disable_footer in template_config.
+        if (!isset($footerSettings['disable_footer'])) {
+            $legacyDisable = Arr::get($templateConfig, 'disable_footer');
+            if ($legacyDisable === 'yes' || $legacyDisable === 'no') {
+                $footerSettings['disable_footer'] = $legacyDisable;
+            }
+        }
+
+        if (!isset($footerSettings['custom_footer'])) {
+            $legacyFooterContent = Arr::get($footerSettings, 'footer_content', '');
+            if (is_string($legacyFooterContent) && trim(wp_strip_all_tags($legacyFooterContent))) {
+                $footerSettings['custom_footer'] = 'yes';
+            }
+        }
+
+        $footerSettings = wp_parse_args($footerSettings, $footerDefaults);
+        $footerSettings['disable_footer'] = ($footerSettings['disable_footer'] === 'yes') ? 'yes' : 'no';
+        $footerSettings['custom_footer'] = ($footerSettings['custom_footer'] === 'yes') ? 'yes' : 'no';
+        $settings['footer_settings'] = $footerSettings;
+        $templateConfig['disable_footer'] = $footerSettings['disable_footer'];
+        $settings['template_config'] = $templateConfig;
+
+        $mailerDefaults = [
+            'from_name'      => '',
+            'from_email'     => '',
+            'reply_to_name'  => '',
+            'reply_to_email' => '',
+            'is_custom'      => 'no'
+        ];
+
+        $mailerSettings = Arr::get($settings, 'mailer_settings', []);
+        $mailerSettings = wp_parse_args($mailerSettings, $mailerDefaults);
+        $settings['mailer_settings'] = $mailerSettings;
+
+        return $settings;
     }
 
     public function getRecipientsCountAttribute($recipientsCount)
@@ -119,8 +173,14 @@ class Campaign extends Model
                 $inserted = Subject::create($data);
                 $validSubjectIds[] = $inserted->id;
             } else {
-                Subject::where('id', $subject['id'])->update(Arr::only($subject, ['key', 'value']));
-                $validSubjectIds[] = $subject['id'];
+                $subjectItem = Subject::where('id', intval($subject['id']))
+                    ->where('object_id', $this->id)
+                    ->first();
+
+                if ($subjectItem) {
+                    $subjectItem->fill(Arr::only($subject, ['key', 'value']))->save();
+                    $validSubjectIds[] = $subjectItem->id;
+                }
             }
         }
 
@@ -516,6 +576,7 @@ class Campaign extends Model
                 'subscriber_id' => $subscriber->id,
                 'email_address' => $subscriber->email,
                 'email_headers' => $mailHeaders,
+                'email_hash'    => Helper::generateEmailHash(),
                 'created_at'    => $time,
                 'updated_at'    => $time
             ];
@@ -551,12 +612,6 @@ class Campaign extends Model
             $subscriber->campaign_id = $this->id;
             $subscriber->email_id = $inserted->id;
 
-            $emailHash = Helper::generateEmailHash($inserted->id);
-
-            CampaignEmail::where('id', $inserted->id)
-                ->update([
-                    'email_hash' => $emailHash
-                ]);
             $updateIds[] = $inserted->id;
         }
 
@@ -591,7 +646,17 @@ class Campaign extends Model
      */
     public function guessEmailSubject()
     {
-        $subjects = $this->subjects()->get();
+        // Cache subjects per campaign to avoid repeated DB queries during batch processing.
+        // The weighted random selection still runs per call for proper A/B distribution.
+        static $subjectsCache = [];
+
+        if (isset($subjectsCache[$this->id])) {
+            $subjects = $subjectsCache[$this->id];
+        } else {
+            $subjects = $this->subjects()->get();
+            $subjectsCache[$this->id] = $subjects;
+        }
+
         if ($subjects->isEmpty()) {
             return null;
         }
@@ -657,13 +722,28 @@ class Campaign extends Model
             ->where('status', 'sent')
             ->count();
 
-        $clicks = CampaignEmail::where('campaign_id', $this->id)
-            ->whereNotNull('click_counter')
-            ->count();
+        if ($this->getOpenTrackingStatus(false) === 'anonymous') {
+            $views = fluentcrm_get_campaign_meta($this->id, '_ano_open_count', true);
+            if (!$views) {
+                $views = 0;
+            }
+        } else {
+            $views = CampaignEmail::where('campaign_id', $this->id)
+                ->where('is_open', 1)
+                ->count();
+        }
 
-        $views = CampaignEmail::where('campaign_id', $this->id)
-            ->where('is_open', 1)
-            ->count();
+        if ($this->getClickTrackingStatus(false) === 'anonymous') {
+            $clickItems = fluentcrm_get_campaign_meta($this->id, '_ano_url_clicks', true);
+            $clicks = 0;
+            if ($clickItems && is_array($clickItems)) {
+                $clicks = array_sum($clickItems);
+            }
+        } else {
+            $clicks = CampaignEmail::where('campaign_id', $this->id)
+                ->whereNotNull('click_counter')
+                ->count();
+        }
 
         $unSubscribed = CampaignUrlMetric::where('campaign_id', $this->id)
             ->where('type', 'unsubscribe')
@@ -706,34 +786,38 @@ class Campaign extends Model
 
     public function maybeDeleteDuplicates()
     {
-        $duplicates = fluentCrmDb()->table('fc_campaign_emails')
-            ->where('campaign_id', $this->id)
-            ->select([fluentCrmDb()->raw('MIN(`id`) AS min_id'), 'subscriber_id', fluentCrmDb()->raw('COUNT(subscriber_id) as count')])
-            ->groupBy('subscriber_id')
-            ->havingRaw('COUNT(subscriber_id) > ?', [1])
-            ->get();
+        global $wpdb;
+        $table = $wpdb->prefix . 'fc_campaign_emails';
 
-        if (!$duplicates) {
+        // Quick check: do any duplicates exist? Most campaigns won't have any.
+        // Exclude NULL subscriber_ids — SQL NULL != NULL so the self-join can't match them.
+        $hasDuplicates = $wpdb->get_var($wpdb->prepare(
+            "SELECT 1 FROM {$table} WHERE campaign_id = %d AND subscriber_id IS NOT NULL GROUP BY subscriber_id HAVING COUNT(*) > 1 LIMIT 1",
+            $this->id
+        ));
+
+        if (!$hasDuplicates) {
             return $this;
         }
 
-        $subscriberIds = [];
-        $exceptIds = [];
-        foreach ($duplicates as $duplicate) {
-            $subscriberIds[] = $duplicate->subscriber_id;
-            $exceptIds[] = $duplicate->min_id;
-        }
+        // Delete duplicates, keeping the row with the lowest id per subscriber.
+        $deleted = $wpdb->query($wpdb->prepare(
+            "DELETE e1 FROM {$table} e1
+             INNER JOIN {$table} e2
+             ON e1.campaign_id = e2.campaign_id
+                AND e1.subscriber_id = e2.subscriber_id
+                AND e1.id > e2.id
+             WHERE e1.campaign_id = %d
+                AND e1.subscriber_id IS NOT NULL",
+            $this->id
+        ));
 
-        fluentCrmDb()->table('fc_campaign_emails')
-            ->where('campaign_id', $this->id)
-            ->whereIn('subscriber_id', $subscriberIds)
-            ->whereNotIn('id', $exceptIds)
-            ->delete();
-
-        $emailCount = $this->getEmailCount();
-        if ($emailCount != $this->recipients_count) {
-            $this->recipients_count = $emailCount;
-            $this->save();
+        if ($deleted) {
+            $emailCount = $this->getEmailCount();
+            if ($emailCount != $this->recipients_count) {
+                $this->recipients_count = $emailCount;
+                $this->save();
+            }
         }
 
         return $this;
@@ -789,16 +873,10 @@ class Campaign extends Model
 
     public function getEmailScheduleAt()
     {
-        static $scheduled_at = null;
-        if ($scheduled_at) {
-            return $scheduled_at;
-        }
-
         $settings = $this->settings;
 
         if (Arr::get($settings, 'sending_type') != 'range_schedule') {
-            $scheduled_at = $this->scheduled_at;
-            return $scheduled_at;
+            return $this->scheduled_at;
         }
 
         // this is a range selector
@@ -899,4 +977,37 @@ class Campaign extends Model
 
         return $this;
     }
+
+    public function getOpenTrackingStatus($globalFallback = true)
+    {
+        $settings = $this->settings;
+        if (isset($settings['open_tracker'])) {
+            $status = $settings['open_tracker'];
+            return $status;
+        }
+
+        if ($globalFallback) {
+            $status = fluentcrmTrackEmailOpen();
+            return $status;
+        }
+
+        return null;
+    }
+
+    public function getClickTrackingStatus($globalFallback = true)
+    {
+        $settings = $this->settings;
+        if (isset($settings['click_tracker'])) {
+            $status = $settings['click_tracker'];
+            return $status;
+        }
+
+        if ($globalFallback) {
+            $status = fluentcrmTrackClicking();
+            return $status;
+        }
+
+        return null;
+    }
+
 }

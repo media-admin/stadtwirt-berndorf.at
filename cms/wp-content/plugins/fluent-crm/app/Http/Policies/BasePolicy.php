@@ -4,7 +4,7 @@ namespace FluentCrm\App\Http\Policies;
 
 use FluentCrm\App\Services\PermissionManager;
 use FluentCrm\Framework\Foundation\Policy;
-use FluentCrm\Framework\Request\Request;
+use FluentCrm\Framework\Http\Request\Request;
 
 /**
  *  BasePolicy - REST API Permission Policy
@@ -18,7 +18,7 @@ class BasePolicy extends Policy
 
     /**
      * Check user permission for any method
-     * @param \FluentCrm\Framework\Request\Request $request
+     * @param Request $request
      * @return Boolean
      */
     public function verifyRequest(Request $request)

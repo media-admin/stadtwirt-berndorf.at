@@ -213,10 +213,9 @@ foreach ($fluentformElements as $fluentformElement) {
 
         if ($response && ($isHtml || defined('FLUENTFORM_RENDERING_ENTRIES')) && in_array($element, ['select', 'input_radio']) && !is_array($response)) {
             if (!isset($field['options'])) {
-                $field['options'] = [];
-                foreach (\FluentForm\Framework\Helpers\ArrayHelper::get($field, 'raw.settings.advanced_options', []) as $option) {
-                    $field['options'][$option['value']] = $option['label'];
-                }
+                $field['options'] = \FluentForm\App\Helpers\Helper::advancedOptionsValueLabelMap(
+                    \FluentForm\Framework\Helpers\ArrayHelper::get($field, 'raw.settings.advanced_options', [])
+                );
             }
             if (isset($field['options'][$response])) {
                 return $field['options'][$response];
@@ -259,7 +258,13 @@ foreach ($fluentformRules as $fluentformRuleName) {
 
 
 $app->addFilter('fluentform/response_render_textarea', function ($value, $field, $formId, $isHtml) {
-    if (!$value || !is_string($value)) {
+    if (is_array($value) || is_object($value)) {
+        $value = fluentImplodeRecursive(', ', array_filter(array_values((array) $value)));
+    }
+
+    $value = $value ? nl2br($value) : $value;
+
+    if (!$isHtml || !$value) {
         return $value;
     }
 

@@ -4,7 +4,7 @@ namespace FluentCrm\App\Http\Controllers;
 
 use FluentCrm\App\Services\Helper;
 use FluentCrm\Framework\Support\Arr;
-use FluentCrm\Framework\Request\Request;
+use FluentCrm\Framework\Http\Request\Request;
 use FluentCrm\App\Models\Subscriber;
 
 /**
@@ -110,8 +110,8 @@ class ImporterController extends Controller
 
     public function importData(Request $request, $driver)
     {
-        $config = $request->get('config');
-        $page = $request->getSafe('importing_page', '', 'intval');
+        $config = $request->get('config', []);
+        $page = $request->getSafe('importing_page', 'intval', 1);
 
         if ($driver == 'users') {
             return $this->processUserImport($config, $page);
@@ -195,6 +195,11 @@ class ImporterController extends Controller
             ];
         }
 
+        $infoSvg = '<span class="fc-inline-help-icon" aria-hidden="true" style="display:inline-flex;vertical-align:middle">'
+            . '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">'
+            . '<path d="M8 14C4.6862 14 2 11.3138 2 8C2 4.6862 4.6862 2 8 2C11.3138 2 14 4.6862 14 8C14 11.3138 11.3138 14 8 14ZM7.4 7.4V11H8.6V7.4H7.4ZM7.4 5V6.2H8.6V5H7.4Z" fill="currentColor"/>'
+            . '</svg></span>';
+
         return [
             'config' => [
                 'roles' => []
@@ -202,10 +207,9 @@ class ImporterController extends Controller
             'fields' => [
                 'roles' => [
                     'label'              => __('Select User Roles', 'fluent-crm'),
-                    'inline_help'        => __('Please check the user roles that you want to import as contact', 'fluent-crm'),
+                    'inline_help'        => $infoSvg . ' ' . __('Please check the user roles that you want to import as contact', 'fluent-crm'),
                     'type'               => 'checkbox-group',
                     'options'            => $formattedRoles,
-                    'input_class'        => 'fluentcrm_2col_labels',
                     'has_all_selector'   => true,
                     'all_selector_label' => __('All', 'fluent-crm')
                 ]
@@ -256,7 +260,7 @@ class ImporterController extends Controller
          * 
          * @param int $limit The number of subscribers to process per request. Default is 100.
          */
-        $limit = apply_filters('fluent_crm/process_subscribers_per_request', 100);
+        $limit = apply_filters('fluent_crm/import_users_limit_per_request', 100);
 
         $userQuery = new \WP_User_Query([
             'role__in' => $inputs['roles'],

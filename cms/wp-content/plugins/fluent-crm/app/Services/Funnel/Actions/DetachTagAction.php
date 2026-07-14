@@ -56,8 +56,10 @@ class DetachTagAction extends BaseAction
         $tags = $sequence->settings['tags'];
 
         $renewedSubscriber = Subscriber::where('id', $subscriber->id)->first();
+        if (!$renewedSubscriber) {
+            FunnelHelper::changeFunnelSubSequenceStatus($funnelSubscriberId, $sequence->id, 'skipped');
+            return;
+        }
         $renewedSubscriber->detachTags($tags);
-
-        //FunnelHelper::changeFunnelSubSequenceStatus($funnelSubscriberId, $sequence->id);
     }
 }

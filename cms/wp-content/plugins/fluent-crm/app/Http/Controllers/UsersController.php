@@ -6,7 +6,7 @@ use FluentCrm\App\Models\Subscriber;
 use FluentCrm\App\Services\Helper;
 use FluentCrm\App\Services\Sanitize;
 use FluentCrm\Framework\Support\Arr;
-use FluentCrm\Framework\Request\Request;
+use FluentCrm\Framework\Http\Request\Request;
 
 /**
  *  UsersController - REST API Handler Class
@@ -21,12 +21,12 @@ class UsersController extends Controller
 {
     /**
      * Get all the users.
-     * @param \FluentCrm\Framework\Request\Request $request
+     * @param \FluentCrm\Framework\Http\Request\Request $request
      * @return \WP_REST_Response
      */
     public function index(Request $request)
     {
-        $roles = $request->getSafe('roles', []);
+        $roles = $request->getSafe('roles', 'sanitize_text_field', []);
         $limit = $request->limit ?: 5;
         $fields = $request->fields ?: ['ID', 'display_name', 'user_email'];
 
@@ -64,7 +64,7 @@ class UsersController extends Controller
         $page = absint($request->get('page', 1));
 
         $userQuery = new \WP_User_Query([
-            'role__in' => $inputs['roles'],
+            'role__in' => Arr::get($inputs, 'roles', []),
             'number'   => $limit,
             'offset'   => ($page - 1) * $limit
         ]);
@@ -109,10 +109,10 @@ class UsersController extends Controller
 
         return Subscriber::import(
             $subscribers,
-            $inputs['tags'],
-            $inputs['lists'],
-            $inputs['update'],
-            $inputs['new_status'],
+            Arr::get($inputs, 'tags', []),
+            Arr::get($inputs, 'lists', []),
+            Arr::get($inputs, 'update'),
+            Arr::get($inputs, 'new_status'),
             $sendDoubleOptin
         );
     }

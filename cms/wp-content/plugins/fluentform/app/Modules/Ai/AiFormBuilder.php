@@ -106,9 +106,11 @@ class AiFormBuilder extends FormService
             'user_prompt'    => $this->getUserPrompt($args),
             'site_url'       => site_url(),
             'site_title'     => get_bloginfo('name'),
+            'site_locale'    => determine_locale(),
             'has_pro'        => Helper::hasPro(),
             'has_payment'    => $paymentSetting['status'] == 'yes',
-            'request_id'     => uniqid('ff_ai_')
+            'request_id'     => uniqid('ff_ai_'),
+            'save_usage'     => apply_filters('fluentform/ai_save_usage', true),
         ];
 
         $result = (new FluentFormAIAPI())->makeRequest($queryArgs);
@@ -126,7 +128,7 @@ class AiFormBuilder extends FormService
         if (json_last_error() !== JSON_ERROR_NONE || empty($decoded) || empty($decoded['fields'])) {
             throw new Exception(esc_html__('Invalid response: Please try again!', 'fluentform'));
         }
-        return $decoded;
+        return $this->applyPromptHints($decoded, $args);
     }
     
     protected function getDefaultFields()
@@ -453,7 +455,299 @@ class AiFormBuilder extends FormService
         if ($additionalQuery) {
             $query .= "\n including questions for information like  " . $additionalQuery . ".";
         }
-        return $startingQuery . $query;
+        return $startingQuery . $query . $this->getPromptContractInstructions();
     }
-    
+
+    private function getPromptContractInstructions()
+    {
+        return "\n\nReturn strict JSON only. The user's instructions may be written in any language. "
+            . "Preserve labels and help text in the user's original language, but always return machine-readable field settings. "
+            . "For every field, explicitly set whether it is required in settings.validation_rules.required.value when the prompt marks it as required or optional. "
+            . "If the prompt lists allowed upload extensions, map them into settings.validation_rules.allowed_file_types.value. "
+            . "If the prompt asks for a multi-step form with sections, include form_step elements between sections.";
+    }
+
+    private function applyPromptHints(array $form, array $args)
+    {
+        $query = (string) Arr::get($args, 'query', '');
+        $additionalQuery = (string) Arr::get($args, 'additional_query', '');
+        $hints = $this->extractPromptFieldHints(trim($query . "\n" . $additionalQuery));
+
+        if (!$hints) {
+            return $form;
+        }
+
+        $hintIndex = 0;
+        $form['fields'] = $this->applyHintsToFields(Arr::get($form, 'fields', []), $hints, $hintIndex);
+
+        return $form;
+    }
+
+    private function applyHintsToFields(array $fields, array $hints, &$hintIndex)
+    {
+        foreach ($fields as &$field) {
+            if (!is_array($field)) {
+                continue;
+            }
+
+            if (count($field) === 1) {
+                $field = reset($field);
+            }
+
+            $element = Arr::get($field, 'element');
+
+            if ('container' === $element) {
+                $columns = Arr::get($field, 'columns', []);
+                foreach ($columns as &$column) {
+                    $column['fields'] = $this->applyHintsToFields(Arr::get($column, 'fields', []), $hints, $hintIndex);
+                }
+                $field['columns'] = $columns;
+                continue;
+            }
+
+            if (in_array($element, ['form_step', 'section_break'])) {
+                continue;
+            }
+
+            $hint = Arr::get($hints, $hintIndex);
+            $hintIndex++;
+
+            if (!$hint) {
+                continue;
+            }
+
+            $field = $this->mergeFieldHint($field, $hint);
+        }
+
+        return $fields;
+    }
+
+    private function mergeFieldHint(array $field, array $hint)
+    {
+        if (array_key_exists('required', $hint)) {
+            Arr::set($field, 'settings.validation_rules.required.value', (bool) $hint['required']);
+        }
+
+        if (!empty($hint['help_message'])) {
+            Arr::set($field, 'settings.help_message', $hint['help_message']);
+        }
+
+        if (!empty($hint['allowed_file_types']) && in_array(Arr::get($field, 'element'), ['input_file', 'input_image'])) {
+            Arr::set($field, 'settings.validation_rules.allowed_file_types.value', array_values(array_unique($hint['allowed_file_types'])));
+        }
+
+        return $field;
+    }
+
+    private function extractPromptFieldHints($prompt)
+    {
+        if (!$prompt) {
+            return [];
+        }
+
+        $lines = preg_split('/\R/u', $prompt);
+        $hints = [];
+
+        foreach ($lines as $line) {
+            $line = trim(wp_strip_all_tags($line));
+            $line = preg_replace('/^[\-\*\d\.\)\s]+/u', '', $line);
+
+            if (!$line || !$this->looksLikeFieldLine($line)) {
+                continue;
+            }
+
+            $attributesText = '';
+            if (preg_match('/\(([^()]*)\)/u', $line, $matches)) {
+                $attributesText = trim($matches[1]);
+            }
+
+            $hint = [];
+            $normalizedLine = function_exists('mb_strtolower') ? mb_strtolower($line, 'UTF-8') : strtolower($line);
+
+            if ($this->containsAnyPhrase($normalizedLine, $this->getRequiredKeywords())) {
+                $hint['required'] = true;
+            } elseif ($this->containsAnyPhrase($normalizedLine, $this->getOptionalKeywords())) {
+                $hint['required'] = false;
+            }
+
+            $helpMessage = $this->extractHelpMessage($attributesText);
+            if ($helpMessage) {
+                $hint['help_message'] = $helpMessage;
+            }
+
+            if ($this->containsAnyPhrase($normalizedLine, $this->getFileUploadKeywords())) {
+                $allowedTypes = $this->extractAllowedFileTypes($line);
+                if ($allowedTypes) {
+                    $hint['allowed_file_types'] = $allowedTypes;
+                }
+            }
+
+            $hints[] = $hint;
+        }
+
+        return $hints;
+    }
+
+    private function looksLikeFieldLine($line)
+    {
+        if (preg_match('/^(create|erstelle|crée|crear|criar|crea|maak|utw[oó]rz|oluştur|创建|作成)\b/ui', $line)) {
+            return false;
+        }
+
+        if (preg_match('/^(section|abschnitt|secci[oó]n|sectione|seção|sectie|sekcja|b[oö]l[uü]m|章节|セクション)\b/ui', $line)) {
+            return false;
+        }
+
+        if (false === strpos($line, '(')) {
+            return false;
+        }
+
+        preg_match('/\(([^()]*)\)/u', $line, $matches);
+        $attributesText = isset($matches[1]) ? $matches[1] : '';
+
+        return $this->containsAnyPhrase(
+            function_exists('mb_strtolower') ? mb_strtolower($attributesText, 'UTF-8') : strtolower($attributesText),
+            $this->getFieldDescriptorKeywords()
+        );
+    }
+
+    private function extractHelpMessage($attributesText)
+    {
+        if (!$attributesText) {
+            return '';
+        }
+
+        if (preg_match('/(?:note|hint|hinweis|remarque|nota|nota bene|opmerking|uwaga|not|说明|備考)\s*:\s*["“]?(.+?)["”]?$/ui', $attributesText, $matches)) {
+            return trim($matches[1], " \t\n\r\0\x0B\"'“”");
+        }
+
+        return '';
+    }
+
+    private function extractAllowedFileTypes($line)
+    {
+        preg_match_all('/\b(jpe?g|gif|png|tiff?|bmp|webp|svg|pdf|docx?|xlsx?|xls|csv|zip|rar|txt)\b/ui', $line, $matches);
+
+        if (empty($matches[1])) {
+            return [];
+        }
+
+        $types = array_map(function ($type) {
+            $type = strtolower($type);
+
+            if ('jpeg' === $type) {
+                return 'jpg';
+            }
+
+            if ('tif' === $type) {
+                return 'tiff';
+            }
+
+            return $type;
+        }, $matches[1]);
+
+        return array_values(array_unique($types));
+    }
+
+    private function containsAnyPhrase($text, array $phrases)
+    {
+        foreach ($phrases as $phrase) {
+            if (false !== strpos($text, $phrase)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function getRequiredKeywords()
+    {
+        return [
+            'required',
+            'mandatory',
+            'pflichtfeld',
+            'erforderlich',
+            'obligatoire',
+            'requis',
+            'obligatorio',
+            'obrigatório',
+            'obbligatorio',
+            'verplicht',
+            'wymagane',
+            'zorunlu',
+            '必填',
+            '必須'
+        ];
+    }
+
+    private function getOptionalKeywords()
+    {
+        return [
+            'optional',
+            'facultatif',
+            'facoltativo',
+            'opcjonalne',
+            'isteğe bağlı',
+            'opcional',
+            'opcionales',
+            '选填',
+            '任意'
+        ];
+    }
+
+    private function getFileUploadKeywords()
+    {
+        return [
+            'file upload',
+            'upload',
+            'datei',
+            'datei upload',
+            'foto upload',
+            'image upload',
+            'upload de fichier',
+            'carga de archivo',
+            'subida de archivo',
+            'carregamento de arquivo',
+            'caricamento file',
+            'bestandsupload',
+            'yükleme',
+            '上传'
+        ];
+    }
+
+    private function getFieldDescriptorKeywords()
+    {
+        return [
+            'text',
+            'textarea',
+            'email',
+            'date',
+            'file',
+            'upload',
+            'phone',
+            'number',
+            'radio',
+            'checkbox',
+            'select',
+            'dropdown',
+            'image',
+            'foto',
+            'bild',
+            'datei',
+            'telefon',
+            'mobil',
+            'correo',
+            'texte',
+            'texto',
+            'testo',
+            'fecha',
+            'fichier',
+            'archivo',
+            'caricamento',
+            'ficheiro',
+            'bestand',
+            'yükleme',
+            '上传'
+        ];
+    }
 }

@@ -16,7 +16,22 @@ class FunnelSubscriber extends Model
 {
     protected $table = 'fc_funnel_subscribers';
 
-    protected $guarded = ['id'];
+    protected $fillable = [
+        'funnel_id',
+        'subscriber_id',
+        'status',
+        'type',
+        'next_sequence',
+        'next_sequence_id',
+        'last_sequence_id',
+        'last_sequence_status',
+        'last_executed_time',
+        'next_execution_time',
+        'starting_sequence_id',
+        'source_trigger_name',
+        'source_ref_id',
+        'notes'
+    ];
 
     public function scopeActive($query)
     {

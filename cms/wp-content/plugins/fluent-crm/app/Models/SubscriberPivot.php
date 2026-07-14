@@ -37,7 +37,7 @@ class SubscriberPivot extends Model
     public static function store($attributes)
     {
         $attributes += [
-            'created_at' => $now = gmdate('Y-m-d h-i-s'),
+            'created_at' => $now = current_time('mysql'),
             'updated_at' => $now
         ];
 

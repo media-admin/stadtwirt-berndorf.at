@@ -234,7 +234,7 @@ if ( ! class_exists( 'CF7Apps_AI_Form_Generator' ) && class_exists( 'CF7Apps_App
 
 			$prompt   = isset( $_POST['prompt'] ) ? sanitize_textarea_field( wp_unslash( $_POST['prompt'] ) ) : '';
 			$template = isset( $_POST['template'] ) ? sanitize_key( wp_unslash( $_POST['template'] ) ) : '';
-
+	
 			$combined = trim( $prompt );
 			if ( '' === $combined && $template ) {
 				foreach ( self::get_template_definitions() as $id => $def ) {

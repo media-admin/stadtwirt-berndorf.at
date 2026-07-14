@@ -46,7 +46,9 @@ class FunnelSubscribers
                 KEY `status` (`status`),
                 KEY `type` (`type`),
                 KEY `next_execution_time` (`next_execution_time`),
-                KEY `next_sequence` (`next_sequence`)
+                KEY `next_sequence` (`next_sequence`),
+                UNIQUE KEY `funnel_subscriber_idx` (`funnel_id`, `subscriber_id`),
+                KEY `status_next_exec_idx` (`status`, `next_execution_time`)
             ) $charsetCollate;";
             dbDelta($sql);
         } else {
@@ -68,6 +70,18 @@ class FunnelSubscribers
                 // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
                 $wpdb->query($sql);
             }
+
+            // Two critical indexes on this table are owned by DbPerformanceService
+            // so the migration and the runtime index health-check / repair path
+            // share one definition and can never drift:
+            //   - funnel_subscriber_idx: UNIQUE (funnel_id, subscriber_id). Its
+            //     sweep + progress-aware dedupe + drop/re-add convergence (an old
+            //     non-unique index of the same name OR a missing key both resolve
+            //     to "unique key present") lives in the service.
+            //   - status_next_exec_idx: composite index for the cron heartbeat
+            //     query (runs every 60 seconds).
+            \FluentCrm\App\Services\DbPerformanceService::ensureCriticalIndex('funnel_subscriber_idx');
+            \FluentCrm\App\Services\DbPerformanceService::ensureCriticalIndex('status_next_exec_idx');
 
         }
     }

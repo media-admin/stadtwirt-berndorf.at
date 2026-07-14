@@ -1,0 +1,1 @@
+import{aQ as e,W as r,X as o,ab as s}from"../../../../vendor.js?ver=3.1.8";import{_ as t}from"../../../../fc-bits-ui.js?ver=3.1.8";import"../../../../vendor-element-plus.js?ver=3.1.8";const n=t({name:"CompaniesRoute"},[["render",function(t,n,a,i,m,u){const v=e("router-view");return r(),o("div",null,[s(v)])}]]);export{n as default};

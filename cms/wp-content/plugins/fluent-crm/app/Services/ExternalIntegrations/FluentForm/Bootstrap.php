@@ -51,7 +51,7 @@ class Bootstrap extends IntegrationManagerController
             'is_active'             => $this->isConfigured(),
             'configure_title'       => __('Configuration required!', 'fluent-crm'),
             'global_configure_url'  => '#',
-            'configure_message'     => __('FluentCRM is not configured yet! Please configure your FluentCRM api first', 'fluent-crm'),
+            'configure_message'     => __('FluentCRM is not configured yet! Please configure your FluentCRM API first', 'fluent-crm'),
             'configure_button_text' => __('Set FluentCRM', 'fluent-crm')
         ];
         return $integrations;
@@ -162,7 +162,7 @@ class Bootstrap extends IntegrationManagerController
                 'key'                => 'other_fields',
                 'require_list'       => false,
                 'label'              => __('Other Fields', 'fluent-crm'),
-                'tips'               => __('Select which Fluent Form fields pair with their<br /> respective FlunentCRM fields.', 'fluent-crm'),
+                'tips'               => __('Select which Fluent Form fields pair with their<br /> respective FluentCRM fields.', 'fluent-crm'),
                 'component'          => 'dropdown_many_fields',
                 'field_label_remote' => __('FluentCRM Field', 'fluent-crm'),
                 'field_label_local'  => __('Form Field', 'fluent-crm'),
@@ -189,13 +189,13 @@ class Bootstrap extends IntegrationManagerController
             [
                 'key'            => 'skip_if_exists',
                 'require_list'   => false,
-                'checkbox_label' => __('Skip if contact already exist in FluentCRM', 'fluent-crm'),
+                'checkbox_label' => __('Skip if contact already exists in FluentCRM', 'fluent-crm'),
                 'component'      => 'checkbox-single'
             ],
             [
                 'key'            => 'skip_primary_data',
                 'require_list'   => false,
-                'checkbox_label' => __('Skip name update if existing contact have old data (per primary field)', 'fluent-crm'),
+                'checkbox_label' => __('Skip name update if an existing contact has old data (per primary field)', 'fluent-crm'),
                 'component'      => 'checkbox-single'
             ],
             [
@@ -209,7 +209,7 @@ class Bootstrap extends IntegrationManagerController
                 'require_list'   => false,
                 'checkbox_label' => __('Enable Force Subscribe if contact is not in subscribed status (Existing contact only)', 'fluent-crm'),
                 'component'      => 'checkbox-single',
-                'inline_tip'     => __('If you enable this then contact will forcefully subscribed no matter in which status that contact had', 'fluent-crm')
+                'inline_tip'     => __('If you enable this, the contact will be forcefully subscribed regardless of the contact\'s current status', 'fluent-crm')
             ],
             [
                 'require_list' => false,
@@ -224,7 +224,7 @@ class Bootstrap extends IntegrationManagerController
             $hasSubscriptionFields = !!FormFieldsParser::getInputsByElementTypes($form, ['subscription_payment_component']);
 
             $options = [
-                'fluentform/payment_refunded' => 'On Payment Refund'
+                'fluentform/payment_refunded' => __('On Payment Refund', 'fluent-crm')
             ];
 
             if ($hasSubscriptionFields) {
@@ -241,7 +241,7 @@ class Bootstrap extends IntegrationManagerController
                 'label'        => __('Run only on events', 'fluent-crm'),
                 'component'    => 'checkbox-multiple-text',
                 'options'      => $options,
-                'tips'         => __('If you check any of the events then this feed will only run to the selected events', 'fluent-crm')
+                'tips'         => __('If you check any of the events, then this feed will only run for the selected events', 'fluent-crm')
             ];
         }
 
@@ -250,7 +250,7 @@ class Bootstrap extends IntegrationManagerController
             'key'          => 'remove_tags',
             'label'        => __('Remove Contact Tags', 'fluent-crm'),
             'placeholder'  => __('Select Tags (remove from contact)', 'fluent-crm'),
-            'tips'         => __('(Optional) The selected tags will be removed from the contact (if exist)', 'fluent-crm'),
+            'tips'         => __('(Optional) The selected tags will be removed from the contact (if it exists)', 'fluent-crm'),
             'component'    => 'select',
             'is_multiple'  => true,
             'required'     => false,
@@ -373,7 +373,7 @@ class Bootstrap extends IntegrationManagerController
             $this->addLog(
                 $feed['settings']['name'],
                 'info',
-                __('Contact creation has been skipped because contact already exist in the database', 'fluent-crm'),
+                __('Contact creation has been skipped because the contact already exists in the database', 'fluent-crm'),
                 $form->id,
                 $entry->id
             );
@@ -479,6 +479,10 @@ class Bootstrap extends IntegrationManagerController
                 $contact['status'] = 'subscribed';
             }
 
+            $originalFields = FluentCrmApi('contacts')->getContact($contact['email'])->getOriginal();
+
+            $currentCustomValues = $subscriber->custom_fields();
+
             $subscriber = FluentCrmApi('contacts')->createOrUpdate($contact, $forceSubscribed, false);
 
             if (!$subscriber) {
@@ -498,6 +502,9 @@ class Bootstrap extends IntegrationManagerController
             if ($removeTags = Arr::get($feed, 'settings.remove_tags', [])) {
                 $subscriber->detachTags($removeTags);
             }
+
+            $dirtyFields = array_merge($feed['processedValues'], ['dirty_custom_fields' => $currentCustomValues]);
+            do_action('fluent_crm/contact_updated_with_changes', $subscriber, $dirtyFields, $originalFields, ['source' => 'fluentform', 'formId' => $form->id]);
 
             $this->addLog(
                 $feed['settings']['name'],
@@ -604,7 +611,7 @@ class Bootstrap extends IntegrationManagerController
             ->orderBy('id', 'ASC')
             ->get();
 
-        if (!$feeds) {
+        if ($feeds->isEmpty()) {
             return false;
         }
         if (!is_array($submission->response)) {

@@ -69,7 +69,7 @@ class SendEmailAction extends BaseAction
                     ]
                 ],
                 'send_email_custom'  => [
-                    'wrapper_class' => 'fc_half_field',
+                    'wrapper_class' => 'fcrm_send_custom_email_form_wrap',
                     'type'          => 'input-text',
                     'label'         => __('Send To Email Addresses (If Custom)', 'fluent-crm'),
                     'placeholder'   => __('Custom Email Addresses', 'fluent-crm'),
@@ -88,11 +88,11 @@ class SendEmailAction extends BaseAction
                 'is_scheduled'       => [
                     'type'          => 'yes_no_check',
                     'check_label'   => __('Schedule this email to a specific date', 'fluent-crm'),
-                    'wrapper_class' => 'fc_half_field fc_no_pad_l',
+                    'wrapper_class' => 'fc_no_pad_l',
                 ],
                 'skip_if_overdue'    => [
                     'type'          => 'yes_no_check',
-                    'wrapper_class' => 'fc_half_field',
+                    'wrapper_class' => 'fcrm_child_field',
                     'check_label'   => __('Skip sending email if date is overdued', 'fluent-crm'),
                     'dependency'    => [
                         'depends_on' => 'is_scheduled',
@@ -103,7 +103,7 @@ class SendEmailAction extends BaseAction
                 'scheduled_at'       => [
                     'label'         => __('Schedule Date and Time', 'fluent-crm'),
                     'type'          => 'date_time',
-                    'wrapper_class' => 'fc_no_marg_b',
+                    'wrapper_class' => 'fcrm_child_field fcrm_schedule_date_time fc_no_marg_b',
                     'placeholder'   => __('Select Date and Time', 'fluent-crm'),
                     'inline_help'   => __('If schedule date is past in the runtime then email will be sent immediately', 'fluent-crm'),
                     'dependency'    => [
@@ -128,13 +128,15 @@ class SendEmailAction extends BaseAction
         $isStripped = Arr::get($sequence, 'is_stripped');
         if ($isStripped && $funnelCampaignId) {
             $refCampaign = FunnelCampaign::find($funnelCampaignId);
+            if (!$refCampaign) {
+                return $sequence;
+            }
             $data = Arr::only($refCampaign->toArray(), array_keys(FunnelCampaign::getMock()));
         } else {
             $data = Arr::only($funnelCampaign, array_keys(FunnelCampaign::getMock()));
         }
 
         $sequenceId = Arr::get($sequence, 'id');
-
         $data['settings']['mailer_settings'] = Arr::get($sequence, 'settings.mailer_settings', []);
 
         if ($funnelCampaignId && $funnel->id == Arr::get($data, 'parent_id')) {
@@ -170,11 +172,12 @@ class SendEmailAction extends BaseAction
 
                 if ($refCampaignData['design_template'] == 'visual_builder') {
                     $refCampaignData['_visual_builder_design'] = fluentcrm_get_campaign_meta($refCampaignData['id'], '_visual_builder_design', true);
+                } else {
+                    $refCampaignData['__fcrm_block_type'] = 'email_body_in_funnel';
                 }
+                $sequence['settings']['campaign'] = $refCampaignData;
             }
         }
-
-        $sequence['settings']['campaign'] = $refCampaignData;
 
         if (empty($sequence['settings']['mailer_settings'])) {
             $sequence['settings']['mailer_settings'] = [
@@ -205,23 +208,24 @@ class SendEmailAction extends BaseAction
         $settings = $sequence->settings;
         $refCampaign = Arr::get($settings, 'reference_campaign');
 
-        if(!$refCampaign) {
+        if (!$refCampaign) {
             FunnelHelper::changeFunnelSubSequenceStatus($funnelSubscriberId, $sequence->id, 'skipped');
             return;
         }
 
-        if($funnelMetric) {
+        if ($funnelMetric) {
             // We are making sure, this action will run only once per funnel subscriber
-            if (did_action('fluent_crm/did_run_' . $funnelMetric->id)) {
+            if (did_action('fluent_crm/did_run_funnel_email_action_' . $funnelMetric->id)) {
                 FunnelHelper::changeFunnelSubSequenceStatus($funnelSubscriberId, $sequence->id, 'skipped');
                 return;
             }
 
-            do_action('fluent_crm/did_run_' . $funnelMetric->id);
+            do_action('fluent_crm/did_run_funnel_email_action_' . $funnelMetric->id);
         }
 
         $campaign = FunnelCampaign::find($refCampaign);
         if (!$campaign) {
+            FunnelHelper::changeFunnelSubSequenceStatus($funnelSubscriberId, $sequence->id, 'skipped');
             return;
         }
 
@@ -255,19 +259,20 @@ class SendEmailAction extends BaseAction
 
             do_action('fluentcrm_process_contact_jobs', $subscriber);
         } else if ($customAddresses = Arr::get($settings, 'send_email_custom')) {
-            $customAddresses = array_map('trim', explode(',', $customAddresses));
             /**
              * Filters and parses custom email addresses for a campaign email text.
              *
              * This code applies the 'fluent_crm/parse_campaign_email_text' filter to process
              * the custom email addresses for a given subscriber.
              *
-             * @param array $customAddresses The custom email addresses to be parsed.
+             * @param string $customAddresses The custom email addresses string to be parsed.
              * @param object $subscriber The subscriber object containing subscriber details.
              *
-             * @return array The filtered and parsed custom email addresses.
+             * @return string The filtered and parsed custom email addresses string.
              */
+
             $customAddresses = apply_filters('fluent_crm/parse_campaign_email_text', $customAddresses, $subscriber);
+            $customAddresses = array_filter(array_map('sanitize_email', explode(',', $customAddresses)));
             $campaign->sendToCustomAddresses($customAddresses, $args, $subscriber);
         }
     }

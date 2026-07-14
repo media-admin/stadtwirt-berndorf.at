@@ -2,7 +2,7 @@
 
 namespace FluentCrm\App\Http\Policies;
 
-use FluentCrm\Framework\Request\Request;
+use FluentCrm\Framework\Http\Request\Request;
 
 /**
  *  SubscriberPolicy - REST API Permission Policy
@@ -15,7 +15,7 @@ class SubscriberPolicy extends BasePolicy
 {
     /**
      * Check user permission for any method
-     * @param \FluentCrm\Framework\Request\Request $request
+     * @param \FluentCrm\Framework\Http\Request\Request $request
      * @return Boolean
      */
     public function verifyRequest(Request $request)
@@ -38,6 +38,11 @@ class SubscriberPolicy extends BasePolicy
     }
 
     public function deleteNote(Request $request)
+    {
+        return $this->currentUserCan('fcrm_manage_contacts_delete');
+    }
+
+    public function bulkDeleteNotes(Request $request)
     {
         return $this->currentUserCan('fcrm_manage_contacts_delete');
     }

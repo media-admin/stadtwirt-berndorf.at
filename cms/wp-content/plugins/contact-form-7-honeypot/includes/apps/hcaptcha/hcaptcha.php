@@ -312,14 +312,12 @@ class CF7Apps_hCaptcha_App extends CF7Apps_App {
     public function validate_hcaptcha( $result, $tags ) { 
         if( $this->get_option( 'is_enabled' ) ) {
             $has_tag = false;
+            $invalid_message = '';
 
             foreach ( $tags as $tag ) {
                 if ( $tag->type === 'cf7apps_hcaptcha' ) {
                     $has_tag = true;
-                    $invalid_message = $tag->get_option( 'invalid-message' );
-                    if ( is_array( $invalid_message ) ) {
-                        $invalid_message = implode( ' ', $invalid_message );
-                    }
+                    $invalid_message = $this->resolve_tag_invalid_message( $tag );
                     $invalid_message = $invalid_message ?: $this->get_option( 'invalid_message' );
                     break;
                 }
@@ -368,6 +366,40 @@ class CF7Apps_hCaptcha_App extends CF7Apps_App {
         }
 
         return $result;
+    }
+
+    /**
+     * Resolve hCaptcha invalid message from tag payload.
+     *
+     * Order:
+     * 1. New quoted value format (`data-tag-part="value"` in generator).
+     * 2. Legacy option format (`invalid-message:...`).
+     *
+     * @since 3.5.0
+     *
+     * @param WPCF7_FormTag|WPCF7_Shortcode $tag Form tag instance.
+     * @return string
+     */
+    private function resolve_tag_invalid_message( $tag ) {
+        $value_message = '';
+
+        if ( isset( $tag->raw_values ) && is_array( $tag->raw_values ) && ! empty( $tag->raw_values ) ) {
+            $value_message = trim( (string) $tag->raw_values[0] );
+        } elseif ( isset( $tag->values ) && is_array( $tag->values ) && ! empty( $tag->values ) ) {
+            $value_message = trim( (string) $tag->values[0] );
+        }
+
+        if ( '' !== $value_message ) {
+            return $value_message;
+        }
+
+        $legacy_message = $tag->get_option( 'invalid-message' );
+
+        if ( is_array( $legacy_message ) ) {
+            $legacy_message = implode( ' ', $legacy_message );
+        }
+
+        return trim( (string) $legacy_message );
     }
 
     /**
@@ -443,7 +475,7 @@ class CF7Apps_hCaptcha_App extends CF7Apps_App {
                 <legend id="<?php echo esc_attr( $args['content'] ); ?>-invalid-message-legend">
                     <?php esc_html_e( 'Error message', 'cf7apps' ); ?>
                 </legend>
-                <input type="text" value="<?php echo esc_attr( $error_message ); ?>" data-tag-option="invalid-message:" data-tag-part="option" name="invalid-message" class="invalid-message-value oneline option" id="<?php echo esc_attr( $args['content'] . '-invalid-message' ); ?>" />
+                <input type="text" value="<?php echo esc_attr( $error_message ); ?>" data-tag-part="value" name="invalid-message" class="invalid-message-value oneline value" id="<?php echo esc_attr( $args['content'] . '-invalid-message' ); ?>" />
                 <br />
                 <label><?php esc_html_e( 'Enter a custom message to display when CAPTCHA validation fails.', 'cf7apps' ); ?></label>
             </fieldset>

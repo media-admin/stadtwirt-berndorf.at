@@ -31,7 +31,7 @@ const CF7AppsMenuBar = () => {
             case 'Integration':
                 return (
                     <>
-                        <img src={ `${ CF7AppsInternalSettings.assetsURL }/images/spam-protection.png` } width={ '23px' } alt={ menu } /> { menu }
+                        <img style={ { marginTop: '-7px' } } src={ `${ CF7AppsInternalSettings.assetsURL }/images/integration.png` } width={ '23px' } alt={ menu } /> { menu }
                     </>
                 );
             case 'General':

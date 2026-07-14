@@ -167,7 +167,7 @@ class CartHelper
         }
     }
 
-    public static function prepareSubsciberData($customer)
+    public static function prepareSubscriberData($customer)
     {
         if(!is_object($customer)) {
             $customer = (object) $customer;

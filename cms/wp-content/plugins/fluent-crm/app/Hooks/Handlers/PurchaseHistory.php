@@ -4,6 +4,7 @@ namespace FluentCrm\App\Hooks\Handlers;
 
 
 use FluentCrm\App\Models\Subscriber;
+use FluentCrm\App\Services\Helper;
 
 /**
  *  PurchaseHistory Class
@@ -14,6 +15,9 @@ use FluentCrm\App\Models\Subscriber;
  */
 class PurchaseHistory
 {
+    /**
+     * Build the commerce summary widget for supported commerce providers.
+     */
     public function getCommerceStatWidget($subscriber)
     {
         /**
@@ -44,14 +48,14 @@ class PurchaseHistory
                 return false;
             }
 
-            $html = '<ul class="fc_full_listed">';
+            $html = '<ul class="fc_full_listed fcrm_customer_summary_list">';
             foreach ($stats as $stat) {
                 $html .= '<li><span class="fc_list_sub">' . $stat['title'] . '</span> <span class="fc_list_value">' . $stat['value'] . '</span></li>';
             }
             $html .= '</ul>';
 
             return [
-                'title'   => 'Customer Summary',
+                'title'   => __('Customer Summary', 'fluent-crm'),
                 'content' => $html
             ];
         }
@@ -67,7 +71,7 @@ class PurchaseHistory
             return false;
         }
 
-        if (class_exists('\Easy_Digital_Downloads')) {
+        if (Helper::isEdd3()) {
 
             $customer = fluentCrmDb()->table('edd_customers')
                 ->where('email', $subscriber->email);
@@ -139,17 +143,23 @@ class PurchaseHistory
 
         foreach ($orders as $order) {
             $item_count = $order->get_item_count() - $order->get_item_count_refunded();
-            $actionsHtml = '<a target="_blank" href="' . $order->get_edit_order_url() . '">' . __('View Order', 'fluent-crm') . '</a>';
+            $actionsHtml = '<a target="_blank" href="' . $order->get_edit_order_url() . '">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8.5 5.5V7H4.75V15.25H13V11.5H14.5V16C14.5 16.1989 14.421 16.3897 14.2803 16.5303C14.1397 16.671 13.9489 16.75 13.75 16.75H4C3.80109 16.75 3.61032 16.671 3.46967 16.5303C3.32902 16.3897 3.25 16.1989 3.25 16V6.25C3.25 6.05109 3.32902 5.86032 3.46967 5.71967C3.61032 5.57902 3.80109 5.5 4 5.5H8.5ZM16.75 3.25V9.25H15.25V5.80975L9.40525 11.6553L8.34475 10.5948L14.1888 4.75H10.75V3.25H16.75Z" fill="#525866"/>
+                </svg>
+            </a>';
+            $date = '<span class="order_id">'.'#' . $order->get_order_number().'</span><span class="order_date">'.wc_format_datetime($order->get_date_created()).'</span>';
+
+            $status = '<span class="fcrm_badge fcrm_badge_'.esc_attr($order->get_status()).'">'. Helper::getStatusText($order->get_status()) .'</span>';
+
             $formattedOrders[] = [
-                'order'   => '#' . $order->get_order_number(),
-                'date'    => esc_html(wc_format_datetime($order->get_date_created())),
-                'status'  => $order->get_status(),
+                'date'    => wp_kses_post($date),
+                'status'  => wp_kses_post($status),
                 /* translators: 1: formatted order total (with currency), 2: number of items */
                 'total'   => wp_kses_post(sprintf(_n('%1$s for %2$s item', '%1$s for %2$s items', $item_count, 'fluent-crm'), $order->get_formatted_order_total(), $item_count)),
-                'actions' => $actionsHtml
+                'action'  => $actionsHtml,
             ];
         }
-
         /**
          * Determine the WooCommerce purchase history sidebar HTML in FluentCRM.
          *
@@ -169,12 +179,6 @@ class PurchaseHistory
             'total'          => $totalOrders,
             'has_recount'    => $hasRecount,
             'columns_config' => [
-                'order'   => [
-                    'label'    => __('Order', 'fluent-crm'),
-                    'width'    => '100px',
-                    'sortable' => true,
-                    'key'      => 'id'
-                ],
                 'date'    => [
                     'label'    => __('Date', 'fluent-crm'),
                     'sortable' => true,
@@ -182,7 +186,6 @@ class PurchaseHistory
                 ],
                 'status'  => [
                     'label' => __('Status', 'fluent-crm'),
-                    'width' => '100px'
                 ],
                 'total'   => [
                     'label'    => __('Total', 'fluent-crm'),
@@ -191,8 +194,8 @@ class PurchaseHistory
                     'key'      => 'total_amount'
                 ],
                 'actions' => [
-                    'label' => __('Actions', 'fluent-crm'),
-                    'width' => '100px'
+                    'label' => __('', 'fluent-crm'),
+                    'width' => '50px'
                 ]
             ]
         ];
@@ -220,7 +223,7 @@ class PurchaseHistory
                 ->whereIn('status', $statuses)
                 ->get();
 
-            if (!$orderStats) {
+            if ($orderStats->isEmpty()) {
                 return false;
             }
 
@@ -258,10 +261,12 @@ class PurchaseHistory
             $data_store = \WC_Data_Store::load('report-customers-stats');
             $stat = $data_store->get_data();
 
+            $avg_value = $orderCount > 0 ? round($lifetimeValue / $orderCount, 2) : 0;
+
             $summaryData = [
                 'order_count'      => $orderCount,
                 'lifetime_value'   => $lifetimeValue,
-                'avg_value'        => round($lifetimeValue / $orderCount, 2),
+                'avg_value'        => $avg_value,
                 'stat_avg_count'   => $stat->avg_orders_count,
                 'stat_avg_spend'   => $stat->avg_total_spend,
                 'stat_avg_value'   => $stat->avg_avg_order_value,
@@ -276,9 +281,12 @@ class PurchaseHistory
         return false;
     }
 
+    /**
+     * Return EDD 3 order history for the subscriber purchase-history panel.
+     */
     public function eddOrders($data, $subscriber)
     {
-        if (!class_exists('\Easy_Digital_Downloads')) {
+        if (!Helper::isEdd3()) {
             return $data;
         }
 
@@ -304,82 +312,56 @@ class PurchaseHistory
         $lasOrderData = '';
 
         /*
-         * Handle for EDD3
+         * EDD 3 stores orders in the edd_orders table. Legacy edd_payment posts
+         * are intentionally not queried because EDD 2 is no longer supported.
          */
-        if (function_exists('\edd_get_orders')) {
-            $totalCount = fluentCrmDb()->table('edd_orders')
-                ->where('customer_id', $customer->id)
-                ->count();
+        $totalCount = fluentCrmDb()->table('edd_orders')
+            ->where('customer_id', $customer->id)
+            ->count();
 
-            if (!$totalCount) {
-                return $data;
-            }
+        if (!$totalCount) {
+            return $data;
+        }
 
-            $valid_columns = ['id', 'date_created', 'total'];
-            $valid_directions = ['ASC', 'DESC'];
+        $valid_columns = ['id', 'date_created', 'total'];
+        $valid_directions = ['ASC', 'DESC'];
 
-            if (!in_array($sort_by, $valid_columns)) {
-                $sort_by = 'id';
-            }
-            if (!in_array(strtoupper($sort_type), $valid_directions)) {
-                $sort_type = 'DESC';
-            }
+        if (!in_array($sort_by, $valid_columns)) {
+            $sort_by = 'id';
+        }
+        if (!in_array(strtoupper($sort_type), $valid_directions)) {
+            $sort_type = 'DESC';
+        }
 
+        $orders = fluentCrmDb()->table('edd_orders')
+            ->where('customer_id', $customer->id)
+            ->orderBy($sort_by, $sort_type)
+            ->limit($per_page)
+            ->offset(($page - 1) * $per_page)
+            ->get();
 
-            $orders = fluentCrmDb()->table('edd_orders')
-                ->where('customer_id', $customer->id)
-                ->orderBy($sort_by, $sort_type)
-                ->limit($per_page)
-                ->offset(($page - 1) * $per_page)
-                ->get();
+        $formattedOrders = [];
 
-            $formattedOrders = [];
+        foreach ($orders as $order) {
+            $orderActionHtml = '<a target="_blank" href="' . add_query_arg('id', $order->id, admin_url('edit.php?post_type=download&page=edd-payment-history&view=view-order-details')) . '">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8.5 5.5V7H4.75V15.25H13V11.5H14.5V16C14.5 16.1989 14.421 16.3897 14.2803 16.5303C14.1397 16.671 13.9489 16.75 13.75 16.75H4C3.80109 16.75 3.61032 16.671 3.46967 16.5303C3.32902 16.3897 3.25 16.1989 3.25 16V6.25C3.25 6.05109 3.32902 5.86032 3.46967 5.71967C3.61032 5.57902 3.80109 5.5 4 5.5H8.5ZM16.75 3.25V9.25H15.25V5.80975L9.40525 11.6553L8.34475 10.5948L14.1888 4.75H10.75V3.25H16.75Z" fill="#525866"/>
+                </svg>
+            </a>';
+            $date = '<span class="order_id">'.'#' . $order->id .'</span><span class="order_date">'.date_i18n(get_option('date_format'), strtotime($order->date_created)).'</span>';
 
-            foreach ($orders as $order) {
-                $orderActionHtml = '<a target="_blank" href="' . add_query_arg('id', $order->id, admin_url('edit.php?post_type=download&page=edd-payment-history&view=view-order-details')) . '">' . __('View Order', 'fluent-crm') . '</a>';
-                $formattedOrders[] = [
-                    'order'  => '#' . $order->id,
-                    'date'   => date_i18n(get_option('date_format'), strtotime($order->date_created)),
-                    'status' => $order->status,
-                    'total'  => edd_currency_filter(edd_format_amount($order->total)),
-                    'action' => $orderActionHtml
-                ];
-            }
+            $status = '<span class="fcrm_badge fcrm_badge_'.esc_attr($order->status).'">'. Helper::getStatusText($order->status) .'</span>';
 
-            if ($orders) {
-                $lasOrderData = date_i18n(get_option('date_format'), strtotime($orders[0]->date_created));
-            }
+            $formattedOrders[] = [
+                'date'   => $date,
+                'status' => $status,
+                'total'  => edd_currency_filter(edd_format_amount($order->total)),
+                'action' => $orderActionHtml
+            ];
+        }
 
-        } else {
-            $totalCount = count($customer->get_payment_ids());
-            if (!$totalCount) {
-                return $data;
-            }
-
-            $payments = edd_get_payments([
-                'customer_id' => $customer->id,
-                'customer'    => $customer->id,
-                'number'      => $per_page,
-                'offset'      => ($page - 1) * $per_page
-            ]);
-
-            $formattedOrders = [];
-            if ($payments) {
-                foreach ($payments as $payment) {
-                    if (!$payment instanceof \EDD_Payment) {
-                        $payment = new \EDD_Payment($payment->ID);
-                    }
-                    $orderActionHtml = '<a target="_blank" href="' . add_query_arg('id', $payment->ID, admin_url('edit.php?post_type=download&page=edd-payment-history&view=view-order-details')) . '">' . __('View Order', 'fluent-crm') . '</a>';
-                    $formattedOrders[] = [
-                        'order'  => '#' . $payment->number,
-                        'date'   => date_i18n(get_option('date_format'), strtotime($payment->date)),
-                        'status' => $payment->status_nicename,
-                        'total'  => edd_currency_filter(edd_format_amount($payment->total)),
-                        'action' => $orderActionHtml
-                    ];
-                }
-                $lasOrderData = date_i18n(get_option('date_format'), strtotime($payments[0]->post_date));
-            }
+        if (!$orders->isEmpty()) {
+            $lasOrderData = date_i18n(get_option('date_format'), strtotime($orders[0]->date_created));
         }
 
         /**
@@ -486,21 +468,34 @@ class PurchaseHistory
         $formattedSubmissions = [];
         foreach ($submissions as $submission) {
             $submissionUrl = admin_url('admin.php?page=wppayform.php#/edit-form/' . $submission->form_id . '/entries/' . $submission->id . '/view');
-            $actionUrl = '<a target="_blank" href="' . $submissionUrl . '">View Submission</a>';
+            $actionUrl = '<a target="_blank" href="' . $submissionUrl . '">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8.5 5.5V7H4.75V15.25H13V11.5H14.5V16C14.5 16.1989 14.421 16.3897 14.2803 16.5303C14.1397 16.671 13.9489 16.75 13.75 16.75H4C3.80109 16.75 3.61032 16.671 3.46967 16.5303C3.32902 16.3897 3.25 16.1989 3.25 16V6.25C3.25 6.05109 3.32902 5.86032 3.46967 5.71967C3.61032 5.57902 3.80109 5.5 4 5.5H8.5ZM16.75 3.25V9.25H15.25V5.80975L9.40525 11.6553L8.34475 10.5948L14.1888 4.75H10.75V3.25H16.75Z" fill="#525866"/>
+                </svg>
+                </a>';
+            $paymentStatus = '<span class="fcrm_badge fcrm_badge_'.esc_attr($submission->payment_status).'">'. \FluentCrm\App\Services\Helper::getStatusText($submission->payment_status) .'</span>';
             $formattedSubmissions[] = [
                 'id'             => '#' . $submission->id,
-                'Form Title'     => $submission->post_title,
-                'Payment Total'  => $submission->recurring_amount ? wpPayFormFormatMoney($submission->recurring_amount, $subscriber->form_id) : wpPayFormFormatMoney($submission->payment_total, $subscriber->form_id),
-                'Payment Status' => $submission->payment_status,
-                'Payment Method' => $submission->payment_method,
-                'Submitted At'   => $submission->created_at,
+                'post_title'     => $submission->post_title,
+                'recurring_amount'  => $submission->recurring_amount ? wpPayFormFormatMoney($submission->recurring_amount, $subscriber->form_id) : wpPayFormFormatMoney($submission->payment_total, $subscriber->form_id),
+                'payment_status' => $paymentStatus,
+                'payment_method' => $submission->payment_method,
+                'created_at'   => $submission->created_at,
                 'action'         => $actionUrl
             ];
         }
 
         return [
             'total' => $total,
-            'data'  => $formattedSubmissions
+            'data'  => $formattedSubmissions,
+            'columns_config' => [
+                'id' => [ 'label' => __('ID', 'fluent-crm'), 'width' => '100px', 'sortable' => false, 'key' => 'id'],
+                'post_title' => [ 'label' => __('Form Title', 'fluent-crm'), 'sortable' => false, 'key' => 'post_title'],
+                'recurring_amount' => [ 'label' => __('Payment Total', 'fluent-crm'), 'sortable' => false, 'key' => 'recurring_amount'],
+                'payment_status' => [ 'label' => __('Payment Status', 'fluent-crm'), 'sortable' => false, 'key' => 'payment_status'],
+                'payment_method' => [ 'label' => __('Payment Method', 'fluent-crm'), 'sortable' => false, 'key' => 'payment_method'],
+                'created_at' => [ 'label' => __('Submitted At', 'fluent-crm'), 'sortable' => false, 'key' => 'created_at']
+            ]
         ];
 
     }
@@ -534,7 +529,7 @@ class PurchaseHistory
         if (!empty($data['purchased_products'])) {
             $body .= '<li><b>' . esc_html__("Purchased Products", "fluent-crm") . '</b><hr /><ul class="fc_list">';
             foreach ($data['purchased_products'] as $product) {
-                $body .= '<li><a target="_blank" rel="nofollow" href="' . $product->guid . '">' . $product->post_title . '</a></li>';
+                $body .= '<li><a target="_blank" rel="nofollow" href="' . esc_url($product->guid) . '">' . esc_html($product->post_title) . '</a></li>';
             }
             $body .= '</ul></li>';
         }
@@ -594,7 +589,7 @@ class PurchaseHistory
                     ->get();
             }
 
-            if (!$hposOrders) {
+            if ($hposOrders->isEmpty()) {
                 return [];
             }
 
@@ -739,10 +734,11 @@ class PurchaseHistory
                 $order_page_url = admin_url('admin.php?page=pmpro-orders&order=' . $order->id);
                 $level = pmpro_getLevel($order->membership_id);
                 $actionsHtml = '<td><a href="' . esc_url($order_page_url) . '" target="_blank">View Order</a></td>';
+                $status = '<span class="fcrm_badge fcrm_badge_'.esc_attr($order->status).'">'. \FluentCrm\App\Services\Helper::getStatusText($order->status) .'</span>';
                 $formattedOrders[] = [
                     'order_code' => '#' . $order->code,
                     'membership_level_name' => $level ? $level->name : null,
-                    'status' => $order->status,
+                    'status' => $status,
                     'total' => $order->total,
                     'date' => gmdate('j F, Y', $order->timestamp),
                     'gateway' => $order->gateway,

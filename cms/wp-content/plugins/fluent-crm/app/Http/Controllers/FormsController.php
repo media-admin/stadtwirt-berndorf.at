@@ -6,7 +6,8 @@ use FluentCrm\App\Models\Funnel;
 use FluentCrm\App\Models\Lists;
 use FluentCrm\App\Models\Tag;
 use FluentCrm\Framework\Support\Arr;
-use FluentCrm\Framework\Request\Request;
+use FluentCrm\Framework\Http\Request\Request;
+use FluentForm\App\Modules\Acl\Acl;
 
 /**
  *  FormsController - REST API Handler Class
@@ -17,13 +18,12 @@ use FluentCrm\Framework\Request\Request;
  *
  * @version 1.0.0
  */
-
 class FormsController extends Controller
 {
     /**
      * Get all of the lists
      *
-     * @param \FluentCrm\Framework\Request\Request $request
+     * @param \FluentCrm\Framework\Http\Request\Request $request
      * @return \WP_REST_Response|array
      * @throws \WpFluent\Exception
      */
@@ -41,10 +41,10 @@ class FormsController extends Controller
 
         // Now let's find the forms which are connected with Fluent Forms
         $connectFeedForms = fluentCrmDb()->table('fluentform_form_meta')
-                                         ->where('meta_key', 'fluentcrm_feeds')
-                                         ->select(['form_id', 'id', 'value'])
-                                         ->groupBy('form_id')
-                                         ->get();
+            ->where('meta_key', 'fluentcrm_feeds')
+            ->select(['form_id', 'id', 'value'])
+            ->groupBy('form_id')
+            ->get();
 
 
         $formIds = [];
@@ -86,13 +86,13 @@ class FormsController extends Controller
             $allFormsQuery = fluentCrmDb()->table('fluentform_forms')
                 ->whereIn('id', $formIds);
 
-            if($search) {
-                $allFormsQuery->where('title', 'LIKE', '%'.$search.'%');
+            if ($search) {
+                $allFormsQuery->where('title', 'LIKE', '%' . $search . '%');
             }
             $allForms = $allFormsQuery->orderBy('id', 'DESC')
-                                      ->limit($limit)
-                                      ->offset($offset)
-                                      ->get();
+                ->limit($limit)
+                ->offset($offset)
+                ->get();
 
             foreach ($allForms as $form) {
                 $funnelUrl = '';
@@ -285,39 +285,39 @@ class FormsController extends Controller
          *
          * This filter allows customization of the Fluent Forms templates used in FluentCRM.
          *
-         * @since 2.7.0
-         *
          * @param array {
          *     An array of form templates.
          *
-         *     @type array $inline_subscribe {
+         * @type array $inline_subscribe {
          *         Inline Opt-in Form template.
-         *         @type string $label       The label for the form.
-         *         @type string $image       The URL of the form image.
-         *         @type string $id          The ID of the form.
-         *         @type string $form_fields The JSON string of form fields.
-         *         @type string $custom_css  The custom CSS for the form.
-         *         @type array  $map_fields  The mapping of form fields.
+         * @type string $label The label for the form.
+         * @type string $image The URL of the form image.
+         * @type string $id The ID of the form.
+         * @type string $form_fields The JSON string of form fields.
+         * @type string $custom_css The custom CSS for the form.
+         * @type array $map_fields The mapping of form fields.
          *     }
-         *     @type array $simple_optin {
+         * @type array $simple_optin {
          *         Simple Opt-in Form template.
-         *         @type string $label       The label for the form.
-         *         @type string $image       The URL of the form image.
-         *         @type string $id          The ID of the form.
-         *         @type string $form_fields The JSON string of form fields.
-         *         @type string $custom_css  The custom CSS for the form.
-         *         @type array  $map_fields  The mapping of form fields.
+         * @type string $label The label for the form.
+         * @type string $image The URL of the form image.
+         * @type string $id The ID of the form.
+         * @type string $form_fields The JSON string of form fields.
+         * @type string $custom_css The custom CSS for the form.
+         * @type array $map_fields The mapping of form fields.
          *     }
-         *     @type array $with_name_subscribe {
+         * @type array $with_name_subscribe {
          *         Subscription Form template.
-         *         @type string $label       The label for the form.
-         *         @type string $image       The URL of the form image.
-         *         @type string $id          The ID of the form.
-         *         @type string $form_fields The JSON string of form fields.
-         *         @type string $custom_css  The custom CSS for the form.
-         *         @type array  $map_fields  The mapping of form fields.
+         * @type string $label The label for the form.
+         * @type string $image The URL of the form image.
+         * @type string $id The ID of the form.
+         * @type string $form_fields The JSON string of form fields.
+         * @type string $custom_css The custom CSS for the form.
+         * @type array $map_fields The mapping of form fields.
          *     }
          * }
+         * @since 2.7.0
+         *
          */
         return apply_filters('fluent_crm/ff_form_templates', [
             'templates' => $templates
@@ -351,5 +351,114 @@ class FormsController extends Controller
         }
         $templatesArray = array_values($templates['templates']);
         return $templatesArray[0];
+    }
+
+    public function getEntries(Request $request, $id)
+    {
+        if (!defined('FLUENTFORM')) {
+            return $this->sendError([
+                'message' => __('Fluent Forms is not installed', 'fluent-crm'),
+                'entries' => []
+            ]);
+        }
+
+        if (!Acl::hasPermission('fluentform_entries_viewer', $id)) {
+            return $this->sendError([
+                'message' => __('You do not have permission to view these entries', 'fluent-crm'),
+                'entries' => []
+            ]);
+        }
+
+        // Check if form exists
+        $form = fluentCrmDb()->table('fluentform_forms')
+            ->where('id', $id)
+            ->first();
+
+        if (!$form) {
+            return $this->sendError([
+                'message' => __('Form not found', 'fluent-crm'),
+                'entries' => []
+            ]);
+        }
+
+        $page = $request->get('page', 1);
+        $limit = $request->get('per_page', 10);
+        $offset = ($page - 1) * $limit;
+        $search = sanitize_text_field($request->get('search', ''));
+
+        // Get total count
+        $totalQuery = fluentCrmDb()->table('fluentform_submissions')
+            ->where('form_id', $id);
+
+        if ($search) {
+            $totalQuery->where(function ($query) use ($search) {
+                $query->where('response', 'LIKE', '%' . $search . '%')
+                    ->orWhere('status', 'LIKE', '%' . $search . '%');
+            });
+        }
+
+        // Get entries
+        $entriesQuery = fluentCrmDb()->table('fluentform_submissions')
+            ->where('form_id', $id);
+
+        if ($search) {
+            $entriesQuery->where(function ($query) use ($search) {
+                $query->where('response', 'LIKE', '%' . $search . '%')
+                    ->orWhere('status', 'LIKE', '%' . $search . '%');
+            });
+        }
+
+        $total = $totalQuery->count();
+
+        $entries = $entriesQuery->orderBy('id', 'DESC')
+            ->limit($limit)
+            ->offset($offset)
+            ->get();
+
+        // Format entries
+        $formattedEntries = [];
+        foreach ($entries as $entry) {
+            $response = json_decode($entry->response, true);
+
+            $formattedEntries[] = [
+                'id'            => $entry->id,
+                'serial_number' => $entry->serial_number,
+                'status'        => $entry->status,
+                'created_at'    => $entry->created_at,
+                'response'      => $response,
+                'user_id'       => $entry->user_id,
+                'browser'       => $entry->browser,
+                'device'        => $entry->device,
+                'ip'            => $entry->ip,
+                'entry_url'     => admin_url('admin.php?page=fluent_forms&form_id=' . $id . '&route=entries#/entries/' . $entry->id)
+            ];
+        }
+
+        return [
+            'entries' => [
+                'data'      => $formattedEntries,
+                'page'      => $page,
+                'per_page'  => $limit,
+                'total'     => $total,
+                'last_page' => ceil($total / $limit)
+            ],
+            'form'    => [
+                'id'    => $form->id,
+                'title' => $form->title
+            ]
+        ];
+    }
+
+    public function getEntry(Request $request, $formId, $id)
+    {
+        $dataView = apply_filters('fluent_crm/dynamic_contact_item_view_fluentform', [
+            'content_html' => 'No data found'
+        ], [
+            '__id' => $id
+        ]);
+
+        return [
+            'entry' => $dataView
+        ];
     }
 }

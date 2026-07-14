@@ -15,13 +15,6 @@ class FunnelSequence extends Model
 {
     protected $table = 'fc_funnel_sequences';
 
-    protected $guarded = ['id'];
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'funnel_id',
         'action_name',
@@ -58,6 +51,20 @@ class FunnelSequence extends Model
     {
         return $this->belongsTo(
             __NAMESPACE__ . '\Funnel', 'funnel_id', 'id'
+        );
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(
+            __NAMESPACE__ . '\FunnelSequence', 'parent_id', 'id'
+        );
+    }
+
+    public function children()
+    {
+        return $this->hasMany(
+            __NAMESPACE__ . '\FunnelSequence', 'parent_id', 'id'
         );
     }
 

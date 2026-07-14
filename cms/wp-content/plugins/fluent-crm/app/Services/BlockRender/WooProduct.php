@@ -54,9 +54,9 @@ class WooProduct
             $contentColorStyle = 'color: ' . $color . ';';
         }
 
-        $pricingStyle = 'margin: 5px 0px; 10px;';
+        $pricingStyle = 'display:block;margin:8px 0 10px;font-size:18px;line-height:1.25;';
         if ($color = Arr::get($atts, 'pricingColor')) {
-            $pricingStyle = 'color: ' . $color . ';';
+            $pricingStyle .= 'color: ' . $color . ';';
         }
 
         $contentHtml = sprintf(
@@ -75,9 +75,9 @@ class WooProduct
 
         if (Arr::get($atts, 'showPrice')) {
             $contentHtml .= sprintf(
-                '<div style="%1$s">%2$s</div>',
+                '<div class="fcw_p_price" style="%1$s">%2$s</div>',
                 $pricingStyle,
-                wp_kses_post($product->get_price_html())
+                ProductListRenderer::preparePriceHtml($product->get_price_html(), __('Free', 'fluent-crm'))
             );
         }
 
@@ -112,10 +112,15 @@ class WooProduct
         $buttonHtml = '<div style="margin-top: 10px; margin-bottom: 10px;">'.$buttonHtml.'</div>';
 
         $contentHtml .= $buttonHtml;
+        $tableClass = 'fce_row';
+        if ($template === 'left' || $template === 'right') {
+            $tableClass .= ' fc_woo_product_stack_mobile';
+        }
+
         ob_start();
         ?>
 
-        <table class="fce_row" border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed; border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;margin-bottom: 20px; margin-top: 20px;<?php echo $tableStyle; //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>"><tbody><tr>
+        <table class="<?php echo esc_attr($tableClass); ?>" border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed; border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;margin-bottom: 20px; margin-top: 20px;<?php echo $tableStyle; //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>"><tbody><tr>
                 <?php
                 if($imageTd) {
                     echo $imageTd; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped

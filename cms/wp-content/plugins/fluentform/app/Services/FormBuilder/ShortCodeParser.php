@@ -166,7 +166,10 @@ class ShortCodeParser
             }
 
             if ($isUrl) {
-                $value = rawurlencode($value);
+                // Don't encode values that are already complete URLs like {wp.site_url}
+                if (!preg_match('#^https?://#i', (string) $value)) {
+                    $value = rawurlencode($value);
+                }
             } else if ($htmlSanitized) {
                 $value = fluentform_sanitize_html($value);
             }
@@ -368,7 +371,9 @@ class ShortCodeParser
             return '';
         }
 
-        if (property_exists($entry, $key)) {
+        $columns = Helper::getEntryColumns($entry);
+
+        if (array_key_exists($key, $columns)) {
             if ('total_paid' == $key || 'payment_total' == $key) {
                 return round($entry->{$key} / 100, 2);
             }
@@ -379,6 +384,8 @@ class ShortCodeParser
         }
         if ('admin_view_url' == $key) {
             return admin_url('admin.php?page=fluent_forms&route=entries&form_id=' . $entry->form_id . '#/entries/' . $entry->id);
+        } elseif ('entry_uid' == $key) {
+            return static::getShortEntryUid($entry);
         } elseif ('entry_uid_link' == $key) {
             return static::getEntryUidLink($entry);
         } elseif (false !== strpos($key, 'meta.')) {
@@ -654,6 +661,22 @@ class ShortCodeParser
 
         // Generate the link
         return site_url('?ff_entry=1&hash=' . $meta->value);
+    }
+
+    protected static function getShortEntryUid($entry)
+    {
+        if (empty($entry->id)) {
+            return '';
+        }
+
+        $entryId = strtoupper(base_convert((string) absint($entry->id), 10, 36));
+        $entryHash = SubmissionMeta::retrieve('_entry_uid_hash', $entry->id);
+
+        if (!$entryHash) {
+            return $entryId;
+        }
+
+        return $entryId . '-' . strtoupper(substr($entryHash, 0, 4));
     }
 
     public static function resetData()

@@ -2,7 +2,10 @@
 
 namespace FluentCrm\App\Services;
 
+use FluentCrm\App\Services\BlockRender\CartProduct;
+use FluentCrm\App\Services\BlockRender\CartProducts;
 use FluentCrm\App\Services\BlockRender\WooProduct;
+use FluentCrm\App\Services\BlockRender\WooProducts;
 use FluentCrm\Framework\Support\Arr;
 
 class BlockParser
@@ -19,7 +22,72 @@ class BlockParser
 
     public function parse($content)
     {
-        $blocks = parse_blocks($content);
+        try {
+            $gutenParse = new \FluentCrm\App\Services\GutenbergEmailParser();
+            $parsed = $gutenParse->parse($content);
+        } catch (\Throwable $e) {
+            $parsed = '';
+        }
+
+        $useFallback = (bool)apply_filters('fluent_crm/block_parser_legacy_fallback_enabled', true, $content, $parsed);
+        if ($useFallback && $this->shouldFallbackToLegacy($content, $parsed)) {
+            return $this->parseWithLegacyParser($content);
+        }
+
+        return $parsed;
+    }
+
+    private function shouldFallbackToLegacy($content, $parsed)
+    {
+        if (!is_string($content) || trim($content) === '') {
+            return false;
+        }
+
+        if (is_string($parsed) && trim($parsed) !== '') {
+            return false;
+        }
+
+        return strpos($content, '<!-- wp:') !== false;
+    }
+
+    private static $syncedPatternCache = [];
+
+    private function renderSyncedPattern($data)
+    {
+        $ref = isset($data['attrs']['ref']) ? (int) $data['attrs']['ref'] : 0;
+        if (!$ref) {
+            return '';
+        }
+
+        if (!isset(self::$syncedPatternCache[$ref])) {
+            $pattern = \FluentCrm\App\Models\Meta::where('object_type', 'email_pattern')
+                ->where('id', $ref)
+                ->first();
+
+            self::$syncedPatternCache[$ref] = ($pattern && !empty($pattern->value['content']))
+                ? $pattern->value['content']
+                : '';
+        }
+
+        $content = self::$syncedPatternCache[$ref];
+        if (!$content) {
+            return '';
+        }
+
+        return $this->parseWithLegacyParser($content);
+    }
+
+    private function parseWithLegacyParser($content)
+    {
+        if (!function_exists('parse_blocks') || !function_exists('render_block')) {
+            return (string)$content;
+        }
+
+        $blocks = parse_blocks((string)$content);
+        if (empty($blocks)) {
+            return (string)$content;
+        }
+
         $output = '';
         foreach ($blocks as $block) {
             $block = $this->sanitizeBlock($block);
@@ -66,7 +134,7 @@ class BlockParser
         } else if ($blockName == 'core/latest-posts') {
             $block['blockName'] = 'fluent-crm/core-posts';
             $block['fc_total_blocks'] = 1;
-        } else if ($blockName == 'fluentcrm/woo-product') {
+        } else if ($blockName == 'fluentcrm/woo-product' || $blockName == 'fluent-crm/woo-product') {
             $block['innerContent'][0] = '';
             $block['innerContent'][2] = '';
             $block['fc_total_blocks'] = 1;
@@ -74,7 +142,15 @@ class BlockParser
             $block['innerContent'][0] = '';
             $block['innerContent'][2] = '';
             $block['fc_total_blocks'] = 1;
-        } else if ($blockName == 'fluent-crm/products') {
+        } else if ($blockName == 'fluent-crm/woo-products') {
+            $block['innerContent'][0] = '';
+            $block['innerContent'][2] = '';
+            $block['fc_total_blocks'] = 1;
+        } else if ($blockName == 'fluent-crm/cart-products') {
+            $block['innerContent'][0] = '';
+            $block['innerContent'][2] = '';
+            $block['fc_total_blocks'] = 1;
+        } else if ($blockName == 'fluent-crm/cart-product') {
             $block['innerContent'][0] = '';
             $block['innerContent'][2] = '';
             $block['fc_total_blocks'] = 1;
@@ -85,7 +161,11 @@ class BlockParser
 
     public function alterBlockContent($content, $data)
     {
-        if (isset($data['blockName']) && $data['blockName'] == 'fluentcrm/conditional-group') {
+        if (isset($data['blockName']) && $data['blockName'] === 'core/block') {
+            return $this->renderSyncedPattern($data);
+        }
+
+        if (isset($data['blockName']) && in_array($data['blockName'], ['fluent-crm/conditional-content', 'fluentcrm/conditional-group'])) {
             return $this->renderConditionalBlock($content, $data);
         }
 
@@ -101,7 +181,7 @@ class BlockParser
             $content = $this->getButtonWrapper($content, $data);
         } else if ($blockName == 'fluent-crm/core-posts') {
             $content = $this->renderLatestPosts($data);
-        } else if ($blockName == 'fluentcrm/woo-product') {
+        } else if ($blockName == 'fluentcrm/woo-product' || $blockName == 'fluent-crm/woo-product') {
             $content = WooProduct::renderProduct($content, $data);
         } else if ($blockName == 'fluent-crm/latest-posts') {
 
@@ -109,11 +189,12 @@ class BlockParser
             if (class_exists('\FluentCampaign\App\Services\PostParser\LatestPost')) {
                 $content = \FluentCampaign\App\Services\PostParser\LatestPost::renderPosts($content, $data);
             }
-        } else if ($blockName == 'fluent-crm/products') {
-            $content = '';
-            if (class_exists('\FluentCampaign\App\Services\PostParser\LatestProductsBlock')) {
-                $content = \FluentCampaign\App\Services\PostParser\LatestProductsBlock::renderProducts($content, $data);
-            }
+        } else if ($blockName == 'fluent-crm/woo-products') {
+            $content = WooProducts::renderProducts($content, $data);
+        } else if ($blockName == 'fluent-crm/cart-products') {
+            $content = CartProducts::renderProducts($content, $data);
+        } else if ($blockName == 'fluent-crm/cart-product') {
+            $content = CartProduct::renderProduct('', $data);
         }
 
         return $content;
@@ -257,7 +338,7 @@ class BlockParser
         $hasTextColor = Arr::get($data, 'attrs.style.color.text') || Arr::get($data, 'attrs.textColor');
 
         $btn_wrapper_class = $defaultClass . ' ';
-        if (!$backgroundColor && strpos($defaultClass, 'is-style-outline') !== true) {
+        if (!$backgroundColor && strpos($defaultClass, 'is-style-outline') === false) {
             $btn_wrapper_class .= 'fc_d_btn_bg ';
             $backgroundColor = '#32373c';
         }
@@ -297,23 +378,21 @@ class BlockParser
 
     private function renderConditionalBlock($content, $data)
     {
-        $subscriber = BlockParserHelper::getSubscriber();
-        if (!$subscriber) {
-            /**
-             * Filter the current subscriber while rendering the Conditional Block in FluentCRM.
-             *
-             * This filter allows you to modify the subscriber object used in the current block condition.
-             *
-             * @since 2.8.44
-             *
-             * @param object $subscriber The current subscriber object.
-             * @return object The modified subscriber object.
-             */
-            $subscriber = apply_filters('fluent_crm/get_current_block_condition_subscriber', $subscriber);
+        $checkType = $this->normalizeConditionalCheckType(Arr::get($data, 'attrs.condition_type', 'show_if_tag_exist'));
+
+        // Login-state conditions do not require subscriber/tag context.
+        if ($checkType === 'show_if_user_logged_in') {
+            return is_user_logged_in() ? $content : '';
         }
 
+        if ($checkType === 'show_if_user_not_logged_in') {
+            return is_user_logged_in() ? '' : $content;
+        }
+
+        $subscriber = $this->getConditionalBlockSubscriber();
+
         if (!$subscriber) {
-            return $content;
+            return '';
         }
 
         $tagIds = Arr::get($data, 'attrs.tag_ids');
@@ -321,7 +400,6 @@ class BlockParser
             return '';
         }
 
-        $checkType = Arr::get($data, 'attrs.condition_type', 'show_if_tag_exist');
         $tagMatched = $subscriber->hasAnyTagId($tagIds);
 
         if ($checkType == 'show_if_tag_exist') {
@@ -339,6 +417,53 @@ class BlockParser
         }
 
         return '';
+    }
+
+    private function getConditionalBlockSubscriber()
+    {
+        $subscriber = BlockParserHelper::getSubscriber();
+
+        // Frontend conditional blocks should resolve the active FluentCRM contact lazily.
+        if (!$subscriber && function_exists('fluentcrm_get_current_contact')) {
+            $subscriber = fluentcrm_get_current_contact();
+        }
+
+        if (!$subscriber) {
+            /**
+             * Filter the current subscriber while rendering the Conditional Block in FluentCRM.
+             *
+             * This filter allows you to modify the subscriber object used in the current block condition.
+             *
+             * @since 2.8.44
+             *
+             * @param object $subscriber The current subscriber object.
+             * @return object The modified subscriber object.
+             */
+            $subscriber = apply_filters('fluent_crm/get_current_block_condition_subscriber', $subscriber);
+        }
+
+        return $subscriber;
+    }
+
+    /**
+     * Keep backward compatibility with v2 conditional block values.
+     */
+    private function normalizeConditionalCheckType($checkType)
+    {
+        $checkType = trim((string)$checkType);
+        if ($checkType === '') {
+            return 'show_if_tag_exist';
+        }
+
+        $map = [
+            // v2 legacy values
+            'show_if_logged_in'       => 'show_if_user_logged_in',
+            'show_if_public_users'    => 'show_if_user_not_logged_in',
+            'show_if_tag_exists'      => 'show_if_tag_exist',
+            'show_if_tag_not_exists'  => 'show_if_tag_not_exist',
+        ];
+
+        return Arr::get($map, $checkType, $checkType);
     }
 
     private function getImageBlockHtml($block)

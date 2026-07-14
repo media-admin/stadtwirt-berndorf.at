@@ -334,6 +334,13 @@ button:focus {
 
 .cf7apps-menu-accordion .MuiButtonBase-root {
     min-height: 40px !important;
+    background-color: #E0FDFF;
+    border-radius: 4px;
+}
+
+.cf7apps-menu-accordion.Mui-expanded .MuiButtonBase-root {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
 }
 
 .cf7apps-menu-route a.active,
@@ -841,7 +848,6 @@ select.cf7apps-form-input {
 .cf7apps-expand-menu-btn {
     float: right;
     margin-right: 10px;
-    margin-bottom: 20px;
     border: none !important;
     color: rgba( 0, 0, 0, 0.54 ) !important;
     background-color: transparent !important;

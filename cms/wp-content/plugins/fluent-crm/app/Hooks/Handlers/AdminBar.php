@@ -24,24 +24,22 @@ class AdminBar
         $contactPermission = PermissionManager::currentUserCan('fcrm_read_contacts');
 
         /**
-         * Determine whether the FluentCRM global search is enabled or not.
+         * Determine whether the FluentCRM admin bar search is enabled or not.
          *
-         * @return bool False Default is false or disabled. 
+         * @return bool False Default is false or disabled.
          */
-        if ( !is_admin() || !$contactPermission || apply_filters('fluent_crm/disable_global_search', false) ) {
+        if (!is_admin() || !$contactPermission || apply_filters('fluent_crm/disable_adminbar_search', apply_filters('fluent_crm/disable_global_search', false))) {
             return;
         }
 
-        add_action('admin_bar_menu', [$this, 'addGlobalSearch'], 999);
-
+        add_action('admin_bar_menu', [$this, 'addAdminBarSearch'], 999);
     }
 
-    public function addGlobalSearch($adminBar)
+    public function addAdminBarSearch($adminBar)
     {
-
         wp_enqueue_script(
-            'fluentcrm_global_search',
-            fluentCrmMix('/admin/js/global-search.js'),
+            'fluentcrm_adminbar_search',
+            fluentCrmMix('/admin/js/adminbar-search.js'),
             ['jquery']
         );
 
@@ -68,7 +66,7 @@ class AdminBar
             }
         }
 
-        wp_localize_script('fluentcrm_global_search', 'fc_bar_vars', [
+        wp_localize_script('fluentcrm_adminbar_search', 'fcrm_adminbar_search_vars', [
             'rest'            => $this->getRestInfo(),
             'links'           => (new Stats)->getQuickLinks(),
             'subscriber_base' => $urlBase . 'subscribers/',
@@ -79,13 +77,14 @@ class AdminBar
                 'Type to search contacts' => __('Type to search contacts', 'fluent-crm'),
                 'Quick Links' => __('Quick Links', 'fluent-crm'),
                 'Sorry no contact found' => __('Sorry no contact found', 'fluent-crm'),
-                'Load More' => __('Load More', 'fluent-crm')
+                'Load More' => __('Load More', 'fluent-crm'),
+                'Close' => __('Close', 'fluent-crm')
             ]
         ]);
 
         $args = [
             'parent' => 'top-secondary',
-            'id'     => 'fc_global_search',
+            'id'     => 'fcrm_adminbar_search',
             'title'  => __('Search Contacts', 'fluent-crm'),
             'href'   => '#',
             'meta'   => false

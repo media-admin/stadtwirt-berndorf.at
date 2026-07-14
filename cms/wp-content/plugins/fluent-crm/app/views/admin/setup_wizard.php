@@ -11,18 +11,16 @@
 
         <div id="fluentcrm_setup_wizard"></div>
         <?php
+            if (!function_exists('media_handle_upload')) {
+                require_once(ABSPATH . 'wp-admin/includes/image.php');
+                require_once(ABSPATH . 'wp-admin/includes/file.php');
+                require_once(ABSPATH . 'wp-admin/includes/media.php');
+            }
+
             wp_enqueue_media(); // add media
             wp_print_scripts(); // window.wp
             do_action('admin_footer');
-            wp_print_scripts('fluentcrm-setup');
         ?>
 
-        <script>
-            jQuery(document).ready(function ($) {
-                if (_ && _.noConflict) {
-                    _.noConflict();
-                }
-            });
-        </script>
     </body>
 </html>

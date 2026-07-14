@@ -229,6 +229,18 @@ $app->addAction('fluentform/loading_editor_assets', function ($form) {
         return $field;
     });
 
+    add_filter('fluentform/editor_init_element_step_start', function ($item) {
+        if (!isset($item['settings']['progress_layout'])) {
+            $item['settings']['progress_layout'] = 'top';
+        }
+
+        if (!isset($item['settings']['tabs_show_progress_bar'])) {
+            $item['settings']['tabs_show_progress_bar'] = 'no';
+        }
+
+        return $item;
+    });
+
     $upgradableCheckInputs = [
         'input_radio',
         'select',
@@ -297,6 +309,10 @@ $app->addAction('fluentform/loading_editor_assets', function ($form) {
                 $element['settings']['values_visible'] = false;
             }
 
+            if ('select' == $upgradeElement && !isset($element['settings']['enable_option_groups'])) {
+                $element['settings']['enable_option_groups'] = 'no';
+            }
+
       
 
             return $element;
@@ -314,6 +330,29 @@ $app->addAction('fluentform/loading_editor_assets', function ($form) {
             }
             if (!isset($element['settings']['file_location_type'])) {
                 $element['settings']['file_location_type'] = 'follow_global_settings';
+            }
+            if ('input_image' === $element['element']) {
+                if (!isset($element['settings']['enable_crop'])) {
+                    $element['settings']['enable_crop'] = 'no';
+                }
+                if (!isset($element['settings']['crop_mode'])) {
+                    $element['settings']['crop_mode'] = (
+                        isset($element['settings']['enforce_image_dimensions']) &&
+                        $element['settings']['enforce_image_dimensions'] === 'yes'
+                    ) ? 'dimensions' : 'ratio';
+                }
+                if (!isset($element['settings']['crop_ratio'])) {
+                    $element['settings']['crop_ratio'] = 'free';
+                }
+                if (!isset($element['settings']['enforce_image_dimensions'])) {
+                    $element['settings']['enforce_image_dimensions'] = 'no';
+                }
+                if (!isset($element['settings']['crop_width'])) {
+                    $element['settings']['crop_width'] = '';
+                }
+                if (!isset($element['settings']['crop_height'])) {
+                    $element['settings']['crop_height'] = '';
+                }
             }
             return $element;
         });
@@ -362,6 +401,30 @@ $app->addAction('fluentform/loading_editor_assets', function ($form) {
         if (!isset($item['settings']['date_config'])) {
             $item['settings']['date_config'] = '';
         }
+        return $item;
+    });
+
+    add_filter('fluentform/editor_init_element_ratings', function ($item) {
+        if (!isset($item['settings']['icon_source'])) {
+            $item['settings']['icon_source'] = 'preset';
+        }
+
+        if (!isset($item['settings']['icon_type'])) {
+            $item['settings']['icon_type'] = \FluentForm\App\Services\FormBuilder\RatingIcon::DEFAULT_ICON;
+        }
+
+        if (!isset($item['settings']['custom_icon_svg'])) {
+            $item['settings']['custom_icon_svg'] = '';
+        }
+
+        if (!isset($item['settings']['inactive_color'])) {
+            $item['settings']['inactive_color'] = \FluentForm\App\Services\FormBuilder\RatingIcon::DEFAULT_INACTIVE_COLOR;
+        }
+
+        if (!isset($item['settings']['active_color'])) {
+            $item['settings']['active_color'] = \FluentForm\App\Services\FormBuilder\RatingIcon::DEFAULT_ACTIVE_COLOR;
+        }
+
         return $item;
     });
 

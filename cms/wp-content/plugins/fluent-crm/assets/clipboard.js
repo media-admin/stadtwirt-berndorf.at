@@ -1,0 +1,1 @@
+function e(e){if(!e)return!1;try{const o=document.createElement("input");return o.value=e,document.body.appendChild(o),o.select(),o.setSelectionRange(0,99999),document.execCommand("copy"),document.body.removeChild(o),!0}catch(o){return console.error("Failed to copy to clipboard:",o),!1}}export{e as c};

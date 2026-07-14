@@ -25,7 +25,7 @@ class OrderStatusChangedTrigger extends BaseTrigger
             'category' => __('FluentCart', 'fluent-crm'),
             'label' => __('Order Status Changed', 'fluent-crm'),
             'description' => __('This funnel will start when an order status updates', 'fluent-crm'),
-            'custom_icon' => 'fluentcart', // as svg
+            'svg' => '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1"><g id="surface1"><path style=" stroke:none;fill-rule:nonzero;fill:rgb(100%,100%,100%);fill-opacity:1;" d="M 2.398438 0 L 21.601562 0 C 22.925781 0 24 1.074219 24 2.398438 L 24 21.601562 C 24 22.925781 22.925781 24 21.601562 24 L 2.398438 24 C 1.074219 24 0 22.925781 0 21.601562 L 0 2.398438 C 0 1.074219 1.074219 0 2.398438 0 Z M 2.398438 0 "/><path style=" stroke:none;fill-rule:nonzero;fill:rgb(0%,0%,62.352943%);fill-opacity:1;" d="M 10.925781 16.476562 L 3.769531 16.476562 L 4.894531 13.878906 C 5.222656 13.117188 5.972656 12.625 6.804688 12.625 L 15.328125 12.625 L 14.746094 13.964844 C 14.085938 15.488281 12.585938 16.476562 10.925781 16.476562 Z M 10.925781 16.476562 "/><path style=" stroke:none;fill-rule:nonzero;fill:rgb(0%,0%,62.352943%);fill-opacity:1;" d="M 16.851562 11.394531 L 6.789062 11.394531 L 7.367188 10.054688 C 8.027344 8.53125 9.53125 7.542969 11.191406 7.542969 L 19.886719 7.542969 L 18.761719 10.140625 C 18.433594 10.902344 17.683594 11.394531 16.851562 11.394531 Z M 16.851562 11.394531 "/></g></svg>'
         ];
     }
 
@@ -65,10 +65,11 @@ class OrderStatusChangedTrigger extends BaseTrigger
     public function getFunnelConditionDefaults($funnel)
     {
         return [
-            'product_ids'   => '',
-            'from_status'   => 'any',
-            'to_status'     => 'any',
-            'run_multiple'  => 'no'
+            'product_ids'        => [],
+            'product_categories' => [],
+            'from_status'        => 'any',
+            'to_status'          => 'any',
+            'run_multiple'       => 'no'
         ];
     }
 
@@ -94,7 +95,16 @@ class OrderStatusChangedTrigger extends BaseTrigger
                 'option_key'  => 'fluent_cart_products',
                 'is_multiple' => true,
                 'label'       => __('Target Products', 'fluent-crm'),
-                'inline_help' => __('Keep it blank to run to any product status changed', 'fluent-crm'),
+                'help'        => __('Select for which products this automation will run', 'fluent-crm'),
+                'inline_help' => __('Keep it blank to run for any product\'s order status change', 'fluent-crm'),
+            ],
+            'product_categories' => [
+                'type'        => 'rest_selector',
+                'option_key'  => 'fluent_cart_product_categories',
+                'is_multiple' => true,
+                'label'       => __('Or Target Product Categories', 'fluent-crm'),
+                'help'        => __('Select for which product category the automation will run', 'fluent-crm'),
+                'inline_help' => __('Keep it blank to run to any category products', 'fluent-crm'),
             ],
             'from_status' => [
                 'type' => 'select',
@@ -112,7 +122,7 @@ class OrderStatusChangedTrigger extends BaseTrigger
                 'type'        => 'yes_no_check',
                 'label'       => '',
                 'check_label' => __('Restart the Automation Multiple times for a contact for this event. (Only enable if you want to restart automation for the same contact)', 'fluent-crm'),
-                'inline_help' => __('If you enable, then it will restart the automation for a contact if the contact already in the automation. Otherwise, It will just skip if already exist', 'fluent-crm')
+                'inline_help' => __('If enabled, it will restart the automation for a contact if the contact is already in the automation. Otherwise, it will skip if it already exists', 'fluent-crm')
             ]
         ];
     }
@@ -122,14 +132,14 @@ class OrderStatusChangedTrigger extends BaseTrigger
         $orderData = $originalArgs[0] ?? [];
 
         $order = Arr::get($orderData, 'order', []);
-        $fromStatus = Arr::get($orderData, 'old_status', []);
-        $toStatus = Arr::get($orderData, 'new_status', []);
+        $fromStatus = Arr::get($orderData, 'old_status', '');
+        $toStatus = Arr::get($orderData, 'new_status', '');
 
         $customer = Arr::get($order, 'customer');
 
         $orderId = Arr::get($order, 'id', 0);
 
-        $subscriberData = CartHelper::prepareSubsciberData($customer);
+        $subscriberData = CartHelper::prepareSubscriberData($customer);
 
 
         if (!is_email($subscriberData['email'])) {
@@ -144,6 +154,8 @@ class OrderStatusChangedTrigger extends BaseTrigger
         if (!$willProcess) {
             return;
         }
+
+        $subscriberData = wp_parse_args($subscriberData, $funnel->settings);
 
         $subscriberData['status'] = (!empty($subscriberData['subscription_status'])) ? $subscriberData['subscription_status'] : 'subscribed';
         unset($subscriberData['subscription_status']);
@@ -169,43 +181,42 @@ class OrderStatusChangedTrigger extends BaseTrigger
             }
         }
 
-        $selectedProductIds = Arr::get($conditions, 'product_ids', []);
+        $orderProductCategories = CartHelper::getProductCategoriesByIds($orderedProductIds);
 
-        // If no products are selected, return true
-        if (empty($selectedProductIds)) {
-            return true;
+        $selectedProductIds = Arr::get($conditions, 'product_ids', []);
+        $selectedProductCategories = Arr::get($conditions, 'product_categories', []);
+
+        if (!empty($selectedProductIds) || !empty($selectedProductCategories)) {
+            $productMatch = !empty($selectedProductIds) && !empty(array_intersect($selectedProductIds, $orderedProductIds));
+            $categoryMatch = !empty($selectedProductCategories) && !empty(array_intersect($selectedProductCategories, $orderProductCategories));
+
+            if (!$productMatch && !$categoryMatch) {
+                return false;
+            }
         }
 
-        $productMatch = !empty($selectedProductIds) && !empty(array_intersect($selectedProductIds, $orderedProductIds));
-
-        if (!$productMatch) {
+        $fromCondition = Arr::get($conditions, 'from_status', 'any');
+        if ($fromCondition !== 'any' && $fromCondition !== $fromStatus) {
             return false;
         }
 
-        if($conditions['from_status'] != 'any') {
-            if($conditions['from_status'] != $fromStatus) {
-                return false;
-            }
-        }
-
-        if($conditions['to_status'] != 'any') {
-            if($conditions['to_status'] != $toStatus) {
-                return false;
-            }
+        $toCondition = Arr::get($conditions, 'to_status', 'any');
+        if ($toCondition !== 'any' && $toCondition !== $toStatus) {
+            return false;
         }
 
         $subscriber = FunnelHelper::getSubscriber($subscriberData['email']);
 
-        // check run_only_one
-        if ($subscriber && FunnelHelper::ifAlreadyInFunnel($funnel->id, $subscriber->id)) {
-            $multipleRun = Arr::get($conditions, 'run_multiple') == 'yes';
-            if ($multipleRun) {
-                FunnelHelper::removeSubscribersFromFunnel($funnel->id, [$subscriber->id]);
-            } else {
-                return false;
+        if ($subscriber) {
+            $funnelSub = FunnelHelper::ifAlreadyInFunnel($funnel->id, $subscriber->id);
+            if ($funnelSub) {
+                $multipleRun = Arr::get($conditions, 'run_multiple') == 'yes';
+                if ($multipleRun) {
+                    FunnelHelper::removeSubscribersFromFunnel($funnel->id, [$subscriber->id]);
+                }
+                return $multipleRun;
             }
         }
-
 
         return true;
     }

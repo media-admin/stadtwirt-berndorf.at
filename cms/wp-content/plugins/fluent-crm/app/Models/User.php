@@ -27,12 +27,19 @@ class User extends Model
      */
     public function getPhotoAttribute()
     {
+        $contact = Subscriber::where('user_id', $this->ID);
+
+        if(!empty($this->attributes['user_email'])) {
+            $contact->orWhere('email', $this->attributes['user_email']);
+        }
+
+        $contact = $contact->first();
+
+        if($contact) {
+            return $contact->photo;
+        }
+
         if(empty($this->attributes['user_email'])) {
-            $contact = Subscriber::where('user_id', $this->ID)
-                ->first();
-            if($contact) {
-                return $contact->photo;
-            }
             return '';
         }
 

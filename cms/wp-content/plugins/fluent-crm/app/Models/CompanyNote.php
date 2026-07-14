@@ -77,6 +77,10 @@ class CompanyNote extends Model
 
         $user = get_user_by('ID', $this->created_by);
 
+        if (!$user) {
+            return false;
+        }
+
         return [
             'ID' => $user->ID,
             'first_name' => $user->first_name,

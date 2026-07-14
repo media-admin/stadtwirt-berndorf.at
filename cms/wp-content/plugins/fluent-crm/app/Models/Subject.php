@@ -36,7 +36,8 @@ class Subject extends Model
 
     public function campaign()
     {
-        return $this->belongsTo(__NAMESPACE__.'\Campaign', 'object_id', 'id');
+        return $this->belongsTo(__NAMESPACE__.'\Campaign', 'object_id', 'id')
+            ->withoutGlobalScope('type');
     }
 
     public function emails()

@@ -9,8 +9,6 @@ use FluentCrm\Framework\Support\Arr;
 
 abstract class BaseHandler
 {
-    protected $startedAt = 0;
-
     protected $runnerTitle = '';
 
     protected $sentCount = 0;
@@ -25,11 +23,9 @@ abstract class BaseHandler
 
     protected $isMultiThread = false;
 
-    protected $dispatchedWithinOneSecond = 0;
-
-    protected $emailLimitPerSecond = 0;
-
     protected $sendingChunkNumber = 0;
+
+    protected $lastLockRefreshAt = 0;
 
     abstract protected function isTimeUp();
 
@@ -47,12 +43,15 @@ abstract class BaseHandler
         $this->sendingChunkNumber++;
 
         $sendableStatuses = ['subscribed', 'transactional'];
+        $table = $wpdb->prefix . 'fc_campaign_emails';
 
         foreach ($campaignEmails as $email) {
-            if ($this->reachedEmailLimitPerSecond()) {
-                $this->updateEmailsStatus($failedIds, 'failed');
-                $failedIds = [];
-                $this->restartWhenOneSecondExceeds();
+            // Stop starting new emails once the runtime budget is spent. The
+            // rate-limit wait below counts against wall-clock, so check every
+            // iteration; any rows we already claimed but don't reach stay
+            // 'processing' and are recovered by the stale-row reset.
+            if ($this->isTimeUp()) {
+                break;
             }
 
             // Check again if the contact is in subscribed status or not
@@ -64,38 +63,73 @@ abstract class BaseHandler
             }
 
             $emailData = $email->data();
-            try {
-                $wpdb->update(
-                    $wpdb->prefix . 'fc_campaign_emails',
-                    [
-                        'status'       => 'sent',
-                        'scheduled_at' => current_time('mysql'),
-                        'email_body'   => ''
-                    ],
-                    [
-                        'id' => $email->id
-                    ]
-                );
-                if ($wpdb->last_error) {
-                    Helper::debugLog('DB Error at ' . $this->runnerTitle, $wpdb->last_error, 'error');
-                    return new \WP_Error('db_error', $wpdb->last_error);
-                }
-            } catch (\Exception $e) {
-                Helper::debugLog('DB Error (Exception) at ' . $this->runnerTitle, $e->getMessage(), 'error');
-                return new \WP_Error('db_error', $e->getMessage());
+
+            // for the same id
+            if (Helper::wasProcessedByKeyId('mail_' . $email->id . '_' . $email->email_address)) {
+                continue;
             }
 
-            if ( Helper::wasProcessedByKeyId( 'mail_'. $email->campaign_id . '_' . $email->email_address ) ) {
+            // Wait for this email's global rate-limit slot BEFORE marking it
+            // sent, so a crash/timeout during the wait leaves the row in
+            // 'processing' (recoverable by the stale-row reset) instead of
+            // 'sent'-but-never-delivered. Heartbeat the processing lock first
+            // (time-gated, so it costs an in-memory check not a write per email)
+            // so a long backpressure sleep can't let the lock expire mid-batch
+            // and admit a second concurrent sender.
+            $this->maybeRefreshLock();
+            GlobalRateLimiter::throttle($emailData);
+
+            // Mark as 'sent' and clear email_body BEFORE sending.
+            // This prevents duplicates on crash — if the process dies after this
+            // point, the email won't be re-queued. Missing one email is acceptable,
+            // sending duplicates is not.
+            //
+            // The WHERE pins both status='processing' AND the original claim's
+            // updated_at. If the rate-limit wait above ran long enough that the
+            // stale-row reset reclaimed this row and another sender re-claimed it
+            // (even one that is mid-send right now, with status back at
+            // 'processing'), that re-claim rewrote updated_at — so our UPDATE
+            // matches 0 rows and we skip. This closes the duplicate-send window
+            // independently of the lock TTL, so it holds even for slow SMTP
+            // transports where a single wp_mail() can hang past the lock. (Same
+            // UPDATE, one extra WHERE column — no added query.)
+            //
+            // Use the RAW updated_at string, not $email->updated_at: the model
+            // casts that column to a DateTime, and $wpdb binds a DateTime object
+            // as an empty string (it does not call __toString), which would make
+            // the WHERE `updated_at = ''`, match 0 rows, and strand EVERY email in
+            // 'processing' forever. The raw attribute is the exact stored string.
+            $claimToken = Arr::get($email->getAttributes(), 'updated_at');
+            $claimed = $wpdb->update($table, [
+                'status'       => 'sent',
+                'scheduled_at' => current_time('mysql'),
+                'email_body'   => '',
+                'is_parsed'    => 1,
+            ], ['id' => $email->id, 'status' => 'processing', 'updated_at' => $claimToken]);
+
+            if ($claimed === false) {
+                Helper::debugLog('DB Error at ' . $this->runnerTitle, $wpdb->last_error, 'error');
+                return new \WP_Error('db_error', $wpdb->last_error ?: 'mark-sent update failed');
+            }
+
+            if ($claimed === 0) {
+                // Row was reclaimed (and likely already sent) by another process
+                // during our wait. Do not send it again.
                 continue;
             }
 
             $this->sentCount++;
 
-            $response = Mailer::send($emailData, $email->subscriber, $email);
+            // Already throttled above (before mark-sent); skip the in-Mailer
+            // reservation so this email isn't rate-limited twice.
+            $response = Mailer::send($emailData, $email->subscriber, $email, true);
 
-            $this->dispatchedWithinOneSecond++;
-
-            if (is_wp_error($response)) {
+            // wp_mail() returns false on failure (not WP_Error) in most cases.
+            // We must catch both to avoid marking undelivered emails as 'sent'.
+            // Note: emails are marked 'sent' BEFORE wp_mail() by design to prevent
+            // duplicate sends on crash. This is intentional — losing one email is
+            // acceptable, sending duplicates is not.
+            if (is_wp_error($response) || $response === false) {
                 $failedIds[] = $email->id;
             }
         }
@@ -114,18 +148,16 @@ abstract class BaseHandler
     protected function processBatchEmails()
     {
         if ($this->isTimeUp()) {
-            update_option($this->optionKey, null);
             return 'time_up';
         }
 
         $emails = $this->getNextBatchEmails();
 
         if (!$emails || $emails->isEmpty()) {
-            update_option($this->optionKey, null);
             return 'empty';
         }
 
-        $this->processing();
+        $this->refreshLock();
         $result = $this->sendEmails($emails);
 
         if (is_wp_error($result)) {
@@ -165,38 +197,16 @@ abstract class BaseHandler
         return apply_filters('fluentcrm_memory_exceeded', $memory_exceeded, $this);
     }
 
-    protected function reachedEmailLimitPerSecond()
-    {
-        $emailLimitPerSecond = $this->getEmailLimitPerSecond();
-        return ($emailLimitPerSecond && $this->dispatchedWithinOneSecond >= $emailLimitPerSecond);
-    }
-
-    protected function restartWhenOneSecondExceeds()
-    {
-        $elapsedTimeMicroSeconds = (microtime(true) - $this->startedAt) * 1000000;
-        $remainingTimeMicroSeconds = 1000000 - $elapsedTimeMicroSeconds;
-
-        if ($remainingTimeMicroSeconds > 0) {
-            usleep((int)ceil($remainingTimeMicroSeconds));
-            $seconds = number_format($remainingTimeMicroSeconds / 1000000, 4);
-            Helper::debugLog('Restarting ' . $this->runnerTitle, 'Halt For: ' . $seconds . ' Seconds ' . $this->emailLimitPerSecond, 'info');
-        }
-
-        $this->dispatchedWithinOneSecond = 0;
-        $this->startedAt = microtime(true);
-    }
-
     protected function updateEmailsStatus($ids, $status)
     {
         if (!$ids) {
             return false;
         }
 
-        fluentCrmDb()->table('fc_campaign_emails')
-            ->whereIn('id', $ids)
-            ->update([
-                'status' => $status
-            ]);
+        global $wpdb;
+        $whereIn = implode(',', array_fill(0, count($ids), '%d'));
+        $query = "UPDATE {$wpdb->prefix}fc_campaign_emails SET status = %s WHERE id IN ($whereIn)";
+        $wpdb->query($wpdb->prepare($query, array_merge([$status], $ids)));
 
         return true;
     }
@@ -212,13 +222,14 @@ abstract class BaseHandler
                 }
             }
 
-            if (!$to) {
+            if (!$to || !\is_string($to) || !is_email($to)) {
                 return;
             }
 
             CampaignEmail::where('email_address', $to)
                 ->limit(1)
-                ->orderBy('id', 'DESC')
+                ->whereIn('status', ['processing', 'sent', 'failed'])
+                ->orderBy('updated_at', 'DESC')
                 ->update([
                     'status' => 'failed',
                     'note'   => $error->get_error_message()
@@ -226,62 +237,70 @@ abstract class BaseHandler
         });
     }
 
-    protected function getEmailLimitPerSecond()
+
+    /**
+     * Atomically acquire the processing lock.
+     *
+     * Replaces the old isProcessing() + processing() two-step pattern
+     * which had a TOCTOU race condition — two processes could both read
+     * "not processing" and both start sending emails.
+     *
+     * @return bool True if the lock was acquired, false if another process holds it.
+     */
+    protected function acquireLock()
     {
-        if ($this->emailLimitPerSecond) {
-            return $this->emailLimitPerSecond;
-        }
+        // Single atomic conditional UPDATE on wp_options (Helper::acquireDbLock)
+        // on every environment. We no longer take a wp_cache_add() fast path when
+        // an external object cache is active: that primitive is only atomic if the
+        // drop-in implements it against the shared backend, and some do not —
+        // notably LiteSpeed Object Cache, whose add() checks only the per-process
+        // in-memory array and then writes unconditionally. Under it, concurrent
+        // senders all acquired the lock and ran at once, overshooting the provider
+        // rate limit. The DB row lock has no such gap. See Helper::acquireDbLock().
+        $lockTimeout = $this->maximumProcessingTime + 30;
 
-        $emailSettings = fluentcrmGetGlobalSettings('email_settings', []);
-
-        if (!empty($emailSettings['emails_per_second'])) {
-            $limit = (int)$emailSettings['emails_per_second'] - 3; // 3 is buffer
-        } else {
-            $limit = 14;
-        }
-
-        if (!$limit || $limit < 4) {
-            $limit = 4;
-        }
-
-        if ($this->isMultiThread) {
-            $limit = ceil($limit / 2);
-        }
-
-        $limit = apply_filters('fluent_crm/email_limit_per_second', $limit, $emailSettings, $this);
-
-        $this->emailLimitPerSecond = $limit;
-
-        return $this->emailLimitPerSecond;
+        return Helper::acquireDbLock($this->optionKey, $lockTimeout);
     }
 
-    protected function isProcessing()
+    /**
+     * Refresh the lock timestamp (heartbeat) to prevent stuck-lock detection.
+     *
+     * Writes to the same wp_options row acquireLock() claims, so the heartbeat
+     * and the stale-detection read share one source of truth.
+     */
+    protected function refreshLock()
     {
-        $lastProcessStartedAt = get_option($this->optionKey);
-
-        if (!$lastProcessStartedAt) {
-            return false;
-        }
-
-        if ($this->seemsStuck($lastProcessStartedAt)) {
-            return false;
-        }
-
-        return true;
+        Helper::refreshDbLock($this->optionKey);
+        $this->lastLockRefreshAt = microtime(true);
     }
 
-    protected function seemsStuck($lastProcessStartedAt)
+    /**
+     * Heartbeat the lock only when it's getting close to its TTL, instead of on
+     * every email. The per-email send loop calls this so a long rate-limit wait
+     * can't let the lock expire mid-batch — but in normal sending (sub-second
+     * waits, batch done in seconds) it never actually writes: the guard is just
+     * an in-memory timestamp compare. It fires ~once per (TTL/3) only when a
+     * batch runs long under backpressure.
+     */
+    protected function maybeRefreshLock()
     {
-        if ($lastProcessStartedAt && time() - $lastProcessStartedAt > 80) {
-            $this->processing();
-            return true;
-        }
+        // Refresh at TTL/4 so the gap between heartbeats, plus one email's
+        // max wait (GlobalRateLimiter caps a single wait at 15s) plus its
+        // wp_mail() send, stays under the lock TTL (maximumProcessingTime + 30):
+        // 20s gap + 15s wait + ~30s send = 65s < 80s. That keeps the lock alive
+        // across a long backpressure sleep without writing on every email.
+        $interval = max(8, (int)(($this->maximumProcessingTime + 30) / 4));
 
-        return false;
+        if ((microtime(true) - $this->lastLockRefreshAt) >= $interval) {
+            $this->refreshLock();
+        }
     }
 
-    protected function processing()
+    /**
+     * Release the processing lock so another process can acquire it.
+     */
+    protected function releaseLock()
     {
-        update_option($this->optionKey, time());
+        Helper::releaseDbLock($this->optionKey);
     }
 }

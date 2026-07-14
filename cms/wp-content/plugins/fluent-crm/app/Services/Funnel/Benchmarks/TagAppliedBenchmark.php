@@ -87,8 +87,16 @@ class TagAppliedBenchmark extends BaseBenchMark
         $subscriber = $originalArgs[1];
         $settings = $benchMark->settings;
 
-        $subscriberTags = $subscriber->tags->pluck('id')->toArray();
         $benchmarkTags = Arr::get($settings, 'tags', []);
+
+        // Gate on the tags actually applied in this event. Without this a contact
+        // who already holds the benchmark tag would advance past the benchmark
+        // on any unrelated tag-add event.
+        if (!$benchmarkTags || !array_intersect((array) $tagIds, $benchmarkTags)) {
+            return;
+        }
+
+        $subscriberTags = $subscriber->tags->pluck('id')->toArray();
 
         if (!$this->isTagMatched($subscriberTags, $benchmarkTags, $settings)) {
             return; // not matched based on condition

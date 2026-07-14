@@ -46,7 +46,8 @@ class FunnelSequences
                 INDEX `{$indexPrefix}_fid_idx` (`funnel_id` ASC),
                 KEY `c_delay` (`c_delay`),
                 KEY `sequence` (`sequence`),
-                KEY `action_name` (`action_name`)
+                KEY `action_name` (`action_name`),
+                KEY `type_action_name_idx` (`type`, `action_name`)
             ) $charsetCollate;";
 
             dbDelta($sql);
@@ -73,6 +74,11 @@ class FunnelSequences
                 // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
                 $wpdb->query($indexSql);
             }
+
+            // Composite index for benchmark lookups (type + action_name). Created
+            // via DbPerformanceService so the migration and the runtime index
+            // health-check / repair path share one definition.
+            \FluentCrm\App\Services\DbPerformanceService::ensureCriticalIndex('type_action_name_idx');
         }
     }
 }

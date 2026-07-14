@@ -6,6 +6,11 @@ if(fluentcrm_is_rtl()) {
     $alignRight = 'left';
 }
 $content_font_family = $config['content_font_family'];
+$sanitizeFontStack = function ($fontStack) {
+    $fontStack = wp_strip_all_tags((string)$fontStack);
+    return preg_replace('/[^a-zA-Z0-9,\s\-_"\'\.]/', '', $fontStack);
+};
+$contentFontCss = $sanitizeFontStack($content_font_family);
 ?>
 
 <style type="text/css">
@@ -17,17 +22,17 @@ $content_font_family = $config['content_font_family'];
         padding: 0;
     }
     body {
-        font-family: <?php echo esc_html($content_font_family); ?>;
+        <?php if ($contentFontCss): ?>font-family: <?php echo $contentFontCss; ?>;<?php endif; ?>
         line-height: 150%;
     }
     p {
-        font-family: <?php echo esc_html($content_font_family); ?>;
+        <?php if ($contentFontCss): ?>font-family: <?php echo $contentFontCss; ?>;<?php endif; ?>
         line-height: 150%;
         font-size: 16px;
         width: 100%;
     }
     li, ol {
-        font-family: <?php echo esc_html($content_font_family); ?>;
+        <?php if ($contentFontCss): ?>font-family: <?php echo $contentFontCss; ?>;<?php endif; ?>
         line-height: 120%;
         font-size: 16px;
         margin-bottom: 5px;
@@ -40,7 +45,7 @@ $content_font_family = $config['content_font_family'];
 
     h1, h2, h3, h4 {
         line-height: 120%;
-        font-family: <?php echo esc_html($content_font_family); ?>;
+        <?php if ($contentFontCss): ?>font-family: <?php echo $contentFontCss; ?>;<?php endif; ?>
     }
 
     .has-text-align-right {
@@ -88,7 +93,7 @@ $content_font_family = $config['content_font_family'];
         outline: none;
         text-decoration: none;
         max-width: 100%;
-        display: block;
+        display: inline-block;
     }
 
     .fcPreviewText {
@@ -105,6 +110,7 @@ $content_font_family = $config['content_font_family'];
 
     a {
         text-decoration: underline;
+        display: inline-block;
     }
 
     p, a, li, td, blockquote {
@@ -264,7 +270,7 @@ $content_font_family = $config['content_font_family'];
     .fc_latest_post_item .fc_latest_post_content .description {
         margin: 0 0 15px 0;
         font-size: 15px;
-        line-height: 180%;
+        line-height: 160%;
     }
     .fc_latest_post_item .fc_latest_post_content .fc_latest_post_btn {
         display: inline-block;

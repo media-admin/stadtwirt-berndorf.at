@@ -2,6 +2,7 @@
 
 namespace FluentCrm\App\Hooks\Handlers;
 
+use FluentCrm\App\Services\Sanitize;
 use FluentCrm\App\Services\Libs\Emogrifier\Emogrifier;
 use FluentCrm\Framework\Support\Arr;
 
@@ -14,9 +15,35 @@ use FluentCrm\Framework\Support\Arr;
  *
  * @version 1.0.0
  */
-
 class EmailDesignTemplates
 {
+
+    public function register()
+    {
+        add_filter('fluent_crm/email-design-template-block_editor', [$this, 'addBlockEditorTemplate'], 10, 3);
+        add_filter('fluent_crm/email-design-template-simple', [$this, 'addBlockEditorTemplate'], 10, 3);
+        add_filter('fluent_crm/email-design-template-plain', [$this, 'addBlockEditorTemplate'], 10, 3);
+        add_filter('fluent_crm/email-design-template-classic', [$this, 'addBlockEditorTemplate'], 10, 3);
+
+
+        add_filter('fluent_crm/email-design-template-raw_classic', [$this, 'addRawClassicTemplate'], 10, 3);
+        add_filter('fluent_crm/email-design-template-web_preview', [$this, 'addWebPreviewTemplate'], 10, 3);
+    }
+
+    public function addBlockEditorTemplate($emailBody, $templateData, $campaign)
+    {
+        $templateData = $this->filterTemplateData($templateData);
+        $templateData['email_body'] = $emailBody;
+
+        $view = FluentCrm('view');
+        $emailBody = $view->make('emails.block_editor.Template', $templateData);
+        $emailBody = $emailBody->__toString();
+
+        $emogrifier = new Emogrifier($emailBody);
+        $emogrifier->disableInvisibleNodeRemoval();
+        return $emogrifier->emogrify();
+    }
+
     /**
      * @param string $emailBody
      * @param array $templateData
@@ -44,11 +71,11 @@ class EmailDesignTemplates
      */
     public function addSimpleTemplate($emailBody, $templateData, $campaign)
     {
-        if(empty($templateData['config']['body_bg_color'])) {
+        if (empty($templateData['config']['body_bg_color'])) {
             $templateData['config']['body_bg_color'] = '#FAFAFA';
         }
 
-        if(empty($templateData['config']['content_bg_color'])) {
+        if (empty($templateData['config']['content_bg_color'])) {
             $templateData['config']['content_bg_color'] = '#ffffff';
         }
 
@@ -70,7 +97,7 @@ class EmailDesignTemplates
      */
     public function addClassicTemplate($emailBody, $templateData, $campaign)
     {
-        if(empty($templateData['config']['content_bg_color'])) {
+        if (empty($templateData['config']['content_bg_color'])) {
             $templateData['config']['content_bg_color'] = '#ffffff';
         }
 
@@ -82,7 +109,7 @@ class EmailDesignTemplates
 
         $emogrifier = new Emogrifier($emailBody);
         $emogrifier->disableInvisibleNodeRemoval();
-        return  $emogrifier->emogrify();
+        return $emogrifier->emogrify();
     }
 
     /**
@@ -155,8 +182,42 @@ class EmailDesignTemplates
 
     private function filterTemplateData($templateData)
     {
-        if(Arr::get($templateData, 'config.disable_footer') == 'yes') {
+        $footerConfig = Arr::get($templateData, 'footer_config', []);
+        $disableFooter = Arr::get($footerConfig, 'disable_footer');
+        if ($disableFooter !== 'yes' && $disableFooter !== 'no') {
+            $disableFooter = Arr::get($templateData, 'config.disable_footer');
+        }
+
+        if ($disableFooter == 'yes') {
             $templateData['footer_text'] = '';
+        } else {
+            $style = 'font-size: 13px; color: #202020;';
+            if ($footerConfig) {
+                $fontSize = Arr::get($footerConfig, 'font_size', 13) . 'px';
+                $color = sanitize_hex_color(Arr::get($footerConfig, 'font_color', '#202020')) ?: '#202020';
+                $backgroundColor = Arr::get($footerConfig, 'background_color', 'transparent');
+                $paddingRaw = Arr::get($footerConfig, 'footer_padding');
+                $safeBackgroundColor = sanitize_hex_color($backgroundColor);
+                if ($backgroundColor === 'transparent') {
+                    $safeBackgroundColor = 'transparent';
+                }
+
+                $safePadding = 20;
+                if ($paddingRaw !== null && $paddingRaw !== '') {
+                    $safePadding = min(80, max(0, intval($paddingRaw)));
+                }
+
+                $style = "font-size: {$fontSize}; color: {$color};";
+                if ($safeBackgroundColor) {
+                    $style .= " background-color: {$safeBackgroundColor};";
+                }
+                $style .= " padding: {$safePadding}px;";
+                $templateData['footer_text'] = Sanitize::sanitizeFooterHtml($footerConfig['footer_content'] ?? '');
+            }
+
+            if($templateData['footer_text']) {
+                $templateData['footer_text'] = "<div style='{$style}'>{$templateData['footer_text']}</div>";
+            }
         }
 
         return $templateData;

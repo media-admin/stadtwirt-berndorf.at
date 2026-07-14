@@ -1,0 +1,16 @@
+{
+    "name": "fluentcrm/emogrifier-build",
+    "type": "project",
+    "description": "Build workspace for FluentCRM Emogrifier scoped dependencies",
+    "require": {
+        "symfony/css-selector": "5.4.45"
+    },
+    "config": {
+        "platform": {
+            "php": "7.4.33"
+        },
+        "sort-packages": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

@@ -97,20 +97,51 @@ class RemoveFromListBenchmark extends BaseBenchMark
 
     private function isListMatched($listIds, $subscriber, $settings)
     {
-        $isMatched = array_intersect($settings['lists'], $listIds);
+        $benchmarkLists = Arr::get($settings, 'lists', []);
+        if (empty($benchmarkLists)) {
+            return false;
+        }
+
+        $isMatched = array_intersect($benchmarkLists, $listIds);
         if (!$isMatched) {
             return false; // not in our scope
         }
 
-        $marchType = Arr::get($settings, 'select_type');
+        $matchType = Arr::get($settings, 'select_type');
 
-        if ($marchType == 'all') {
+        if ($matchType == 'all') {
+            // Check that ALL benchmark lists have been removed (none remain on subscriber)
             $attachedListIds = $subscriber->lists->pluck('id')->toArray();
-            return !array_diff($settings['lists'], $attachedListIds) == $settings['lists'];
+            return empty(array_intersect($benchmarkLists, $attachedListIds));
         }
 
         return $isMatched;
+    }
 
+    public function assertCurrentGoalState($asserted, $benchmark, $funnelSubscriber)
+    {
+        if (!$funnelSubscriber || !$funnelSubscriber->subscriber) {
+            return $asserted;
+        }
+
+        $subscriber = $funnelSubscriber->subscriber;
+        $settings = $benchmark->settings;
+        $benchmarkLists = Arr::get($settings, 'lists', []);
+
+        if (empty($benchmarkLists)) {
+            return $asserted;
+        }
+
+        $attachedListIds = $subscriber->lists->pluck('id')->toArray();
+        $matchType = Arr::get($settings, 'select_type');
+
+        if ($matchType == 'all') {
+            return empty(array_intersect($benchmarkLists, $attachedListIds));
+        }
+
+        // 'any' — at least one benchmark list is NOT in subscriber's lists
+        $removed = array_diff($benchmarkLists, $attachedListIds);
+        return !empty($removed);
     }
 
 }

@@ -1,0 +1,1 @@
+import{aQ as e,W as r,Y as o}from"../../../vendor.js?ver=3.1.8";import{_ as s}from"../../../fc-bits-ui.js?ver=3.1.8";import"../../../vendor-element-plus.js?ver=3.1.8";const t=s({name:"email-view"},[["render",function(s,t,n,a,i,m){const v=e("router-view");return r(),o(v)}]]);export{t as default};

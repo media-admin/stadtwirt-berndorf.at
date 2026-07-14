@@ -8,6 +8,7 @@ use FluentCart\App\Models\Customer;
 use FluentCart\App\Models\Order;
 use FluentCrm\App\Models\Subscriber;
 
+use FluentCrm\App\Services\ExternalIntegrations\FluentCart\Benchmarks\OrderSuccessBenchmark;
 use FluentCrm\App\Services\ExternalIntegrations\FluentCart\SmartCode\SmartCodeParser;
 use FluentCrm\App\Services\ExternalIntegrations\FluentCart\SmartCode\SmartCodeRegister;
 
@@ -34,7 +35,7 @@ class FluentCart
 
         SmartCodeRegister::push();
 
-
+        (new RevenueTracker())->init();
     }
 
     public function addAutomations()
@@ -45,7 +46,7 @@ class FluentCart
         new OrderRefundedTrigger();
         new OrderCanceledTrigger();
 
-        // new OrderStatusChangedTrigger(); // Disabled for now as will be available in future
+        // new OrderStatusChangedTrigger();
         new SubscriptionExpiredTrigger();
 
         //subscription activated
@@ -59,6 +60,10 @@ class FluentCart
 
         //subscription end of term(completed)
         new SubscriptionEndOfTermTrigger();
+
+
+        // Goals
+        new OrderSuccessBenchmark();
     }
 
     public function addHooks()
@@ -102,13 +107,9 @@ class FluentCart
 
     public function addCartIcon($icons)
     {
-        $icons['fluentcart'] = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
-                                <g id="surface1">
-                                <path style=" stroke:none;fill-rule:nonzero;fill:rgb(100%,100%,100%);fill-opacity:1;" d="M 2.398438 0 L 21.601562 0 C 22.925781 0 24 1.074219 24 2.398438 L 24 21.601562 C 24 22.925781 22.925781 24 21.601562 24 L 2.398438 24 C 1.074219 24 0 22.925781 0 21.601562 L 0 2.398438 C 0 1.074219 1.074219 0 2.398438 0 Z M 2.398438 0 "/>
-                                <path style=" stroke:none;fill-rule:nonzero;fill:rgb(0%,0%,62.352943%);fill-opacity:1;" d="M 10.925781 16.476562 L 3.769531 16.476562 L 4.894531 13.878906 C 5.222656 13.117188 5.972656 12.625 6.804688 12.625 L 15.328125 12.625 L 14.746094 13.964844 C 14.085938 15.488281 12.585938 16.476562 10.925781 16.476562 Z M 10.925781 16.476562 "/>
-                                <path style=" stroke:none;fill-rule:nonzero;fill:rgb(0%,0%,62.352943%);fill-opacity:1;" d="M 16.851562 11.394531 L 6.789062 11.394531 L 7.367188 10.054688 C 8.027344 8.53125 9.53125 7.542969 11.191406 7.542969 L 19.886719 7.542969 L 18.761719 10.140625 C 18.433594 10.902344 17.683594 11.394531 16.851562 11.394531 Z M 16.851562 11.394531 "/>
-                                </g>
-                                </svg>';
+        $icons['fluentcart'] = [
+            'svg' => '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="18" height="18" rx="1.8" fill="#00009F"/><path d="M9.19408 13.3557H3.82861L4.67063 11.4086C4.91784 10.8369 5.48112 10.4668 6.10395 10.4668H12.4955L12.0607 11.4722C11.5663 12.6155 10.4397 13.3557 9.19408 13.3557Z" fill="white"/><path d="M13.6389 9.54518H6.0918L6.52656 8.5398C7.02098 7.39646 8.14753 6.65625 9.39319 6.65625H15.9142L15.0722 8.60341C14.825 9.17507 14.2617 9.54518 13.6389 9.54518Z" fill="white"/></svg>',
+        ];
         return $icons;
     }
 
@@ -154,7 +155,7 @@ class FluentCart
                 'status' => ['label' => __('Status', 'fluent-crm'), 'width' => '140px', 'sortable' => false],
 //                'payment' => ['label' => __('Payment', 'fluent-crm'), 'width' => '140px', 'sortable' => false, 'key' => 'payment_status'],
                 'total' => ['label' => __('Total', 'fluent-crm'), 'width' => '120px', 'sortable' => true, 'key' => 'total'],
-                'action' => ['label' => __('Actions', 'fluent-crm'), 'width' => '100px', 'sortable' => false],
+                'action' => ['label' => __('', 'fluent-crm'), 'width' => '100px', 'sortable' => false],
             ],
         ];
 
@@ -165,12 +166,19 @@ class FluentCart
         $formattedOrders = [];
 
         foreach ($orders as $order) {
-            $orderActionHtml = '<a target="_blank" href="' . admin_url('admin.php?page=fluent-crm#/orders/' . $order->id . '/view') . '">' . __('View Order', 'fluent-crm') . '</a>';
+            $orderActionHtml = '<a target="_blank" href="' . admin_url('admin.php?page=fluent-cart#/orders/' . $order->id . '/view') . '">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8.5 5.5V7H4.75V15.25H13V11.5H14.5V16C14.5 16.1989 14.421 16.3897 14.2803 16.5303C14.1397 16.671 13.9489 16.75 13.75 16.75H4C3.80109 16.75 3.61032 16.671 3.46967 16.5303C3.32902 16.3897 3.25 16.1989 3.25 16V6.25C3.25 6.05109 3.32902 5.86032 3.46967 5.71967C3.61032 5.57902 3.80109 5.5 4 5.5H8.5ZM16.75 3.25V9.25H15.25V5.80975L9.40525 11.6553L8.34475 10.5948L14.1888 4.75H10.75V3.25H16.75Z" fill="#525866"/>
+            </svg>
+            </a>';
             $coupons = implode(', ', array_column($order['appliedCoupons']->toArray(), 'code'));
+
+            $date = '<span class="order_id">#' . $order->id .'</span><span class="order_date">'.date_i18n(get_option('date_format'), strtotime($order->created_at)).'</span>';
+            $status = '<span class="fcrm_badge fcrm_badge_'.esc_attr($order->status).'">'. \FluentCrm\App\Services\Helper::getStatusText($order->status) .'</span>';
+
             $formattedOrders[] = [
-                'order' => '#' . $order->id,
-                'date' => date_i18n(get_option('date_format'), strtotime($order->created_at)),
-                'status' => $order->status,
+                'date' => $date,
+                'status' => $status,
 //                'payment' => $order->payment_status,
 //                'coupons' => $coupons,
                 'total' => Helper::toDecimal($order->total_amount), // Adjust if using a different helper
@@ -226,8 +234,15 @@ class FluentCart
         $items = [];
         foreach ($recentOrders as $order) {
             foreach ($order->order_items as $orderItem) {
+
+                $itemDisplayName = $orderItem->post_title;
+
+                if($orderItem->post_title != $orderItem->title) {
+                    $itemDisplayName = $orderItem->post_title . ' - ' . $orderItem->title;
+                }
+
                 $items[] = [
-                    'name' => isset($orderItem->title) ? $orderItem->title : __('(Product)', 'fluent-crm'),
+                    'name' => $itemDisplayName,
                     'price' => isset($orderItem->line_total) ? Helper::toDecimal($orderItem->line_total) : 0,
                     'created_at' => $order->created_at,
                     'order_id' => $order->id,
@@ -254,9 +269,9 @@ class FluentCart
         $html .= '<h3 class="history_title">' . __('Purchased Products', 'fluent-crm') . '</h3>';
         $html .= '<div class="fc_history_widget"><ul class="fc_full_listed max_height_550">';
         foreach ($items as $item) {
-            $orderUrl = admin_url('admin.php?page=fluent-crm#/orders/' . $item['order_id'] . '/view');
-            $badges = '<span class="fc_purchase_badge fc_badge_price">' . esc_html(Helper::toDecimal($item['price'])) . '</span>';
-            $badges .= '<span class="fc_purchase_badge fc_badge_date"><a target="_blank" rel="noopener" href="' . esc_url($orderUrl) . '">' . date_i18n(get_option('date_format'), strtotime($item['created_at'])) . '</a></span>';
+            $orderUrl = admin_url('admin.php?page=fluent-cart#/orders/' . $item['order_id'] . '/view');
+            $badges = '<span class="el-tag el-tag--primary">' . esc_html(Helper::toDecimal($item['price'])) . '</span>';
+            $badges .= '<span class="el-tag el-tag--primary"><a target="_blank" rel="noopener" href="' . esc_url($orderUrl) . '">' . date_i18n(get_option('date_format'), strtotime($item['created_at'])) . '</a></span>';
             $html .= '<li class="fc_product_name">' . esc_html($item['name']) . ' ' . $badges . '</li>';
         }
         if (!$items) {
@@ -490,5 +505,4 @@ class FluentCart
 
         return $result;
     }
-
 }

@@ -6,7 +6,7 @@ use FluentCrm\App\Models\Lists;
 use FluentCrm\App\Models\Subscriber;
 use FluentCrm\App\Services\Helper;
 use FluentCrm\Framework\Support\Arr;
-use FluentCrm\Framework\Request\Request;
+use FluentCrm\Framework\Http\Request\Request;
 
 /**
  *  ListsController - REST API Handler Class
@@ -22,7 +22,7 @@ class ListsController extends Controller
     /**
      * Get all of the lists
      *
-     * @param \FluentCrm\Framework\Request\Request $request
+     * @param \FluentCrm\Framework\Http\Request\Request $request
      * @return \WP_REST_Response
      */
     public function index(Request $request)
@@ -30,8 +30,8 @@ class ListsController extends Controller
         $with = $request->get('with', []);
 
         $order = [
-            'by'    => $request->getSafe('sort_by', 'id', 'sanitize_sql_orderby'),
-            'order' => $request->getSafe('sort_order', 'DESC', 'sanitize_sql_orderby')
+            'by'    => $request->getSafe('sort_by', 'sanitize_sql_orderby', 'id'),
+            'order' => $request->getSafe('sort_order', 'sanitize_sql_orderby', 'DESC')
         ];
         $paginatedLists = Lists::orderBy($order['by'], $order['order'])
             ->searchBy($request->getSafe('search'))
@@ -57,9 +57,10 @@ class ListsController extends Controller
             $formattedLists = [];
             foreach ($allLists as $list) {
                 $formattedLists[] = [
-                    'id'    => strval($list->id),
-                    'title' => $list->title,
-                    'slug'  => $list->slug
+                    'id'          => strval($list->id),
+                    'title'       => $list->title,
+                    'slug'        => $list->slug,
+                    'description' => $list->description
                 ];
             }
             $data['all_lists'] = $formattedLists;
@@ -71,7 +72,7 @@ class ListsController extends Controller
     /**
      * Find a list.
      *
-     * @param \FluentCrm\Framework\Request\Request $request
+     * @param \FluentCrm\Framework\Http\Request\Request $request
      * @param int $id
      * @return \WP_REST_Response
      */
@@ -84,7 +85,7 @@ class ListsController extends Controller
     /**
      * Store a list.
      *
-     * @param \FluentCrm\Framework\Request\Request $request
+     * @param \FluentCrm\Framework\Http\Request\Request $request
      * @return \WP_REST_Response
      */
     public function create(Request $request)
@@ -123,7 +124,7 @@ class ListsController extends Controller
     /**
      * Store a list.
      *
-     * @param \FluentCrm\Framework\Request\Request $request
+     * @param \FluentCrm\Framework\Http\Request\Request $request
      * @param $id int
      * @return \WP_REST_Response
      */
@@ -142,7 +143,7 @@ class ListsController extends Controller
             $list = Lists::where('slug', $allData['slug'])->first();
             if (!$list) {
                 return $this->sendError([
-                    'message' => 'List could not be found'
+                    'message' => __('List could not be found', 'fluent-crm')
                 ]);
             }
 
@@ -156,7 +157,7 @@ class ListsController extends Controller
 
         if (Lists::where('slug', $allData['slug'])->where('id', '!=', $id)->first()) {
             return $this->sendError([
-                'message' => 'Provided slug already exist in another list'
+                'message' => __('Provided slug already exists in another list', 'fluent-crm')
             ]);
         }
 
@@ -179,7 +180,7 @@ class ListsController extends Controller
     /**
      * Bulk store lists.
      *
-     * @param \FluentCrm\Framework\Request\Request $request
+     * @param \FluentCrm\Framework\Http\Request\Request $request
      * @return \WP_REST_Response
      */
     public function storeBulk(Request $request)
@@ -224,7 +225,7 @@ class ListsController extends Controller
     /**
      * Delete a list
      *
-     * @param \FluentCrm\Framework\Request\Request $request
+     * @param \FluentCrm\Framework\Http\Request\Request $request
      * @param int $id
      * @return \WP_REST_Response
      */
@@ -241,8 +242,9 @@ class ListsController extends Controller
 
     public function handleBulkAction(Request $request)
     {
-        $listIds = $request->getSafe('listIds', [], 'intval');
-        $listIds = array_filter($listIds);
+        $listIds = array_map('intval', (array)$request->get('listIds', []));
+
+        $listIds = array_unique(array_filter($listIds));
 
         foreach ($listIds as $listId) {
             Lists::where('id', $listId)->delete();
@@ -251,7 +253,7 @@ class ListsController extends Controller
         }
 
         return $this->sendSuccess([
-            'message' => __('Selected Lists has been removed permanently', 'fluent-crm'),
+            'message' => __('Selected Lists have been removed permanently', 'fluent-crm'),
         ]);
 
     }

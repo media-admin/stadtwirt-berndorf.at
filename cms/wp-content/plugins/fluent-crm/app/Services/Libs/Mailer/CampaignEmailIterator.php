@@ -62,12 +62,11 @@ class CampaignEmailIterator implements \Iterator
         $ids = $emails->pluck('id')->toArray();
 
         if ($ids) {
-            CampaignEmail::whereIn('id', $ids)
-                ->update([
-                    'status'       => 'processing',
-                    'updated_at'   => $currentTime,
-                    'scheduled_at' => $currentTime
-                ]);
+            // Update the status to 'processing' for the selected emails
+            global $wpdb;
+            $placeholders = implode(',', array_fill(0, count($ids), '%d'));
+            $query = "UPDATE {$wpdb->prefix}fc_campaign_emails SET status = %s, updated_at = %s, scheduled_at = %s WHERE id IN ($placeholders)";
+            $wpdb->query($wpdb->prepare($query, array_merge(['processing', $currentTime, $currentTime], $ids)));
         }
 
         $this->emails = $emails;

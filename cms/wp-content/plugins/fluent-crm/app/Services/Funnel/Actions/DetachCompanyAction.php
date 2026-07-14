@@ -47,13 +47,17 @@ class DetachCompanyAction extends BaseAction
     public function handle($subscriber, $sequence, $funnelSubscriberId, $funnelMetric)
     {
         if (empty($sequence->settings['company'])) {
-            FunnelHelper::changefunnelSubSequenceStatus($funnelSubscriberId, $sequence->id, 'skipped');
+            FunnelHelper::changeFunnelSubSequenceStatus($funnelSubscriberId, $sequence->id, 'skipped');
             return;
         }
 
         $company = $sequence->settings['company'];
 
         $renewedSubscriber = Subscriber::where('id', $subscriber->id)->first();
+        if (!$renewedSubscriber) {
+            FunnelHelper::changeFunnelSubSequenceStatus($funnelSubscriberId, $sequence->id, 'skipped');
+            return;
+        }
         $renewedSubscriber->detachCompanies([$company]);
     }
 }

@@ -6,15 +6,31 @@ use Exception;
 
 class ValidationException extends Exception
 {
-    private $errors;
+    /**
+     * The validation errors
+     * 
+     * @var array
+     */
+    protected $errors = [];
 
-    public function __construct($message = "", $code = 0 , Exception $previous = NULL, $errors = [])
+    /**
+     * Construct the Validation Exception Instance
+     * @param string         $message
+     * @param integer        $code
+     * @param Exception|null $previous
+     * @param array          $errors
+     */
+    public function __construct($message = "", $code = 0 , ?Exception $previous = null, $errors = [])
     {
         $this->errors = $errors;
 
         parent::__construct($message, $code, $previous);
     }
 
+    /**
+     * Retrieve the validation errors
+     * @return array
+     */
     public function errors()
     {
         return $this->errors;

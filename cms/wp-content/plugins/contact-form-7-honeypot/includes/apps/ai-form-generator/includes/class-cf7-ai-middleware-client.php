@@ -89,14 +89,8 @@ class CF7Apps_Cf7Ai_Client {
 
 	/** License key, operation slug, site URL, middleware base URL. */
 	public static function mw_config() {
-		$license = '';
-		if ( defined( 'CF7APPS_AI_MIDDLEWARE_LICENSE_KEY' ) && CF7APPS_AI_MIDDLEWARE_LICENSE_KEY !== '' && CF7APPS_AI_MIDDLEWARE_LICENSE_KEY !== null ) {
-			$license = trim( (string) CF7APPS_AI_MIDDLEWARE_LICENSE_KEY );
-		}
-		if ( '' === $license ) {
-			$license = get_option( 'cf7apps_ai_middleware_license_key', '' );
-			$license = is_string( $license ) ? trim( $license ) : '';
-		}
+		$license = get_option( 'cf7apps_ai_middleware_license_key', '' );
+		$license = is_string( $license ) ? trim( $license ) : '';
 		if ( '' === $license ) {
 			$all = get_option( 'cf7apps_settings', array() );
 			$app = isset( $all['cf7-ai-form-generator'] ) && is_array( $all['cf7-ai-form-generator'] ) ? $all['cf7-ai-form-generator'] : array();
@@ -288,7 +282,6 @@ class CF7Apps_Cf7Ai_Client {
 		$json = json_decode( $raw, true );
 
 		$license_from_response = self::license_from_json( $json );
-
 		if ( $code >= 200 && $code < 300 && '' !== $license_from_response ) {
 			self::save_license( $license_from_response );
 
@@ -406,9 +399,8 @@ class CF7Apps_Cf7Ai_Client {
 			),
 			$body
 		);
-
+		
 		$response = wp_remote_post( $url, $args );
-
 		if ( is_wp_error( $response ) ) {
 			return new WP_Error(
 				'cf7apps_ai_http',

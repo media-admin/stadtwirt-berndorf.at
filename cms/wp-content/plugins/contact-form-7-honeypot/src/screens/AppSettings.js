@@ -16,6 +16,7 @@ import { toast } from 'react-toastify';
 import parse from 'html-react-parser';
 import CF7AppsSelectField from "../components/CF7AppsSelectField";
 import CF7AppsNotice from "../components/CF7AppsNotice";
+import { getWebhookDataTypeOptions } from "../utils/webhookUiUtils";
 
 const TextareaField = ({ fieldKey, field, className, description, disabled, openMap, setOpenMap, formData, handleInputChange }) => {
     const open = (openMap && openMap[ fieldKey ] !== undefined) ? openMap[ fieldKey ] : ! field.collapsible;
@@ -187,8 +188,15 @@ const AppSettings = () => {
                                 }
                                 else if(settings['fields'][tabKey][fieldKey].type === 'checkbox') {
                                     _formData[fieldKey] = settings['fields'][tabKey][fieldKey].checked;
-                                } else if ( settings['fields'][tabKey][fieldKey].type === 'textarea' ) {
+                                }                                 else if ( settings['fields'][tabKey][fieldKey].type === 'textarea' ) {
                                     _formData[fieldKey] = settings['fields'][tabKey][fieldKey].value !== undefined ? settings['fields'][tabKey][fieldKey].value : (settings['fields'][tabKey][fieldKey].default ? settings['fields'][tabKey][fieldKey].default : '');
+                                } else if ( settings['fields'][tabKey][fieldKey].type === 'select' ) {
+                                    const f = settings['fields'][tabKey][fieldKey];
+                                    if ( f.selected !== undefined && f.selected !== null && f.selected !== '' ) {
+                                        _formData[fieldKey] = f.selected;
+                                    } else {
+                                        _formData[fieldKey] = f.default !== undefined ? f.default : '';
+                                    }
                                 }
                             }
                         });
@@ -214,6 +222,12 @@ const AppSettings = () => {
                                 }
                             } else if ( field.type === 'textarea' ) {
                                 _formData[fieldKey] = field.value !== undefined ? field.value : (field.default ? field.default : '');
+                            } else if ( field.type === 'select' ) {
+                                if ( field.selected !== undefined && field.selected !== null && field.selected !== '' ) {
+                                    _formData[fieldKey] = field.selected;
+                                } else {
+                                    _formData[fieldKey] = field.default !== undefined ? field.default : '';
+                                }
                             }
 
                             if ( settings['fields'][ fieldKey ].sub_fields ) {
@@ -242,6 +256,9 @@ const AppSettings = () => {
                             }
                         }
                     });
+                }
+                if ( app === 'webhook' && String( _formData.method || '' ).toUpperCase() === 'GET' && _formData.data_type === 'form' ) {
+                    _formData.data_type = 'json';
                 }
                 setFormData(_formData);
                 // initialize openMap for textarea fields across tabs
@@ -288,11 +305,17 @@ const AppSettings = () => {
      * @since 3.0.0
      */
     const handleInputChange = (e) => {
-        const { name, value, required } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value
-        }));
+        const { name, value } = e.target;
+        setFormData((prev) => {
+            const next = {
+                ...prev,
+                [name]: value
+            };
+            if ( app === 'webhook' && name === 'method' && String( value ).toUpperCase() === 'GET' && prev.data_type === 'form' ) {
+                next.data_type = 'json';
+            }
+            return next;
+        });
     }
 
     /**
@@ -540,15 +563,24 @@ const AppSettings = () => {
                                                     )
                                                 }
                                                 else if(field.type === 'select') {
+                                                    const isWebhookDataType = app === 'webhook' && fieldKey === 'data_type';
+                                                    const selectOptions = isWebhookDataType
+                                                        ? getWebhookDataTypeOptions( formData.method, field.options )
+                                                        : field.options;
+                                                    const selectedVal = formData[fieldKey] !== undefined && formData[fieldKey] !== null
+                                                        ? formData[fieldKey]
+                                                        : field.selected;
                                                     return (
                                                         <CF7AppsSelectField
                                                             key={ fieldKey }
                                                             label={field.title}
                                                             className={className}
                                                             name={fieldKey}
-                                                            selected={formData['selected']}
-                                                            options={field.options}
+                                                            selected={ selectedVal }
+                                                            options={ selectOptions }
+                                                            onChange={ handleInputChange }
                                                             description={ parse( String(field.description) ) }
+                                                            disabled={ field.disabled }
                                                         />
                                                     )
                                                 }
@@ -708,16 +740,25 @@ const AppSettings = () => {
                                         />
                                     )
                                 }
-                                else if(field.type === 'select') { 
+                                else if(field.type === 'select') {
+                                    const isWebhookDataType = app === 'webhook' && fieldKey === 'data_type';
+                                    const selectOptions = isWebhookDataType
+                                        ? getWebhookDataTypeOptions( formData.method, field.options )
+                                        : field.options;
+                                    const selectedVal = formData[fieldKey] !== undefined && formData[fieldKey] !== null
+                                        ? formData[fieldKey]
+                                        : field.selected;
                                     return (
                                         <CF7AppsSelectField
+                                            key={ fieldKey }
                                             label={field.title}
                                             className={className}
                                             name={fieldKey}
-                                            selected={field['selected']}
-                                            options={field.options}
+                                            selected={ selectedVal }
+                                            options={ selectOptions }
                                             onChange={handleInputChange}
                                             description={ parse( String(field.description) ) }
+                                            disabled={ field.disabled }
                                         />
                                     )
                                     } else if ( field.type === 'textarea' ) {

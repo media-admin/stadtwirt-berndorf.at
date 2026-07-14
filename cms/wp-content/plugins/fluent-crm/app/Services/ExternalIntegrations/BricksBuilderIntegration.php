@@ -88,7 +88,7 @@ class BricksBuilderIntegration
     public function checkCondition($result, $condition_key, $condition)
     {
         $acceptedKeys = ['fluent_crm_tags', 'fluent_crm_lists'];
-        if (!in_array($condition_key, $acceptedKeys)) {
+        if (!in_array($condition_key, $acceptedKeys, true)) {
             return $result;
         }
 

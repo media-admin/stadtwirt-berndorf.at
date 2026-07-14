@@ -68,9 +68,10 @@ defined('ABSPATH') or die;
                                         <iframe
                                                 class="w-100"
                                                 style="height: 340px; border-radius: 8px;"
-                                                src="https://www.youtube.com/embed/geJ9ZQGZz2o?si=PYY7lYWilINmngUV"
+                                                data-src="https://www.youtube.com/embed/geJ9ZQGZz2o?si=PYY7lYWilINmngUV"
                                                 title="YouTube video player"
                                                 frameborder="0"
+                                                loading="lazy"
                                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                                                 allowfullscreen>
                                         </iframe>
@@ -246,20 +247,25 @@ defined('ABSPATH') or die;
                         dialogEl.parentElement.classList.add('ff_backdrop');
                         dialogEl.classList.remove('hidden');
                         dialogEl.classList.add('dialog-fade-enter-active');
+
+                        const iframe = dialogEl.querySelector('iframe[data-src]');
+                        if (iframe && !iframe.src) {
+                            iframe.src = iframe.getAttribute('data-src');
+                        }
                     });
-        
+
                     btnCloseEl.addEventListener('click', function(){
                         dialogEl.parentElement.classList.remove('ff_backdrop');
                         dialogEl.classList.add('hidden');
                         dialogEl.classList.remove('dialog-fade-enter-active');
-                        
+
                         const videoElement = dialogEl.querySelector('video, iframe');
                         if (videoElement) {
                             if (videoElement.tagName === 'VIDEO') {
                                 videoElement.pause();
                                 videoElement.currentTime = 0;
                             } else if (videoElement.tagName === 'IFRAME') {
-                                videoElement.src = videoElement.src;
+                                videoElement.removeAttribute('src');
                             }
                         }
                     });

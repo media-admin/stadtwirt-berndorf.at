@@ -65,11 +65,12 @@ class Commands
         );
     }
 
+    /**
+     * Sync EDD 3 customers into FluentCRM commerce tables from EDD order data.
+     */
     public function sync_edd_customers($args, $assoc_args)
     {
-        if (!class_exists('\Easy_Digital_Downloads')) {
-            \WP_CLI::error('Easy Digital Downloads is not installed');
-        }
+        $this->requireEdd3Cli();
 
         $tags = \WP_CLI\Utils\get_flag_value($assoc_args, 'tags', '');
         $lists = \WP_CLI\Utils\get_flag_value($assoc_args, 'lists', '');
@@ -130,15 +131,17 @@ class Commands
             [
                 [
                     'status' => __('Completed', 'fluent-crm'),
-                    'count'  => fluentCrmDb()->table('posts')->where('post_type', 'edd_payment')->where('post_status', 'publish')->count()
+                    'count'  => fluentCrmDb()->table('edd_orders')
+                        ->whereIn('status', ['complete', 'completed'])
+                        ->count()
                 ],
                 [
                     'status' => __('Processing', 'fluent-crm'),
-                    'count'  => fluentCrmDb()->table('posts')->where('post_type', 'edd_payment')->where('post_status', 'processing')->count()
+                    'count'  => fluentCrmDb()->table('edd_orders')->where('status', 'processing')->count()
                 ],
                 [
                     'status' => __('Subscription Payments', 'fluent-crm'),
-                    'count'  => fluentCrmDb()->table('posts')->where('post_type', 'edd_payment')->where('post_status', 'edd_subscription')->count()
+                    'count'  => fluentCrmDb()->table('edd_orders')->where('status', 'edd_subscription')->count()
                 ],
                 [
                     'status' => __('Customer Counts', 'fluent-crm'),
@@ -185,6 +188,8 @@ class Commands
 
         $skippedContacts = [];
         $resultItems = [];
+        // EDD 3 sync reads canonical edd_orders statuses only.
+        $paymentStatuses = ['edd_subscription', 'processing', 'complete', 'completed', 'partially_refunded'];
         $progress = \WP_CLI\Utils\make_progress_bar('Synced Customers', $customersTotal);
 
         while ($processingStatus) {
@@ -195,11 +200,17 @@ class Commands
 
             $offset += $limit;
 
-            if (!$customers) {
+            if ($customers->isEmpty()) {
                 $processingStatus = false;
             } else {
                 foreach ($customers as $customer) {
-                    $result = \FluentCampaign\App\Services\Integrations\Edd\EddCommerceHelper::syncCommerceCustomer($customer, $contactStatus, ['edd_subscription', 'processing', 'publish'], $formattedTags, $formattedLists);
+                    $result = \FluentCampaign\App\Services\Integrations\Edd\EddCommerceHelper::syncCommerceCustomer(
+                        $customer,
+                        $contactStatus,
+                        $paymentStatuses,
+                        $formattedTags,
+                        $formattedLists
+                    );
                     if ($result) {
                         $progress->tick();
                         $resultItems[] = [
@@ -246,8 +257,13 @@ class Commands
 
     }
 
+    /**
+     * Remove synced EDD commerce data only when EDD 3 is available.
+     */
     public function disable_edd_sync()
     {
+        $this->requireEdd3Cli();
+
         $module = 'edd';
         Commerce::disableModule($module);
         ContactRelationModel::provider($module)->delete();
@@ -415,7 +431,7 @@ class Commands
 
             $offset += 10;
 
-            if (!$customers) {
+            if ($customers->isEmpty()) {
                 $processingStatus = false;
             } else {
                 foreach ($customers as $customer) {
@@ -634,7 +650,7 @@ class Commands
 
             $offset += 10;
 
-            if (!$students) {
+            if ($students->isEmpty()) {
                 $processingStatus = false;
             } else {
                 foreach ($students as $student) {
@@ -673,14 +689,15 @@ class Commands
         \WP_CLI::line('Nice. All Done');
     }
 
+    /**
+     * Display EDD 3 commerce statistics from synced FluentCRM commerce data.
+     */
     public function edd_stats($args, $assoc_args)
     {
 
         $isHelp = $type = \WP_CLI\Utils\get_flag_value($assoc_args, 'commands', '');
 
-        if (!class_exists('\Easy_Digital_Downloads')) {
-            \WP_CLI::error('Easy Digital Downloads is not installed');
-        }
+        $this->requireEdd3Cli();
 
         if (!defined('FLUENTCAMPAIGN')) {
             \WP_CLI::error('FluentCRM Pro is required');
@@ -830,8 +847,13 @@ class Commands
         \WP_CLI::line('All FluentCRM Database Tables have been truncated');
     }
 
+    /**
+     * Apply a FluentCRM tag to users with active lifetime EDD 3 licenses.
+     */
     public function edd_add_ltd_tag($args, $assoc_args)
     {
+        $this->requireEdd3Cli();
+
         if (empty($assoc_args) || count($assoc_args) != 2) {
             \WP_CLI::line('use --product=productId --tag=tagID');
             return;
@@ -869,7 +891,7 @@ class Commands
             return;
         }
 
-        if (!$licenses) {
+        if ($licenses->isEmpty()) {
             \WP_CLI::line('No users found');
             return;
         }
@@ -899,8 +921,13 @@ class Commands
 
     }
 
+    /**
+     * Apply a FluentCRM tag to users with active EDD 3 licenses for a price option.
+     */
     public function edd_add_price_tag($args, $assoc_args)
     {
+        $this->requireEdd3Cli();
+
         if (empty($assoc_args) || count($assoc_args) != 3) {
             \WP_CLI::line('use --product=productId --price_id=PRICEID --tag=tagID');
             return;
@@ -934,7 +961,7 @@ class Commands
             return;
         }
 
-        if (!$licenses) {
+        if ($licenses->isEmpty()) {
             \WP_CLI::line('No users found');
             return;
         }
@@ -961,6 +988,16 @@ class Commands
         }
 
         \WP_CLI::line('Total Done: ' . $completedCount);
+    }
+
+    /**
+     * Stop EDD CLI flows before they touch legacy EDD 2 data or tables.
+     */
+    private function requireEdd3Cli()
+    {
+        if (!Helper::isEdd3()) {
+            \WP_CLI::error('Easy Digital Downloads 3 is required');
+        }
     }
 
     /*
@@ -1018,6 +1055,9 @@ class Commands
     /*
      * Send Pending Emails parallelly via CLI
      * use it with caution
+     * Requires the "Multi-threaded email sending" experimental feature to be
+     * enabled — it is a parallel sender and shares the cross-process rate budget
+     * that only exists in multi-thread mode. No-ops when the flag is off.
      * basic usage: wp fluent_crm cli_send
      * advanced usage: wp fluent_crm cli_send --force=yes --option_key=fluentcrm_is_sending_cli_emails --run_time=50 --offset=200 --min_pending=300 --silent=yes
      */
@@ -1029,6 +1069,24 @@ class Commands
 
         if (\WP_CLI\Utils\get_flag_value($assoc_args, 'force') == 'yes') {
             $interactive = false;
+        }
+
+        // The CLI sender is a PARALLEL sender — it works from an offset so it can
+        // run alongside the cron Handler, and shares the install's per-second rate
+        // budget with it. That budget is only coordinated across processes (via
+        // GlobalRateLimiter's DB path) when multi-threading is enabled; with the
+        // flag off the cron Handler paces in memory and would have no idea this
+        // process is also sending, so the combined rate could exceed the cap and
+        // trip the provider's throttle. Gate the command on the same flag so the
+        // flag stays the single source of truth for "is parallel sending active".
+        if (!Helper::isExperimentalEnabled('multi_threading_emails')) {
+            // Exit NON-ZERO in both modes. A scripted `--silent` cron wrapper that
+            // checks $? must see failure, not a silent success that sends nothing
+            // and leaves the queue stranded without tripping monitoring.
+            if ($showLogs) {
+                \WP_CLI::error('Multi-threaded email sending is disabled, so the CLI sender is a no-op. It runs in parallel with the cron sender and needs the "Multi-threaded email sending" experimental feature enabled (Settings → Experimental Features) so the per-second rate stays coordinated across both.');
+            }
+            \WP_CLI::halt(1);
         }
 
         $pendingEmails = Helper::getUpcomingEmailCount();
@@ -1099,6 +1157,11 @@ class Commands
         }
 
         \WP_CLI::line('User ids for contacts has been synced');
+    }
+
+    public function simulate_funnel($args, $assoc_args)
+    {
+        (new SimulateFunnelCommand())->handle($args, $assoc_args);
     }
 
 }

@@ -31,6 +31,7 @@ class PrefFormHandler
             return '';
         }
 
+
         do_action('fluent_crm/rendering_pref_form_shortcode');
 
         $subscriber = FluentCrmApi('contacts')->getCurrentContact(true, true);
@@ -146,18 +147,18 @@ class PrefFormHandler
 
         wp_enqueue_style(
             'fluentcrm_public_pref',
-            FLUENTCRM_PLUGIN_URL . 'assets/public/public_pref.css',
+            fluentCrmMix('public/public_pref.css'),
             [],
             FLUENTCRM_PLUGIN_VERSION
         );
 
-        wp_enqueue_script('fluentcrm_public_pref', FLUENTCRM_PLUGIN_URL . 'assets/public/public_pref.js', ['jquery'], FLUENTCRM_PLUGIN_VERSION, true);
+        wp_enqueue_script('fluentcrm_public_pref', fluentCrmMix('public/public_pref.js'), ['jquery'], FLUENTCRM_PLUGIN_VERSION, true);
 
         wp_localize_script('fluentcrm_public_pref', 'fluentcrm_sub_pref', [
             'ajaxurl' => admin_url('admin-ajax.php')
         ]);
 
-        return fluentCrm('view')->make('external.pref_form', [
+        return (string) fluentCrm('view')->make('external.pref_form', [
             'fields'     => $formFields,
             'submitBtn'  => [
                 'container_class' => 'fc_pref_submit',
@@ -209,7 +210,7 @@ class PrefFormHandler
     {
         if (!isset($_POST['_fc_nonce']) || !wp_verify_nonce($_POST['_fc_nonce'], 'fluent_crm_account_form_fields')) {
             wp_send_json_error([
-                'message' => 'Sorry, your nonce did not verify.'
+                'message' => __('Sorry, your nonce did not verify.', 'fluent-crm')
             ], 422);
         }
 
@@ -217,7 +218,7 @@ class PrefFormHandler
 
         if (Arr::get($settings, 'pref_form') != 'yes' || empty(Arr::get($settings, 'pref_general'))) {
             wp_send_json_error([
-                'message' => 'Sorry! you can not update your profile'
+                'message' => __('Sorry! You cannot update your profile.', 'fluent-crm')
             ], 422);
         }
 
@@ -232,7 +233,7 @@ class PrefFormHandler
 
         if (!$subscriber) {
             wp_send_json_error([
-                'message' => 'Sorry! you can not update your profile'
+                'message' => __('Sorry! You cannot update your profile.', 'fluent-crm')
             ], 422);
         }
 
@@ -257,6 +258,10 @@ class PrefFormHandler
             } else {
                 $validData[$key] = sanitize_text_field(Arr::get($validData, $key, ''));
             }
+        }
+
+        if (!empty($validData['date_of_birth']) && !$this->isValidDate($validData['date_of_birth'])) {
+            $errors[] = 'date_of_birth';
         }
 
         if ($errors) {
@@ -480,31 +485,21 @@ class PrefFormHandler
             ];
         }
 
-        if (in_array('date_of_birth', $generalFields)) {
-            $formFields['date_of_birth'] = [
-                'type'     => 'date',
-                'name'     => 'date_of_birth',
-                'id'       => 'fc_date_of_birth',
-                'atts'     => [
-                    'type'          => 'text',
-                    'data-max-year' => gmdate('Y'),
-                    'data-min-year' => gmdate('Y') - 120,
-                    'class'         => 'fc_date_item',
-                    'data-format'   => 'YYYY-MM-DD',
-                    'placeholder'   => __('Date of Birth', 'fluent-crm'),
-                    'data-template' => 'DD - MM - YYYY'
-                ],
-                'required' => false,
-                'label'    => Arr::get($labels, 'dob', 'Date of Birth'),
-                'value'    => $subscriber->date_of_birth
-            ];
-        }
-
         $formFields[] = [
             'type' => 'raw_html',
             'html' => '</div>'
         ];
 
+        if (in_array('date_of_birth', $generalFields)) {
+            $formFields['date_of_birth'] = [
+                'type'     => 'date_dropdowns',
+                'name'     => 'date_of_birth',
+                'id'       => 'fc_date_of_birth',
+                'required' => false,
+                'label'    => Arr::get($labels, 'dob', 'Date of Birth'),
+                'value'    => $subscriber->date_of_birth
+            ];
+        }
 
         if (in_array('address_fields', $generalFields)) {
             $formFields[] = [
@@ -689,7 +684,7 @@ class PrefFormHandler
     {
         $inputFields = [];
 
-        $inputTypes = ['hidden', 'input', 'checkboxes', 'select', 'radio', 'date', 'textarea', 'select-multi', 'custom_date', 'custom_date_time'];
+        $inputTypes = ['hidden', 'input', 'checkboxes', 'select', 'radio', 'date', 'date_dropdowns', 'textarea', 'select-multi', 'custom_date', 'custom_date_time'];
 
         foreach ($fields as $inputKey => $field) {
             $type = Arr::get($field, 'type');
@@ -807,6 +802,20 @@ class PrefFormHandler
         }
 
         return $fieldConfig;
+    }
+
+    /**
+     * Check if a string is a valid calendar date in Y-m-d format.
+     *
+     * @param string $ymd Date string (e.g. 2024-02-31).
+     * @return bool
+     */
+    private function isValidDate($ymd)
+    {
+        if (!is_string($ymd) || !preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $ymd, $parts)) {
+            return false;
+        }
+        return checkdate((int) $parts[2], (int) $parts[3], (int) $parts[1]);
     }
 
 }

@@ -8,7 +8,7 @@
 
 namespace FluentCrm\App\Http\Controllers;
 
-use FluentCrm\Framework\Request\Request;
+use FluentCrm\Framework\Http\Request\Request;
 use FluentCrm\Framework\Support\Arr;
 
 /**
@@ -30,7 +30,7 @@ class SetupController extends Controller
             $this->installFluentForm();
         }
 
-        if($request->get('install_fluentcart', 'no') === 'yes' && !defined('FLUENTCART_VERSION')) {
+        if ($request->get('install_fluentcart', 'no') === 'yes' && !defined('FLUENTCART_VERSION')) {
             $this->installFluentCart();
         }
 
@@ -51,6 +51,11 @@ class SetupController extends Controller
 
     public function handleFluentFormInstall()
     {
+        if (!current_user_can('install_plugins')) {
+            return $this->sendError([
+                'message' => __('Sorry! you do not have permission to install plugin', 'fluent-crm')
+            ]);
+        }
         $this->installFluentForm();
         return [
             'ff_config'    => [
@@ -59,6 +64,62 @@ class SetupController extends Controller
             ],
             'is_installed' => defined('FLUENTFORM'),
             'message'      => __('Fluent Forms has been installed and activated', 'fluent-crm')
+        ];
+    }
+
+    public function handleFluentBoardsInstall()
+    {
+        if (!current_user_can('install_plugins')) {
+            return $this->sendError([
+                'message' => __('Sorry! you do not have permission to install plugin', 'fluent-crm')
+            ]);
+        }
+        $this->installFluentBoards();
+        return [
+            'message'      => __('Fluent Boards has been installed and activated', 'fluent-crm'),
+            'is_installed' => defined('FLUENT_BOARDS'),
+        ];
+    }
+
+    public function handleFluentCommunityInstall()
+    {
+        if (!current_user_can('install_plugins')) {
+            return $this->sendError([
+                'message' => __('Sorry! you do not have permission to install plugin', 'fluent-crm')
+            ]);
+        }
+        $this->installFluentCommunity();
+        return [
+            'message'      => __('Fluent Community has been installed and activated', 'fluent-crm'),
+            'is_installed' => defined('FLUENT_COMMUNITY_PLUGIN_VERSION'),
+        ];
+    }
+
+    public function handleFluentBookingInstall()
+    {
+        if (!current_user_can('install_plugins')) {
+            return $this->sendError([
+                'message' => __('Sorry! you do not have permission to install plugin', 'fluent-crm')
+            ]);
+        }
+        $this->installFluentBooking();
+        return [
+            'message'      => __('Fluent Booking has been installed and activated', 'fluent-crm'),
+            'is_installed' => defined('FLUENT_BOOKING_VERSION'),
+        ];
+    }
+
+    public function handleFluentCartInstall()
+    {
+        if (!current_user_can('install_plugins')) {
+            return $this->sendError([
+                'message' => __('Sorry! you do not have permission to install plugin', 'fluent-crm')
+            ]);
+        }
+        $this->installFluentCart();
+        return [
+            'message'      => __('FluentCart has been installed and activated', 'fluent-crm'),
+            'is_installed' => defined('FLUENTCART_VERSION'),
         ];
     }
 
@@ -80,28 +141,7 @@ class SetupController extends Controller
 
     }
 
-    public function handleFluentConnectInstall()
-    {
-        if (!current_user_can('install_plugins')) {
-            return $this->sendError([
-                'message' => __('Sorry! you do not have permission to install plugin', 'fluent-crm')
-            ]);
-        }
 
-        $plugin_id = 'fluent-connect';
-        $plugin = [
-            'name'      => __('Fluent Connect', 'fluent-crm'),
-            'repo-slug' => 'fluent-connect',
-            'file'      => 'fluent-connect.php',
-        ];
-        $this->backgroundInstaller($plugin, $plugin_id);
-
-        return [
-            'is_installed' => defined('FLUENT_CONNECT_PLUGIN_VERSION'),
-            'message'      => __('FluentConnect plugin has been installed and activated successfully', 'fluent-crm')
-        ];
-
-    }
 
     public function handleFluentSupportInstall()
     {
@@ -163,6 +203,38 @@ class SetupController extends Controller
             'name'      => __('Fluent Forms', 'fluent-crm'),
             'repo-slug' => 'fluentform',
             'file'      => 'fluentform.php',
+        ];
+        $this->backgroundInstaller($plugin, $plugin_id);
+    }
+
+    private function installFluentBoards()
+    {
+        $plugin_id = 'fluent-boards';
+        $plugin = [
+            'name'      => __('Fluent Boards', 'fluent-crm'),
+            'repo-slug' => 'fluent-boards',
+            'file'      => 'fluent-boards.php',
+        ];
+        $this->backgroundInstaller($plugin, $plugin_id);
+    }
+    private function installFluentCommunity()
+    {
+        $plugin_id = 'fluent-community';
+        $plugin = [
+            'name'      => __('Fluent Community', 'fluent-crm'),
+            'repo-slug' => 'fluent-community',
+            'file'      => 'fluent-community.php',
+        ];
+        $this->backgroundInstaller($plugin, $plugin_id);
+    }
+
+    private function installFluentBooking()
+    {
+        $plugin_id = 'fluent-booking';
+        $plugin = [
+            'name'      => __('Fluent Booking', 'fluent-crm'),
+            'repo-slug' => 'fluent-booking',
+            'file'      => 'fluent-booking.php',
         ];
         $this->backgroundInstaller($plugin, $plugin_id);
     }
@@ -277,7 +349,6 @@ class SetupController extends Controller
                     }
 
                     $activate = true;
-
                 } catch (\Exception $e) {
                 }
 

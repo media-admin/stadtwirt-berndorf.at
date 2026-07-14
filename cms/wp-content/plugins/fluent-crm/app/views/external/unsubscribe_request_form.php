@@ -30,7 +30,7 @@
     </div>
     <div class="fluentcrm_un_form_wrapper">
         <h4><?php esc_html_e('Get Unsubscribe Link', 'fluent-crm') ?></h4>
-        <p><?php esc_html_e('Looks like we could not determine your info. Please fill out the form and get unsubscribe link via email.', 'fluent-crm'); ?></p>
+        <p><?php esc_html_e('Looks like we could not determine your info. Please fill out the form and get an unsubscribe link via email.', 'fluent-crm'); ?></p>
 
         <form method="POST" class="fluentcrm_public_pref_form fc_public_form" action="/" id="fc_unsub_req_form">
             <input type="hidden" name="action" value="fluentcrm_request_unsubscribe_ajax"/>

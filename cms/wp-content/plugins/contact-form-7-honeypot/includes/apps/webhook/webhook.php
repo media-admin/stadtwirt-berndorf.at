@@ -461,7 +461,16 @@ if ( ! class_exists( 'CF7Apps_Webhook' ) && class_exists( 'CF7Apps_App' ) ) :
                 // Replace individual field placeholders
                 foreach ( $mapped_data as $field_name => $field_value ) {
                     $placeholder = '[' . $field_name . ']';
-                    $payload_template = str_replace( $placeholder, $field_value, $payload_template );
+                    if ( is_array( $field_value ) ) {
+                        $replace = implode( ', ', array_map( 'strval', $field_value ) );
+                    } elseif ( is_scalar( $field_value ) ) {
+                        $replace = (string) $field_value;
+                    } elseif ( null === $field_value ) {
+                        $replace = '';
+                    } else {
+                        $replace = wp_json_encode( $field_value );
+                    }
+                    $payload_template = str_replace( $placeholder, $replace, $payload_template );
                 }
                 
                 // Try to decode as JSON, fallback to raw template

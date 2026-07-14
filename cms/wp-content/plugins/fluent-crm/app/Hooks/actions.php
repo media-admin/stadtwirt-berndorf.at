@@ -10,24 +10,27 @@
  */
 
 // Init scheduled tasks
-use FluentCart\Api\Resource\OrderResource;
-use FluentCart\App\Models\Order;
 
 \FluentCrm\App\Hooks\Handlers\Scheduler::register();
+(new \FluentCrm\App\Hooks\Handlers\FluentBlockEditorHandler())->register();
+(new \FluentCrm\App\Hooks\Handlers\FluentConditionalContentBlockHandler())->register();
+(new \FluentCrm\App\Modules\AbandonCart\AbandonCart())->register();
 
-$app->addAction('fluentcrm_contacts_filter_subscriber', function ($query, $filters) {
+(new \FluentCrm\App\Hooks\Handlers\AutoSubscribeHandler())->register();
+
+add_action('fluentcrm_contacts_filter_subscriber', function ($query, $filters) {
     return (new \FluentCrm\App\Models\Subscriber)->buildGeneralPropertiesFilterQuery($query, $filters);
 }, 10, 2);
 
-$app->addAction('fluentcrm_contacts_filter_segment', function ($query, $filters) {
+add_action('fluentcrm_contacts_filter_segment', function ($query, $filters) {
     return (new \FluentCrm\App\Models\Subscriber)->buildSegmentFilterQuery($query, $filters);
 }, 10, 2);
 
-$app->addAction('fluentcrm_contacts_filter_custom_fields', function ($query, $filters) {
+add_action('fluentcrm_contacts_filter_custom_fields', function ($query, $filters) {
     return (new \FluentCrm\App\Models\Subscriber)->buildCustomFieldsFilterQuery($query, $filters);
 }, 10, 2);
 
-$app->addAction('fluentcrm_contacts_filter_activities', function ($query, $filters) {
+add_action('fluentcrm_contacts_filter_activities', function ($query, $filters) {
     return (new \FluentCrm\App\Models\Subscriber)->buildActivitiesFilterQuery($query, $filters);
 }, 10, 2);
 
@@ -65,15 +68,28 @@ $app->addAction('wp_ajax_fluentcrm_export_funnel', 'FunnelHandler@exportFunnel')
 $app->addAction('wp_ajax_fluentcrm_save_funnel_email_action', 'FunnelHandler@saveEmailAction');
 $app->addAction('wp_ajax_fluentcrm_save_campaign_email_body', 'FunnelHandler@saveCampaignEmail');
 
-/*
- * Integrations
- */
-$app->addAction('init', 'Integrations@register');
+
 
 /*
- * Funnel
+ * Integrations & Funnels Handler Init
  */
-$app->addAction('fluentcrm_addons_loaded', 'FunnelHandler@handle');
+
+(new \FluentCrm\App\Hooks\Handlers\FunnelHandler())->register();
+
+// FluentCart's modal checkout fires fluent_cart/before_payment_methods and calls die()
+// during init at priority 10, before a priority-10 callback can register. Only
+// CheckoutSubscription needs to be early — everything else in FluentCart::init() is fine at 10.
+add_action('init', function () {
+    if (defined('FLUENTCART_VERSION')) {
+        (new \FluentCrm\App\Services\ExternalIntegrations\FluentCart\CheckoutSubscription())->init();
+    }
+}, 1);
+
+// All external integrations (FluentCart::init() runs here too, minus CheckoutSubscription)
+add_action('init', function () {
+    (new \FluentCrm\App\Hooks\Handlers\Integrations())->register();
+}, 10);
+
 
 $app->addAction('fluentcrm_subscriber_status_to_subscribed', 'FunnelHandler@resumeSubscriberFunnels', 1, 2);
 
@@ -111,7 +127,15 @@ add_action('fluent_crm/debug_log', function ($logData) {
 $app->addAction('admin_bar_menu', 'AdminBar@init');
 
 add_action('wp_ajax_nopriv_fluentcrm-post-campaigns-emails-processing', function () use ($app) {
-    \FluentCrm\App\Hooks\Handlers\Scheduler::processFiveMinutes();
+    $campaignId = isset($_REQUEST['campaign_id']) ? intval($_REQUEST['campaign_id']) : 0;
+
+    if ($campaignId) {
+        // Continue processing a specific campaign — skip housekeeping/discovery
+        \FluentCrm\App\Hooks\Handlers\Scheduler::processCampaignById($campaignId);
+    } else {
+        // No campaign ID — run full discovery (backward compat)
+        \FluentCrm\App\Hooks\Handlers\Scheduler::processFiveMinutes();
+    }
 
     wp_send_json_success([
         'message' => 'success',
@@ -125,12 +149,6 @@ add_action('wp_ajax_nopriv_fluentcrm-post-campaigns-emails-processing', function
 add_action('wp_loaded', function () use ($app) {
     if (isset($_GET['ns_url'])) {
         (new \FluentCrm\App\Hooks\Handlers\RedirectionHandler())->redirect($_GET);
-    } else if (isset($_GET['do_fluentcrm_scheduled_tasks'])) {
-        do_action('fluentcrm_scheduled_minute_tasks');
-        wp_send_json_success();
-    } else if (isset($_GET['fluentcrm_scheduled_hourly_tasks'])) {
-        do_action('fluentcrm_scheduled_hourly_tasks');
-        wp_send_json_success();
     }
 });
 
@@ -157,13 +175,6 @@ if (!empty($_GET['page']) && 'fluentcrm-setup' == $_GET['page']) {
     }, 999);
 }
 
-$app->addAction('user_register', 'AutoSubscribeHandler@userRegistrationHandler', 99, 1);
-$app->addAction('comment_post', 'AutoSubscribeHandler@handleCommentPost', 99, 3);
-
-$app->addAction('profile_update', 'AutoSubscribeHandler@syncUserUpdate', 10, 3);
-$app->addAction('delete_user', 'AutoSubscribeHandler@maybeDeleteContact', 10, 3);
-
-$app->addAction('woocommerce_customer_save_address', 'AutoSubscribeHandler@syncWooAddressUpdate', 10, 2);
 
 add_shortcode('fluentcrm_pref', function ($atts, $content) {
     return (new \FluentCrm\App\Hooks\Handlers\PrefFormHandler())->handleShortCode($atts, $content);
@@ -181,7 +192,7 @@ if (defined('WP_CLI') && WP_CLI) {
 
 add_action('admin_notices', function () {
     if (defined('FLUENTCAMPAIGN_FRAMEWORK_VERSION') && FLUENTCAMPAIGN_FRAMEWORK_VERSION < 3) {
-        echo '<div class="fc_notice notice notice-error fc_notice_error"><h3>Update FluentCRM Pro Plugin</h3><p>Your are using out-dated version of FluentCRM Pro. <a href="' . esc_url(admin_url('plugins.php?s=fluentcampaign=pro&plugin_status=all&fluentcrm_pro_check_update=' . time())) . '">' . esc_html__('Please update FluentCRM Pro to latest version', 'fluent-crm') . '</a>.</p></div>';
+        echo '<div class="fc_notice notice notice-error fc_notice_error"><h3>Update FluentCRM Pro Plugin</h3><p>You are using an out-of-date version of FluentCRM Pro. <a href="' . esc_url(admin_url('plugins.php?s=fluentcampaign=pro&plugin_status=all&fluentcrm_pro_check_update=' . time())) . '">' . esc_html__('Please update FluentCRM Pro to latest version', 'fluent-crm') . '</a>.</p></div>';
     }
 });
 
@@ -200,4 +211,42 @@ add_action('wp_ajax_fluentcrm_renew_rest_nonce', function () {
     ], 200);
 });
 
+/*
+ * Add custom CSS for fcrm_notice
+ */
+add_action('admin_head', function () {
+    echo '<style>
+        .fcrm_notice {
+            background: #ffffff;
+            border: 1px solid #E1E4EA;
+            border-left: 3px solid #FB3748;
+            padding: 10px 12px !important;
+            border-radius: 8px;
+            margin-bottom: 5px;
+        }
+    </style>';
+});
 
+/*
+ * MCP — Register abilities for the WordPress Abilities API.
+ *
+ * Lazy-register guard:
+ *  - On WP < 6.9 (no Abilities API in core) OR sites without the WP MCP Adapter
+ *    plugin active, `wp_register_ability` is undefined — we skip silently.
+ *  - The opt-out option `fluent_crm_mcp_enabled` (default 'yes') lets admins
+ *    disable the entire MCP surface from Settings → MCP without uninstalling
+ *    the adapter.
+ *
+ * See `app/Modules/MCP/MCPInit.php` for the registration logic.
+ */
+add_action('init', function () {
+    if (!function_exists('wp_register_ability')) {
+        return;
+    }
+
+    if (fluentcrm_get_option('mcp_enabled', 'yes') !== 'yes') {
+        return;
+    }
+
+    (new \FluentCrm\App\Modules\MCP\MCPInit())->init();
+}, 5);

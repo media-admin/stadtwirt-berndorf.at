@@ -1,7 +1,11 @@
-import { __ } from "@wordpress/i18n";
 import CF7AppsHelpText from "./CF7AppsHelpText";
 
 const CF7AppsSelectField = ({ label, selected, description, onChange, className = '', options, name, disabled }) => {
+    const optionKeys = Object.keys( options || {} );
+    const selectValue =
+        selected !== undefined && selected !== null && String( selected ) !== ''
+            ? String( selected )
+            : ( optionKeys[0] ?? '' );
     // if caller includes 'inline-select' in className we render the wrapper inline so multiple selects
     // can appear on the same row. This keeps the change local and opt-in from PHP settings by
     // adding 'inline-select' to the field's class value.
@@ -52,7 +56,7 @@ const CF7AppsSelectField = ({ label, selected, description, onChange, className 
                             className={`cf7apps-form-input ${className}`} 
                             name={name}
                             onChange={onChange}
-                            defaultValue={selected}
+                            value={selectValue}
                             disabled={disabled}
                             style={{
                                 appearance: 'none',
@@ -94,7 +98,7 @@ const CF7AppsSelectField = ({ label, selected, description, onChange, className 
                         className={`cf7apps-form-input ${className}`} 
                         name={name}
                         onChange={onChange}
-                        defaultValue={selected}
+                        value={selectValue}
                         disabled={disabled}
                         style={{
                             appearance: 'none',

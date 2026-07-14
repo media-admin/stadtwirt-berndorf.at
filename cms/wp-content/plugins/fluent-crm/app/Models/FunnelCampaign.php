@@ -81,10 +81,10 @@ class FunnelCampaign extends Campaign
                  *
                  * This filter allows you to modify the email body content before it is sent to the subscriber.
                  *
-                 * @since 2.7.0
-                 *
                  * @param string $emailBody The email body content.
                  * @param object $refSubscriber The subscriber object reference.
+                 * @since 2.7.0
+                 *
                  */
                 $emailBody = apply_filters('fluent_crm/parse_campaign_email_text', $emailBody, $refSubscriber);
                 /**
@@ -92,12 +92,12 @@ class FunnelCampaign extends Campaign
                  *
                  * This filter allows you to modify the email subject text before it is sent to the subscriber.
                  *
-                 * @since 2.7.0
-                 * 
                  * @param string $emailSubject The original email subject text.
                  * @param object $refSubscriber The subscriber object reference.
                  *
                  * @return string The filtered email subject text.
+                 * @since 2.7.0
+                 *
                  */
                 $emailSubject = apply_filters('fluent_crm/parse_campaign_email_text', $emailSubject, $refSubscriber);
             }
@@ -175,7 +175,8 @@ class FunnelCampaign extends Campaign
             // Let's create the email body here
             $rawTemplates = [
                 'raw_html',
-                'visual_builder'
+                'visual_builder',
+                'raw_classic'
             ];
             $emailBody = $this->email_body;
             if (!in_array($this->design_template, $rawTemplates)) {
@@ -187,16 +188,15 @@ class FunnelCampaign extends Campaign
              *
              * This filter allows you to modify the email body content before it is sent to the subscriber.
              *
-             * @since 2.8.44
-             * 
              * @param string $emailBody The original email body content.
              * @param object $subscriber The subscriber object containing subscriber details.
              *
              * @return string The filtered email body content.
+             * @since 2.8.44
+             *
              */
             $emailBody = apply_filters('fluent_crm/parse_campaign_email_text', $emailBody, $subscriber);
             // email body creation done
-
 
             if ($subjectItem && !empty($subjectItem->value)) {
                 $emailSubject = $subjectItem->value;
@@ -208,12 +208,12 @@ class FunnelCampaign extends Campaign
              *
              * This filter allows you to modify the email subject text for a campaign.
              *
-             * @since 2.8.40
-             * 
              * @param string $emailSubject The original email subject text.
              * @param object $subscriber The subscriber object.
              *
              * @return string The filtered email subject text.
+             * @since 2.8.40
+             *
              */
             $email['email_subject'] = apply_filters('fluent_crm/parse_campaign_email_text', $emailSubject, $subscriber);
 
@@ -233,19 +233,29 @@ class FunnelCampaign extends Campaign
              *
              * This filter allows you to modify the email body content before it is sent to the subscriber.
              *
-             * @since 2.8.44
-             * 
              * @param string $emailBody The email body content.
              * @param object $subscriber The subscriber object containing subscriber details.
              *
              * @return string The filtered email body content.
+             * @since 2.8.44
+             *
              */
             $emailBody = apply_filters('fluent_crm/parse_campaign_email_text', $emailBody, $subscriber);
-            $urls = $this->getShortUrls($emailBody);
 
-            if ($urls) {
-                $emailBody = Helper::attachUrls($emailBody, $urls, $inserted->id, $emailHash);
+
+            $trackingType = fluentcrmTrackClicking();
+
+            if ($trackingType) {
+                $campaignUrls = Helper::urlReplaces($emailBody);
+                if ($campaignUrls) {
+                    if ($trackingType === 'anonymous') {
+                        $emailBody = Helper::attachAnonymousUrls($emailBody, $campaignUrls, $inserted->id, $emailHash);
+                    } else {
+                        $emailBody = Helper::attachUrls($emailBody, $campaignUrls, $inserted->id, $emailHash);
+                    }
+                }
             }
+
 
             CampaignEmail::where('id', $inserted->id)
                 ->update([
@@ -286,12 +296,14 @@ class FunnelCampaign extends Campaign
     }
 
 
-    public function getShortUrls($emailBody)
+    public function getOpenTrackingStatus($globalFallback = true)
     {
-        if (!fluentcrmTrackClicking()) {
-            return [];
-        }
-
-        return Helper::urlReplaces($emailBody);
+        return fluentcrmTrackEmailOpen();
     }
+
+    public function getClickTrackingStatus($globalFallback = true)
+    {
+        return fluentcrmTrackClicking();
+    }
+
 }

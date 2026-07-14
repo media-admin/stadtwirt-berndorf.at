@@ -97,19 +97,51 @@ class RemoveFromTagBenchmark extends BaseBenchMark
 
     private function isTagMatched($tagIds, $subscriber, $settings)
     {
-        $isMatched = array_intersect($settings['tags'], $tagIds);
+        $benchmarkTags = Arr::get($settings, 'tags', []);
+        if (empty($benchmarkTags)) {
+            return false;
+        }
+
+        $isMatched = array_intersect($benchmarkTags, $tagIds);
         if (!$isMatched) {
             return false; // not in our scope
         }
 
-        $marchType = Arr::get($settings, 'select_type');
+        $matchType = Arr::get($settings, 'select_type');
 
-        if ($marchType == 'all') {
+        if ($matchType == 'all') {
+            // Check that ALL benchmark tags have been removed (none remain on subscriber)
             $attachedTagIds = $subscriber->tags->pluck('id')->toArray();
-            return !array_diff($settings['tags'], $attachedTagIds) == $settings['tags'];
+            return empty(array_intersect($benchmarkTags, $attachedTagIds));
         }
 
         return $isMatched;
+    }
+
+    public function assertCurrentGoalState($asserted, $benchmark, $funnelSubscriber)
+    {
+        if (!$funnelSubscriber || !$funnelSubscriber->subscriber) {
+            return $asserted;
+        }
+
+        $subscriber = $funnelSubscriber->subscriber;
+        $settings = $benchmark->settings;
+        $benchmarkTags = Arr::get($settings, 'tags', []);
+
+        if (empty($benchmarkTags)) {
+            return $asserted;
+        }
+
+        $attachedTagIds = $subscriber->tags->pluck('id')->toArray();
+        $matchType = Arr::get($settings, 'select_type');
+
+        if ($matchType == 'all') {
+            return empty(array_intersect($benchmarkTags, $attachedTagIds));
+        }
+
+        // 'any' — at least one benchmark tag is NOT in subscriber's tags
+        $removed = array_diff($benchmarkTags, $attachedTagIds);
+        return !empty($removed);
     }
 
 }

@@ -925,41 +925,7 @@ class Route
      */
     protected function handleResponse($response)
     {
-        if ($response->get_status() >= 400) {
-            $this->fireExceptionEvent(
-                new Exception(
-                    $this->extractErrorMessage($response),
-                    $response->get_status()
-                )
-            );
-        }
-
         return $response;
-    }
-
-    /**
-     * Extract error message from response data.
-     *
-     * @param  \WP_REST_Response $response
-     * @return string
-     */
-    protected function extractErrorMessage($response)
-    {
-        $data = $response->get_data();
-
-        if (is_string($data)) {
-            return $data;
-        }
-
-        if (is_array($data) && isset($data['message'])) {
-            return $data['message'];
-        }
-
-        if ($data instanceof WP_Error) {
-            return $data->get_error_message();
-        }
-
-        return 'Unknown error';
     }
 
     /**
@@ -995,17 +961,25 @@ class Route
 
         $this->fireExceptionEvent($e);
 
+        // Production sanitization: client-facing message must not leak
+        // PDO / HTTP-client / file-system internals. The real message
+        // ships to fluent_exception listeners (Night Watcher / bridge)
+        // via fireExceptionEvent above, so observability is preserved.
         if ($this->app->isDebugOn()) {
             $data = [
                 'file'  => $e->getFile(),
                 'line'  => $e->getLine(),
             ];
+
+            $message = $e->getMessage();
+        } else {
+            $message = 'An internal error occurred.';
         }
 
         return $this->app->response->sendError([
             'code'    => 'plugin_exception',
             'data'    => $data,
-            'message' => $e->getMessage(),
+            'message' => $message,
         ], $e->getCode() ?: 500, $headers);
     }
 
@@ -1082,6 +1056,15 @@ class Route
      */
     protected function fireExceptionEvent($exception)
     {
+        // Reentrancy guard: a fluent_exception listener that itself triggers
+        // an exception path must not re-enter this method and recurse. Reset
+        // in finally so subsequent (sequential) calls proceed normally.
+        static $firing = false;
+
+        if ($firing) {
+            return;
+        }
+
         if ($this->app->isDebugOn() || defined('FLUENT_BRIDGE_SECRET')) {
             $message = sprintf(
                 "%s in %s:%d\nStack trace:\n%s\n",
@@ -1090,10 +1073,26 @@ class Route
                 $exception->getLine(),
                 $exception->getTraceAsString()
             );
-            
+
             error_log($message);
-            
+        }
+
+        $firing = true;
+
+        try {
             $this->app->doAction('fluent_exception', $exception);
+        } catch (Throwable $listenerError) {
+            // Listener-throw isolation: a buggy fluent_exception listener
+            // (DB down, disk full) must not escape and crash the response.
+            // Log under the same gate; never re-fire fluent_exception here
+            // — that would be the cascade we are protecting against.
+            if ($this->app->isDebugOn() || defined('FLUENT_BRIDGE_SECRET')) {
+                error_log(
+                    'fluent_exception listener failed: ' . $listenerError->getMessage()
+                );
+            }
+        } finally {
+            $firing = false;
         }
     }
 
@@ -1143,7 +1142,7 @@ class Route
 
             return $response;
 
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return new WP_Error(
                 'Permission Callback Error',
                 $e->getMessage(), [

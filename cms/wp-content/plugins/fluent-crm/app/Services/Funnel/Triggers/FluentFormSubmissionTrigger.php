@@ -211,7 +211,7 @@ class FluentFormSubmissionTrigger extends BaseTrigger
         foreach (Arr::get($processedValues, 'other_fields', []) as $otherField) {
             if (!empty($otherField['field_key']) && !empty($otherField['field_value'])) {
                 $key = $otherField['field_key'];
-                if (strpos($key, '.')) {
+                if (strpos($key, '.') !== false) {
                     $subscriberData['custom_values'][str_replace('custom.', '', $key)] = $otherField['field_value'];
                 } else {
                     $subscriberData[$key] = $otherField['field_value'];

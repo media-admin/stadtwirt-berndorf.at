@@ -396,14 +396,18 @@ class PaymentHandler
     {
         // phpcs:disable WordPress.Security.NonceVerification.Recommended -- Nonce verified by Acl::verify()
         $route = isset($_REQUEST['route']) ? sanitize_text_field(wp_unslash($_REQUEST['route'])) : '';
-        $formScopedRoutes = [
-            'get_form_settings',
-            'save_form_settings',
+        $paymentMutationRoutes = [
             'update_transaction',
             'cancel_subscription'
         ];
+        $formSettingRoutes = [
+            'get_form_settings',
+            'save_form_settings'
+        ];
 
-        if (in_array($route, $formScopedRoutes, true)) {
+        if (in_array($route, $paymentMutationRoutes, true)) {
+            Acl::verify('fluentform_manage_payments', $this->resolveRouteFormId($route));
+        } elseif (in_array($route, $formSettingRoutes, true)) {
             Acl::verify('fluentform_forms_manager', $this->resolveRouteFormId($route));
         } else {
             Acl::verify('fluentform_settings_manager');

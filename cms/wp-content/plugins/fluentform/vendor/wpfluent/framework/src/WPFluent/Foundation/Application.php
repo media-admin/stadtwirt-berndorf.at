@@ -21,10 +21,29 @@ use FluentForm\Framework\Foundation\ComponentBinder;
 use FluentForm\Framework\Foundation\Concerns\FoundationTrait;
 
 /**
- * @property \FluentForm\Framework\Foundation\Config $config
- * @property \FluentForm\Framework\Http\Router\Router $router
- * @property \FluentForm\Framework\Http\Request\Request $request
- * @property \FluentForm\Framework\Http\Response\Response $response
+ * Application — service container with magic property access via __get.
+ *
+ * Properties below are bound in {@see ComponentBinder::bindComponents()} and
+ * {@see Application::init()}/{@see Application::setAppLevelNamespace()}. Each
+ * `@property` declaration teaches PHPStan about a runtime container binding so
+ * `$app->view->render(...)` and similar access can be type-checked.
+ *
+ * @property \FluentForm\Framework\Foundation\Config        $config
+ * @property \FluentForm\Framework\View\View                $view
+ * @property \FluentForm\Framework\Cache\Cache              $cache
+ * @property \FluentForm\Framework\Http\Router\Router       $router
+ * @property \FluentForm\Framework\Http\Request\Request     $request
+ * @property \FluentForm\Framework\Http\Response\Response   $response
+ * @property \FluentForm\Framework\Validator\Validator      $validator
+ * @property \FluentForm\Framework\Events\Dispatcher        $events
+ * @property \FluentForm\Framework\Encryption\Encrypter     $encrypter
+ * @property \FluentForm\Framework\Encryption\Encrypter     $crypt
+ * @property \FluentForm\Framework\Database\DatabaseManager $db
+ * @property \FluentForm\Framework\Http\URL                 $url
+ * @property \FluentForm\Framework\Support\Mail             $mail
+ * @property \FluentForm\Framework\Support\Pipeline         $pipeline
+ * @property string                             $__pluginfile__
+ * @property string                             $__namespace__
  */
 class Application extends Container
 {
@@ -252,15 +271,15 @@ class Application extends Container
      */
     protected function loadConfigIfExists()
     {
-        $data = [];
+        $files = [];
 
         if (is_dir($this['path.config'])) {
             foreach (glob($this['path.config'] . '*.php') as $file) {
-                $data[basename($file, '.php')] = require($file);
+                $files[basename($file, '.php')] = $file;
             }
         }
 
-        $this->instance('config', new Config($data));
+        $this->instance('config', new Config([], $files));
     }
 
     /**

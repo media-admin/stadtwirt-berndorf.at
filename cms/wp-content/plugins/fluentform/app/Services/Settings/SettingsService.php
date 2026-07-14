@@ -140,7 +140,7 @@ class SettingsService
             'customUrl'                  => 'sanitize_url',
             'enabled'                    => 'rest_sanitize_boolean',
             'numberOfEntries'            => 'intval',
-            'period'                     => 'intval',
+            'period'                     => 'sanitize_text_field',
             'limitReachedMsg'            => 'sanitize_text_field',
             'start'                      => 'sanitize_text_field',
             'end'                        => 'sanitize_text_field',
@@ -250,9 +250,12 @@ class SettingsService
         $conversationalForm = new FluentConversational();
 
         return [
-            'design_settings' => $conversationalForm->getDesignSettings($formId),
-            'meta_settings'   => $conversationalForm->getMetaSettings($formId),
-            'has_pro'         => defined('FLUENTFORMPRO'),
+            'design_settings'     => $conversationalForm->getDesignSettings($formId),
+            'meta_settings'       => $conversationalForm->getMetaSettings($formId),
+            'form_settings'       => Form::getFormsDefaultSettings($formId),
+            'pretty_url'          => $this->getPrettyUrlSettings($formId),
+            'has_pro'             => defined('FLUENTFORMPRO'),
+            'has_pro_share_page'  => $this->hasProSharePage(),
         ];
     }
 
@@ -289,6 +292,13 @@ class SettingsService
             FormMeta::persist($formId, $metaKey . '_meta', $meta);
         }
 
+        $prettyUrl = $this->savePrettyUrlSettings(Arr::get($attributes, 'pretty_url'), $formId);
+
+        $formSettings = Arr::get($attributes, 'form_settings');
+        if (is_array($formSettings) && isset($formSettings['restrictions'])) {
+            $this->saveFormRestrictions($formId, Arr::get($formSettings, 'restrictions', []));
+        }
+
         $params = [
             'fluent-form' => $formId,
         ];
@@ -300,7 +310,25 @@ class SettingsService
         return [
             'message'   => __('Settings successfully updated','fluentform'),
             'share_url' => $shareUrl,
+            'pretty_url' => $prettyUrl,
         ];
+    }
+
+    public function saveFormRestrictions($formId, $restrictions)
+    {
+        $formId = intval($formId);
+
+        if (!is_array($restrictions)) {
+            return Form::getFormsDefaultSettings($formId);
+        }
+
+        $existingFormSettings = Form::getFormsDefaultSettings($formId);
+        $existingFormSettings['restrictions'] = $restrictions;
+        $existingFormSettings = $this->sanitizeData($existingFormSettings);
+
+        FormMeta::persist($formId, 'formSettings', $existingFormSettings);
+
+        return $existingFormSettings;
     }
 
     public function getPreset($formId)
@@ -362,5 +390,63 @@ class SettingsService
         $clean = sanitize_text_field($clean);
         
         return trim($clean);
+    }
+
+    private function hasProSharePage()
+    {
+        return defined('FLUENTFORMPRO') && class_exists('\FluentFormPro\classes\SharePage\SharePage');
+    }
+
+    private function hasProPrettyUrl()
+    {
+        return defined('FLUENTFORMPRO') && class_exists('\FluentFormPro\classes\SharePage\FormPrettyUrlService');
+    }
+
+    private function getPrettyUrlSettings($formId)
+    {
+        if (!$this->hasProPrettyUrl()) {
+            return [
+                'available'  => false,
+                'slug'       => '',
+                'enabled'    => false,
+                'pretty_url' => '',
+                'base_slug'  => 'form',
+            ];
+        }
+
+        $service = '\FluentFormPro\classes\SharePage\FormPrettyUrlService';
+        $slug = $service::getSlug($formId);
+        if (!$slug) {
+            $form = Form::find($formId);
+            $slug = $form ? $service::generateSlug($form->title, $formId) : '';
+        }
+
+        return [
+            'available'  => true,
+            'slug'       => $slug,
+            'enabled'    => $service::isEnabled($formId),
+            'pretty_url' => $service::getFormPrettyUrl($formId),
+            'base_slug'  => $service::getBaseSlug(),
+        ];
+    }
+
+    private function savePrettyUrlSettings($prettyUrl, $formId)
+    {
+        if (!is_array($prettyUrl) || !$this->hasProPrettyUrl()) {
+            return $this->getPrettyUrlSettings($formId);
+        }
+
+        $service = '\FluentFormPro\classes\SharePage\FormPrettyUrlService';
+        $slug = sanitize_text_field(Arr::get($prettyUrl, 'slug', ''));
+        $enabled = Arr::isTrue($prettyUrl, 'enabled');
+        $savedSlug = $service::saveSlug($formId, $slug, $enabled);
+
+        return [
+            'available'  => true,
+            'slug'       => $savedSlug,
+            'enabled'    => $service::isEnabled($formId),
+            'pretty_url' => $service::getFormPrettyUrl($formId),
+            'base_slug'  => $service::getBaseSlug(),
+        ];
     }
 }

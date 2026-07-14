@@ -13,7 +13,7 @@ class Acl
 
     public static function normalizeFormId($formId)
     {
-        if ($formId === null || $formId === false || $formId === '') {
+        if (null === $formId || false === $formId || '' === $formId) {
             return null;
         }
 
@@ -62,11 +62,11 @@ class Acl
             'fluentform_settings_manager',
             'fluentform_full_access',
         ];
-    
+
         $data = apply_filters_deprecated(
             'fluentform_permission_set',
             [
-                $data
+                $data,
             ],
             FLUENTFORM_FRAMEWORK_UPGRADE,
             'fluentform/permission_set',
@@ -165,7 +165,8 @@ class Acl
             return true;
         }
 
-        $grantedRole = static::getCurrentUserCapability();
+        // Skip the role fallback for explicit managers, else a limited manager escalates.
+        $grantedRole = self::isExplicitManager() ? false : static::getCurrentUserCapability();
 
         foreach ((array) $permissions as $permission) {
             $allowed = current_user_can($permission);
@@ -190,13 +191,40 @@ class Acl
         return current_user_can('fluentform_full_access') || current_user_can('manage_options');
     }
 
+    // Is the CURRENT user a Manager added by name (per-user), not just someone riding a delegated role?
+    private static function isExplicitManager()
+    {
+        $userId = get_current_user_id();
+
+        return (bool) ($userId && self::userHasDirectGrant($userId, wp_get_current_user()));
+    }
+
+    // "Direct grant" = permissions attached to the USER themselves (per-user Manager),
+    // as opposed to access inherited from a delegated WordPress role.
+    private static function userHasDirectGrant($userId, $user)
+    {
+        // Flag set when an admin adds the user via Settings -> Managers.
+        if (get_user_meta($userId, '_fluent_forms_has_role', true)) {
+            return true;
+        }
+
+        // Legacy fallback: caps stored on the user itself ($user->caps), not merged in from a role.
+        foreach (static::getPermissionSet() as $permission) {
+            if ($user && !empty($user->caps[$permission])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private static function filterPermissionCheck($permission, $allowed, $formId)
     {
         $allowed = apply_filters_deprecated(
             'fluentform_verify_user_permission_' . $permission,
             [
                 $allowed,
-                $formId
+                $formId,
             ],
             FLUENTFORM_FRAMEWORK_UPGRADE,
             'fluentform/verify_user_permission_' . $permission,
@@ -351,15 +379,19 @@ class Acl
         $isSuperMan = static::isSuperMan($user);
         $capability = static::findUserCapability($user);
 
-        if ($isSuperMan || $capability) {
-            if ($isSuperMan) {
-                // $permissionSet[] = 'administrator';
-            }
+        $isManager = self::userHasDirectGrant($user->ID, $user);
 
+        if ($isSuperMan) {
             return $permissionSet;
         }
 
         $userPermissions = array_values(array_intersect(array_keys($user->allcaps), $permissionSet));
+
+        // Delegated-role users still return before the filter (unchanged boundary);
+        // a manager just reports their own scoped caps instead of the full set.
+        if ($capability) {
+            return $isManager ? $userPermissions : $permissionSet;
+        }
 
         return apply_filters('fluentform/current_user_permissions', $userPermissions);
     }

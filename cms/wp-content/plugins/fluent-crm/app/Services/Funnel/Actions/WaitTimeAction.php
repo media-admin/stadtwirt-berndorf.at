@@ -74,7 +74,7 @@ class WaitTimeAction extends BaseAction
             'fields'    => [
                 'wait_type'        => [
                     'type'    => 'radio_buttons',
-                    'label'   => 'Waiting Type',
+                    'label'   => __('Waiting Type', 'fluent-crm'),
                     'options' => [
                         [
                             'id'    => 'unit_wait',
@@ -110,6 +110,10 @@ class WaitTimeAction extends BaseAction
                     'wrapper_class' => 'fc_2col_inline',
                     'options'       => [
                         [
+                            'id'    => 'months',
+                            'title' => __('Months', 'fluent-crm')
+                        ],
+                        [
                             'id'    => 'days',
                             'title' => __('Days', 'fluent-crm')
                         ],
@@ -141,36 +145,36 @@ class WaitTimeAction extends BaseAction
                 ],
                 'to_day'           => [
                     'type'          => 'checkboxes',
-                    'label'         => 'Wait until next day(s) of the week',
+                    'label'         => __('Wait until next day(s) of the week', 'fluent-crm'),
                     'wrapper_class' => 'fc_2col_inline pad-r-20',
                     'options'       => [
                         [
                             'id'    => 'Mon',
-                            'title' => 'Mon'
+                            'title' => __('Mon', 'fluent-crm')
                         ],
                         [
                             'id'    => 'Tue',
-                            'title' => 'Tue'
+                            'title' => __('Tue', 'fluent-crm')
                         ],
                         [
                             'id'    => 'Wed',
-                            'title' => 'Wed'
+                            'title' => __('Wed', 'fluent-crm')
                         ],
                         [
                             'id'    => 'Thu',
-                            'title' => 'Thu'
+                            'title' => __('Thu', 'fluent-crm')
                         ],
                         [
                             'id'    => 'Fri',
-                            'title' => 'Fri'
+                            'title' => __('Fri', 'fluent-crm')
                         ],
                         [
                             'id'    => 'Sat',
-                            'title' => 'Sat'
+                            'title' => __('Sat', 'fluent-crm')
                         ],
                         [
                             'id'    => 'Sun',
-                            'title' => 'Sun'
+                            'title' => __('Sun', 'fluent-crm')
                         ]
                     ],
                     'dependency'    => [
@@ -180,9 +184,9 @@ class WaitTimeAction extends BaseAction
                     ]
                 ],
                 'to_day_time'      => [
-                    'label'          => 'Time of the day',
+                    'label'          => __('Time of the day', 'fluent-crm'),
                     'type'           => 'time_selector',
-                    'placeholder'    => 'Select Time',
+                    'placeholder'    => __('Select Time', 'fluent-crm'),
                     'wrapper_class'  => 'fc_2col_inline',
                     'picker_options' => [
                         'start' => '00:00',
@@ -212,6 +216,6 @@ class WaitTimeAction extends BaseAction
 
     public function handle($subscriber, $sequence, $funnelSubscriberId, $funnelMetric)
     {
-        //FunnelHelper::changeFunnelSubSequenceStatus($funnelSubscriberId, $sequence->id);
+        // No-op: delay is handled by the processor via sequence delay settings
     }
 }

@@ -38,7 +38,6 @@
 	background: #152a5c !important;
 	border-color: #0d2149 !important;
 	color: #fff !important;
-	box-shadow: 0 1px 0 #081633 !important;
 }
 
 .cf7apps-ai-fg-open.button:focus {
@@ -152,7 +151,6 @@
 .cf7apps-ai-fg-modal__close:hover,
 .cf7apps-ai-fg-modal__close:focus {
 	color: #1d2327;
-	background: #f0f0f1;
 	outline: none;
 }
 

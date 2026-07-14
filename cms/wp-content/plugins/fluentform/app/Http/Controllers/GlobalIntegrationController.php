@@ -12,9 +12,18 @@ class GlobalIntegrationController extends Controller
     public function index(GlobalIntegrationService $globalIntegrationService)
     {
         try {
-            $returnData = $globalIntegrationService->get($this->request->all());
+            $attributes = $this->request->all();
+            $returnData = $globalIntegrationService->get($attributes);
             if (Arr::isTrue($returnData, 'status')) {
                 return $this->sendSuccess($returnData);
+            }
+            // No settings_key provided is a list-style call, not an error; return 200 with empty payload.
+            if (!Arr::get($attributes, 'settings_key')) {
+                return $this->sendSuccess([
+                    'status'      => false,
+                    'integration' => [],
+                    'settings'    => [],
+                ]);
             }
             return $this->sendError($returnData);
         } catch (Exception $e) {

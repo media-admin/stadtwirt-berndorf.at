@@ -53,7 +53,7 @@ abstract class BaseTrigger
         $settingsFields['fields']['__force_run_actions'] = [
             'label'       => '',
             'type'        => 'yes_no_check',
-            'check_label' => __('Run the automation actions even contact status is not in subscribed status', 'fluent-crm'),
+            'check_label' => __('Run the automation actions even if the contact status is not subscribed', 'fluent-crm'),
             'true_label'  => 'yes',
             'false_label' => 'no'
         ];

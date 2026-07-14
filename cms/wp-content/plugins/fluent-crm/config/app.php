@@ -10,5 +10,5 @@ return array(
     'hook_prefix'    => 'fluentcrm_',
     'rest_namespace' => 'fluent-crm',
     'rest_version'   => 'v2',
-    'env'            => 'production',
+    'env' => 'production',
 );

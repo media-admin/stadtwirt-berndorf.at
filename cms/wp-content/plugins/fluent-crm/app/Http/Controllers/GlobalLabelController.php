@@ -5,7 +5,8 @@ namespace FluentCrm\App\Http\Controllers;
 
 use FluentCrm\App\Models\Funnel;
 use FluentCrm\App\Models\Label;
-use FluentCrm\Framework\Request\Request;
+use FluentCrm\App\Models\TermRelation;
+use FluentCrm\Framework\Http\Request\Request;
 use FluentCrm\Framework\Support\Arr;
 
 /**
@@ -47,7 +48,7 @@ class GlobalLabelController extends Controller
 
         return [
             'label' => $label,
-            'message' => __('Labels has been Updated successfully', 'fluent-crm')
+            'message' => __('Label has been created successfully', 'fluent-crm')
         ];
     }
 
@@ -72,7 +73,7 @@ class GlobalLabelController extends Controller
 
         return [
             'label' => $label,
-            'message' => __('Labels has been Updated successfully', 'fluent-crm')
+            'message' => __('Labels have been updated successfully', 'fluent-crm')
         ];
     }
 
@@ -122,34 +123,27 @@ class GlobalLabelController extends Controller
     protected function deleteLabelFromFunnel($funnelId, $slug)
     {
         $funnel = Funnel::findOrFail($funnelId);
-        if (!$funnel) {
-            return [
-                'message' => __('Label not found', 'fluent-crm')
-            ];
+        $label = Label::where('slug', $slug)->first();
+
+        if (!$label) {
+            return;
         }
 
-        $labelMeta = $funnel->getLabelMeta();
-        if (!$labelMeta) {
-            return [
-                'message' => __('Label not found', 'fluent-crm')
-            ];
-        }
-        $updatedLabels = array_diff($labelMeta->value, [$slug]);
-        $funnel->updateOrDeleteLabel($updatedLabels);
+        $funnel->detachLabels([$label->id]);
     }
 
     protected function deleteLabelFromFunnelLabel($slug)
     {
-        $customLabels = fluentcrm_get_option('funnel_custom_labels', []);
-        if (!array_key_exists($slug, $customLabels)) {
-            return [
-                'message' => __('Label not found', 'fluent-crm')
-            ];
+        $label = Label::where('slug', $slug)->first();
+
+        if (!$label) {
+            return;
         }
 
-        unset($customLabels[$slug]);
-        fluentcrm_update_option('funnel_custom_labels', $customLabels);
+        TermRelation::where('term_id', $label->id)
+            ->where('object_type', Funnel::class)
+            ->delete();
 
-        Funnel::removeLabelFromAllFunnels($slug);
+        $label->delete();
     }
 }

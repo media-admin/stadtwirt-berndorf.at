@@ -2,6 +2,7 @@
 
 namespace FluentCrm\App\Models;
 
+use FluentCrm\App\Models\CampaignEmail;
 use FluentCrm\App\Services\Helper;
 use FluentCrm\App\Services\Sanitize;
 use FluentCrm\Framework\Support\Arr;
@@ -42,6 +43,7 @@ class Subscriber extends Model
         'email',
         'status', // pending / subscribed / bounced / unsubscribed; Default: subscriber
         'contact_type', // lead / customer
+        'sms_status', // sms_pending / sms_subscribed / sms_unsubscribed / sms_bounced; Default: sms_subscribed
         'address_line_1',
         'address_line_2',
         'postal_code',
@@ -83,7 +85,7 @@ class Subscriber extends Model
                 }
 
                 if ($user) {
-                    if ($model->first_name && $model->last_name != $user->first_name) {
+                    if ($model->first_name && $model->first_name != $user->first_name) {
                         update_user_meta($user->ID, 'first_name', $model->first_name);
                     }
                     if ($model->last_name && $model->last_name != $user->last_name) {
@@ -310,7 +312,7 @@ class Subscriber extends Model
                     $prefix . 'lists.id'
                 )
                 ->where($prefix . 'subscriber_pivot.object_type', 'FluentCrm\App\Models\Lists')
-                ->whereIn($prefix . 'tags.' . $filterBy, $keys)
+                ->whereIn($prefix . 'lists.' . $filterBy, $keys)
                 ->groupBy($prefix . 'subscriber_pivot.subscriber_id')
                 ->select($prefix . 'subscriber_pivot.subscriber_id');
         });
@@ -627,9 +629,7 @@ class Subscriber extends Model
         $updateValues = [];
 
         if ($deleteOtherValues) {
-            $deleteMetaKeys = array_map(function ($key) {
-                return $key;
-            }, array_keys($emptyValues));
+            $deleteMetaKeys = array_keys($emptyValues);
 
             if ($deleteMetaKeys) {
                 $this->custom_field_meta()->whereIn('key', $deleteMetaKeys)->delete();
@@ -734,6 +734,7 @@ class Subscriber extends Model
             'last_name'      => __('Last Name', 'fluent-crm'),
             'full_name'      => __('Full Name', 'fluent-crm'),
             'email'          => __('Email', 'fluent-crm'),
+            'contact_type'   => __('Contact Type', 'fluent-crm'),
             'timezone'       => __('Timezone', 'fluent-crm'),
             'address_line_1' => __('Address Line 1', 'fluent-crm'),
             'address_line_2' => __('Address Line 2', 'fluent-crm'),
@@ -1151,7 +1152,7 @@ class Subscriber extends Model
 
         if ($isSubscribed && $exist->status == 'subscribed') {
             if (!$isNew) {
-                do_action('fluent_crm/subscriber_status_changed', $this, $oldStatus, $this->status);
+                do_action('fluent_crm/subscriber_status_changed', $exist, $oldStatus, $exist->status);
             }
             do_action('fluentcrm_subscriber_status_to_subscribed', $exist, $oldStatus);
         }
@@ -1194,35 +1195,66 @@ class Subscriber extends Model
             return $this;
         }
 
-        $listIds = Sanitize::sanitizeListIds($listIds);
-
-        $this->load('lists');
-        $existingLists = $this->lists;
-        $existingListIds = [];
-        foreach ($existingLists as $list) {
-            $existingListIds[] = $list->id;
-        }
-        $newListIds = array_diff($listIds, $existingListIds);
-
-        $newListIds = array_map(function ($listId) {
-            return (int)$listId;
-        }, $newListIds);
-
-        $newListIds = array_filter($newListIds);
-
-        if (!$newListIds) {
+        // Guard against attaching to an unsaved Subscriber (id = 0 or unset).
+        // Without this, INSERT IGNORE would happily write a (0, X, 'Lists')
+        // garbage row and the contact_added_to_lists action would fire with
+        // $this->id = 0. Sanitize is also skipped because sanitizeListIds() can
+        // create new lists as a side effect, which we don't want to do for an
+        // invalid subscriber.
+        if (empty($this->id)) {
             return $this;
         }
 
-        $lists = array_combine($newListIds, array_fill(
-            0,
-            count($newListIds),
-            ['object_type' => 'FluentCrm\App\Models\Lists']
-        ));
+        $listIds = Sanitize::sanitizeListIds($listIds);
+        $listIds = array_filter(array_map('intval', $listIds));
 
-        if ($lists) {
-            $this->lists()->attach($lists);
-            $this->load('lists');
+        if (!$listIds) {
+            return $this;
+        }
+
+        global $wpdb;
+        $pivotTable = $wpdb->prefix . 'fc_subscriber_pivot';
+        $objectType = 'FluentCrm\App\Models\Lists';
+
+        // Per-row INSERT IGNORE. The composite unique key on
+        // (subscriber_id, object_id, object_type) added in the SubscriberPivot
+        // migration makes this race-safe: when two concurrent integrations
+        // (e.g. WooCommerce + WP Fusion + LearnDash hooks all firing on the
+        // same enrollment) call attachLists() with the same pair, the second
+        // INSERT IGNORE gets rows_affected = 0 and we don't fire the
+        // contact_added_to_lists action for that ID — preventing the
+        // duplicate-event leak the customer was seeing.
+        // Timestamps use current_time('mysql') (WordPress site timezone) to
+        // match the ORM's freshTimestamp() convention used by historical rows.
+        $now = current_time('mysql');
+        $newListIds = [];
+
+        foreach ($listIds as $listId) {
+            $affected = $wpdb->query($wpdb->prepare(
+                "INSERT IGNORE INTO {$pivotTable} (subscriber_id, object_id, object_type, created_at, updated_at) VALUES (%d, %d, %s, %s, %s)",
+                $this->id, $listId, $objectType, $now, $now
+            ));
+            // $wpdb->query() returns false on errors like deadlocks or lock-wait
+            // timeouts. PHP's `false > 0` is false, so without this check the
+            // failure would be silently treated as "row already existed" and we
+            // wouldn't fire contact_added_to_lists even when the row may have
+            // ultimately been written. Log and skip to surface the issue.
+            if ($affected === false) {
+                Helper::debugLog('Subscriber::attachLists pivot insert failed', $wpdb->last_error, 'error');
+                continue;
+            }
+            if ($affected > 0) {
+                $newListIds[] = $listId;
+            }
+        }
+
+        // Always refresh the in-memory relationship so callers reusing this
+        // Subscriber instance see post-write state, even on the no-op path.
+        // Matches the original ORM-driven attach() behavior, which loaded
+        // upfront for the diff and reloaded after write.
+        $this->load('lists');
+
+        if ($newListIds) {
             fluentcrm_contact_added_to_lists($newListIds, $this);
 
             do_action('fluent_crm/contact_added_to_lists', $this, $newListIds);
@@ -1237,36 +1269,44 @@ class Subscriber extends Model
             return $this;
         }
 
-        $tagIds = Sanitize::sanitizeTagIds($tagIds);
-
-        $this->load('tags');
-        $existingTags = $this->tags;
-        $existingTagIds = [];
-        foreach ($existingTags as $tag) {
-            $existingTagIds[] = (int)$tag->id;
-        }
-
-        $newTagIds = array_diff($tagIds, $existingTagIds);
-
-        $newTagIds = array_map(function ($tagId) {
-            return (int)$tagId;
-        }, $newTagIds);
-
-        $newTagIds = array_filter($newTagIds);
-
-        if (!$newTagIds) {
+        // Guard against attaching to an unsaved Subscriber — see attachLists().
+        if (empty($this->id)) {
             return $this;
         }
 
-        $tags = array_combine($newTagIds, array_fill(
-            0,
-            count($newTagIds),
-            ['object_type' => 'FluentCrm\App\Models\Tag']
-        ));
+        $tagIds = Sanitize::sanitizeTagIds($tagIds);
+        $tagIds = array_filter(array_map('intval', $tagIds));
 
-        if ($tags) {
-            $this->tags()->attach($tags);
-            $this->load('tags');
+        if (!$tagIds) {
+            return $this;
+        }
+
+        global $wpdb;
+        $pivotTable = $wpdb->prefix . 'fc_subscriber_pivot';
+        $objectType = 'FluentCrm\App\Models\Tag';
+
+        // Per-row INSERT IGNORE — see attachLists() for the rationale.
+        $now = current_time('mysql');
+        $newTagIds = [];
+
+        foreach ($tagIds as $tagId) {
+            $affected = $wpdb->query($wpdb->prepare(
+                "INSERT IGNORE INTO {$pivotTable} (subscriber_id, object_id, object_type, created_at, updated_at) VALUES (%d, %d, %s, %s, %s)",
+                $this->id, $tagId, $objectType, $now, $now
+            ));
+            if ($affected === false) {
+                Helper::debugLog('Subscriber::attachTags pivot insert failed', $wpdb->last_error, 'error');
+                continue;
+            }
+            if ($affected > 0) {
+                $newTagIds[] = $tagId;
+            }
+        }
+
+        // Always refresh the relation — see attachLists() for rationale.
+        $this->load('tags');
+
+        if ($newTagIds) {
             fluentcrm_contact_added_to_tags($newTagIds, $this);
 
             do_action('fluent_crm/contact_added_to_tags', $this, $newTagIds);
@@ -1281,35 +1321,43 @@ class Subscriber extends Model
             return $this;
         }
 
-        $this->load('companies');
-
-        $existingCompanies = $this->companies;
-        $existingCompanyIds = [];
-        foreach ($existingCompanies as $company) {
-            $existingCompanyIds[] = (int)$company->id;
-        }
-
-        $newCompanyIds = array_diff($companyIds, $existingCompanyIds);
-
-        $newCompanyIds = array_map(function ($newCompanyId) {
-            return (int)$newCompanyId;
-        }, $newCompanyIds);
-
-        $newCompanyIds = array_filter($newCompanyIds);
-
-        if (!$newCompanyIds) {
+        // Guard against attaching to an unsaved Subscriber — see attachLists().
+        if (empty($this->id)) {
             return $this;
         }
 
-        $companies = array_combine($newCompanyIds, array_fill(
-            0,
-            count($newCompanyIds),
-            ['object_type' => 'FluentCrm\App\Models\Company']
-        ));
+        $companyIds = array_filter(array_map('intval', $companyIds));
 
-        if ($companies) {
-            $this->companies()->attach($companies);
-            $this->load('companies');
+        if (!$companyIds) {
+            return $this;
+        }
+
+        global $wpdb;
+        $pivotTable = $wpdb->prefix . 'fc_subscriber_pivot';
+        $objectType = 'FluentCrm\App\Models\Company';
+
+        // Per-row INSERT IGNORE — see attachLists() for the rationale.
+        $now = current_time('mysql');
+        $newCompanyIds = [];
+
+        foreach ($companyIds as $companyId) {
+            $affected = $wpdb->query($wpdb->prepare(
+                "INSERT IGNORE INTO {$pivotTable} (subscriber_id, object_id, object_type, created_at, updated_at) VALUES (%d, %d, %s, %s, %s)",
+                $this->id, $companyId, $objectType, $now, $now
+            ));
+            if ($affected === false) {
+                Helper::debugLog('Subscriber::attachCompanies pivot insert failed', $wpdb->last_error, 'error');
+                continue;
+            }
+            if ($affected > 0) {
+                $newCompanyIds[] = $companyId;
+            }
+        }
+
+        // Always refresh the relation — see attachLists() for rationale.
+        $this->load('companies');
+
+        if ($newCompanyIds) {
             fluentcrm_contact_added_to_companies($newCompanyIds, $this);
         }
 
@@ -1322,30 +1370,66 @@ class Subscriber extends Model
             return $this;
         }
 
-        $listIds = Sanitize::sanitizeListIds($listIds, false);
-
-        $this->load('lists');
-
-        $existingLists = $this->lists;
-        $existingListIds = [];
-        foreach ($existingLists as $list) {
-            $existingListIds[] = $list->id;
+        // Guard against detaching from an unsaved Subscriber — defensive, same
+        // pattern as the attach methods. With $this->id = 0 the SELECT would
+        // match any garbage rows the migration is supposed to have cleaned up.
+        if (empty($this->id)) {
+            return $this;
         }
 
-        $validListIds = array_intersect($listIds, $existingListIds);
+        $listIds = Sanitize::sanitizeListIds($listIds, false);
+        $listIds = array_filter(array_map('intval', $listIds));
 
-        $validListIds = array_map(function ($listId) {
-            return (int)$listId;
-        }, $validListIds);
+        if (!$listIds) {
+            return $this;
+        }
 
-        $validListIds = array_filter($validListIds);
+        global $wpdb;
+        $pivotTable = $wpdb->prefix . 'fc_subscriber_pivot';
+        $objectType = 'FluentCrm\App\Models\Lists';
 
-        if ($validListIds) {
-            $this->lists()->detach($validListIds);
-            $this->load('lists');
-            fluentcrm_contact_removed_from_lists($validListIds, $this);
+        // Fresh DB read — bypass any stale relationship cached on $this — so we
+        // only consider list IDs that actually exist for this subscriber right now.
+        $placeholders = implode(',', array_fill(0, count($listIds), '%d'));
+        $existingListIds = $wpdb->get_col($wpdb->prepare(
+            "SELECT object_id FROM {$pivotTable} WHERE subscriber_id = %d AND object_type = %s AND object_id IN ({$placeholders})",
+            array_merge([$this->id, $objectType], $listIds)
+        ));
 
-            do_action('fluent_crm/contact_removed_from_lists', $this, $validListIds);
+        $existingListIds = array_map('intval', $existingListIds);
+        $validListIds = array_values(array_intersect($listIds, $existingListIds));
+
+        if (!$validListIds) {
+            return $this;
+        }
+
+        // Per-row DELETE so a concurrent detachLists() racing us against the
+        // same (subscriber, list) pair can be distinguished via rows_affected.
+        // The first DELETE removes the row and reports affected = 1; the
+        // second reports 0 and we skip firing the action — preventing the
+        // double-fire that would happen if we trusted our pre-DELETE diff.
+        $removedListIds = [];
+        foreach ($validListIds as $listId) {
+            $affected = $wpdb->query($wpdb->prepare(
+                "DELETE FROM {$pivotTable} WHERE subscriber_id = %d AND object_type = %s AND object_id = %d",
+                $this->id, $objectType, $listId
+            ));
+            if ($affected === false) {
+                Helper::debugLog('Subscriber::detachLists pivot delete failed', $wpdb->last_error, 'error');
+                continue;
+            }
+            if ($affected > 0) {
+                $removedListIds[] = $listId;
+            }
+        }
+
+        // Always refresh the relation — see attachLists() for rationale.
+        $this->load('lists');
+
+        if ($removedListIds) {
+            fluentcrm_contact_removed_from_lists($removedListIds, $this);
+
+            do_action('fluent_crm/contact_removed_from_lists', $this, $removedListIds);
         }
 
         return $this;
@@ -1357,30 +1441,59 @@ class Subscriber extends Model
             return $this;
         }
 
-        $tagsIds = Sanitize::sanitizeTagIds($tagsIds, false);
-
-        $this->load('tags');
-
-        $existingTags = $this->tags;
-        $existingTagIds = [];
-        foreach ($existingTags as $tag) {
-            $existingTagIds[] = $tag->id;
+        // Guard against detaching from an unsaved Subscriber — see detachLists().
+        if (empty($this->id)) {
+            return $this;
         }
 
-        $validTagIds = array_intersect($tagsIds, $existingTagIds);
+        $tagsIds = Sanitize::sanitizeTagIds($tagsIds, false);
+        $tagsIds = array_filter(array_map('intval', $tagsIds));
 
-        $validTagIds = array_map(function ($tagId) {
-            return (int)$tagId;
-        }, $validTagIds);
+        if (!$tagsIds) {
+            return $this;
+        }
 
-        $validTagIds = array_filter($validTagIds);
+        global $wpdb;
+        $pivotTable = $wpdb->prefix . 'fc_subscriber_pivot';
+        $objectType = 'FluentCrm\App\Models\Tag';
 
-        if ($validTagIds) {
-            $this->tags()->detach($validTagIds);
-            $this->load('tags');
-            fluentcrm_contact_removed_from_tags($validTagIds, $this);
+        // Fresh DB read — see detachLists() for rationale.
+        $placeholders = implode(',', array_fill(0, count($tagsIds), '%d'));
+        $existingTagIds = $wpdb->get_col($wpdb->prepare(
+            "SELECT object_id FROM {$pivotTable} WHERE subscriber_id = %d AND object_type = %s AND object_id IN ({$placeholders})",
+            array_merge([$this->id, $objectType], $tagsIds)
+        ));
 
-            do_action('fluent_crm/contact_removed_from_tags', $this, $validTagIds);
+        $existingTagIds = array_map('intval', $existingTagIds);
+        $validTagIds = array_values(array_intersect($tagsIds, $existingTagIds));
+
+        if (!$validTagIds) {
+            return $this;
+        }
+
+        // Per-row DELETE with rows_affected check — see detachLists().
+        $removedTagIds = [];
+        foreach ($validTagIds as $tagId) {
+            $affected = $wpdb->query($wpdb->prepare(
+                "DELETE FROM {$pivotTable} WHERE subscriber_id = %d AND object_type = %s AND object_id = %d",
+                $this->id, $objectType, $tagId
+            ));
+            if ($affected === false) {
+                Helper::debugLog('Subscriber::detachTags pivot delete failed', $wpdb->last_error, 'error');
+                continue;
+            }
+            if ($affected > 0) {
+                $removedTagIds[] = $tagId;
+            }
+        }
+
+        // Always refresh the relation — see attachLists() for rationale.
+        $this->load('tags');
+
+        if ($removedTagIds) {
+            fluentcrm_contact_removed_from_tags($removedTagIds, $this);
+
+            do_action('fluent_crm/contact_removed_from_tags', $this, $removedTagIds);
         }
 
         return $this;
@@ -1392,28 +1505,56 @@ class Subscriber extends Model
             return $this;
         }
 
-
-        $this->load('companies');
-
-        $existingCompanies = $this->companies;
-        $existingCompanyIds = [];
-        foreach ($existingCompanies as $company) {
-            $existingCompanyIds[] = $company->id;
+        // Guard against detaching from an unsaved Subscriber — see detachLists().
+        if (empty($this->id)) {
+            return $this;
         }
 
-        $validIds = array_intersect($companyIds, $existingCompanyIds);
+        $companyIds = array_filter(array_map('intval', $companyIds));
 
+        if (!$companyIds) {
+            return $this;
+        }
 
-        $validIds = array_map(function ($id) {
-            return (int)$id;
-        }, $validIds);
+        global $wpdb;
+        $pivotTable = $wpdb->prefix . 'fc_subscriber_pivot';
+        $objectType = 'FluentCrm\App\Models\Company';
 
-        $validIds = array_filter($validIds);
+        // Fresh DB read — see detachLists() for rationale.
+        $placeholders = implode(',', array_fill(0, count($companyIds), '%d'));
+        $existingCompanyIds = $wpdb->get_col($wpdb->prepare(
+            "SELECT object_id FROM {$pivotTable} WHERE subscriber_id = %d AND object_type = %s AND object_id IN ({$placeholders})",
+            array_merge([$this->id, $objectType], $companyIds)
+        ));
 
-        if ($validIds) {
-            $this->companies()->detach($validIds);
-            $this->load('companies');
-            fluentcrm_contact_removed_from_companies($validIds, $this);
+        $existingCompanyIds = array_map('intval', $existingCompanyIds);
+        $validCompanyIds = array_values(array_intersect($companyIds, $existingCompanyIds));
+
+        if (!$validCompanyIds) {
+            return $this;
+        }
+
+        // Per-row DELETE with rows_affected check — see detachLists().
+        $removedCompanyIds = [];
+        foreach ($validCompanyIds as $companyId) {
+            $affected = $wpdb->query($wpdb->prepare(
+                "DELETE FROM {$pivotTable} WHERE subscriber_id = %d AND object_type = %s AND object_id = %d",
+                $this->id, $objectType, $companyId
+            ));
+            if ($affected === false) {
+                Helper::debugLog('Subscriber::detachCompanies pivot delete failed', $wpdb->last_error, 'error');
+                continue;
+            }
+            if ($affected > 0) {
+                $removedCompanyIds[] = $companyId;
+            }
+        }
+
+        // Always refresh the relation — see attachLists() for rationale.
+        $this->load('companies');
+
+        if ($removedCompanyIds) {
+            fluentcrm_contact_removed_from_companies($removedCompanyIds, $this);
         }
 
         return $this;
@@ -1519,14 +1660,14 @@ class Subscriber extends Model
         switch ($filter['operator']) {
             case 'before':
                 $filter['operator'] = '<';
-                if (strlen($filter['value']) < 11) {
+                if (!empty($filter['value']) && strlen($filter['value']) < 11) {
                     $filter['value'] = $filter['value'] . ' 00:00:00';
                 }
                 break;
 
             case 'after':
                 $filter['operator'] = '>';
-                if (strlen($filter['value']) < 11) {
+                if (!empty($filter['value']) && strlen($filter['value']) < 11) {
                     $filter['value'] = $filter['value'] . ' 00:00:00';
                 }
                 break;
@@ -1584,14 +1725,13 @@ class Subscriber extends Model
                 } elseif ($newOperator == 'LIKE' || $newOperator == 'NOT LIKE') {
                     $query->where($referenceColumn, $newOperator, '%' . $filter['value'] . '%');
                 } else {
-                    // This can be date
-                    $dateOperators = ['before', 'after', 'date_equal', 'days_before', 'days_within'];
-
-                    if (in_array($operator, $dateOperators)) {
-                        $query->whereTimestamp($referenceColumn, $newOperator, $filter['value']);
-                    } else {
-                        $query->where($referenceColumn, $newOperator, $filter['value']);
-                    }
+                    // Date operators (before/after/date_equal/days_before/days_within) are
+                    // already normalized by filterParser() into '<' / '>' with a datetime
+                    // string value. A plain where() is correct here — the previous
+                    // whereTimestamp() call was a phantom method that the WPFluent
+                    // dynamic-where __call magic silently rewrote to
+                    // `WHERE timestamp = '<column>'`, producing a SQL error.
+                    $query->where($referenceColumn, $newOperator, $filter['value']);
                 }
             } else {
                 $filter['value'] = sanitize_text_field($filter['value']);
@@ -1897,6 +2037,11 @@ class Subscriber extends Model
                     continue;
                 }
 
+                // created_at/last_activity are TIMESTAMP and date_of_birth is DATE.
+                // Comparing those columns to an empty string forces MySQL to coerce
+                // '' into a TIMESTAMP/DATE and throws "Incorrect TIMESTAMP value: ''".
+                // whereNotNull + != '0000-00-00' is enough — empty strings cannot
+                // legitimately be stored in these typed columns.
                 $query = $query->where(function ($q) use ($filter) {
                     $q->whereNotNull($filter['property'])
                         ->where($filter['property'], '!=', '0000-00-00');
@@ -1926,7 +2071,8 @@ class Subscriber extends Model
                 });
             } else if ($operator == 'not_null') {
                 $query = $query->where(function ($q) use ($filter) {
-                    return $q->where($filter['property'], '!=', '');
+                    return $q->whereNotNull($filter['property'])
+                        ->where($filter['property'], '!=', '');
                 });
             } else {
                 $query = $query->where($filter['property'], $operator, $searchTerm);
@@ -2162,10 +2308,15 @@ class Subscriber extends Model
     public function buildActivitiesFilterQuery($query, $filters)
     {
         foreach ($filters as $filter) {
-            if (empty($filter['value']) && $filter['property'] !== 'email_opened' && $filter['property'] !== 'email_link_clicked') {
-                continue;
+            if (empty($filter['value'])) {
+                if (in_array($filter['property'], ['email_opened', 'email_link_clicked'])) {
+                    if ($filter['operator'] != 'never') {
+                        continue;
+                    }
+                } else {
+                    continue;
+                }
             }
-
 
             $originalValue = $filter['value'];
 
@@ -2256,12 +2407,18 @@ class Subscriber extends Model
                 }
 
                 continue;
+            } else if ($filterProp == 'email_opened') {
+                $relation = 'campaignEmails';
+                $filter['where'] = [
+                    'prop'  => 'is_open',
+                    'value' => 1,
+                    'field' => 'updated_at'
+                ];
             } else if ($filterProp != 'email_sent') {
                 $relation = 'urlMetrics';
-
                 $filter['where'] = [
                     'prop'  => 'type',
-                    'value' => $filter['property'] == 'email_opened' ? 'open' : 'click',
+                    'value' => 'click',
                     'field' => 'updated_at'
                 ];
             }
@@ -2313,8 +2470,16 @@ class Subscriber extends Model
             return false;
         }
 
+        if ($activityName == 'email_opened') {
+            $lastOpen = CampaignEmail::where('subscriber_id', $this->id)
+                ->where('is_open', 1)
+                ->orderBy('updated_at', 'DESC')
+                ->first();
+            return $lastOpen ? $lastOpen->updated_at : false;
+        }
+
         $lastActivity = CampaignUrlMetric::where('subscriber_id', $this->id)
-            ->where('type', ($activityName == 'email_link_clicked') ? 'click' : 'open')
+            ->where('type', 'click')
             ->orderBy('updated_at', 'DESC')
             ->first();
 
@@ -2394,18 +2559,7 @@ class Subscriber extends Model
 
     public function getSecureHash()
     {
-        $hash = $this->getMeta('_secure_hash', 'internal');
-        if ($hash) {
-            return $hash;
-        }
-
-        $hash = md5(wp_rand(100, 10000) . '_' . $this->id . '_' . $this->email . '_' . time());
-
-        $hash = str_replace('e', 'd', $hash);
-
-        $this->updateMeta('_secure_hash', $hash, 'internal');
-
-        return $hash;
+        return fluentCrmGetContactSecureHash($this->id);
     }
 
     public function trackEvent($eventData, $isUnique = false)

@@ -1,0 +1,1 @@
+function n(n,t){const e=n[t]||[],a="companies"===t?"name":"title";return e.length>0?e.map(n=>n[a]).join(", "):""}function t(n,t){const e=n[t]||[],a="companies"===t?"name":"title";return e.map(n=>n[a])}export{n as a,t as g};

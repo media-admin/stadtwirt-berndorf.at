@@ -226,9 +226,7 @@ class CF7Apps_Rest_API_WP_Admin_V1 extends CF7Apps_Base_Rest_API {
             );
         }
 
-        foreach( $settings['app_settings'] as $key => $value ) { 
-            $settings[$key] = sanitize_text_field( $value );
-        }
+        $settings['app_settings'] = $this->sanitize_app_settings( $settings['app_settings'] );
 
         $settings_for = isset( $settings['settings-for'] ) ? $settings['settings-for'] : '';
         if ( 'internal-settings' === $settings_for ) {
@@ -246,6 +244,34 @@ class CF7Apps_Rest_API_WP_Admin_V1 extends CF7Apps_Base_Rest_API {
                 500
             );
         }
+    }
+
+    /**
+     * Recursively sanitize app settings before persisting.
+     *
+     * @since 3.5.0
+     *
+     * @param mixed $value Setting value.
+     * @return mixed
+     */
+    private function sanitize_app_settings( $value ) {
+        if ( is_array( $value ) ) {
+            foreach ( $value as $key => $item ) {
+                $value[ $key ] = $this->sanitize_app_settings( $item );
+            }
+
+            return $value;
+        }
+
+        if ( is_bool( $value ) || is_int( $value ) || is_float( $value ) || null === $value ) {
+            return $value;
+        }
+
+        if ( is_scalar( $value ) ) {
+            return sanitize_text_field( (string) $value );
+        }
+
+        return '';
     }
 
     /**

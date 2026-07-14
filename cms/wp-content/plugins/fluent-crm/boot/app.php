@@ -32,7 +32,7 @@ return function ($file) {
             add_filter('fluent_crm/dashboard_notices', function ($notices) {
                 if (version_compare(FLUENTCRM_MIN_PRO_VERSION, FLUENTCAMPAIGN_PLUGIN_VERSION, '>')) {
                     $updateUrl = admin_url('plugins.php?s=fluentcampaign-pro&plugin_status=all&fluentcrm_pro_check_update=' . time());
-                    $notices[] = '<div style="padding: 15px 10px;" class="updated"><b>Heads UP: </b> FluentCRM Pro needs to be updated to the latest version. <a href="' . esc_url($updateUrl) . '">Click here to update</a></div>';
+                    $notices[] = '<div><b>Heads UP: </b> FluentCRM Pro needs to be updated to the latest version. <a href="' . esc_url($updateUrl) . '">Click here to update</a></div>';
                 }
                 return $notices;
             });
@@ -55,14 +55,14 @@ return function ($file) {
         if (!isset($schedules['fluentcrm_every_minute'])) {
             $schedules['fluentcrm_every_minute'] = array(
                 'interval' => 60,
-                'display'  => esc_html__('Every Minute (FluentCRM)', 'fluent-crm'),
+                'display'  => 'Every Minute (FluentCRM)'
             );
         }
 
         if (!isset($schedules['fluentcrm_scheduled_five_minute_tasks'])) {
             $schedules['fluentcrm_scheduled_five_minute_tasks'] = array(
                 'interval' => 300,
-                'display'  => esc_html__('Every 5 Minutes (FluentCRM)', 'fluent-crm'),
+                'display'  => 'Every 5 Minutes (FluentCRM)'
             );
         }
 
@@ -71,7 +71,7 @@ return function ($file) {
 
     add_action('fluentcrm_loading_app', function () {
 
-        if (!as_next_scheduled_action('fluentcrm_scheduled_every_minute_tasks')) {
+        if (!as_has_scheduled_action('fluentcrm_scheduled_every_minute_tasks', [], 'fluent-crm')) {
             as_schedule_recurring_action(time(), 60, 'fluentcrm_scheduled_every_minute_tasks', [], 'fluent-crm');
         }
 
@@ -104,8 +104,8 @@ return function ($file) {
          * The below schedule is powered by Action Scheduler by WooCommerce
          * It will run every day.
          */
-        if (false === as_next_scheduled_action( 'fluent_crm_ascheduler_runs_daily' ) ) {
-            as_schedule_recurring_action( strtotime('midnight today'), DAY_IN_SECONDS, 'fluent_crm_ascheduler_runs_daily', [], 'fluent-crm' );
+        if (false === as_next_scheduled_action('fluent_crm_ascheduler_runs_daily')) {
+            as_schedule_recurring_action(strtotime('midnight today'), DAY_IN_SECONDS, 'fluent_crm_ascheduler_runs_daily', [], 'fluent-crm');
         }
         /*
          *

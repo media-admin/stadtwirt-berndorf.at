@@ -35,20 +35,6 @@ class Stats
                     'name' => 'all_emails'
                 ]
             ],
-            'tags'              => [
-                'title' => __('Tags', 'fluent-crm'),
-                'count' => Tag::count(),
-                'route' => [
-                    'name' => 'tags'
-                ]
-            ],
-            'total_templates'   => [
-                'title' => __('Email Templates', 'fluent-crm'),
-                'count' => Template::where('post_type', fluentcrmTemplateCPTSlug())->count(),
-                'route' => [
-                    'name' => 'templates'
-                ]
-            ],
             'total_automations'   => [
                 'title' => __('Active Automations', 'fluent-crm'),
                 'count' => Funnel::where('status', 'published')->count(),
@@ -90,27 +76,32 @@ class Stats
             [
                 'title' => __('Contact Segments', 'fluent-crm'),
                 'url'   => $urlBase . 'contact-groups/lists',
-                'icon'  => 'el-icon-folder'
+                'icon'  => 'ContactSegments'
             ],
             [
                 'title' => __('Recurring Campaigns', 'fluent-crm'),
                 'url'   => $urlBase . 'email/recurring-campaigns',
-                'icon'  => 'el-icon-message'
+                'icon'  => 'RecurringCampaigns'
             ],
             [
                 'title' => __('Email Sequences', 'fluent-crm'),
                 'url'   => $urlBase . 'email/sequences',
-                'icon'  => 'el-icon-alarm-clock'
+                'icon'  => 'EmailSequences'
+            ],
+            [
+                'title' => __('MCP for AI Agents', 'fluent-crm'),
+                'url'   => $urlBase . 'settings/mcp_settings',
+                'icon'  => 'el-icon-connection'
             ],
             [
                 'title' => __('Documentations', 'fluent-crm'),
                 'url'   =>  $urlBase . 'documentation',
-                'icon'  => 'el-icon-document'
+                'icon'  => 'Documentations'
             ],
             [
                 'title' => __('Video Tutorials (Free)', 'fluent-crm'),
                 'url' => 'https://www.youtube.com/playlist?list=PLXpD0vT4thWG-ZPeM6cco7BS5cJY9bTjL',
-                'icon' => 'el-icon-video-camera',
+                'icon' => 'VideoTutorials',
                 'is_external' => true
             ]
         ];
@@ -129,9 +120,6 @@ class Stats
 
     public function getOnboardingStat()
     {
-        if (fluentcrm_get_option('onboarding_status') == 'yes') {
-            return null;
-        }
 
         $formCreated = false;
         if(defined('FLUENTFORM')) {
@@ -142,6 +130,10 @@ class Stats
             if(!$formCreated) {
                 $formCreated = !!Funnel::where('trigger_name', 'fluentform_submission_inserted')->first();
             }
+        }
+
+        if (fluentcrm_get_option('onboarding_status') == 'yes' && $formCreated) {
+            return null;
         }
 
         $boardingSteps = [
@@ -201,5 +193,35 @@ class Stats
             'completed' => $completed,
             'steps'     => $boardingSteps
         ];
+    }
+
+    public function getRecentContacts($limit = 5)
+    {
+        return Subscriber::where('status', 'subscribed')
+            ->orderBy('created_at', 'DESC')
+            ->limit($limit)
+            ->get();
+    }
+
+    public function getActiveAutomations($limit = 5)
+    {
+        return Funnel::where('status', 'published')
+            ->orderBy('created_at', 'DESC')
+            ->limit($limit)
+            ->get();
+    }
+
+    public function getRecentCampaigns($limit = 5)
+    {
+        $campaigns = Campaign::where('status', 'archived')
+            ->orderBy('created_at', 'DESC')
+            ->limit($limit)
+            ->get();
+
+        foreach ($campaigns as $campaign) {
+            $campaign->stats = $campaign->stats();
+        }
+
+        return $campaigns;
     }
 }

@@ -40,19 +40,24 @@ class RedirectionHandler
             $urlData->url_token = $data['fch'];
         }
 
-        $redirectUrl = trim($this->trackUrlClick($mailId, $urlData));
+        $isAnonymousClick = isset($data['ano']);
+
+        $redirectUrl = trim($this->trackUrlClick($mailId, $urlData, $isAnonymousClick));
         $redirectUrl = htmlspecialchars_decode($redirectUrl);
 
-        if ($redirectUrl) {
-            // remove zero width space
-            $redirectUrl = str_replace(["\xE2\x80\x8B", '%E2%80%8B'], '', $redirectUrl);
-            do_action('fluentcrm_email_url_click', $redirectUrl, $mailId, $urlData);
-            wp_redirect($redirectUrl, 307);
+        if (!$redirectUrl) {
+            wp_redirect(home_url(), 307);
             exit;
         }
+
+        // remove zero width space
+        $redirectUrl = str_replace(["\xE2\x80\x8B", '%E2%80%8B'], '', $redirectUrl);
+        do_action('fluentcrm_email_url_click', $redirectUrl, $mailId, $urlData);
+        wp_redirect($redirectUrl, 307);
+        exit;
     }
 
-    public function trackUrlClick($mailId, $urlData)
+    public function trackUrlClick($mailId, $urlData, $isAnonymousClick = false)
     {
         if (!$mailId) {
             return $urlData->url;
@@ -72,24 +77,33 @@ class RedirectionHandler
             return $urlData->url;
         }
 
-        if (!$campaignEmail->is_open) {
-            CampaignUrlMetric::maybeInsert([
-                'type'          => 'open',
-                'campaign_id'   => $campaignEmail->id,
-                'subscriber_id' => $campaignEmail->subscriber_id,
-                'ip_address'    => FluentCrm('request')->getIp(fluentCrmWillAnonymizeIp())
-            ]);
+        // Require valid fch token before recording any tracking data.
+        // Missing or invalid token = redirect but don't record metrics.
+        // This prevents analytics poisoning via forged or guessed mid values.
+        if (empty($urlData->url_token) || substr($campaignEmail->email_hash, 0, 8) !== $urlData->url_token) {
+            return $urlData->url;
+        }
 
+        if (!$campaignEmail->is_open && !$isAnonymousClick) {
             do_action('fluent_crm/email_opened', $campaignEmail);
         }
 
-        $id = CampaignUrlMetric::maybeInsert([
-            'url_id'        => $urlData->id,
-            'campaign_id'   => $campaignEmail->campaign_id,
-            'subscriber_id' => $campaignEmail->subscriber_id,
-            'type'          => 'click',
-            'ip_address'    => FluentCrm('request')->getIp(fluentCrmWillAnonymizeIp())
-        ]);
+        if (!$isAnonymousClick) {
+            CampaignUrlMetric::maybeInsert([
+                'url_id'        => $urlData->id,
+                'campaign_id'   => $campaignEmail->campaign_id,
+                'subscriber_id' => $campaignEmail->subscriber_id,
+                'type'          => 'click',
+                'ip_address'    => FluentCrm('request')->getIp(fluentCrmWillAnonymizeIp())
+            ]);
+        }
+
+        $url = $urlData->url;
+
+        $url = str_replace('&amp;', '&', $url);
+        $url = esc_url_raw($url);
+
+        $isSmartUrl = strpos($url, 'route=smart_url');
 
         $tokenVerified = false;
 
@@ -99,21 +113,21 @@ class RedirectionHandler
          * This filter allows you to control whether cookies should be used for tracking
          * FluentCRM redirection. By default, it is set to true.
          *
+         * @param bool Whether to use cookies for redirection. Default true.
          * @since 2.8.44
          *
-         * @param bool Whether to use cookies for redirection. Default true.
          */
         if (apply_filters('fluent_crm/will_use_cookie', true) && !empty($urlData->url_token)) {
             // validate the URL token here
-            if (substr($campaignEmail->email_hash, 0, 8) == $urlData->url_token) {
+            if (substr($campaignEmail->email_hash, 0, 8) === $urlData->url_token) {
                 $tokenVerified = true;
                 $secureHash = fluentCrmGetContactSecureHash($campaignEmail->subscriber_id);
-                setcookie("fc_hash_secure", $secureHash, time() + 7776000, COOKIEPATH, COOKIE_DOMAIN);  /* expire in 90 days */
+                setcookie("fc_hash_secure", $secureHash, time() + 7776000, COOKIEPATH, COOKIE_DOMAIN, is_ssl(), true);  /* expire in 90 days */
                 $_COOKIE['fc_hash_secure'] = $secureHash;
             }
 
             if ($campaignEmail->campaign_id) {
-                setcookie("fc_cid", $campaignEmail->campaign_id, time() + 9676800, COOKIEPATH, COOKIE_DOMAIN);  /* expire in 28 days */
+                setcookie("fc_cid", $campaignEmail->campaign_id, time() + 2419200, COOKIEPATH, COOKIE_DOMAIN, is_ssl(), true);  /* expire in 28 days */
             }
         }
 
@@ -121,18 +135,17 @@ class RedirectionHandler
 
         $args = $campaign->getUtmParams();
 
-        $campaignEmail->click_counter += 1;
-        $campaignEmail->is_open = 1;
-        $campaignEmail->save();
+        if (!$isAnonymousClick) {
+            $campaignEmail->click_counter += 1;
+            $campaignEmail->is_open = 1;
+            $campaignEmail->save();
+        } else {
+            do_action('fluent_crm/anonymous_email_url_clicked', $url, $campaign, $campaignEmail);
+        }
 
-        do_action('fluent_crm/track_activity_by_subscriber', $campaignEmail->subscriber_id);
+        do_action('fluent_crm/track_activity_by_subscriber', $campaignEmail->subscriber);
 
-        $url = $urlData->url;
-
-        $url = str_replace('&amp;', '&', $url);
-        $url = esc_url_raw($url);
-
-        if (strpos($url, 'route=smart_url')) {
+        if ($isSmartUrl) {
             // this is a smart URL
             $url_components = wp_parse_url($url);
             parse_str($url_components['query'], $params);
@@ -141,7 +154,7 @@ class RedirectionHandler
                 $subscriber = $campaignEmail->subscriber;
 
                 $signedHash = Arr::get($_REQUEST, 'signed_hash');
-                $isSecure = $tokenVerified && $signedHash && wp_check_password($campaignEmail->email_hash, $signedHash);
+                $isSecure = $tokenVerified && $signedHash && \FluentCrm\App\Services\Helper::verifySmartUrlHash($campaignEmail->email_hash, $signedHash);
 
                 if ($isSecure) {
                     do_action('fluent_crm/smart_link_verified', $subscriber);
@@ -151,11 +164,12 @@ class RedirectionHandler
             }
         }
 
-        if (strpos($urlData->url, 'route=bnu')) {
+        if (strpos($urlData->url, 'route=bnu') !== false) {
             $url_components = wp_parse_url($url);
             parse_str($url_components['query'], $params);
             if (!empty($params['aid'])) {
                 $benchmarkActionId = intval($params['aid']);
+                // Note: hook name has a known typo (missing 't' in 'fluent') — kept for backward compatibility with Pro
                 do_action('fluencrm_benchmark_link_clicked', $benchmarkActionId, $campaignEmail->subscriber);
             }
             $args['bnu_timer_' . time()] = time();

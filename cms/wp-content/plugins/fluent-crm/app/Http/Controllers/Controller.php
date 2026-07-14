@@ -23,12 +23,12 @@ abstract class Controller
     protected $app = null;
 
     /**
-     * @var \FluentCrm\Framework\Request\Request
+     * @var \FluentCrm\Framework\Http\Request\Request
      */
     protected $request = null;
 
     /**
-     * @var \FluentCrm\Framework\Response\Response
+     * @var \FluentCrm\Framework\Http\Response\Response
      */
     protected $response = null;
 
@@ -42,7 +42,6 @@ abstract class Controller
     public function validate($data, $rules, $messages = [])
     {
         $validator = new Validator($data, $rules, $messages);
-
 
         if ($validator->validate()->fails()) {
             // Sanitize validation error messages before returning them

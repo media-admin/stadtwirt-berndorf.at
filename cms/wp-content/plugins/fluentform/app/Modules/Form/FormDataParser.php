@@ -328,7 +328,7 @@ class FormDataParser
                 $values && is_array($values) &&
                 $options = ArrayHelper::get($field, 'raw.settings.advanced_options', [])
             ) {
-                $options = array_column($options, 'label', 'value');
+                $options = \FluentForm\App\Helpers\Helper::advancedOptionsValueLabelMap($options);
                 foreach ($values as &$value) {
                     if ($label = ArrayHelper::get($options, $value)) {
                         $value = $label;
@@ -347,10 +347,9 @@ class FormDataParser
         }
 
         if (!isset($field['options'])) {
-            $field['options'] = [];
-            foreach (ArrayHelper::get($field, 'raw.settings.advanced_options', []) as $option) {
-                $field['options'][$option['value']] = $option['label'];
-            }
+            $field['options'] = \FluentForm\App\Helpers\Helper::advancedOptionsValueLabelMap(
+                ArrayHelper::get($field, 'raw.settings.advanced_options', [])
+            );
         }
 
         $html = '<ul style="white-space: normal;">';

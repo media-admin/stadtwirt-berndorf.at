@@ -30,7 +30,7 @@
     </div>
     <div class="fluentcrm_un_form_wrapper">
         <h4><?php esc_html_e('Get Email Subscription Management Link', 'fluent-crm') ?></h4>
-        <p><?php esc_html_e('Looks like we could not determine your info. Please fill out the form and get your email subscription form link via email.', 'fluent-crm'); ?></p>
+        <p><?php esc_html_e('Looks like we could not determine your info. Please fill out the form and get your email subscription management link via email.', 'fluent-crm'); ?></p>
 
         <form method="POST" class="fluentcrm_public_pref_form fc_public_form" action="/" id="fc_unsub_req_form">
             <input type="hidden" name="action" value="fluentcrm_request_manage_subscription_ajax"/>

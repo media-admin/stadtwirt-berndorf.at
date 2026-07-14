@@ -56,6 +56,95 @@ class Helper
         return $input;
     }
 
+    public static function isOptionGroup($option)
+    {
+        return is_array($option)
+            && ArrayHelper::get($option, 'type') === 'group'
+            && is_array(ArrayHelper::get($option, 'options'));
+    }
+
+    public static function sanitizeAdvancedOptions($options, $depth = 0)
+    {
+        if (!is_array($options)) {
+            return [];
+        }
+
+        $sanitized = [];
+
+        foreach ($options as $option) {
+            if (!is_array($option)) {
+                continue;
+            }
+
+            if (self::isOptionGroup($option)) {
+                $groupOptions = self::sanitizeAdvancedOptions(
+                    ArrayHelper::get($option, 'options', []),
+                    $depth + 1
+                );
+
+                if ($depth > 0) {
+                    $sanitized = array_merge($sanitized, $groupOptions);
+                    continue;
+                }
+
+                $sanitized[] = [
+                    'type'    => 'group',
+                    'label'   => wp_kses_post(ArrayHelper::get($option, 'label', '')),
+                    'options' => $groupOptions,
+                ];
+                continue;
+            }
+
+            $sanitized[] = [
+                'label'      => wp_kses_post(ArrayHelper::get($option, 'label', '')),
+                'value'      => sanitize_text_field(ArrayHelper::get($option, 'value', '')),
+                'image'      => sanitize_url(ArrayHelper::get($option, 'image', '')),
+                'calc_value' => sanitize_text_field(ArrayHelper::get($option, 'calc_value', '')),
+                'disabled'   => ArrayHelper::isTrue($option, 'disabled'),
+            ];
+        }
+
+        return $sanitized;
+    }
+
+    public static function flattenAdvancedOptions($options)
+    {
+        if (!is_array($options)) {
+            return [];
+        }
+
+        $flattened = [];
+
+        foreach ($options as $option) {
+            if (self::isOptionGroup($option)) {
+                $flattened = array_merge(
+                    $flattened,
+                    self::flattenAdvancedOptions(ArrayHelper::get($option, 'options', []))
+                );
+                continue;
+            }
+
+            if (!is_array($option)) {
+                continue;
+            }
+
+            $flattened[] = $option;
+        }
+
+        return $flattened;
+    }
+
+    public static function advancedOptionsValueLabelMap($options)
+    {
+        $formatted = [];
+
+        foreach (self::flattenAdvancedOptions($options) as $option) {
+            $formatted[ArrayHelper::get($option, 'value')] = ArrayHelper::get($option, 'label');
+        }
+
+        return $formatted;
+    }
+
     public static function makeMenuUrl($page = 'fluent_forms_settings', $component = null)
     {
         $baseUrl = admin_url('admin.php?page=' . $page);
@@ -117,7 +206,7 @@ class Helper
             'fluentform_entry_statuses_core',
             [
                 $statuses,
-                $form_id
+                $form_id,
             ],
             FLUENTFORM_FRAMEWORK_UPGRADE,
             'fluentform/entry_statuses_core',
@@ -146,7 +235,7 @@ class Helper
         $data = apply_filters_deprecated(
             'fluentform_reportable_inputs',
             [
-                $data
+                $data,
             ],
             FLUENTFORM_FRAMEWORK_UPGRADE,
             'fluentform/reportable_inputs',
@@ -161,7 +250,7 @@ class Helper
         $grid = apply_filters_deprecated(
             'fluentform_subfield_reportable_inputs',
             [
-                ['tabular_grid']
+                ['tabular_grid'],
             ],
             FLUENTFORM_FRAMEWORK_UPGRADE,
             'fluentform/subfield_reportable_inputs',
@@ -174,7 +263,7 @@ class Helper
     public static function getFormMeta($formId, $metaKey, $default = '', $forced = false)
     {
         $formattedValues = self::$formMetaCache[$formId] ?? [];
-        
+
         if (!isset(self::$formMetaCache[$formId]) || $forced) {
             $formMetas = FormMeta::where('form_id', $formId)
                 ->get();
@@ -182,7 +271,7 @@ class Helper
             $formattedValues = [];
             foreach ($formMetas as $formMeta) {
                 $value = $formMeta->value;
-                
+
                 $decoded = json_decode($value ?? '', true);
                 if (is_array($decoded)) {
                     $value = $decoded;
@@ -219,6 +308,23 @@ class Helper
         } catch (\Exception $ex) {
             return null;
         }
+    }
+
+    /**
+     * Resolve an entry's column => value map regardless of whether the entry is
+     * a stdClass DB row (columns are real properties) or a WPFluent Model
+     * (columns live in an internal attribute bag reached via __get).
+     *
+     * @param object|array $entry
+     * @return array
+     */
+    public static function getEntryColumns($entry)
+    {
+        if (is_object($entry) && method_exists($entry, 'getAttributes')) {
+            return $entry->getAttributes();
+        }
+
+        return (array) $entry;
     }
 
     public static function getSubmissionMeta($submissionId, $metaKey, $default = false)
@@ -285,7 +391,7 @@ class Helper
 
     public static function getFormInstaceClass($formId)
     {
-        static::$formInstance += 1;
+        static::$formInstance++;
 
         return 'ff_form_instance_' . $formId . '_' . static::$formInstance;
     }
@@ -305,8 +411,7 @@ class Helper
             'fluent_forms_add_ons',
             'fluent_forms_docs',
             'fluent_forms_payment_entries',
-            'fluent_forms_smtp',
-            'fluent_forms_reports'
+            'fluent_forms_reports',
         ];
 
         $status = true;
@@ -320,7 +425,7 @@ class Helper
         $status = apply_filters_deprecated(
             'fluentform_is_admin_page',
             [
-                $status
+                $status,
             ],
             FLUENTFORM_FRAMEWORK_UPGRADE,
             'fluentform/is_admin_page',
@@ -352,7 +457,7 @@ class Helper
                 $result = shortcode_parse_atts($parsedCode);
 
                 if (!empty($result[$selector])) {
-                    if ($tag == 'fluentform' && !empty($result['type']) && $result['type'] == 'conversational') {
+                    if ('fluentform' == $tag && !empty($result['type']) && 'conversational' == $result['type']) {
                         continue;
                     }
 
@@ -363,7 +468,7 @@ class Helper
                     if ($theme) {
                         $attributes[] = [
                             'formId' => $result[$selector],
-                            'theme'  => $theme
+                            'theme'  => $theme,
                         ];
                     }
                 }
@@ -386,7 +491,7 @@ class Helper
             return $ids;
         }
 
-        $has_block = false !== strpos($content, '<!-- wp:fluentfom/guten-block' . ' ');
+        $has_block = false !== strpos($content, '<!-- wp:fluentfom/guten-block ');
 
         if (!$has_block) {
             return $ids;
@@ -400,7 +505,7 @@ class Helper
 
             $hasBlock = strpos($block['blockName'], 'fluentfom/guten-block') === 0;
             if ($hasBlock) {
-                $formId = (int)$block['attrs']['formId'];
+                $formId = (int) $block['attrs']['formId'];
 
                 $ids[] = $formId;
 
@@ -409,7 +514,7 @@ class Helper
                 if ($theme) {
                     $attributes[] = [
                         'formId' => $formId,
-                        'theme'  => $theme
+                        'theme'  => $theme,
                     ];
                 }
             }
@@ -445,8 +550,8 @@ class Helper
             return false;
         }
 
-        $fieldsJson = (string)($form->form_fields ?? '');
-        if ($fieldsJson === '') {
+        $fieldsJson = (string) ($form->form_fields ?? '');
+        if ('' === $fieldsJson) {
             return false;
         }
 
@@ -455,7 +560,7 @@ class Helper
             return false;
         }
 
-        return (bool)ArrayHelper::get($fields, 'stepsWrapper');
+        return (bool) ArrayHelper::get($fields, 'stepsWrapper');
     }
 
     public static function hasFormElement($formId, $elementName)
@@ -479,8 +584,8 @@ class Helper
                 // if form has pending payment then the value doesn't exist in EntryDetails table
                 // further checking on Submission table if the value exists
                 if (!$exist && $form->has_payment) {
-                    $escapedKey = json_encode($fieldName);
-                    $escapedValue = json_encode($inputValue);
+                    $escapedKey = wp_json_encode($fieldName);
+                    $escapedValue = wp_json_encode($inputValue);
                     $searchPattern = trim($escapedKey, '"') . '":' . $escapedValue;
                     $searchPattern = addcslashes($searchPattern, '%_');
 
@@ -567,7 +672,7 @@ class Helper
         $data = apply_filters_deprecated(
             'fluentform_numeric_styles',
             [
-                $data
+                $data,
             ],
             FLUENTFORM_FRAMEWORK_UPGRADE,
             'fluentform/numeric_styles',
@@ -618,6 +723,25 @@ class Helper
         return array_diff_assoc($inputNames, $uniqueNames);
     }
 
+    public static function getRankingFieldsWithDuplicateOptionValues($fields)
+    {
+        if (is_string($fields)) {
+            $fields = json_decode($fields, true);
+        }
+
+        if (!is_array($fields)) {
+            return [];
+        }
+
+        $items = ArrayHelper::get($fields, 'fields', []);
+
+        if (!is_array($items)) {
+            return [];
+        }
+
+        return static::collectRankingFieldsWithDuplicateOptionValues($items);
+    }
+
     protected static function getFieldNamesStatuses($fields)
     {
         $names = [];
@@ -629,14 +753,74 @@ class Helper
                     $columnInputs = static::getFieldNamesStatuses(ArrayHelper::get($column, 'fields', []));
                     $names = array_merge($names, $columnInputs);
                 }
-            } else {
-                if ($name = ArrayHelper::get($field, 'attributes.name')) {
+            } elseif ($name = ArrayHelper::get($field, 'attributes.name')) {
                     $names[] = $name;
-                }
             }
         }
 
         return $names;
+    }
+
+    protected static function collectRankingFieldsWithDuplicateOptionValues($fields)
+    {
+        $duplicates = [];
+
+        foreach ($fields as $field) {
+            if ('container' === ArrayHelper::get($field, 'element')) {
+                $columns = ArrayHelper::get($field, 'columns', []);
+                foreach ($columns as $column) {
+                    $columnFields = ArrayHelper::get($column, 'fields', []);
+                    $duplicates = array_merge(
+                        $duplicates,
+                        static::collectRankingFieldsWithDuplicateOptionValues($columnFields)
+                    );
+                }
+                continue;
+            }
+
+            if (!empty($field['fields']) && is_array($field['fields'])) {
+                $duplicates = array_merge(
+                    $duplicates,
+                    static::collectRankingFieldsWithDuplicateOptionValues($field['fields'])
+                );
+                continue;
+            }
+
+            if ('input_ranking' !== ArrayHelper::get($field, 'element')) {
+                continue;
+            }
+
+            $formattedOptions = ArrayHelper::get($field, 'settings.advanced_options', []);
+            if (!$formattedOptions) {
+                $formattedOptions = [];
+                foreach (ArrayHelper::get($field, 'options', []) as $value => $label) {
+                    $formattedOptions[] = [
+                        'label' => $label,
+                        'value' => $value,
+                    ];
+                }
+            }
+
+            $optionValues = array_values(array_filter(array_map(
+                'sanitize_text_field',
+                array_column(static::flattenAdvancedOptions($formattedOptions), 'value')
+            ), function ($value) {
+                return '' !== $value;
+            }));
+
+            if (count($optionValues) !== count(array_unique($optionValues))) {
+                $fieldLabel = ArrayHelper::get($field, 'settings.admin_field_label');
+                if (!$fieldLabel) {
+                    $fieldLabel = ArrayHelper::get($field, 'settings.label');
+                }
+                if (!$fieldLabel) {
+                    $fieldLabel = ArrayHelper::get($field, 'attributes.name');
+                }
+                $duplicates[] = $fieldLabel ? $fieldLabel : __('Ranking Field', 'fluentform');
+            }
+        }
+
+        return $duplicates;
     }
 
     public static function isConversionForm($formId)
@@ -657,10 +841,8 @@ class Helper
             return static::getConversionUrl($formId);
         } elseif ('classic' == $type) {
             return site_url('?fluent_forms_pages=1&design_mode=1&preview_id=' . $formId) . '#ff_preview';
-        } else {
-            if (static::isConversionForm($formId)) {
+        } elseif (static::isConversionForm($formId)) {
                 return static::getConversionUrl($formId);
-            }
         }
 
         return site_url('?fluent_forms_pages=1&design_mode=1&preview_id=' . $formId) . '#ff_preview';
@@ -688,7 +870,7 @@ class Helper
         $slug = apply_filters_deprecated(
             'fluentform_conversational_url_slug',
             [
-                'fluent-form'
+                'fluent-form',
             ],
             FLUENTFORM_FRAMEWORK_UPGRADE,
             'fluentform/conversational_url_slug',
@@ -722,7 +904,7 @@ class Helper
         $locations = apply_filters_deprecated(
             'fluentform_file_upload_options',
             [
-                $locations
+                $locations,
             ],
             FLUENTFORM_FRAMEWORK_UPGRADE,
             'fluentform/file_upload_options',
@@ -807,7 +989,7 @@ class Helper
             'fluentform_truncate_password_values',
             [
                 true,
-                $formId
+                $formId,
             ],
             FLUENTFORM_FRAMEWORK_UPGRADE,
             'fluentform/truncate_password_values',
@@ -829,8 +1011,7 @@ class Helper
         $rowJoiner = '<br />',
         $colJoiner = ', ',
         $type = ''
-    )
-    {
+    ) {
         if (!$girdData || !$field) {
             return '';
         }
@@ -857,7 +1038,7 @@ class Helper
                     if ($girdCols && isset($girdCols[$item])) {
                         $item = $girdCols[$item];
                     }
-                    if ($index == (count($column) - 1)) {
+                    if ((count($column) - 1) == $index) {
                         $_colJoiner = '';
                     }
                     $value .= $item . $_colJoiner;
@@ -934,7 +1115,7 @@ class Helper
     public static function isAutosaveEnabled()
     {
         $autosaveEnabled = ArrayHelper::get(get_option('_fluentform_global_form_settings'), 'misc.autosave_enabled', 'no');
-        return $autosaveEnabled === 'yes';
+        return 'yes' === $autosaveEnabled;
     }
 
     public static function maybeDecryptUrl($url)
@@ -962,7 +1143,7 @@ class Helper
     public static function isBlockEditor()
     {
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Checking REST API context
-        return defined('REST_REQUEST') && REST_REQUEST && !empty($_REQUEST['context']) && $_REQUEST['context'] === 'edit';
+        return defined('REST_REQUEST') && REST_REQUEST && !empty($_REQUEST['context']) && 'edit' === $_REQUEST['context'];
     }
 
     public static function resolveValidationRulesGlobalOption(&$field)
@@ -971,14 +1152,12 @@ class Helper
             foreach ($field['fields'] as &$subField) {
                 static::resolveValidationRulesGlobalOption($subField);
             }
-        } else {
-            if (ArrayHelper::get($field, 'settings.validation_rules')) {
-                foreach ($field['settings']['validation_rules'] as $key => &$rule) {
-                    if (!isset($rule['global'])) {
-                        $rule['global'] = false;
-                    }
-                    $rule['global_message'] = static::getGlobalDefaultMessage($key);
+        } elseif (ArrayHelper::get($field, 'settings.validation_rules')) {
+            foreach ($field['settings']['validation_rules'] as $key => &$rule) {
+                if (!isset($rule['global'])) {
+                    $rule['global'] = false;
                 }
+                $rule['global_message'] = static::getGlobalDefaultMessage($key);
             }
         }
     }
@@ -1015,7 +1194,8 @@ class Helper
             $fieldType = ArrayHelper::get($rawField, 'element');
             $rawField = apply_filters('fluentform/rendering_field_data_' . $fieldType, $rawField, $form);
             $options = [];
-            if ("net_promoter_score" === $fieldType) {
+            $otherPrefix = '';
+            if ('net_promoter_score' === $fieldType) {
                 $options = array_flip(ArrayHelper::get($rawField, 'options', []));
             } elseif ('ratings' == $fieldType) {
                 $options = array_keys(ArrayHelper::get($rawField, 'options', []));
@@ -1023,7 +1203,7 @@ class Helper
                 $options = ['on'];
             } elseif ('terms_and_condition' == $fieldType) {
                 $options = ['on', 'off'];
-            } elseif (in_array($fieldType, ['input_radio', 'select', 'input_checkbox'])) {
+            } elseif (in_array($fieldType, ['input_radio', 'select', 'input_checkbox', 'input_ranking'])) {
                 if (ArrayHelper::isTrue($rawField, 'attributes.multiple')) {
                     $fieldType = 'multi_select';
                 }
@@ -1039,15 +1219,16 @@ class Helper
                     // @todo : Update all reference in form templates
                 }
 
-                $options = array_column($formattedOptions, 'value');
-                
+                $options = array_column(self::flattenAdvancedOptions($formattedOptions), 'value');
+
                 // Add field-specific __ff_other__ to options if "Other" option is enabled
                 if (in_array($fieldType, ['input_checkbox', 'input_radio']) &&
                     ArrayHelper::get($rawField, 'settings.enable_other_option') === 'yes') {
                     $fieldName = sanitize_key(str_replace(['[', ']'], '', ArrayHelper::get($rawField, 'attributes.name', '')));
                     $options[] = '__ff_other_' . $fieldName . '__';
+                    $otherPrefix = static::getOtherOptionValuePrefix($rawField);
                 }
-            } elseif ("dynamic_field" == $fieldType) {
+            } elseif ('dynamic_field' == $fieldType) {
                 $dynamicFetchValue = 'yes' == ArrayHelper::get($rawField, 'settings.dynamic_fetch');
                 if ($dynamicFetchValue) {
                     $rawField = apply_filters('fluentform/dynamic_field_re_fetch_result_and_resolve_value', $rawField);
@@ -1068,6 +1249,32 @@ class Helper
 
             $isValid = true;
             switch ($fieldType) {
+                case 'input_ranking':
+                    $skipValidationInputsWithOptions = apply_filters('fluentform/skip_validation_inputs_with_options', false, $fieldType, $form, $formData);
+                    if ($skipValidationInputsWithOptions) {
+                        break;
+                    }
+
+                    if (!is_array($inputValue)) {
+                        $isValid = false;
+                        break;
+                    }
+
+                    $filteredValues = array_values(array_filter(array_map('sanitize_text_field', $inputValue), function ($value) {
+                        return '' !== $value;
+                    }));
+
+                    $normalizedOptions = array_values(array_filter(array_map('sanitize_text_field', $options), function ($value) {
+                        return '' !== $value;
+                    }));
+
+                    sort($filteredValues);
+                    sort($normalizedOptions);
+
+                    $isValid = count($inputValue) === count($options)
+                        && count($filteredValues) === count(array_unique($filteredValues))
+                        && $filteredValues === $normalizedOptions;
+                    break;
                 case 'input_radio':
                 case 'select':
                 case 'net_promoter_score':
@@ -1077,28 +1284,26 @@ class Helper
                 case 'input_checkbox':
                 case 'multi_select':
                 case 'dynamic_field_options':
-            
                     $skipValidationInputsWithOptions = apply_filters('fluentform/skip_validation_inputs_with_options', false, $fieldType, $form, $formData);
                     if ($skipValidationInputsWithOptions) {
                         break;
                     }
                     if (is_array($inputValue)) {
-                        // Handle field-specific "Other" options for checkboxes
-                        $filteredValues = array_filter($inputValue, function($value) {
-                            // Skip field-specific other values and processed other values
+                        // Skip "Other" values — raw, localized or legacy English prefix
+                        $filteredValues = array_filter($inputValue, function ($value) use ($otherPrefix) {
                             return !preg_match('/^__ff_other_.*__$/', $value) &&
-                                   !preg_match('/^Other:\s/', $value);
+                                    !preg_match('/^Other:\s/', $value) &&
+                                    !($otherPrefix && 0 === strpos($value, $otherPrefix));
                         });
                         $isValid = array_diff($filteredValues, $options);
                         $isValid = empty($isValid);
+                    } elseif (preg_match('/^__ff_other_.*__$/', $inputValue) ||
+                        preg_match('/^Other:\s/', $inputValue) ||
+                        ($otherPrefix && 0 === strpos($inputValue, $otherPrefix))) {
+                        // Accept "Other" values — raw, localized or legacy English prefix
+                        $isValid = true;
                     } else {
-                        // Handle field-specific "Other" option for single values
-                        if (preg_match('/^__ff_other_.*__$/', $inputValue) ||
-                            preg_match('/^Other:\s/', $inputValue)) {
-                            $isValid = true;
-                        } else {
-                            $isValid = in_array($inputValue, $options);
-                        }
+                        $isValid = in_array($inputValue, $options);
                     }
                     break;
                 case 'input_number':
@@ -1162,6 +1367,32 @@ class Helper
         return $error;
     }
 
+    /**
+     * Prefix used to store a checkable field's "Other" option value,
+     * built from the field's own (translated) label. Pass $form to run
+     * the field through the rendering filter (translation plugins) first.
+     *
+     * @param array $rawField
+     * @param object|null $form
+     * @return string
+     */
+    public static function getOtherOptionValuePrefix($rawField, $form = null)
+    {
+        $fieldType = ArrayHelper::get($rawField, 'element');
+        if ($form && $fieldType) {
+            $rawField = apply_filters('fluentform/rendering_field_data_' . $fieldType, $rawField, $form);
+        }
+
+        $label = trim((string) ArrayHelper::get($rawField, 'settings.other_option_label'));
+
+        if ('' === $label) {
+            $label = __('Other', 'fluentform');
+        }
+
+        // Avoid "::" when the label already ends with a colon
+        return ':' === substr($label, -1) ? $label . ' ' : $label . ': ';
+    }
+
     public static function getWhiteListedFields($formId)
     {
         $whiteListedFields = [
@@ -1177,7 +1408,7 @@ class Helper
             '__square_payment_method_id',
             '__square_verify_buyer_id',
             'ct_bot_detector_event_token',
-            'ff_ct_form_load_time'
+            'ff_ct_form_load_time',
         ];
 
         return apply_filters('fluentform/white_listed_fields', $whiteListedFields, $formId);
@@ -1185,6 +1416,7 @@ class Helper
 
     /**
      * Shortcode parse on validation message
+     *
      * @param string $message
      * @param object $form
      * @param string $fieldName
@@ -1193,7 +1425,7 @@ class Helper
     public static function shortCodeParseOnValidationMessage($message, $form, $fieldName)
     {
         // Return early if form is null to prevent errors
-        if ($form === null) {
+        if (null === $form) {
             return $message;
         }
 
@@ -1201,7 +1433,7 @@ class Helper
         // Add 'current_field' name as data array to resolve {labels.current_field} shortcode if it has
         return ShortCodeParser::parse(
             $message,
-            (object)['response' => "", 'form_id' => $form->id],
+            (object) ['response' => '', 'form_id' => $form->id],
             ['current_field' => $fieldName],
             $form
         );
@@ -1357,7 +1589,7 @@ class Helper
             'HTTP_X_COUNTRY',
             'X-Country',
             'HTTP_X_COUNTRY_ISO',
-            'X-Country-ISO'
+            'X-Country-ISO',
         ];
 
         foreach ($headers as $header) {
@@ -1365,8 +1597,8 @@ class Helper
             if (isset($_SERVER[$header])) {
                 // phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- Country code from CDN/proxy header, validated below
                 $code = trim(sanitize_text_field(wp_unslash($_SERVER[$header])));
-            } // Try with HTTP_ prefix if not already present
-            elseif (strpos($header, 'HTTP_') !== 0) {
+            } elseif (strpos($header, 'HTTP_') !== 0) {
+                // Try with HTTP_ prefix if not already present
                 $httpHeader = 'HTTP_' . str_replace('-', '_', strtoupper($header));
                 if (isset($_SERVER[$httpHeader])) {
                     // phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- Country code from CDN/proxy header, validated below
@@ -1379,7 +1611,7 @@ class Helper
             }
 
             // Basic validation - should be 2-letter country code
-            if (!empty($code) && is_string($code) && strlen($code) === 2 && ctype_alpha($code) && $code !== 'XX') {
+            if (!empty($code) && is_string($code) && 2 === strlen($code) && ctype_alpha($code) && 'XX' !== $code) {
                 return strtoupper($code);
             }
         }
@@ -1389,6 +1621,7 @@ class Helper
 
     /**
      * Fixes PHP Object Injection Vulnerability
+     *
      * @param $data
      * @return mixed
      */
@@ -1400,10 +1633,11 @@ class Helper
         return $data;
     }
 
-	/**
-	 * If elementor editor is open
-	 * @return bool
-	 */
+    /**
+     * If elementor editor is open
+     *
+     * @return bool
+     */
     public static function isElementorEditor()
     {
         return defined('ELEMENTOR_VERSION') &&
@@ -1415,6 +1649,7 @@ class Helper
     /**
      * Check if we're in block editor context (Site Editor, Template Editor, or Post/Page Editor)
      * Covers all Gutenberg block editor contexts including mobile/tablet preview iframes
+     *
      * @return bool
      */
     public static function isSiteEditor()
@@ -1445,8 +1680,8 @@ class Helper
         $request_uri = isset($_SERVER['REQUEST_URI']) ? sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'])) : '';
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Checking block editor context
         return isset( $_GET['_wp-find-template'] ) ||
-               strpos( $request_uri, 'site-editor.php' ) !== false ||
+                strpos( $request_uri, 'site-editor.php' ) !== false ||
                // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Checking REST API context
-               (defined('REST_REQUEST') && REST_REQUEST && !empty($_REQUEST['context']) && $_REQUEST['context'] === 'edit');
+                (defined('REST_REQUEST') && REST_REQUEST && !empty($_REQUEST['context']) && 'edit' === $_REQUEST['context']);
     }
 }

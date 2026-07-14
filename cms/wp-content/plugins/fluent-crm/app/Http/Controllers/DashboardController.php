@@ -27,7 +27,7 @@ class DashboardController extends Controller
         $notices = [];
 
         if ((time() - $nextMinuteTask) > 120) {
-            $notices[] = '<div style="padding: 15px 10px;" class="error"><b>Attention: </b> Looks like the scheduled cron jobs are not running timely. Please consider setup server side cron. <a href="' . admin_url('admin.php?page=fluentcrm-admin#/settings/settings_tools') . '">Click here to check the status</a></div>';
+            $notices[] = '<div class=""><b>Attention: </b> Looks like the scheduled cron jobs are not running timely. Please consider setup server side cron. <a href="' . admin_url('admin.php?page=fluentcrm-admin#/settings/settings_tools') . '">Click here to check the status</a></div>';
         }
 
         $systemTips = '';
@@ -37,11 +37,12 @@ class DashboardController extends Controller
             if ($lastEmail && strtotime($lastEmail->created_at) < strtotime('-120 days')) {
                 $emailsCount = number_format($emailsCount, 0);
                 $sysBody = '<div class="fc_system_tips">';
-                $sysBody .= '<p>You have ' . $emailsCount . ' email history in the database. Consider clean up old email history to speed up your next email campaign.</p>';
-                $sysBody .= '<a href="' . fluentcrm_menu_url_base('settings/settings_tools') . '" class="el-button el-button--small el-button--default">View Data Cleanup</a>';
+                /* translators: %s: number of emails in the database */
+                $sysBody .= '<p>' . sprintf(__('You have %s email history in the database. Consider cleaning up old email history to speed up your next email campaign.', 'fluent-crm'), $emailsCount) . '</p>';
+                $sysBody .= '<a href="' . fluentcrm_menu_url_base('settings/settings_tools') . '" class="el-button fcrm_primary_btn">' . __('View Data Cleanup', 'fluent-crm') . '</a>';
                 $sysBody .= '</div>';
                 $systemTips = [
-                    'title' => 'Database Cleanup Suggestion',
+                    'title' => __('Database Cleanup Suggestion', 'fluent-crm'),
                     'body'  => $sysBody,
                 ];
             }
@@ -96,7 +97,11 @@ class DashboardController extends Controller
                 'create_form_link' => admin_url('admin.php?page=fluent_forms#add=1')
             ],
             'recommendation'    => $this->recommendation(),
-            'system_tips'       => $systemTips
+            'system_tips'       => $systemTips,
+            'recent_contacts'    => $stats->getRecentContacts(3),
+            'active_automations' => $stats->getActiveAutomations(3),
+            'recent_campaigns'   => $stats->getRecentCampaigns(3),
+            'triggers'           => $this->getTriggers()
         ]);
     }
 
@@ -111,126 +116,118 @@ class DashboardController extends Controller
         if (defined('WC_PLUGIN_FILE')) {
             $recommendations[] = [
                 'provider'    => 'WooCommerce',
-                'title'       => 'Do more with WooCommerce + FluentCRM',
-                'description' => 'Integrate FluentCRM with WooCommerce and segment your customers by purchase behavior, send super targeted emails, onboarding emails, cross promotions and many more.',
-                'btn_text'    => 'Upgrade to Pro',
+                'title'       => __('Do more with WooCommerce + FluentCRM', 'fluent-crm'),
+                'description' => __('Integrate FluentCRM with WooCommerce and segment your customers by purchase behavior, send super targeted emails, onboarding emails, cross promotions and many more.', 'fluent-crm'),
+                'btn_text'    => __('Upgrade to Pro', 'fluent-crm'),
                 'learn_more'  => 'https://fluentcrm.com/integrations/woocommerce-marketing-automation/',
-                'base_title'  => 'Supercharge your WooCommerce store by upgrading FluentCRM Pro'
+                'base_title'  => __('Supercharge your WooCommerce store by upgrading FluentCRM Pro', 'fluent-crm')
             ];
             $recommendations[] = [
                 'provider'    => 'WooCommerce',
-                'title'       => 'Do more with WooCommerce + FluentCRM',
-                'description' => 'Integrate FluentCRM with WooCommerce and segment your customers by purchase behavior, send super targeted emails, onboarding emails, cross promotions and many more.',
-                'btn_text'    => 'Upgrade to Pro',
+                'title'       => __('Do more with WooCommerce + FluentCRM', 'fluent-crm'),
+                'description' => __('Integrate FluentCRM with WooCommerce and segment your customers by purchase behavior, send super targeted emails, onboarding emails, cross promotions and many more.', 'fluent-crm'),
+                'btn_text'    => __('Upgrade to Pro', 'fluent-crm'),
                 'learn_more'  => 'https://fluentcrm.com/integrations/woocommerce-marketing-automation/',
-                'base_title'  => 'Supercharge your WooCommerce store by upgrading FluentCRM Pro'
+                'base_title'  => __('Supercharge your WooCommerce store by upgrading FluentCRM Pro', 'fluent-crm')
             ];
         }
 
-        if (class_exists('\Easy_Digital_Downloads')) {
+        if (Helper::isEdd3()) {
             $recommendations[] = [
                 'provider'    => 'EDD',
-                'title'       => 'Do more with EDD + FluentCRM',
-                'description' => 'Integrate FluentCRM with Easy Digital Downloads and segment your customers by purchase behavior, send super targeted emails, onboarding emails, cross promotions and many more.',
-                'btn_text'    => 'Upgrade to Pro',
+                'title'       => __('Do more with EDD + FluentCRM', 'fluent-crm'),
+                'description' => __('Integrate FluentCRM with Easy Digital Downloads and segment your customers by purchase behavior, send super targeted emails, onboarding emails, cross promotions and many more.', 'fluent-crm'),
+                'btn_text'    => __('Upgrade to Pro', 'fluent-crm'),
                 'learn_more'  => 'https://fluentcrm.com/integrations/easy-digital-downloads-integration-fluentcrm/',
-                'base_title'  => 'Supercharge your Digital Downloads store by upgrading FluentCRM Pro'
+                'base_title'  => __('Supercharge your Digital Downloads store by upgrading FluentCRM Pro', 'fluent-crm')
             ];
         }
 
         if (defined('LLMS_PLUGIN_FILE')) {
             $recommendations[] = [
                 'provider'    => 'LifterLMS',
-                'title'       => 'Do more with LifterLMS + FluentCRM',
-                'description' => 'Integrate LifterLMS with FluentCRM and segment your students by courses, send super targeted emails, onboarding emails, cross promote more courses and many more.',
+                'title'       => __('Do more with LifterLMS + FluentCRM', 'fluent-crm'),
+                'description' => __('Integrate LifterLMS with FluentCRM and segment your students by courses, send super targeted emails, onboarding emails, cross promote more courses and many more.', 'fluent-crm'),
                 'learn_more'  => 'https://fluentcrm.com/integrations/lifterlms/',
-                'btn_text'    => 'Upgrade to Pro',
-                'base_title'  => 'Supercharge your LMS by upgrading FluentCRM Pro'
+                'btn_text'    => __('Upgrade to Pro', 'fluent-crm'),
+                'base_title'  => __('Supercharge your LMS by upgrading FluentCRM Pro', 'fluent-crm')
             ];
             $recommendations[] = [
                 'provider'    => 'LifterLMS',
-                'title'       => 'Do more with LifterLMS + FluentCRM',
-                'description' => 'Integrate LifterLMS with FluentCRM and segment your students by courses, send super targeted emails, onboarding emails, cross promote more courses and many more.',
+                'title'       => __('Do more with LifterLMS + FluentCRM', 'fluent-crm'),
+                'description' => __('Integrate LifterLMS with FluentCRM and segment your students by courses, send super targeted emails, onboarding emails, cross promote more courses and many more.', 'fluent-crm'),
                 'learn_more'  => 'https://fluentcrm.com/integrations/lifterlms/',
-                'btn_text'    => 'Upgrade to Pro',
-                'base_title'  => 'Supercharge your LMS by upgrading FluentCRM Pro'
+                'btn_text'    => __('Upgrade to Pro', 'fluent-crm'),
+                'base_title'  => __('Supercharge your LMS by upgrading FluentCRM Pro', 'fluent-crm')
             ];
         } else if (defined('LEARNDASH_VERSION')) {
             $recommendations[] = [
                 'provider'    => 'LearnDash',
-                'title'       => 'Do more with LearnDash + FluentCRM',
-                'description' => 'Integrate LearnDash with FluentCRM and segment your students by courses, send super targeted emails, onboarding emails, cross promote more courses and many more.',
+                'title'       => __('Do more with LearnDash + FluentCRM', 'fluent-crm'),
+                'description' => __('Integrate LearnDash with FluentCRM and segment your students by courses, send super targeted emails, onboarding emails, cross promote more courses and many more.', 'fluent-crm'),
                 'learn_more'  => 'https://fluentcrm.com/integrations/learndash-integration-fluentcrm/',
-                'btn_text'    => 'Upgrade to Pro',
-                'base_title'  => 'Supercharge your LMS by upgrading FluentCRM Pro'
+                'btn_text'    => __('Upgrade to Pro', 'fluent-crm'),
+                'base_title'  => __('Supercharge your LMS by upgrading FluentCRM Pro', 'fluent-crm')
             ];
             $recommendations[] = [
                 'provider'    => 'LearnDash',
-                'title'       => 'Do more with LearnDash + FluentCRM',
-                'description' => 'Integrate LearnDash with FluentCRM and segment your students by courses, send super targeted emails, onboarding emails, cross promote more courses and many more.',
+                'title'       => __('Do more with LearnDash + FluentCRM', 'fluent-crm'),
+                'description' => __('Integrate LearnDash with FluentCRM and segment your students by courses, send super targeted emails, onboarding emails, cross promote more courses and many more.', 'fluent-crm'),
                 'learn_more'  => 'https://fluentcrm.com/integrations/learndash-integration-fluentcrm/',
-                'btn_text'    => 'Upgrade to Pro',
-                'base_title'  => 'Supercharge your LMS by upgrading FluentCRM Pro'
+                'btn_text'    => __('Upgrade to Pro', 'fluent-crm'),
+                'base_title'  => __('Supercharge your LMS by upgrading FluentCRM Pro', 'fluent-crm')
             ];
         } else if (defined('TUTOR_VERSION')) {
             $recommendations[] = [
                 'provider'    => 'TutorLMS',
-                'title'       => 'Do more with TutorLMS + FluentCRM',
-                'description' => 'Integrate TutorLMS with FluentCRM and segment your students by courses, send super targeted emails, onboarding emails, cross promote more courses and many more.',
-                'btn_text'    => 'Upgrade to Pro',
-                'base_title'  => 'Supercharge your LMS by upgrading FluentCRM Pro'
-            ];
-        } else if (defined('TUTOR_VERSION')) {
-            $recommendations[] = [
-                'provider'    => 'TutorLMS',
-                'title'       => 'Do more with TutorLMS + FluentCRM',
-                'description' => 'Integrate TutorLMS with FluentCRM and segment your students by courses, send super targeted emails, onboarding emails, cross promote more courses and many more.',
-                'btn_text'    => 'Upgrade to Pro',
+                'title'       => __('Do more with TutorLMS + FluentCRM', 'fluent-crm'),
+                'description' => __('Integrate TutorLMS with FluentCRM and segment your students by courses, send super targeted emails, onboarding emails, cross promote more courses and many more.', 'fluent-crm'),
+                'btn_text'    => __('Upgrade to Pro', 'fluent-crm'),
                 'learn_more'  => 'https://fluentcrm.com/docs/tutorlms-integration-with-fluentcrm/',
-                'base_title'  => 'Supercharge your LMS by upgrading FluentCRM Pro'
+                'base_title'  => __('Supercharge your LMS by upgrading FluentCRM Pro', 'fluent-crm')
             ];
         } else if (defined('LP_PLUGIN_FILE')) {
             $recommendations[] = [
                 'provider'    => 'LearnPress',
-                'title'       => 'Do more with LearnPress + FluentCRM',
-                'description' => 'Integrate LearnPress with FluentCRM and segment your students by courses, send super targeted emails, onboarding emails, cross promote more courses and many more.',
-                'btn_text'    => 'Upgrade to Pro',
+                'title'       => __('Do more with LearnPress + FluentCRM', 'fluent-crm'),
+                'description' => __('Integrate LearnPress with FluentCRM and segment your students by courses, send super targeted emails, onboarding emails, cross promote more courses and many more.', 'fluent-crm'),
+                'btn_text'    => __('Upgrade to Pro', 'fluent-crm'),
                 'learn_more'  => 'https://fluentcrm.com/docs/learpress-integration-with-fluentcrm/',
-                'base_title'  => 'Supercharge your LMS by upgrading FluentCRM Pro'
+                'base_title'  => __('Supercharge your LMS by upgrading FluentCRM Pro', 'fluent-crm')
             ];
         }
 
         if (defined('PMPRO_VERSION')) {
             $recommendations[] = [
                 'provider'    => 'PaidMembership Pro',
-                'title'       => 'Do more with PaidMembership Pro + FluentCRM',
-                'description' => 'Integrate PaidMembership Pro with FluentCRM and segment your members by membership levels, send super targeted emails, onboarding emails, cross promote more levels and many more.',
-                'btn_text'    => 'Upgrade to Pro',
-                'base_title'  => 'Supercharge your Membership Site by upgrading FluentCRM Pro'
+                'title'       => __('Do more with PaidMembership Pro + FluentCRM', 'fluent-crm'),
+                'description' => __('Integrate PaidMembership Pro with FluentCRM and segment your members by membership levels, send super targeted emails, onboarding emails, cross promote more levels and many more.', 'fluent-crm'),
+                'btn_text'    => __('Upgrade to Pro', 'fluent-crm'),
+                'base_title'  => __('Supercharge your Membership Site by upgrading FluentCRM Pro', 'fluent-crm')
             ];
         } else if (defined('WLM3_PLUGIN_VERSION')) {
             $recommendations[] = [
                 'provider'    => 'Wishlist Member',
-                'title'       => 'Do more with Wishlist Member + FluentCRM',
-                'description' => 'Integrate Wishlist Member with FluentCRM and segment your members by membership levels, send super targeted emails, onboarding emails, cross promote more levels and many more.',
-                'btn_text'    => 'Upgrade to Pro',
-                'base_title'  => 'Supercharge your Membership Site by upgrading FluentCRM Pro'
+                'title'       => __('Do more with Wishlist Member + FluentCRM', 'fluent-crm'),
+                'description' => __('Integrate Wishlist Member with FluentCRM and segment your members by membership levels, send super targeted emails, onboarding emails, cross promote more levels and many more.', 'fluent-crm'),
+                'btn_text'    => __('Upgrade to Pro', 'fluent-crm'),
+                'base_title'  => __('Supercharge your Membership Site by upgrading FluentCRM Pro', 'fluent-crm')
             ];
         } else if (defined('MEPR_PLUGIN_NAME')) {
             $recommendations[] = [
                 'provider'    => 'MemberPress',
-                'title'       => 'Do more with MemberPress + FluentCRM',
-                'description' => 'Integrate MemberPress with FluentCRM and segment your members by membership levels, send super targeted emails, onboarding emails, cross promote more levels and many more.',
-                'btn_text'    => 'Upgrade to Pro',
-                'base_title'  => 'Supercharge your Membership Site by upgrading FluentCRM Pro'
+                'title'       => __('Do more with MemberPress + FluentCRM', 'fluent-crm'),
+                'description' => __('Integrate MemberPress with FluentCRM and segment your members by membership levels, send super targeted emails, onboarding emails, cross promote more levels and many more.', 'fluent-crm'),
+                'btn_text'    => __('Upgrade to Pro', 'fluent-crm'),
+                'base_title'  => __('Supercharge your Membership Site by upgrading FluentCRM Pro', 'fluent-crm')
             ];
         } else if (class_exists('\Restrict_Content_Pro')) {
             $recommendations[] = [
                 'provider'    => 'Restrict Content Pro',
-                'title'       => 'Do more with Restrict Content Pro + FluentCRM',
-                'description' => 'Integrate Restrict Content Pro with FluentCRM and segment your members by membership levels, send super targeted emails, onboarding emails, cross promote more levels and many more.',
-                'btn_text'    => 'Upgrade to Pro',
-                'base_title'  => 'Supercharge your Membership Site by upgrading FluentCRM Pro'
+                'title'       => __('Do more with Restrict Content Pro + FluentCRM', 'fluent-crm'),
+                'description' => __('Integrate Restrict Content Pro with FluentCRM and segment your members by membership levels, send super targeted emails, onboarding emails, cross promote more levels and many more.', 'fluent-crm'),
+                'btn_text'    => __('Upgrade to Pro', 'fluent-crm'),
+                'base_title'  => __('Supercharge your Membership Site by upgrading FluentCRM Pro', 'fluent-crm')
             ];
         }
 
@@ -238,10 +235,12 @@ class DashboardController extends Controller
             $title = defined('BP_PLATFORM_VERSION') ? 'BuddyBoss' : 'BuddyPress';
             $recommendations[] = [
                 'provider'    => $title,
-                'title'       => 'Do more with ' . $title . ' + FluentCRM',
-                'description' => 'Integrate ' . $title . ' with FluentCRM and segment your members by different group, send super targeted emails, onboarding emails, cross promote more groups and many more.',
-                'btn_text'    => 'Upgrade to Pro',
-                'base_title'  => 'Supercharge your Community Site by upgrading FluentCRM Pro'
+                /* translators: %s: plugin name (BuddyBoss or BuddyPress) */
+                'title'       => sprintf(__('Do more with %s + FluentCRM', 'fluent-crm'), $title),
+                /* translators: %s: plugin name (BuddyBoss or BuddyPress) */
+                'description' => sprintf(__('Integrate %s with FluentCRM and segment your members by different group, send super targeted emails, onboarding emails, cross promote more groups and many more.', 'fluent-crm'), $title),
+                'btn_text'    => __('Upgrade to Pro', 'fluent-crm'),
+                'base_title'  => __('Supercharge your Community Site by upgrading FluentCRM Pro', 'fluent-crm')
             ];
         }
 
@@ -251,5 +250,19 @@ class DashboardController extends Controller
 
         return $recommendations[array_rand($recommendations)];
 
+    }
+
+    private function getTriggers()
+    {
+        /**
+         * Determine the list of funnel triggers in FluentCRM.
+         *
+         * This filter allows you to modify the array of funnel triggers.
+         *
+         * @since 1.0.0
+         *
+         * @param array An array of funnel triggers.
+         */
+        return apply_filters('fluentcrm_funnel_triggers', []);
     }
 }

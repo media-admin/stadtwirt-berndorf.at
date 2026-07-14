@@ -15,6 +15,7 @@ import CF7AppsRadioField from '../../../../../src/components/CF7AppsRadioField';
 import parse from 'html-react-parser';
 import {toast} from "react-toastify";
 import { useLocation } from 'react-router';
+import { getWebhookDataTypeOptions } from '../../../../../src/utils/webhookUiUtils';
 
 const TextareaField = ({ fieldKey, field, className, description, disabled, openMap, setOpenMap, formData, handleInputChange, isWebhookDisabled }) => {
     const open = (openMap && openMap[ fieldKey ] !== undefined) ? openMap[ fieldKey ] : ! field.collapsible;
@@ -166,6 +167,12 @@ const CF7AppsSettings = () => {
                             } else {
                                 _formData[ fieldKey ] = field.default ? field.default : '';
                             }
+                        } else if ( 'select' === field.type ) {
+                            if ( field.selected !== undefined && field.selected !== null && field.selected !== '' ) {
+                                _formData[ fieldKey ] = field.selected;
+                            } else if ( field.default !== undefined ) {
+                                _formData[ fieldKey ] = field.default;
+                            }
                         }
 
                         if ( settings['fields'][ fieldKey ].sub_fields ) {
@@ -201,6 +208,10 @@ const CF7AppsSettings = () => {
 
                 } );
 
+                if ( app === 'webhook' && String( _formData.method || '' ).toUpperCase() === 'GET' && _formData.data_type === 'form' ) {
+                    _formData.data_type = 'json';
+                }
+
                 setFormData( _formData );
                 // initialize openMap for textarea fields so open state survives rerenders
                 let _openMap = {};
@@ -221,10 +232,16 @@ const CF7AppsSettings = () => {
 
     const handleInputChange = ( e ) => {
         const { name, value } = e.target;
-        setFormData( ( prev ) => ( {
-            ...prev,
-            [ name ]: value,
-        } ) );
+        setFormData( ( prev ) => {
+            const next = {
+                ...prev,
+                [ name ]: value,
+            };
+            if ( app === 'webhook' && name === 'method' && String( value ).toUpperCase() === 'GET' && prev.data_type === 'form' ) {
+                next.data_type = 'json';
+            }
+            return next;
+        } );
     }
 
     const saveAppSettings = () => {
@@ -400,14 +417,21 @@ const CF7AppsSettings = () => {
                                     />
                                 );
                             } else if ( 'select' === field.type ) {
+                                const isWebhookDataType = app === 'webhook' && fieldKey === 'data_type';
+                                const selectOptions = isWebhookDataType
+                                    ? getWebhookDataTypeOptions( formData.method, field.options )
+                                    : field.options;
+                                const selectedVal = formData[ fieldKey ] !== undefined && formData[ fieldKey ] !== null
+                                    ? formData[ fieldKey ]
+                                    : field.selected;
                                 return (
                                     <CF7AppsSelectField
                                         key={fieldKey}
                                         label={ field.title }
                                         className={ className }
                                         name={ fieldKey }
-                                        selected={ field['selected'] }
-                                        options={ field.options }
+                                        selected={ selectedVal }
+                                        options={ selectOptions }
                                         onChange={ handleInputChange }
                                         description={ parse( String( field.description ) ) }
                                         disabled={ field.disabled }

@@ -7,7 +7,7 @@ use FluentCrm\App\Services\Helper;
 use FluentCrm\App\Services\Libs\FileSystem;
 use FluentCrm\App\Services\Sanitize;
 use FluentCrm\Framework\Support\Arr;
-use FluentCrm\Framework\Request\Request;
+use FluentCrm\Framework\Http\Request\Request;
 use FluentCrm\App\Models\Subscriber;
 
 /**
@@ -23,7 +23,7 @@ class CsvController extends Controller
 {
 
     /**
-     * @param \FluentCrm\Framework\Request\Request $request
+     * @param \FluentCrm\Framework\Http\Request\Request $request
      * @return \WP_REST_Response
      * @throws \FluentCrm\Framework\Validator\ValidationException
      */
@@ -206,7 +206,9 @@ class CsvController extends Controller
 
 
         $page = $this->request->get('importing_page', 1);
-        $processPerRequest = 500;
+
+        $processPerRequest = apply_filters('fluent_crm/csv_import_contact_limit_per_request', 100);
+        
         $offset = ($page - 1) * $processPerRequest;
         $records = array_slice($allRecords, $offset, $processPerRequest);
 
@@ -247,7 +249,7 @@ class CsvController extends Controller
             }
 
             if (!array_key_exists('email', $subscriber)) {
-                return $this->sendError(['email' => "The email field is required."], 422);
+                return $this->sendError(['email' => __('The email field is required.', 'fluent-crm')], 422);
             }
 
             $subscriber['email'] = is_string($subscriber['email']) ? trim($subscriber['email']) : $subscriber['email'];
@@ -398,7 +400,7 @@ class CsvController extends Controller
             }
 
             if (empty($company['name'])) {
-                return $this->sendError(['email' => "The company name field is required."], 422);
+                return $this->sendError(['email' => __('The company name field is required.', 'fluent-crm')], 422);
             }
 
             if (!$willUpdate) {

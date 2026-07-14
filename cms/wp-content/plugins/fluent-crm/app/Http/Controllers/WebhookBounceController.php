@@ -3,7 +3,7 @@
 namespace FluentCrm\App\Http\Controllers;
 
 use FluentCrm\App\Services\ExternalIntegrations\MailComplaince\Webhook;
-use FluentCrm\Framework\Request\Request;
+use FluentCrm\Framework\Http\Request\Request;
 
 /**
  *  WebhookBounceController - REST API Handler Class
@@ -16,7 +16,7 @@ use FluentCrm\Framework\Request\Request;
  */
 class WebhookBounceController extends Controller
 {
-    private $validServices = ['mailgun', 'pepipost', 'postmark', 'sendgrid', 'sparkpost', 'elasticemail', 'postalserver', 'smtp2go', 'brevo'];
+    private $validServices = ['mailgun', 'pepipost', 'postmark', 'sendgrid', 'sparkpost', 'elasticemail', 'postalserver', 'smtp2go', 'brevo', 'tosend'];
 
     public function handleBounce(Request $request, $serviceName, $securityCode)
     {
@@ -49,7 +49,7 @@ class WebhookBounceController extends Controller
             ], $request, $securityCode);
         }
 
-        if ($securityCode != $this->getSecurityCode()) {
+        if (!hash_equals($this->getSecurityCode(), $securityCode)) {
             return $this->getError();
         }
 

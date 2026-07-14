@@ -319,23 +319,7 @@ function fluentFormPrintUnescapedInternalString($string)
 
 function fluentform_options_sanitize($options)
 {
-    $maps = [
-        'label'      => 'wp_kses_post',
-        'value'      => 'sanitize_text_field',
-        'image'      => 'sanitize_url',
-        'calc_value' => 'sanitize_text_field',
-    ];
-
-    $mapKeys = array_keys($maps);
-
-    foreach ($options as $optionIndex => $option) {
-        $attributes = array_filter(ArrayHelper::only($option, $mapKeys));
-        foreach ($attributes as $key => $value) {
-            $options[$optionIndex][$key] = call_user_func($maps[$key], $value);
-        }
-    }
-
-    return $options;
+    return \FluentForm\App\Helpers\Helper::sanitizeAdvancedOptions($options);
 }
 
 function fluentform_iframe_srcdoc_sanitize($value)
@@ -454,6 +438,64 @@ function fluentform_kses_js($content)
     }
 
     return preg_replace('/<\/?script[^>]*>/is', '', $content);
+}
+
+function fluentform_sanitize_json_object($value)
+{
+    if (!is_string($value) || '' === trim($value)) {
+        return '';
+    }
+
+    $value = trim($value);
+
+    $decoded = json_decode($value, true);
+
+    // Best-effort recovery of a pure-data JS-object literal (unquoted keys,
+    // single quotes, trailing commas) — the documented "JS object" format for
+    // the Date/Time field's advanced config. json_decode below is the security
+    // gate: any function or expression that survives normalisation is still not
+    // valid JSON, so it is rejected. Normalisation can only recover data, never
+    // execute or emit code.
+    if (JSON_ERROR_NONE !== json_last_error() || !is_array($decoded)) {
+        $decoded = json_decode(fluentform_js_object_to_json($value), true);
+    }
+
+    if (JSON_ERROR_NONE !== json_last_error() || !is_array($decoded)) {
+        return '';
+    }
+
+    if ([] === $decoded) {
+        return '{}';
+    }
+
+    // date_config must be an object; reject a top-level JSON array. Nested
+    // arrays (e.g. flatpickr `disable: [...]`) are preserved by not forcing
+    // JSON_FORCE_OBJECT recursively.
+    if (array_keys($decoded) === range(0, count($decoded) - 1)) {
+        return '';
+    }
+
+    return wp_json_encode($decoded);
+}
+
+function fluentform_js_object_to_json($value)
+{
+    // Single-quoted strings -> double-quoted (respecting escapes).
+    $value = preg_replace_callback(
+        "/'((?:\\\\.|[^'\\\\])*)'/s",
+        function ($m) {
+            return '"' . str_replace(['\\\'', '"'], ['\'', '\\"'], $m[1]) . '"';
+        },
+        $value
+    );
+
+    // Quote unquoted object keys: `{ key:` / `, key:` -> `{ "key":`.
+    $value = preg_replace('/([{,]\s*)([A-Za-z_$][A-Za-z0-9_$]*)(\s*:)/', '$1"$2"$3', $value);
+
+    // Drop trailing commas before a closing brace/bracket.
+    $value = preg_replace('/,\s*([}\]])/', '$1', $value);
+
+    return $value;
 }
 
 /**

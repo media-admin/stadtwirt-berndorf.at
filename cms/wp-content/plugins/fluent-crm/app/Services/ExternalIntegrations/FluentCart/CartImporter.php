@@ -152,7 +152,7 @@ class CartImporter
                 ],
                 'sync_import_html'  => [
                     'type'       => 'html-viewer',
-                    'heading'    => 'FluentCart Data Sync',
+                    'heading'    => __('FluentCart Data Sync', 'fluent-crm'),
                     'info'       => __('You can sync all your FluentCart Customers into FluentCRM and all future customers and purchase data will be synced.', 'fluent-crm').'<br />'.__('After this sync you can import by product by product and provide appropriate tags', 'fluent-crm'),
                     'dependency' => [
                         'depends_on' => 'import_type',
@@ -235,7 +235,7 @@ class CartImporter
         $importedCustomers = [];
         // pushing all customers without tags
         foreach ($customers as $customer) {
-            $subscribers = CartHelper::prepareSubsciberData($customer);
+            $subscribers = CartHelper::prepareSubscriberData($customer);
             if($customer->user_id) {
                 $subscribers = Helper::getWPMapUserInfo($customer->user_id);
             }
@@ -301,7 +301,8 @@ class CartImporter
     {
         $allProductsIds =  CartHelper::getPurchasedProductsByCustomerId($customerId);
         // check in products
-        return array_intersect($allProductsIds, $productIds); // return only those products which are in productIds
+        // getPurchasedProductsByCustomerId() returns a Collection via pluck(), convert to array for array_intersect()
+        return array_intersect($allProductsIds->toArray(), $productIds); // return only those products which are in productIds
     }
 
     private static function getSyncStatus()

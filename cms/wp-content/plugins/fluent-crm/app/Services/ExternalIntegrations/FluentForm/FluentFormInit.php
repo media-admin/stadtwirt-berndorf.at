@@ -73,7 +73,7 @@ class FluentFormInit
             ->orderBy('fluentform_subscriptions.created_at', 'desc')
             ->get();
 
-        if (empty($subscriptions)) {
+        if ($subscriptions->isEmpty()) {
             return $widgets;
         }
 
@@ -113,7 +113,7 @@ class FluentFormInit
         $html .= '<span class="fc_mepr_subscription_price">' . $subscription->formatted_recurring_amount . '<small>/'.$subscription->billing_interval.'</small></span>';
         $html .= '</span>';
         $html .= '<a href="' . $permalink . '" target="_blank" class="fc_mepr_subscription_title">';
-        $html .= '<b>' . esc_html($subscription->item_name) . '<span class="fc_dash_extrernal dashicons dashicons-external"></span></b>';
+        $html .= '<b>' . esc_html($subscription->item_name) . '<span class="fc_dash_external dashicons dashicons-external"></span></b>';
         $html .= '</a>';
         $html .= '<span class="fc_date">' . __('Start Date: ', 'fluent-crm') . $formatted_date . '</span>';
         if ($subscription->status == 'active') {

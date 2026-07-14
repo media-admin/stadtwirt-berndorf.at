@@ -3,6 +3,7 @@
 namespace FluentCrm\App\Http\Controllers;
 
 use FluentCrm\App\Models\CustomContactField;
+use FluentCrm\App\Services\Helper;
 
 /**
  *  CustomContactFieldsController - REST API Handler Class
@@ -27,7 +28,7 @@ class CustomContactFieldsController extends Controller
     public function saveGlobalFields(CustomContactField $model)
     {
         $fields = $model->saveGlobalFields(
-            $this->request->getJson('fields')
+            Helper::parseArrayOrJson($this->request->get('fields'))
         );
 
         return $this->sendSuccess([

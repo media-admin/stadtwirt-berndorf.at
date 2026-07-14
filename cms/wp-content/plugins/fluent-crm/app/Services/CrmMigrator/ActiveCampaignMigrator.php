@@ -9,10 +9,15 @@ class ActiveCampaignMigrator extends BaseMigrator
 {
     public function getInfo()
     {
+        $infoSvg = $this->getInfoIcon();
+
+        $logo = $this->getSvgLogo();
+
         return [
             'title'                  => 'ActiveCampaign',
             'description'            => __('Transfer your ActiveCampaign tags and contacts to FluentCRM', 'fluent-crm'),
             'logo'                   => fluentCrmMix('images/migrators/active_campaign.png'),
+            'logo_svg'               => $logo,
             'supports'               => [
                 'tags'                => false,
                 'lists'               => false,
@@ -31,14 +36,14 @@ class ActiveCampaignMigrator extends BaseMigrator
                     'placeholder' => __('API Access URL', 'fluent-crm'),
                     'data_type'   => 'url',
                     'type'        => 'input-text',
-                    'inline_help' => __('You can find Account ID Settings -> Developer -> API Access', 'fluent-crm')
+                    'inline_help' => $infoSvg . ' ' . __('You can find Account ID Settings -> Developer -> API Access', 'fluent-crm')
                 ],
                 'api_key' => [
                     'label'       => __('API Access Key', 'fluent-crm'),
                     'placeholder' => __('ActiveCampaign API Token', 'fluent-crm'),
                     'data_type'   => 'password',
                     'type'        => 'input-text',
-                    'inline_help' => __('You can find your API key at ActiveCampaign Settings -> Developer -> API Access', 'fluent-crm')
+                    'inline_help' => $infoSvg . ' ' . __('You can find your API key at ActiveCampaign Settings -> Developer -> API Access', 'fluent-crm')
                 ]
             ],
             'refresh_on_list_change' => false,
@@ -338,5 +343,14 @@ class ActiveCampaignMigrator extends BaseMigrator
         }
 
         return $formattedMaps;
+    }
+
+    public function getSvgLogo()
+    {
+        return '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
+  <path d="M16 30C23.732 30 30 23.732 30 16C30 8.26801 23.732 2 16 2C8.26801 2 2 8.26801 2 16C2 23.732 8.26801 30 16 30Z" fill="#004CFF"/>
+  <path d="M20.7497 15.9683L12.5577 21.4086C12.1782 21.6616 11.9883 22.0727 11.9883 22.4839V23.8439L21.92 17.3283C22.3628 17.0121 22.6475 16.5059 22.6475 15.9683C22.6475 15.4306 22.3945 14.9244 21.92 14.6081L11.9883 8.15576V9.42089C11.9883 9.8638 12.2097 10.2749 12.5577 10.4963L20.7497 15.9683Z" fill="white"/>
+  <path d="M15.8155 16.4112C16.2583 16.6958 16.8277 16.6958 17.2705 16.4112L17.9663 15.9367L12.779 12.4259C12.4628 12.2044 11.9883 12.4259 11.9883 12.837V13.8807L14.6768 15.6837L15.8155 16.4112Z" fill="white"/>
+</svg>';
     }
 }

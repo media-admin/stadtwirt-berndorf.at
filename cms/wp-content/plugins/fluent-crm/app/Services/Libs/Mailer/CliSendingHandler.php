@@ -39,30 +39,29 @@ class CliSendingHandler extends BaseHandler
         Helper::debugLog('Starting ' . $this->runnerTitle, '', 'extended');
 
         try {
-            $this->processing();
             $this->handleFailedLog();
-            $this->startedAt = microtime(true);
             $result = $this->processBatchEmails();
 
             if (is_wp_error($result)) {
-                update_option($this->optionKey, null);
+                $this->releaseLock();
                 $this->logSentCount();
                 return new \WP_Error('wp_error', $result->get_error_message());
             }
 
             if ($result === 'time_up') {
+                $this->releaseLock();
                 $this->logSentCount();
                 return new \WP_Error('time_up', 'Time Up');
             }
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
+            $this->releaseLock();
             Helper::debugLog('Exception at ' . $this->runnerTitle, $e->getMessage(), 'error');
             return new \WP_Error('exception', $e->getMessage());
         }
 
         $this->logSentCount();
-
-        update_option($this->optionKey, null);
+        $this->releaseLock();
         return true;
     }
 
@@ -93,8 +92,8 @@ class CliSendingHandler extends BaseHandler
         $this->isMultiThread = true;
         $this->startingTimeStamp = time();
 
-        if ($this->isProcessing()) {
-            Helper::debugLog('already Processing', 'Handler::handle', 'extended');
+        if (!$this->acquireLock()) {
+            Helper::debugLog('already Processing', 'CliSendingHandler::handle', 'extended');
             return new \WP_Error('already_processing', 'Already Processing');
         }
 
@@ -118,27 +117,45 @@ class CliSendingHandler extends BaseHandler
             \WP_CLI::line(sprintf('Sent %1d emails. -> %2d', $this->sentCount, $this->sendingChunkNumber));
         }
 
+        global $wpdb;
+        $table = $wpdb->prefix . 'fc_campaign_emails';
         $currentTime = current_time('mysql');
-        $emails = CampaignEmail::whereIn('status', ['pending', 'scheduled'])
-            ->where('scheduled_at', '<=', $currentTime)
-            ->with('campaign', 'subscriber')
-            ->orderBy('scheduled_at', 'DESC')
-            ->offset($this->offset)
-            ->limit($this->sendingPerChunk)
-            ->get();
 
-        $ids = $emails->pluck('id')->toArray();
+        // Use transaction-based atomic claiming like Handler to prevent duplicates
+        $wpdb->query('START TRANSACTION');
+
+        $rows = $wpdb->get_results($wpdb->prepare(
+            "SELECT id FROM {$table} WHERE status IN ('pending', 'scheduled') AND scheduled_at <= %s ORDER BY scheduled_at DESC LIMIT %d, %d FOR UPDATE",
+            $currentTime, $this->offset, $this->sendingPerChunk
+        ));
+
+        $ids = wp_list_pluck($rows, 'id');
 
         if ($ids) {
-            fluentCrmDb()->table('fc_campaign_emails')
-                ->whereIn('id', $ids)
-                ->update([
-                    'status'     => 'processing',
-                    'updated_at' => $currentTime
-                ]);
+            $idsPlaceholder = implode(',', array_fill(0, count($ids), '%d'));
+            $result = $wpdb->query($wpdb->prepare(
+                "UPDATE {$table} SET status = 'processing', updated_at = %s WHERE id IN ($idsPlaceholder) AND status IN ('pending', 'scheduled')",
+                array_merge([$currentTime], $ids)
+            ));
+
+            if ($result === false || $wpdb->rows_affected === 0) {
+                $wpdb->query('ROLLBACK');
+                return [];
+            }
         }
 
-        return $emails;
+        $wpdb->query('COMMIT');
+
+        if (!$ids) {
+            return [];
+        }
+
+        $this->refreshLock();
+
+        return CampaignEmail::whereIn('id', $ids)
+            ->where('status', 'processing')
+            ->with(['campaign', 'subscriber'])
+            ->get();
     }
 
     public function setRunnerTitle($title)

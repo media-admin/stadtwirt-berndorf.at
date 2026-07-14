@@ -50,7 +50,7 @@ trait ReportingHelperTrait
         ];
 
         if ($frequency == static::$weekly) {
-            $select[] = fluentCrmDb()->raw('WEEK(created_at) week');
+            $select[] = fluentCrmDb()->raw('WEEK(' . $dateField . ') week');
         } else if ($frequency == static::$monthly) {
             // Keep existing month for backward compatibility
             $select[] = fluentCrmDb()->raw('MONTH(' . $dateField . ') AS month');

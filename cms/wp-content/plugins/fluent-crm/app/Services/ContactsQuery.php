@@ -24,12 +24,14 @@ class ContactsQuery
             'tags'               => [],
             'lists'              => [],
             'statuses'           => [],
+            'sms_statuses'           => [],
             'has_commerce'       => false,
             'custom_fields'      => false,
             'limit'              => false,
             'offset'             => false,
             'contact_status'     => '',
-            'company_ids'        => []
+            'company_ids'        => [],
+            'contact_ids'        => []
         ]);
 
         $this->setupQuery();
@@ -47,7 +49,22 @@ class ContactsQuery
         }
 
         if ($shortBy = $this->args['sort_by']) {
-            if (in_array($shortBy, (new Subscriber())->getFillable()) || $shortBy == 'id') {
+            // Allowlist of every real fc_subscribers column. The framework
+            // rewrite (May 2025) made orderBy() throw LogicException for
+            // names that don't match ^[a-zA-Z0-9_\.]+$, and unknown columns
+            // would produce SQL errors — so the check has to happen before
+            // we hand the value to the builder. getFillable() used to be
+            // the gate but it omits id, contact_owner and a few others,
+            // so legitimate sorts (e.g., contact_owner) silently dropped.
+            $allowedSortBy = [
+                'id', 'user_id', 'hash', 'contact_owner', 'company_id', 'prefix',
+                'first_name', 'last_name', 'email', 'timezone', 'address_line_1',
+                'address_line_2', 'postal_code', 'city', 'state', 'country', 'ip',
+                'latitude', 'longitude', 'total_points', 'life_time_value', 'phone',
+                'status', 'contact_type', 'source', 'avatar', 'date_of_birth',
+                'created_at', 'last_activity', 'updated_at',
+            ];
+            if (in_array($shortBy, $allowedSortBy, true)) {
                 $subscribersQuery->orderBy($shortBy, $this->args['sort_type']);
             }
         }
@@ -88,6 +105,15 @@ class ContactsQuery
 
                 $subscribersQuery->filterByStatues($statuses);
             }
+
+            if ($sms_statuses = $this->args['sms_statuses']) {
+                $sms_statuses = (array) $sms_statuses;
+                $subscribersQuery->where(function ($query) use ($sms_statuses) {
+                    foreach ($sms_statuses as $sms_status) {
+                        $query->orWhere('sms_status', $sms_status);
+                    }
+                });
+            }
         }
 
         if ($this->args['has_commerce']) {
@@ -114,6 +140,10 @@ class ContactsQuery
 
         if ($this->args['company_ids']) {
             $subscribersQuery->filterByCompanies($this->args['company_ids']);
+        }
+
+        if ($this->args['contact_ids'] && is_array($this->args['contact_ids']) && !empty($this->args['contact_ids'])) {
+            $subscribersQuery->whereIn('id', $this->args['contact_ids']);
         }
 
         $this->model = $subscribersQuery;
