@@ -411,7 +411,7 @@ function customtheme_ensure_srcset_meta( ?array $image_meta, array $size_array, 
  */
 add_filter( 'wp_get_attachment_image', 'customtheme_webp_picture_element', 10, 5 );
 
-function customtheme_webp_picture_element( string $html, int $attachment_id, string|array $size, bool $icon, array $attr ): string {
+function customtheme_webp_picture_element( string $html, int $attachment_id, string|array $size, bool $icon, $attr = array() ): string {
     if ( ! apply_filters( 'customtheme_enable_picture_webp', false ) ) return $html;
 
     $image_src = wp_get_attachment_image_url( $attachment_id, $size );
