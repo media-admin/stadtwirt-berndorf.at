@@ -1,139 +1,149 @@
+import { __ } from "@wordpress/i18n";
 import { useEffect, useState } from "@wordpress/element";
-import { Button, FlexItem } from "@wordpress/components";
 import CF7AppsSkeletonLoader from "../components/CF7AppsSkeletonLoader";
 import { getMenu } from "../api/api";
-import { Accordion, AccordionDetails, AccordionSummary, Typography } from "@mui/material";
-import { ExpandMore, DensityMedium, KeyboardArrowLeft } from "@mui/icons-material";
+import { Accordion, AccordionDetails, AccordionSummary, Typography, Tooltip } from "@mui/material";
+import { ExpandMore } from "@mui/icons-material";
 import { NavLink } from "react-router";
+import {
+	useCF7AppsNav,
+	NAV_EXPANDED_WIDTH,
+	NAV_COLLAPSED_WIDTH,
+} from "../context/CF7AppsNavContext";
+import {
+	getActiveParentMenu,
+	getParentNavPath,
+	getParentMenuIcon,
+	getParentHeadingClassName,
+	getParentMenuLabel,
+	isParentMenuActive,
+	isPaymentParentMenu,
+} from "../utils/menuParent";
 
-const MenuBar = (props) => {
-    const [isLoading, setIsLoading] = useState(true);
-    const [menuItems, setMenuItems] = useState([]);
-    const [ expanded, setExpanded ] = useState( true );
-    const [ menuStyle, setMenuStyle ] = useState( {} );
+const MenuBar = () => {
+	const {
+		isPanelOpen,
+		isPanelHovering,
+		startPanelHover,
+		endPanelHover,
+		shellWidth,
+		panelClassNames,
+	} = useCF7AppsNav();
+	const [isLoading, setIsLoading] = useState(true);
+	const [menuItems, setMenuItems] = useState({});
+	const activeParentMenu = getActiveParentMenu();
 
-    useEffect( () => {
-        async function fetchMenu() {
-            setIsLoading(true);
-            const response = await getMenu();
-            if(response) {
-                setMenuItems(response);
-                setIsLoading(false);
-            }
-        }
+	useEffect(() => {
+		async function fetchMenu() {
+			const response = await getMenu();
+			if (response) {
+				setMenuItems(response);
+				setIsLoading(false);
+			}
+		}
 
-        fetchMenu();
-    }, []);
+		fetchMenu();
+	}, []);
 
-    const getParentMenu = (menu) => {
-        switch (menu) {
-            case 'Spam Protection':
-                return (
-                    <>
-                        <img src={`${CF7Apps.assetsURL}/images/spam-protection.png`} width="23px" alt={menu} /> { expanded ? menu : null }
-                    </>
-                );
+	const panelWidth = isPanelOpen ? NAV_EXPANDED_WIDTH : NAV_COLLAPSED_WIDTH;
+	const visibleParentMenus = Object.keys(menuItems).filter(
+		(parentMenu) => !isPaymentParentMenu(parentMenu)
+	);
 
-            case 'General':
-                return (
-                    <>
-                        <img style={ { marginTop: '-7px' } } src={`${ CF7Apps.assetsURL }/images/general.png`} width={'23px'} alt={ menu } /> { expanded ? menu : null }
-                    </>
-                );
-                break;
+	return (
+		<div
+			className="cf7apps-nav-shell"
+			style={{ width: `${shellWidth}px` }}
+			onMouseEnter={startPanelHover}
+			onMouseLeave={endPanelHover}
+		>
+			<nav
+				className={panelClassNames}
+				style={{ width: `${panelWidth}px` }}
+				aria-label={__("CF7 Apps navigation", "cf7apps")}
+			>
+				<div className="cf7apps-nav-panel-body">
+					{isLoading ? (
+						<div className="cf7apps-nav-loading">
+							<CF7AppsSkeletonLoader
+								count={1}
+								height={40}
+								width={isPanelOpen ? 205 : 40}
+							/>
+							<br />
+							<CF7AppsSkeletonLoader count={3} height={20} />
+						</div>
+					) : !isPanelOpen ? (
+						<div className="cf7apps-menu-icon-only">
+							{visibleParentMenus.map((parentMenu) => {
+								const isActive = isParentMenuActive(
+									parentMenu,
+									activeParentMenu
+								);
 
-            case 'Integration':
-                return (
-                    <>
-                        <img style={ { marginTop: '-7px' } } src={`${ CF7Apps.assetsURL }/images/integration.png`} width={'23px'} alt={ menu } /> { expanded ? menu : null }
-                    </>
-                );
-                break;
-            default:
-                return menu;
-        }
-    }
-
-    const handleMenuClick = ( e ) => {
-        e.preventDefault();
-        setExpanded( ! expanded );
-
-        let style;
-        if ( expanded ) {
-            style = { width: '60px' };
-        } else {
-            style = {};
-        }
-
-        setMenuStyle( style );
-    }
-
-    return (
-        <>
-            <div
-                className="cf7apps-menu-bar"
-                style={ menuStyle }
-            >
-
-                
-                <Button onClick={ handleMenuClick } className="cf7apps-btn tertiary-secondary cf7apps-expand-menu-btn">
-                    {
-                        expanded ? <KeyboardArrowLeft /> : <DensityMedium />
-                    }
-                </Button>
-
-                <div className="cf7apps-clearfix"></div>
-            
-
-            {
-                isLoading
-                ?
-                <div style={{ padding: '20px', paddingTop: '5px' }}>
-                    <CF7AppsSkeletonLoader count={1} height={40} width={205} />
-                    <br />
-                    <CF7AppsSkeletonLoader count={1} height={30} />
-                    <br />
-                    <CF7AppsSkeletonLoader count={1} height={20} />
-                    <br />
-                    <CF7AppsSkeletonLoader count={1} height={20} />
-                    <br />
-                    <CF7AppsSkeletonLoader count={1} height={20} />
-                </div>
-                :
-                <div>
-                    <div className="cf7apps-menu-container">
-                        {
-                            Object.keys(menuItems).map((parentMenu, parentIndex) => {
-                                return (
-                                    <Accordion key={parentIndex} defaultExpanded className="cf7apps-menu-accordion">
-                                        <AccordionSummary
-                                            expandIcon={ expanded ? <ExpandMore /> : null }
-                                            >
-                                                <Typography component="span" className="cf7apps-menu-heading">
-                                                    { getParentMenu(parentMenu) }
-                                                </Typography>
-                                            </AccordionSummary>
-                                            <AccordionDetails className="cf7apps-menu-routes-container" style={{ display: expanded ? 'block' : 'none' }}>
-                                                {
-                                                    Object.entries(menuItems[parentMenu]).map(([route, subMenu], subMenuIndex) => {
-                                                        return (
-                                                            <div className='cf7apps-menu-route' key={subMenuIndex}>
-                                                                <NavLink to={`/settings/${route}`}>{ subMenu }</NavLink>
-                                                            </div>
-                                                        )
-                                                    })
-                                                }
-                                            </AccordionDetails>
-                                    </Accordion>
-                                )
-                            })
-                        }
-                    </div>
-                </div>
-            }
-            </div>
-        </>
-    );
-}
+								return (
+									<Tooltip key={parentMenu} title={parentMenu}>
+										<NavLink
+											to={getParentNavPath(parentMenu)}
+											className={
+												isActive
+													? "cf7apps-menu-icon-only-item is-active"
+													: "cf7apps-menu-icon-only-item"
+											}
+											aria-label={parentMenu}
+										>
+											{getParentMenuIcon(parentMenu, true)}
+										</NavLink>
+									</Tooltip>
+								);
+							})}
+						</div>
+					) : (
+						<div className="cf7apps-menu-container">
+							{visibleParentMenus.map((parentMenu, parentIndex) => (
+								<Accordion
+									key={parentIndex}
+									defaultExpanded
+									className="cf7apps-menu-accordion"
+									disableGutters
+								>
+									<AccordionSummary
+										expandIcon={<ExpandMore />}
+										className="cf7apps-menu-accordion-summary"
+									>
+										<Typography
+											component="span"
+											className={getParentHeadingClassName(
+												parentMenu
+											)}
+										>
+											{getParentMenuLabel(parentMenu)}
+										</Typography>
+									</AccordionSummary>
+									<AccordionDetails className="cf7apps-menu-routes-container">
+										{Object.entries(menuItems[parentMenu]).map(
+											([route, subMenu], subMenuIndex) => (
+												<div
+													className="cf7apps-menu-route"
+													key={subMenuIndex}
+												>
+													<NavLink
+														to={`/settings/${route}`}
+													>
+														{subMenu}
+													</NavLink>
+												</div>
+											)
+										)}
+									</AccordionDetails>
+								</Accordion>
+							))}
+						</div>
+					)}
+				</div>
+			</nav>
+		</div>
+	);
+};
 
 export default MenuBar;

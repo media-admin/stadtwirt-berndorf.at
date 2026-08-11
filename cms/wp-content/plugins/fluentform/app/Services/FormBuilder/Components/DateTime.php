@@ -56,7 +56,10 @@ class DateTime extends BaseComponent
 
         $ariaLabel = esc_html__(' Use arrow keys to navigate dates. Press enter to select a date.', 'fluentform');
         $label = ArrayHelper::get($data, 'settings.label');
-        $elMarkup = "<input  aria-label='" . $label . $ariaLabel . "'  aria-haspopup='dialog' data-type-datepicker data-format='" . esc_attr($dateFormat) . "' " . $atts . " aria-invalid='false' aria-required={$ariaRequired}>"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $atts is escaped before being passed in.
+        // SECURITY (FINDING-12): esc_attr the settings.label before interpolating it into the
+        // single-quoted aria-label; the save-time wp_kses does not encode quotes, so an unescaped
+        // label allows an attribute breakout (stored XSS).
+        $elMarkup = "<input  aria-label='" . esc_attr($label) . $ariaLabel . "'  aria-haspopup='dialog' data-type-datepicker data-format='" . esc_attr($dateFormat) . "' " . $atts . " aria-invalid='false' aria-required={$ariaRequired}>"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $atts is escaped before being passed in.
         $config = $this->getDateFormatConfigJSON($data['settings'], $form);
         $customConfig = $this->getCustomConfig($data['settings'], $form);
         $this->loadToFooter($config, $customConfig, $form, $id);
@@ -142,12 +145,11 @@ class DateTime extends BaseComponent
             (string) ArrayHelper::get($settings, 'date_config')
         );
 
+        // Emitted JS is rebuilt from validated data tokens (ints only) — the raw setting never reaches the script sink.
+        $customConfigObject = fluentform_date_config_to_js($customConfigObject);
+
         $customConfigObject = '' !== $customConfigObject ? $customConfigObject : '{}';
 
-        // The stored field value is always sanitised to a data-only JSON object
-        // (functions/expressions are stripped — they are the XSS vector for
-        // lower-privilege editors). Developers who need flatpickr callbacks
-        // supply them here from trusted server-side code, never via the setting.
         return apply_filters('fluentform/date_time_custom_config', $customConfigObject, $settings, $form);
     }
 

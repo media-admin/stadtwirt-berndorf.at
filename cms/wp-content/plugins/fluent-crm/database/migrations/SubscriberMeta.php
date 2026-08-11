@@ -37,6 +37,12 @@ class SubscriberMeta
             ) $charsetCollate;";
 
             dbDelta($sql);
+
+            // (key, value) lookup index — added post-create via the guarded service
+            // path (not inlined in CREATE TABLE): its 1020-byte utf8mb4 width exceeds
+            // the 767-byte InnoDB key limit on MySQL < 5.7.7 / MariaDB < 10.2, and an
+            // inline failure would take the whole CREATE TABLE down with it.
+            \FluentCrm\App\Services\DbPerformanceService::ensureCriticalIndex('subscriber_meta_key_value_idx');
         } else{
 
             // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
@@ -52,6 +58,10 @@ class SubscriberMeta
                 // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
                 $wpdb->query($sql);
             }
+
+            // (key, value) lookup index — owned by DbPerformanceService so the
+            // migration and the runtime health-check/repair path share one definition.
+            \FluentCrm\App\Services\DbPerformanceService::ensureCriticalIndex('subscriber_meta_key_value_idx');
         }
     }
 }

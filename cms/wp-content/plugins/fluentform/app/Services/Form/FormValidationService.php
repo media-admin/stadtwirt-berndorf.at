@@ -743,7 +743,7 @@ class FormValidationService
             $status = Arr::get($body, 'status', false) === 'success';
             
             if (!$status) {
-                return Helper::getCountryCodeFromHeaders();
+                return Helper::getCountryCodeFromHeaders(true);
             }
 
             if ($country = Arr::get($body,'CountryCode')) {
@@ -752,10 +752,11 @@ class FormValidationService
                 self::throwValidationException($message);
             }
         } else {
-            if ($country = Helper::getCountryCodeFromHeaders()) {
-                return $country;
-            }
-            self::throwValidationException($message);
+            // FINDING-26: geo provider unreachable. Return the CDN header only if the site opted
+            // into trusting it for enforcement; otherwise null. A null country makes
+            // checkCountryRestriction() skip rather than hard-block every submission during a
+            // third-party outage (a country restriction is only meaningful with a known country).
+            return Helper::getCountryCodeFromHeaders(true);
         }
     }
 
@@ -771,8 +772,8 @@ class FormValidationService
         foreach ($providedKeywords as $keyword) {
             foreach ($words as $word) {
                 if (
-                    strtoupper($word) === strtoupper($keyword) ||
-                    preg_match('/\b' . strtoupper($keyword) . '\b/', strtoupper($word))
+                    mb_strtoupper($word, 'UTF-8') === mb_strtoupper($keyword, 'UTF-8') ||
+                    preg_match('/(*UCP)\b' . preg_quote($keyword, '/') . '\b/ui', $word)
                 ) {
                     return true;
                 }

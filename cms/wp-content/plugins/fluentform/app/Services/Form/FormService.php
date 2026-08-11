@@ -97,7 +97,8 @@ class FormService
             
             return $form;
         } catch (Exception $e) {
-            throw new Exception(esc_html($e->getMessage()));
+            // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- surfaced as JSON by the REST layer, never echoed as HTML
+            throw new Exception($e->getMessage());
         }
     }
     

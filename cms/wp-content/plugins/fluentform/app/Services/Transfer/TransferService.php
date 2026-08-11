@@ -76,7 +76,7 @@ class TransferService
             $form->form_fields = json_decode($form->form_fields);
             $forms[] = $form;
         }
-    
+
         $fileName = 'fluentform-export-forms-' . count($forms) . '-' . date('d-m-Y') . '.json';
 
         header('Content-disposition: attachment; filename=' . $fileName);
@@ -89,6 +89,32 @@ class TransferService
     }
 
     /**
+     * Build the notice shown when imported custom JS/CSS was skipped because the
+     * importer lacks unfiltered_html. Returns an empty string when nothing was skipped.
+     *
+     * @param int $skippedForms
+     * @param int $totalForms
+     * @return string
+     */
+    protected static function restrictedCodeNotice($skippedForms, $totalForms)
+    {
+        if (!$skippedForms) {
+            return '';
+        }
+
+        if ($totalForms < 2) {
+            return __('Custom JS and CSS were not imported because your account cannot add custom code. Ask an administrator to add it.', 'fluentform');
+        }
+
+        return sprintf(
+            /* translators: 1: number of forms whose custom code was skipped, 2: total number of imported forms */
+            __('Custom JS and CSS were not imported for %1$d of %2$d forms because your account cannot add custom code. Ask an administrator to add it.', 'fluentform'),
+            $skippedForms,
+            $totalForms
+        );
+    }
+
+    /**
      * @param File $file The uploaded JSON file
      * @param bool $applyDefaultStyle Whether to apply default style settings to imported forms
      * @throws Exception
@@ -98,6 +124,7 @@ class TransferService
         if ($file instanceof File) {
             $forms = \json_decode($file->getContents(), true);
             $insertedForms = [];
+            $restrictedCodeForms = 0;
             if ($forms && is_array($forms)) {
                 foreach ($forms as $formItem) {
                     $formFields = json_encode([]);
@@ -108,6 +135,21 @@ class TransferService
                     } else {
                         throw new Exception(esc_html__('You have a faulty JSON file, please export the Fluent Forms again.', 'fluentform'));
                     }
+
+                    // SECURITY (FINDING-07): the editor save path routes form_fields through
+                    // Updater::sanitizeFields (skipped only for unfiltered_html users), but import
+                    // stored them verbatim, so an importer without unfiltered_html could plant
+                    // stored XSS (e.g. a field label of <img onerror=...>). Apply the same
+                    // recursive HTML sanitizer used for imported meta values unless the importer
+                    // may author raw HTML.
+                    if (!fluentformCanUnfilteredHTML()) {
+                        $decodedFields = json_decode($formFields, true);
+                        if (is_array($decodedFields)) {
+                            static::sanitizeJsonNode($decodedFields);
+                            $formFields = wp_json_encode($decodedFields) ?: $formFields;
+                        }
+                    }
+
                     $formTitle = sanitize_text_field(Arr::get($formItem, 'title'));
                     $form = [
                         'title'       => $formTitle ?: 'Blank Form',
@@ -132,11 +174,26 @@ class TransferService
                         'edit_url' => admin_url('admin.php?page=fluent_forms&route=editor&form_id=' . $formId),
                     ];
 
+                    $skippedCustomCode = false;
+
                     if (isset($formItem['metas'])) {
                         foreach ($formItem['metas'] as $metaData) {
                             $metaKey = sanitize_text_field(Arr::get($metaData, 'meta_key'));
                             $metaValue = Arr::get($metaData, 'value');
-                            if ("ffc_form_settings_generated_css" == $metaKey || "ffc_form_settings_meta" == $metaKey) {
+                            // SECURITY (FINDING-08): Customizer::store() refuses to save custom
+                            // JS/CSS without unfiltered_html; import must honor the same boundary.
+                            // Sanitizing _custom_form_js via fluentform_kses_js is insufficient
+                            // because the value is JS *code* executed inside a <script> block (kses
+                            // only strips <script> tags), so skip these keys entirely for importers
+                            // who cannot author raw JS/CSS.
+                            if (
+                                in_array($metaKey, ['_custom_form_js', '_custom_form_css'], true)
+                                && !fluentformCanUnfilteredHTML()
+                            ) {
+                                $skippedCustomCode = true;
+                                continue;
+                            }
+                            if ('ffc_form_settings_generated_css' == $metaKey || 'ffc_form_settings_meta' == $metaKey) {
                                 $metaValue = str_replace('ff_conv_app_' . Arr::get($formItem, 'id'), 'ff_conv_app_' . $formId, $metaValue);
                             }
                             $metaValue = static::sanitizeImportedMetaValue($metaKey, $metaValue);
@@ -161,6 +218,10 @@ class TransferService
                         }
                     }
 
+                    if ($skippedCustomCode) {
+                        $restrictedCodeForms++;
+                    }
+
                     do_action('fluentform/form_imported', $formId);
 
                     // Apply default style if requested
@@ -170,8 +231,9 @@ class TransferService
                 }
 
                 return ([
-                    'message'        => __('You form has been successfully imported.', 'fluentform'),
-                    'inserted_forms' => $insertedForms,
+                    'message'                 => __('You form has been successfully imported.', 'fluentform'),
+                    'inserted_forms'          => $insertedForms,
+                    'restricted_code_notice'  => static::restrictedCodeNotice($restrictedCodeForms, count($insertedForms)),
                 ]);
             }
         }
@@ -205,14 +267,14 @@ class TransferService
         }
         $formInputs = FormFieldsParser::getEntryInputs($form, ['admin_label', 'raw']);
         $inputLabels = FormFieldsParser::getAdminLabels($form, $formInputs);
-        $selectedLabels = Arr::get($args,'fields_to_export');
+        $selectedLabels = Arr::get($args, 'fields_to_export');
         if (is_string($selectedLabels) && Helper::isJson($selectedLabels)) {
             $selectedLabels = \json_decode($selectedLabels, true);
         }
         $selectedLabels = fluentFormSanitizer($selectedLabels);
-    
+
         $withNotes = isset($args['with_notes']);
-       
+
         //filter out unselected fields
         if (!empty($selectedLabels)) {
             foreach ($inputLabels as $key => $value) {
@@ -221,7 +283,7 @@ class TransferService
                 }
             }
         }
-        
+
         $submissions = self::getSubmissions($args);
         $submissions = FormDataParser::parseFormEntries($submissions, $form, $formInputs);
         $parsedShortCodes = [];
@@ -232,7 +294,9 @@ class TransferService
         // Preload notes for all submissions in a single query to avoid N+1
         $notesMap = [];
         if ($withNotes && count($submissions)) {
-            $submissionIds = array_map(function ($s) { return is_object($s) ? $s->id : $s['id']; }, $submissions->toArray());
+            $submissionIds = array_map(function ($s) {
+                return is_object($s) ? $s->id : $s['id'];
+            }, $submissions->toArray());
             $allNotes = SubmissionMeta::whereIn('response_id', $submissionIds)
                 ->where('meta_key', '_notes')
                 ->get();
@@ -244,18 +308,18 @@ class TransferService
         foreach ($submissions as $submission) {
 
             $submission->response = json_decode($submission->response, true);
-         
+
             $temp = [];
             foreach ($inputLabels as $field => $label) {
-                
+
                 //format tabular grid data for CSV/XLSV/ODS export
-                if (isset($formInputs[$field]['element']) && "tabular_grid" === $formInputs[$field]['element']) {
+                if (isset($formInputs[$field]['element']) && 'tabular_grid' === $formInputs[$field]['element']) {
                     $gridRawData = Arr::get($submission->response, $field);
                     $content = Helper::getTabularGridFormatValue($gridRawData, Arr::get($formInputs, $field), ' | ');
-                } elseif (isset($formInputs[$field]['element']) && "subscription_payment_component" === $formInputs[$field]['element']) {
+                } elseif (isset($formInputs[$field]['element']) && 'subscription_payment_component' === $formInputs[$field]['element']) {
                     //resolve plane name for subscription field
                     $planIndex = Arr::get($submission->user_inputs, $field);
-                    $planLabel = Arr::get($formInputs,  "{$field}.raw.settings.subscription_options.{$planIndex}.name");
+                    $planLabel = Arr::get($formInputs, "{$field}.raw.settings.subscription_options.{$planIndex}.name");
                     if ($planLabel) {
                         $content = $planLabel;
                     } else {
@@ -263,13 +327,13 @@ class TransferService
                     }
                 } else {
                     $content = self::getFieldExportContent($submission, $field);
-                    if (Arr::get($formInputs, $field . '.element') === "input_number" && is_numeric($content)) {
+                    if (Arr::get($formInputs, $field . '.element') === 'input_number' && is_numeric($content)) {
                         $content = $content + 0;
                     }
                 }
                 $temp[] = Helper::sanitizeForCSV($content);
             }
-    
+
             if (!empty($selectedShortcodes)) {
                 $regularShortcodes = self::getRegularExportShortcodes($selectedShortcodes, $legacyShortcodeHeaders);
 
@@ -284,20 +348,25 @@ class TransferService
                     );
                 }
 
-                $temp = array_merge(
-                    $temp,
-                    self::getSelectedShortcodeExportValues(
-                        $selectedShortcodes,
-                        $parsedShortCodes,
-                        $legacyShortcodeHeaders,
-                        $submission
-                    )
+                // SECURITY (FINDING-17): shortcode-export values (which include submitter-controlled
+                // {inputs.*} content) bypassed the CSV formula guard applied to regular columns.
+                // Sanitize each so a leading = - + @ etc. cannot execute when opened in a spreadsheet.
+                $shortcodeValues = self::getSelectedShortcodeExportValues(
+                    $selectedShortcodes,
+                    $parsedShortCodes,
+                    $legacyShortcodeHeaders,
+                    $submission
                 );
+                $shortcodeValues = array_map(function ($v) {
+                    return is_scalar($v) ? Helper::sanitizeForCSV((string) $v) : $v;
+                }, $shortcodeValues);
+                $temp = array_merge($temp, $shortcodeValues);
             }
             if ($withNotes) {
                 $noteValues = isset($notesMap[$submission->id]) ? $notesMap[$submission->id] : [];
                 if (!empty($noteValues)) {
-                    $temp[] = implode(", ", $noteValues);
+                    // SECURITY (FINDING-17): notes are submitter-influenceable and were exported raw.
+                    $temp[] = Helper::sanitizeForCSV(implode(", ", $noteValues));
                 }
             }
 
@@ -313,15 +382,20 @@ class TransferService
             $parsedShortCodes,
             $legacyShortcodeHeaders
         );
-        
+
         $inputLabels = array_merge($inputLabels, $extraLabels);
-        if($withNotes){
-            $inputLabels[] = __('Notes','fluentform');
+        if ($withNotes) {
+            $inputLabels[] = __('Notes', 'fluentform');
         }
         $inputLabels = apply_filters('fluentform/export_entry_metadata_labels', $inputLabels, $form, $args);
 
-        $data = array_merge([array_values($inputLabels)], $exportData);
-        
+        // SECURITY (FINDING-17): sanitize the header row too — field/shortcode labels can start with
+        // a formula lead character (=, +, -, @) and were exported unguarded.
+        $headerRow = array_map(function ($v) {
+            return is_scalar($v) ? Helper::sanitizeForCSV((string) $v) : $v;
+        }, array_values($inputLabels));
+        $data = array_merge([$headerRow], $exportData);
+
         $data = apply_filters('fluentform/export_data', $data, $form, $exportData, $inputLabels);
         $fileName = self::getReadableExportFileName($form->title);
         self::downloadOfficeDoc($data, $type, $fileName);
@@ -525,7 +599,7 @@ class TransferService
             ];
             if (!in_array($tableName, $allowedTables, true)) {
                 wp_send_json([
-                    'message' => __('Invalid table name for export.', 'fluentform')
+                    'message' => __('Invalid table name for export.', 'fluentform'),
                 ], 422);
             }
             $query = wpFluent()->table($tableName)
@@ -542,7 +616,7 @@ class TransferService
                 });
             }
         } else {
-            $query = (new Submission)->customQuery($args);
+            $query = (new Submission())->customQuery($args);
         }
 
         $entries = fluentFormSanitizer(Arr::get($args, 'entries', []));
@@ -562,9 +636,12 @@ class TransferService
         $data = array_map(function ($item) {
             return array_map(function ($itemValue) {
                 if (is_array($itemValue)) {
-                    return implode(', ', $itemValue);
+                    $itemValue = implode(', ', $itemValue);
                 }
-                return $itemValue;
+
+                return is_string($itemValue)
+                    ? Helper::sanitizeForCSV($itemValue)
+                    : $itemValue;
             }, $item);
         }, $data);
         // Load Composer autoloader for OpenSpout
@@ -618,5 +695,4 @@ class TransferService
             return \OpenSpout\Writer\Common\Creator\WriterEntityFactory::createRow($cells);
         }, $data);
     }
-
 }

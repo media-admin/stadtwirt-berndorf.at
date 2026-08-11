@@ -133,21 +133,24 @@ $app->addFilter('fluentform/rendering_form', function ($form) {
     if (!isset($captcha)) {
         return $form;
     }
-    // place recaptcha below custom submit button
+    // place captcha below custom submit button
+    $formFields = $form->fields;
     $hasCustomSubmit = false;
-    foreach ($form->fields['fields'] as $index => $field) {
+    foreach ($formFields['fields'] as $index => $field) {
         if (in_array($field['element'], ['recaptcha', 'hcaptcha', 'turnstile'])) {
-            \FluentForm\Framework\Helpers\ArrayHelper::forget($form->fields['fields'], $index);
+            \FluentForm\Framework\Helpers\ArrayHelper::forget($formFields['fields'], $index);
         }
         if ('custom_submit_button' == $field['element']) {
             $hasCustomSubmit = true;
-            array_splice($form->fields['fields'], $index, 0, [$captcha]);
+            array_splice($formFields['fields'], $index, 0, [$captcha]);
             break;
         }
     }
     if (!$hasCustomSubmit) {
-        $form->fields['fields'][] = $captcha;
+        $formFields['fields'][] = $captcha;
     }
+
+    $form->fields = $formFields;
 
     return $form;
 }, 10, 1);
@@ -382,12 +385,12 @@ $app->addFilter(
                         'status' => false,
                         'values' => [],
                         'message' => __('Sorry! You can\'t submit a form the country you are residing.', 'fluentform'),
-                        'validation_type' => 'fail_on_condition_met'
+                        'validation_type' => 'fail_on_condition_met',
                     ],
                     'keywords' => [
                         'status' => false,
                         'values' => '',
-                        'message' => __('Sorry! Your submission contains some restricted keywords.', 'fluentform')
+                        'message' => __('Sorry! Your submission contains some restricted keywords.', 'fluentform'),
                     ],
                 ]
             ];

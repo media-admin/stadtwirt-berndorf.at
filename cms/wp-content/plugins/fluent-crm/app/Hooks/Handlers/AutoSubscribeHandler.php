@@ -198,9 +198,9 @@ class AutoSubscribeHandler
         }
 
         if (!$contact->country) {
-            // get CF Country from request header: CF-IPCountry
-            $countryCode = sanitize_text_field($_SERVER['HTTP_CF_IPCOUNTRY'] ?? '');
-            if ($countryCode && preg_match('/^[A-Z]{2}$/', $countryCode) && $countryCode !== 'XX') {
+            // CF-IPCountry, trusted only when the request transited Cloudflare
+            $countryCode = Helper::getCfIpCountry();
+            if ($countryCode) {
                 $contact->country = $countryCode;
                 $contact->save();
             }
@@ -241,15 +241,32 @@ class AutoSubscribeHandler
             $newSubscriber = Subscriber::where('email', $user->user_email)->first();
 
             if ($newSubscriber) {
-                fluentCrmDb()->table('fc_subscribers')
-                    ->where('id', $oldSubscriber->id)
-                    ->update([
-                        'user_id' => ''
-                    ]);
+                // A contact already owns the new address: move the WP-user link to it.
+                // $oldSubscriber may not exist at all (the old address never had a
+                // contact) — dereferencing it unguarded 500s the whole profile update.
+                if ($oldSubscriber && $oldSubscriber->id != $newSubscriber->id) {
+                    fluentCrmDb()->table('fc_subscribers')
+                        ->where('id', $oldSubscriber->id)
+                        ->update([
+                            'user_id' => null
+                        ]);
+                }
+
+                if ($newSubscriber->user_id != $user->ID) {
+                    fluentCrmDb()->table('fc_subscribers')
+                        ->where('id', $newSubscriber->id)
+                        ->update([
+                            'user_id'    => $user->ID,
+                            'updated_at' => current_time('mysql')
+                        ]);
+                }
+
                 $oldSubscriber = false;
             }
 
             if ($oldSubscriber) {
+                $oldEmail = $oldSubscriber->email;
+
                 $updateData = [
                     'email'      => $user->user_email,
                     'hash'       => md5($user->user_email),
@@ -265,9 +282,16 @@ class AutoSubscribeHandler
                     $updateData['last_name'] = $user->last_name;
                 }
 
-                return fluentCrmDb()->table('fc_subscribers')
+                $updated = fluentCrmDb()->table('fc_subscribers')
                     ->where('id', $oldSubscriber->id)
                     ->update($updateData);
+
+                // The raw query-builder update bypasses model events, so fire the
+                // email-changed hook explicitly — Cleanup@handleContactEmailChanged
+                // re-snapshots queued fc_campaign_emails rows to the new address.
+                do_action('fluent_crm/contact_email_changed', Subscriber::find($oldSubscriber->id), $oldEmail);
+
+                return $updated;
             }
         }
 
@@ -353,10 +377,10 @@ class AutoSubscribeHandler
 
     public function maybeAddCountryToProfile($userLogin, $wpUser)
     {
-        // get CF Country from request header: CF-IPCountry
-        $countryCode = sanitize_text_field($_SERVER['HTTP_CF_IPCOUNTRY'] ?? '');
+        // CF-IPCountry, trusted only when the request transited Cloudflare
+        $countryCode = Helper::getCfIpCountry();
 
-        if (!$countryCode || !preg_match('/^[A-Z]{2}$/', $countryCode) || $countryCode === 'XX') {
+        if (!$countryCode) {
             return;
         }
 

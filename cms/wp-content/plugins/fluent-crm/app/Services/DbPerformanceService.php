@@ -761,6 +761,42 @@ class DbPerformanceService
                 ],
                 'cleanup' => 'funnel_metrics',
             ],
+            // Serves the `_secure_hash` reverse lookup that runs on every unsubscribe
+            // click / manage-subscription view / conditional-content page render.
+            // Without it those unauthenticated endpoints full-scan the meta table
+            // with a LONGTEXT comparison.
+            'subscriber_meta_key_value_idx'          => [
+                'type'    => 'index',
+                'table'   => 'fc_subscriber_meta',
+                'title'   => __('Subscriber Meta Key/Value Lookup Indexing', 'fluent-crm'),
+                'columns' => [
+                    ['name' => 'key', 'sub_part' => 191],
+                    ['name' => 'value', 'sub_part' => 64],
+                ],
+            ],
+            // Serves the dashboard growth chart and recent-contacts queries that
+            // filter by status and range/sort on created_at on every dashboard load.
+            // Its leading `status` column also covers status-only filtering, so
+            // fresh installs no longer ship a separate plain `status` index.
+            'subscriber_status_created_idx'          => [
+                'type'    => 'index',
+                'table'   => 'fc_subscribers',
+                'title'   => __('Contact Growth Reporting Indexing', 'fluent-crm'),
+                'columns' => [
+                    ['name' => 'status'],
+                    ['name' => 'created_at'],
+                ],
+            ],
+            // Serves the click/open-stats overview: WHERE type = ? AND created_at BETWEEN.
+            'url_metrics_type_created_idx'           => [
+                'type'    => 'index',
+                'table'   => 'fc_campaign_url_metrics',
+                'title'   => __('Click Stats Reporting Indexing', 'fluent-crm'),
+                'columns' => [
+                    ['name' => 'type'],
+                    ['name' => 'created_at'],
+                ],
+            ],
         ];
 
         return $indexActions;

@@ -766,7 +766,7 @@ class GutenbergEmailParser
             $listItems = '';
             foreach ($innerBlocks as $block) {
                 if ($block['blockName'] === 'core/list-item') {
-                    $listItems .= $this->renderListItem($block['innerHTML'], $block['attrs'] ?? []);
+                    $listItems .= $this->renderListItem($this->buildListItemContent($block), $block['attrs'] ?? []);
                 }
             }
         }
@@ -867,6 +867,85 @@ class GutenbergEmailParser
         }, $content, 1);
 
         return $content;
+    }
+
+    /**
+     * Build a list item's inner HTML, re-inserting nested list blocks.
+     *
+     * The block parser strips nested core/list blocks out of a list item's
+     * innerHTML, leaving null placeholders in innerContent. Without this
+     * reconstruction, every nested list level is lost from the sent email.
+     *
+     * @param array $block Parsed core/list-item block.
+     * @return string
+     */
+    private function buildListItemContent($block)
+    {
+        $innerBlocks = $block['innerBlocks'] ?? [];
+        $innerContent = $block['innerContent'] ?? [];
+
+        if (empty($innerBlocks) || empty($innerContent)) {
+            return $block['innerHTML'] ?? '';
+        }
+
+        $content = '';
+        $blockIndex = 0;
+        foreach ($innerContent as $chunk) {
+            if (is_string($chunk)) {
+                $content .= $chunk;
+                continue;
+            }
+
+            // A null chunk marks the position of the next inner block.
+            $innerBlock = isset($innerBlocks[$blockIndex]) ? $innerBlocks[$blockIndex] : null;
+            $blockIndex++;
+
+            if ($innerBlock && $innerBlock['blockName'] === 'core/list') {
+                $content .= $this->renderNestedList($innerBlock);
+            }
+        }
+
+        return $content;
+    }
+
+    /**
+     * Render a nested list as a bare <ul>/<ol>, without the table wrapper
+     * used for root-level lists (a table is not valid inside an <li>).
+     *
+     * @param array $listBlock Parsed core/list block nested inside a list item.
+     * @return string
+     */
+    private function renderNestedList($listBlock)
+    {
+        $attrs = $listBlock['attrs'] ?? [];
+
+        if (!$this->checkBlockConditionVisibility($attrs)) {
+            return '';
+        }
+
+        $tag = !empty($attrs['ordered']) ? 'ol' : 'ul';
+
+        $listItems = '';
+        foreach (($listBlock['innerBlocks'] ?? []) as $item) {
+            if ($item['blockName'] === 'core/list-item') {
+                $listItems .= $this->renderListItem($this->buildListItemContent($item), $item['attrs'] ?? []);
+            }
+        }
+
+        if (!$listItems) {
+            return '';
+        }
+
+        $classes = ['fc_list_item'];
+        if ($attrsClass = trim((string)Arr::get($attrs, 'className', ''))) {
+            $classes = array_merge($classes, preg_split('/\s+/', $attrsClass));
+        }
+        if (preg_match('/<' . $tag . '[^>]*class=["\']([^"\']+)["\']/i', (string)($listBlock['innerHTML'] ?? ''), $matches)) {
+            $classes = array_merge($classes, preg_split('/\s+/', trim((string)$matches[1])));
+        }
+        $classAttr = implode(' ', array_filter(array_unique($classes)));
+
+        return "<{$tag} class='{$classAttr}'>{$listItems}</{$tag}>";
     }
 
     /**
@@ -1135,7 +1214,7 @@ class GutenbergEmailParser
         unset($attrs['elem_id']);
 
         $innerHtml = <<<HTML
-        <table role="presentation" style="$tableStyles" align="$textAlign" class="fc_buttons_wrap" width="100%" cellspacing="0" cellpadding="0" border="0"><td id="$elementId" class="fc_buttons_inner">
+        <table role="presentation" style="$tableStyles" align="$textAlign" class="fc_buttons_wrap" width="100%" cellspacing="0" cellpadding="0" border="0"><tr><td id="$elementId" class="fc_buttons_inner">
         HTML;
 
 
@@ -1392,7 +1471,7 @@ class GutenbergEmailParser
             }
         }
 
-        $buttonAttrs = $this->getFirstButtonBlockAttrs($block);
+        $buttonAttrs = Arr::get($this->getFirstButtonBlock($block), 'attrs', []);
         $buttonElementId = uniqid('block-', false);
         $buttonAttrs['elem_id'] = $buttonElementId;
 
@@ -2316,7 +2395,13 @@ class GutenbergEmailParser
             $tableClass .= ' fc_table_striped';
         }
 
-        return $this->wrapInTable("<table id='$id' class='{$tableClass}' style=\"{$styles}\">{$tableContent}</table>", $attrs);
+        // The table markup sits inside a <figure> wrapper; keep its caption too.
+        $captionHtml = '';
+        if (preg_match('/<figcaption[^>]*>(.*?)<\/figcaption>/s', $content, $captionMatch) && trim($captionMatch[1]) !== '') {
+            $captionHtml = '<div class="wp-element-caption" style="font-size: 13px; text-align: center; margin-top: 6px;">' . $captionMatch[1] . '</div>';
+        }
+
+        return $this->wrapInTable("<table id='$id' class='{$tableClass}' style=\"{$styles}\">{$tableContent}</table>" . $captionHtml, $attrs);
     }
 
     /**
@@ -2697,25 +2782,34 @@ class GutenbergEmailParser
 
             // Common font family presets
             $fontFamilyMap = array_merge([
-                'system-ui'  => '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-                'system'     => '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-                'arial'      => 'Arial, Helvetica, sans-serif',
-                'helvetica'  => '"Helvetica Neue", Helvetica, Arial, sans-serif',
-                'times'      => '"Times New Roman", Times, serif',
+                'system-ui'        => '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+                'system'           => '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+                'arial'            => 'Arial, Helvetica, sans-serif',
+                'helvetica'        => '"Helvetica Neue", Helvetica, Arial, sans-serif',
+                'times'            => '"Times New Roman", Times, serif',
                 'times-new-roman' => '"Times New Roman", Times, serif',
-                'georgia'    => 'Georgia, serif',
-                'courier'    => '"Courier New", Courier, monospace',
-                'courier-new' => '"Courier New", Courier, monospace',
-                'verdana'    => 'Verdana, Geneva, sans-serif',
-                'tahoma'     => 'Tahoma, Geneva, sans-serif',
-                'trebuchet'  => '"Trebuchet MS", Helvetica, sans-serif',
-                'trebuchet-ms' => '"Trebuchet MS", Helvetica, sans-serif',
-                'palatino'   => '"Palatino Linotype", "Book Antiqua", Palatino, serif',
-                'garamond'   => 'Garamond, serif',
-                'impact'     => 'Impact, Charcoal, sans-serif',
-                'comic-sans' => '"Comic Sans MS", cursive, sans-serif',
-                'comic-sans-ms' => '"Comic Sans MS", cursive, sans-serif',
-                'monospace'  => 'Monaco, "Lucida Console", Courier, monospace'
+                'georgia'          => 'Georgia, serif',
+                'courier'          => '"Courier New", Courier, monospace',
+                'courier-new'      => '"Courier New", Courier, monospace',
+                'verdana'          => 'Verdana, Geneva, sans-serif',
+                'tahoma'           => 'Tahoma, Geneva, sans-serif',
+                'trebuchet'        => '"Trebuchet MS", Helvetica, sans-serif',
+                'trebuchet-ms'     => '"Trebuchet MS", Helvetica, sans-serif',
+                'lucida'           => '"Lucida Sans Unicode", "Lucida Grande", sans-serif',
+                'palatino'         => '"Palatino Linotype", "Book Antiqua", Palatino, serif',
+                'garamond'         => 'Garamond, serif',
+                'impact'           => 'Impact, Charcoal, sans-serif',
+                'comic-sans'       => '"Comic Sans MS", cursive, sans-serif',
+                'comic-sans-ms'    => '"Comic Sans MS", cursive, sans-serif',
+                'monospace'        => 'Monaco, "Lucida Console", Courier, monospace',
+                'lato'             => '"Lato", "Helvetica Neue", Helvetica, Arial, sans-serif',
+                'lora'             => '"Lora", Georgia, "Times New Roman", serif',
+                'merriweather'     => '"Merriweather", Georgia, "Times New Roman", serif',
+                'merriweather-sans' => '"Merriweather Sans", "Helvetica Neue", Helvetica, Arial, sans-serif',
+                'noticia-text'     => '"Noticia Text", Georgia, "Times New Roman", serif',
+                'open-sans'        => '"Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif',
+                'roboto'           => '"Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif',
+                'source-sans-pro'  => '"Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif'
             ], $fontFamilyMap);
         }
 

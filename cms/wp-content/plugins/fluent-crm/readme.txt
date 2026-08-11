@@ -4,7 +4,7 @@ Tags: email marketing, newsletter, crm, email newsletter, subscribers
 Requires at least: 5.0
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 3.1.8
+Stable tag: 3.1.10
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -260,6 +260,26 @@ You can report any security bugs found in the source code of FluentCRM plugins t
 10. Pro Integrations
 
 == Changelog ==
+
+= 3.1.10 (Date: July 27, 2026) =
+- Improvement: Campaigns start sending immediately instead of waiting for the next cron tick.
+- Improvement: Multi-threaded email sending enabled by default.
+- Fixed: List and automation report counts on custom database table prefixes.
+
+= 3.1.9 (Date: July 27, 2026) =
+- New: Sticky notes in the automation editor, kept through export, import and duplication.
+- New: FluentCRM contact widget on the FluentCart customer page.
+- New: Empty / Not Empty operators for tags, lists and companies in advanced filters.
+- New: New MCP abilities for tags, lists and contact filters, plus batch contact lookups and automation enrollment data.
+- Improvement: Search, status filter and sortable columns in Sequence Subscribers.
+- Improvement: More paragraph font presets in the email editor.
+- Improvement: Email sending pipeline reworked for safe parallel workers — the queue is now partitioned by modulo (--modulo / --remainder replaces --offset in cli_send), with owner-token campaign locks and bulk recipient materialization.
+- Improvement: Weekly cleanup now clears stored email bodies for sent, cancelled and failed emails to free up database space.
+- Fixed: Gmail horizontal scrollbar on the Plain Left email design.
+- Fixed: Missing Order By options in the Latest Posts block.
+- Fixed: Test email address validation and campaign title uniqueness checks.
+- Security: Hardened permission checks and input handling for non-admin roles across contacts, notes, imports and webhooks.
+- Other Improvement & Bug Fixes
 
 = 3.1.8 (Date: June 30, 2026) =
 - Improvement: Email sending now respects the configured maximum sending cap.

@@ -77,7 +77,7 @@ $page = sanitize_text_field($_GET['page']);
         </li>
         <?php if(!defined('FLUENTFORMPRO')): ?>
             <li>
-                <a target="_blank" rel="noopener" href="<?php echo esc_url(fluentform_upgrade_url()); ?>" class="ff_menu_link ff_menu_link_buy">
+                <a target="_blank" rel="noopener" href="<?php echo esc_url(fluentform_upgrade_url('top_bar')); ?>" class="ff_menu_link ff_menu_link_buy">
                     <?php esc_html_e('Upgrade to Pro', 'fluentform'); ?>
                 </a>
             </li>

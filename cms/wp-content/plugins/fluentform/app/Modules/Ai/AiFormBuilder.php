@@ -2,7 +2,7 @@
 
 namespace FluentForm\App\Modules\Ai;
 
-defined('ABSPATH') or die;
+defined('ABSPATH') || die;
 
 use Exception;
 use FluentForm\App\Helpers\Helper;
@@ -47,6 +47,8 @@ class AiFormBuilder extends FormService
     }
 
     /**
+     * Map the AI-generated field list into a persisted form.
+     *
      * @param array $form
      * @return Form|\FluentForm\Framework\Database\Query\Builder
      * @throws Exception
@@ -88,6 +90,8 @@ class AiFormBuilder extends FormService
     }
 
     /**
+     * Send the prompt to the AI service and return the decoded form fields.
+     *
      * @param array $args
      * @return array response form fields
      * @throws Exception
@@ -108,7 +112,7 @@ class AiFormBuilder extends FormService
             'site_title'     => get_bloginfo('name'),
             'site_locale'    => determine_locale(),
             'has_pro'        => Helper::hasPro(),
-            'has_payment'    => $paymentSetting['status'] == 'yes',
+            'has_payment'    => 'yes' == $paymentSetting['status'],
             'request_id'     => uniqid('ff_ai_'),
             'save_usage'     => apply_filters('fluentform/ai_save_usage', true),
         ];
@@ -118,9 +122,12 @@ class AiFormBuilder extends FormService
         if (is_wp_error($result)) {
             throw new Exception(esc_html($result->get_error_message()));
         }
-       
+
         $response = trim(Arr::get($result, 'response', ''), '"');
-        if (false !== preg_match('/```json(.*?)```/s', $response, $matches)) {
+        // preg_match() returns 0 when there is no fence and false only on error,
+        // so this must test for an actual match — otherwise an unfenced (and
+        // perfectly valid) JSON reply is replaced with an empty string.
+        if (1 === preg_match('/```json(.*?)```/s', $response, $matches)) {
             $response = trim($matches[1]);
         }
 
@@ -130,20 +137,22 @@ class AiFormBuilder extends FormService
         }
         return $this->applyPromptHints($decoded, $args);
     }
-    
+
     protected function getDefaultFields()
     {
         if ($this->allDefaultFields) {
             return $this->allDefaultFields;
         }
-        /**
-         * @var \FluentForm\App\Services\FormBuilder\Components
-         */
         $components = $this->app->make('components');
         $this->app->doAction('fluentform/editor_init', $components);
         $editorComponents = $components->toArray();
-        $general = Arr::get($editorComponents, 'general', []);
-        $advanced = Arr::get($editorComponents, 'advanced', []);
+        // Re-key by element name. The palette groups are keyed by element in
+        // DefaultElements.php, but Components::sort() renumbers them 0..n for
+        // the editor's JSON contract - so whether these arrive keyed or as a
+        // list depends on whether anything rendered the palette earlier in the
+        // request. resolveInput() matches on the key, so normalise here.
+        $general = array_column(Arr::get($editorComponents, 'general', []), null, 'element');
+        $advanced = array_column(Arr::get($editorComponents, 'advanced', []), null, 'element');
         $container = Arr::get($editorComponents, 'container', []);
 
         // Apply filter to get additional components
@@ -164,7 +173,7 @@ class AiFormBuilder extends FormService
         $this->allDefaultFields = array_merge($general, $payments, $advanced, ['container' => $container]);
         return $this->allDefaultFields;
     }
-    
+
     protected function processField($element, $field, $allFields)
     {
         if ('container' == $element) {
@@ -189,7 +198,7 @@ class AiFormBuilder extends FormService
             $formatField['attributes'] = wp_parse_args($attributes, $matchedField['attributes']);
         }
 
-        $formatField['uniqElKey'] = "el_" . uniqid();
+        $formatField['uniqElKey'] = 'el_' . uniqid();
 
         if ('form_step' === $element) {
             return $formatField;
@@ -227,10 +236,10 @@ class AiFormBuilder extends FormService
                 }
             }
         }
-        
+
         return $formatField;
     }
-    
+
     protected function resolveInput($field)
     {
         if (!is_array($field)) {
@@ -264,7 +273,7 @@ class AiFormBuilder extends FormService
         }
         return false;
     }
-    
+
     protected function getOptions($options = [])
     {
         $formattedOptions = [];
@@ -292,10 +301,10 @@ class AiFormBuilder extends FormService
                 'value' => $value,
             ];
         }
-        
+
         return $formattedOptions;
     }
-    
+
     protected function getBlankFormConfig()
     {
         $attributes = ['type' => 'form', 'predefined' => 'blank_form'];
@@ -305,16 +314,16 @@ class AiFormBuilder extends FormService
         $customForm['form_fields'] = json_encode($customForm['form_fields']);
         return $customForm;
     }
-    
+
     protected function saveForm($formattedInputs, $title, $isStepForm = false, $isConversational = false, $customCss = '')
     {
         $customForm = $this->prepareCustomForm($formattedInputs, $isStepForm);
         $data = Form::prepare($customForm);
 
         $form = $this->model->create($data);
-        $form->title = $title ?: $form->title . ' (ChatGPT#' . $form->id . ')';
+        $form->title = $title ? $title : $form->title . ' (ChatGPT#' . $form->id . ')';
 
-        $formData = (object)$form->toArray();
+        $formData = (object) $form->toArray();
         if (FormFieldsParser::hasPaymentFields($formData)) {
             $form->has_payment = 1;
         }
@@ -334,7 +343,7 @@ class AiFormBuilder extends FormService
         if ($customCss = fluentformSanitizeCSS($customCss)) {
             Helper::setFormMeta($form->id, '_custom_form_css', $customCss);
         }
-        
+
         do_action('fluentform/inserted_new_form', $form->id, $data);
         return $form;
     }
@@ -389,6 +398,8 @@ class AiFormBuilder extends FormService
     }
 
     /**
+     * Build the step-wrapper skeleton used to wrap a multi-step form.
+     *
      * @return array
      */
     protected function getStepWrapper()
@@ -409,7 +420,7 @@ class AiFormBuilder extends FormService
                     'enable_step_page_resume'      => 'no',
                 ],
                 'editor_options' => [
-                    'title' => 'Start Paging'
+                    'title' => 'Start Paging',
                 ],
             ],
             'stepEnd'   => [
@@ -422,38 +433,48 @@ class AiFormBuilder extends FormService
                     'prev_btn' => [
                         'type'    => 'default',
                         'text'    => 'Previous',
-                        'img_url' => ''
-                    ]
+                        'img_url' => '',
+                    ],
                 ],
                 'editor_options' => [
-                    'title' => 'End Paging'
+                    'title' => 'End Paging',
                 ],
-            ]
+            ],
         ];
     }
-    
+
     private function getUserPrompt($args)
     {
-        $startingQuery = "Create a form for ";
+        $startingQuery = 'Create a form for ';
         $query = Sanitizer::sanitizeTextField(Arr::get($args, 'query'));
         if (empty($query)) {
             throw new Exception(esc_html__('Query is empty!', 'fluentform'));
         }
-        
-        // Validate query length to prevent abuse (max 2000 characters)
-        if (strlen($query) > 2000) {
-            throw new Exception(esc_html__('Query is too long. Please limit your prompt to 2000 characters.', 'fluentform'));
+
+        // Validate query length to prevent abuse (filterable; default 12000 characters)
+        $maxQueryLength = (int) apply_filters('fluentform/ai_query_max_length', 12000);
+        if (mb_strlen($query) > $maxQueryLength) {
+            throw new Exception(esc_html(sprintf(
+                /* translators: %d is the maximum allowed number of characters */
+                __('Query is too long. Please limit your prompt to %d characters.', 'fluentform'),
+                $maxQueryLength
+            )));
         }
-        
+
         $additionalQuery = Sanitizer::sanitizeTextField(Arr::get($args, 'additional_query'));
-        
-        // Validate additional query length (max 1000 characters)
-        if ($additionalQuery && strlen($additionalQuery) > 1000) {
-            throw new Exception(esc_html__('Additional query is too long. Please limit to 1000 characters.', 'fluentform'));
+
+        // Validate additional query length (filterable; default 6000 characters)
+        $maxAdditionalQueryLength = (int) apply_filters('fluentform/ai_additional_query_max_length', 6000);
+        if ($additionalQuery && mb_strlen($additionalQuery) > $maxAdditionalQueryLength) {
+            throw new Exception(esc_html(sprintf(
+                /* translators: %d is the maximum allowed number of characters */
+                __('Additional query is too long. Please limit to %d characters.', 'fluentform'),
+                $maxAdditionalQueryLength
+            )));
         }
-        
+
         if ($additionalQuery) {
-            $query .= "\n including questions for information like  " . $additionalQuery . ".";
+            $query .= "\n including questions for information like  " . $additionalQuery . '.';
         }
         return $startingQuery . $query . $this->getPromptContractInstructions();
     }
@@ -462,9 +483,9 @@ class AiFormBuilder extends FormService
     {
         return "\n\nReturn strict JSON only. The user's instructions may be written in any language. "
             . "Preserve labels and help text in the user's original language, but always return machine-readable field settings. "
-            . "For every field, explicitly set whether it is required in settings.validation_rules.required.value when the prompt marks it as required or optional. "
-            . "If the prompt lists allowed upload extensions, map them into settings.validation_rules.allowed_file_types.value. "
-            . "If the prompt asks for a multi-step form with sections, include form_step elements between sections.";
+            . 'For every field, explicitly set whether it is required in settings.validation_rules.required.value when the prompt marks it as required or optional. '
+            . 'If the prompt lists allowed upload extensions, map them into settings.validation_rules.allowed_file_types.value. '
+            . 'If the prompt asks for a multi-step form with sections, include form_step elements between sections.';
     }
 
     private function applyPromptHints(array $form, array $args)
@@ -510,7 +531,7 @@ class AiFormBuilder extends FormService
             }
 
             $hint = Arr::get($hints, $hintIndex);
-            $hintIndex++;
+            ++$hintIndex;
 
             if (!$hint) {
                 continue;
@@ -676,7 +697,7 @@ class AiFormBuilder extends FormService
             'wymagane',
             'zorunlu',
             '必填',
-            '必須'
+            '必須',
         ];
     }
 
@@ -691,7 +712,7 @@ class AiFormBuilder extends FormService
             'opcional',
             'opcionales',
             '选填',
-            '任意'
+            '任意',
         ];
     }
 
@@ -711,7 +732,7 @@ class AiFormBuilder extends FormService
             'caricamento file',
             'bestandsupload',
             'yükleme',
-            '上传'
+            '上传',
         ];
     }
 
@@ -747,7 +768,7 @@ class AiFormBuilder extends FormService
             'ficheiro',
             'bestand',
             'yükleme',
-            '上传'
+            '上传',
         ];
     }
 }

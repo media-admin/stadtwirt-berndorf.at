@@ -36,6 +36,9 @@ class FluentCart
         SmartCodeRegister::push();
 
         (new RevenueTracker())->init();
+
+        (new CustomerWidget())->init();
+
     }
 
     public function addAutomations()

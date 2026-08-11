@@ -90,7 +90,7 @@ if (fluentcrm_is_rtl()) {
         background: <?php echo esc_attr($bodBgyColor); ?>;
         background-color: <?php echo esc_attr($bodBgyColor); ?>;
     }
-    .fc_block_template_body.template_classic {
+    body.template_classic #bodyCell {
         padding-left: 20px !important;
         padding-right: 20px !important;
     }
@@ -700,6 +700,7 @@ if (fluentcrm_is_rtl()) {
 
     .fc_image img {
         display: inline-block;
+        vertical-align: top;
     }
 
     .fc_align_center {

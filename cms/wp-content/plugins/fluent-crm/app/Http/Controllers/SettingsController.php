@@ -343,80 +343,90 @@ class SettingsController extends Controller
             fluentcrm_update_option('_fc_bounce_key', $securityCode);
         }
 
+        $restNamespace = FluentCrm()->config->get('app.rest_namespace');
+        $bounceUrl = function ($provider) use ($restNamespace, $securityCode) {
+            return rest_url($restNamespace . '/v2/public/bounce_handler/' . $provider . '/handle/' . $securityCode);
+        };
+
         $bounceSettings = [
             'ses'          => [
                 'label'       => __('Amazon SES', 'fluent-crm'),
-                'webhook_url' => site_url('index.php?fluentcrm=1&route=bounce_handler&provider=ses&verify_key=' . $securityCode),
+                'webhook_url' => add_query_arg([
+                    FLUENTCRM_EXTERNAL_URL_PARAM => 1,
+                    'route'                      => 'bounce_handler',
+                    'provider'                   => 'ses',
+                    'verify_key'                 => $securityCode
+                ], site_url('index.php')),
                 'doc_url'     => 'https://fluentcrm.com/docs/bounce-handler-with-amazon-ses/',
                 'input_title' => __('Amazon SES Bounce Handler URL', 'fluent-crm'),
                 'input_info'  => __('Please use this bounce handler url in your Amazon SES + SNS settings', 'fluent-crm')
             ],
             'tosend'       => [
                 'label'       => __('ToSend', 'fluent-crm'),
-                'webhook_url' => get_rest_url(null, 'fluent-crm/v2/public/bounce_handler/tosend/handle/' . $securityCode),
+                'webhook_url' => $bounceUrl('tosend'),
                 'doc_url'     => 'https://fluentcrm.com/docs/bounce-handling-with-tosend/',
                 'input_title' => __('ToSend Bounce Handler Webhook URL', 'fluent-crm'),
                 'input_info'  => __('Please paste this URL into your ToSend\'s Webhook settings to enable Bounce Handling with FluentCRM. Select both Bounce and Complaint events.', 'fluent-crm')
             ],
             'mailgun'      => [
                 'label'       => __('Mailgun', 'fluent-crm'),
-                'webhook_url' => get_rest_url(null, 'fluent-crm/v2/public/bounce_handler/mailgun/handle/' . $securityCode),
+                'webhook_url' => $bounceUrl('mailgun'),
                 'doc_url'     => 'https://fluentcrm.com/docs/bounce-handling-with-mailgun/',
                 'input_title' => __('Mailgun Bounce Handler Webhook URL', 'fluent-crm'),
                 'input_info'  => __('Please paste this URL into your Mailgun\'s Webhook settings to enable Bounce Handling with FluentCRM', 'fluent-crm')
             ],
             'pepipost'     => [
                 'label'       => __('PepiPost', 'fluent-crm'),
-                'webhook_url' => get_rest_url(null, 'fluent-crm/v2/public/bounce_handler/pepipost/handle/' . $securityCode),
+                'webhook_url' => $bounceUrl('pepipost'),
                 'doc_url'     => 'https://fluentcrm.com/docs/bounce-handling-with-pepipost/',
                 'input_title' => __('PepiPost Bounce Handler Webhook URL', 'fluent-crm'),
                 'input_info'  => __('Please paste this URL into your PepiPost\'s Webhook settings to enable Bounce Handling with FluentCRM', 'fluent-crm')
             ],
             'postmark'     => [
                 'label'       => __('PostMark', 'fluent-crm'),
-                'webhook_url' => get_rest_url(null, 'fluent-crm/v2/public/bounce_handler/postmark/handle/' . $securityCode),
+                'webhook_url' => $bounceUrl('postmark'),
                 'doc_url'     => 'https://fluentcrm.com/docs/bounce-handling-with-postmark/',
                 'input_title' => __('PostMark Bounce Handler Webhook URL', 'fluent-crm'),
                 'input_info'  => __('Please paste this URL into your PostMark\'s Webhook settings to enable Bounce Handling with FluentCRM', 'fluent-crm')
             ],
             'sendgrid'     => [
                 'label'       => __('SendGrid', 'fluent-crm'),
-                'webhook_url' => get_rest_url(null, 'fluent-crm/v2/public/bounce_handler/sendgrid/handle/' . $securityCode),
+                'webhook_url' => $bounceUrl('sendgrid'),
                 'doc_url'     => 'https://fluentcrm.com/docs/bounce-handling-with-sendgrid/',
                 'input_title' => __('SendGrid Bounce Handler Webhook URL', 'fluent-crm'),
                 'input_info'  => __('Please paste this URL into your SendGrid\'s Webhook settings to enable Bounce Handling with FluentCRM', 'fluent-crm')
             ],
             'sparkpost'    => [
                 'label'       => __('SparkPost', 'fluent-crm'),
-                'webhook_url' => get_rest_url(null, 'fluent-crm/v2/public/bounce_handler/sparkpost/handle/' . $securityCode),
+                'webhook_url' => $bounceUrl('sparkpost'),
                 'doc_url'     => 'https://fluentcrm.com/docs/bounce-handling-with-sparkpost/',
                 'input_title' => __('SparkPost Bounce Handler Webhook URL', 'fluent-crm'),
                 'input_info'  => __('Please paste this URL into your SparkPost\'s Webhook settings to enable Bounce Handling with FluentCRM', 'fluent-crm')
             ],
             'elasticemail' => [
                 'label'       => __('Elastic Email', 'fluent-crm'),
-                'webhook_url' => get_rest_url(null, 'fluent-crm/v2/public/bounce_handler/elasticemail/handle/' . $securityCode),
+                'webhook_url' => $bounceUrl('elasticemail'),
                 'doc_url'     => 'https://fluentcrm.com/docs/bounce-handling-with-elastic-email/',
                 'input_title' => __('Elastic Email Bounce Handler Webhook URL', 'fluent-crm'),
                 'input_info'  => __('Please paste this URL into your Elastic Email\'s Webhook settings to enable Bounce Handling with FluentCRM', 'fluent-crm')
             ],
             'postalserver' => [
                 'label'       => __('Postal Server', 'fluent-crm'),
-                'webhook_url' => get_rest_url(null, 'fluent-crm/v2/public/bounce_handler/postalserver/handle/' . $securityCode),
+                'webhook_url' => $bounceUrl('postalserver'),
                 'doc_url'     => 'https://fluentcrm.com/docs/bounce-handling-with-postal-server/',
                 'input_title' => __('Postal Server Bounce Handler Webhook URL', 'fluent-crm'),
                 'input_info'  => __('Please paste this URL into your Postal Server\'s Webhook settings to enable Bounce Handling with FluentCRM. Please select only MessageBounced & MessageDeliveryFailed event', 'fluent-crm')
             ],
             'smtp2go'      => [
                 'label'       => __('SMTP2Go', 'fluent-crm'),
-                'webhook_url' => get_rest_url(null, 'fluent-crm/v2/public/bounce_handler/smtp2go/handle/' . $securityCode),
+                'webhook_url' => $bounceUrl('smtp2go'),
                 'doc_url'     => 'https://fluentcrm.com/docs/bounce-handling-with-smtp2go/',
                 'input_title' => __('SMTP2Go Bounce Handler Webhook URL', 'fluent-crm'),
                 'input_info'  => __('Please paste this URL into your SMTP2Go\'s Webhook settings to enable Bounce Handling with FluentCRM', 'fluent-crm')
             ],
             'brevo'        => [
                 'label'       => __('Brevo (ex Sendinblue)', 'fluent-crm'),
-                'webhook_url' => get_rest_url(null, 'fluent-crm/v2/public/bounce_handler/brevo/handle/' . $securityCode),
+                'webhook_url' => $bounceUrl('brevo'),
                 'doc_url'     => 'https://fluentcrm.com/docs/bounce-handling-with-brevo/',
                 'input_title' => __('Brevo Bounce Handler Webhook URL', 'fluent-crm'),
                 'input_info'  => __('Please paste this URL into your Brevo\'s Webhook settings to enable Bounce Handling with FluentCRM', 'fluent-crm')
@@ -688,7 +698,9 @@ class SettingsController extends Controller
         $selectedLogs = $data['selected_logs'];
         $daysBefore = $data['days_before'];
 
-        $refDate = gmdate('Y-m-d 00:00:01', time() - $daysBefore * 86400);
+        // Site-local cutoff: created_at is written with current_time(), so a UTC
+        // time() base deletes up to a site-offset's worth of extra (or fewer) rows.
+        $refDate = gmdate('Y-m-d 00:00:01', current_time('timestamp') - $daysBefore * 86400);
 
         $dataCounters = [];
         if (in_array('emails', $selectedLogs)) {
@@ -753,7 +765,8 @@ class SettingsController extends Controller
         $perChunk = 10000; // Deleting 10,000 per chunk
         $hasMore = false;
 
-        $refDate = gmdate('Y-m-d 00:00:01', time() - $daysBefore * 86400);
+        // Same site-local cutoff as the preview in getOldLogDetails().
+        $refDate = gmdate('Y-m-d 00:00:01', current_time('timestamp') - $daysBefore * 86400);
         if (in_array('emails', $selectedLogs)) {
 
             $campaignIds = CampaignEmail::where('created_at', '<', $refDate)

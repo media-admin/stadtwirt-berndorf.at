@@ -150,6 +150,25 @@ class Cleanup
             ->update([
                 'email_address' => $subscriber->email
             ]);
+
+        // A new address has no bounce history — the accumulated soft-bounce strikes
+        // belong to the old mailbox and must not carry over toward the bounce flip.
+        $this->resetSoftBounceCount($subscriber);
+    }
+
+    /**
+     * Clear the accumulated soft-bounce strike counter.
+     *
+     * Wired to email changes and double-opt-in confirmations — both are positive
+     * deliverability/consent signals. Without a reset the counter accumulates
+     * across years until the Nth soft bounce silently flips the contact to
+     * `bounced`.
+     *
+     * @param \FluentCrm\App\Models\Subscriber $subscriber
+     */
+    public function resetSoftBounceCount($subscriber)
+    {
+        fluentcrm_delete_subscriber_meta($subscriber->id, '_soft_bounce_count');
     }
 
 
@@ -314,7 +333,7 @@ class Cleanup
 
         global $wpdb;
 
-        // Get the timestamp for 7 days ago
+        // Get the timestamp for $days_old days ago
         $cutoff_date = gmdate('Y-m-d H:i:s', strtotime("-{$days_old} days"));
 
         // Get the group ID
@@ -327,23 +346,47 @@ class Cleanup
             return false; // Group not found
         }
 
-        // Delete old actions and their associated logs
-        $deleted = $wpdb->query($wpdb->prepare("
-        DELETE a, l
-        FROM {$wpdb->prefix}actionscheduler_actions a
-        LEFT JOIN {$wpdb->prefix}actionscheduler_logs l ON a.action_id = l.action_id
-        WHERE a.group_id = %d
-        AND a.status IN ('complete', 'failed')
-        AND a.scheduled_date_gmt < %s", $group_id, $cutoff_date));
+        // Delete old actions and their associated logs in bounded batches. FluentCRM
+        // produces a very large number of scheduled actions (email sends, funnels,
+        // sequences), so a single unbounded multi-table DELETE could hold a large lock
+        // and bloat the transaction on busy sites. We loop while batches stay full and
+        // we are still within a safe time budget.
+        $batchSize = 500;
+        $totalDeleted = 0;
 
-        // Clean up orphaned claims
+        do {
+            $actionIds = $wpdb->get_col($wpdb->prepare(
+                "SELECT action_id
+                 FROM {$wpdb->prefix}actionscheduler_actions
+                 WHERE group_id = %d
+                 AND status IN ('complete', 'failed')
+                 AND scheduled_date_gmt < %s
+                 LIMIT %d",
+                $group_id, $cutoff_date, $batchSize
+            ));
+
+            if (!$actionIds) {
+                break;
+            }
+
+            // Safe to interpolate: every id is cast to an integer.
+            $ids = implode(',', array_map('intval', $actionIds));
+
+            // Remove the associated logs first, then the actions themselves.
+            $wpdb->query("DELETE FROM {$wpdb->prefix}actionscheduler_logs WHERE action_id IN ({$ids})");
+            $totalDeleted += (int) $wpdb->query("DELETE FROM {$wpdb->prefix}actionscheduler_actions WHERE action_id IN ({$ids})");
+
+            $isFullBatch = count($actionIds) === $batchSize;
+        } while ($isFullBatch && !fluentCrmIsTimeOut(30));
+
+        // Clean up orphaned claims (claims whose actions no longer exist)
         $wpdb->query("
         DELETE c
         FROM {$wpdb->prefix}actionscheduler_claims c
         LEFT JOIN {$wpdb->prefix}actionscheduler_actions a ON c.claim_id = a.claim_id
         WHERE a.action_id IS NULL");
 
-        return $deleted;
+        return $totalDeleted;
     }
 
     public function SyncSubscriberDeleteSettings($fromKey, $value)

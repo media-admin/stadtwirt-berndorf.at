@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Plugins - Advanced Custom Fields (ACF®) - Stable (latest release) package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2026-05-28 19:53:29+0000\n"
+"PO-Revision-Date: 2026-08-01 21:37:34+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -10,6 +10,111 @@ msgstr ""
 "X-Generator: GlotPress/4.0.3\n"
 "Language: de\n"
 "Project-Id-Version: Plugins - Advanced Custom Fields (ACF®) - Stable (latest release)\n"
+
+#: includes/admin/views/email-opt-in-banner.php:70
+msgid "Join the list"
+msgstr "Liste beitreten"
+
+#: includes/admin/views/email-opt-in-banner.php:54
+msgid "Email address"
+msgstr "E-Mail-Adresse"
+
+#: includes/admin/views/email-opt-in-banner.php:39
+msgid "Join the ACF community."
+msgstr "Werde Teil der ACF-Community."
+
+#: includes/admin/views/email-opt-in-banner.php:21
+msgid "Privacy Policy"
+msgstr "Datenschutzerklärung"
+
+#: includes/admin/admin-email-opt-in-banner.php:264
+msgid "Please enter a valid email address."
+msgstr "Bitte gib eine gültige E-Mail-Adresse ein."
+
+#: includes/admin/admin-email-opt-in-banner.php:263
+msgid "Email address is required."
+msgstr "Die E-Mail-Adresse ist erforderlich."
+
+#: src/Site_Health/Site_Health.php:1009
+msgid "Datastore Enabled"
+msgstr "Datenspeicher aktiviert"
+
+#: src/Site_Health/Site_Health.php:996
+msgid "Objects with Schema Support"
+msgstr "Objekte mit Schema-Unterstützung"
+
+#: src/Site_Health/Site_Health.php:984
+msgid "Schema Support"
+msgstr "Schema-Unterstützung"
+
+#: src/Site_Health/Site_Health.php:975
+msgid "AI Execution Errors"
+msgstr "KI-Ausführungsfehler"
+
+#: src/Site_Health/Site_Health.php:968
+msgid "AI Actions Executed"
+msgstr "Ausgeführte KI-Aktionen"
+
+#: src/Site_Health/Site_Health.php:929
+msgid "AI Support"
+msgstr "KI-Unterstützung"
+
+#: src/Site_Health/Site_Health.php:396
+msgid "Disabled"
+msgstr "Deaktiviert"
+
+#: src/Site_Health/Site_Health.php:395
+msgid "Enabled"
+msgstr "Aktiviert"
+
+#: src/AI/GEO/GEO.php:135
+msgid "All Types"
+msgstr "Alle Typen"
+
+#: src/AI/GEO/GEO.php:103
+msgid "Schema.org Type"
+msgstr "Schema.org-Typ"
+
+#: src/AI/GEO/GEO.php:65
+msgid "Schema"
+msgstr "Schema"
+
+#: src/AI/GEO/FieldSettings.php:169
+msgid "Schema.org Output Format"
+msgstr "Schema.org-Ausgabeformat"
+
+#: src/AI/GEO/FieldSettings.php:144
+msgid "Schema.org Property"
+msgstr "Schema.org-Eigenschaft"
+
+#: src/AI/GEO/FieldSettings.php:95
+msgid "Missing required parameters"
+msgstr "Erforderliche Parameter fehlen"
+
+#: src/AI/AI.php:156
+msgid "AI Context Description"
+msgstr "KI-Kontextbeschreibung"
+
+#: src/AI/AI.php:136
+msgid "AI Description"
+msgstr "KI-Beschreibung"
+
+#: src/AI/AI.php:134
+msgid "Allow AI Access"
+msgstr "KI-Zugriff erlauben"
+
+#. translators: %s The singular label for the custom taxonomy.
+#: src/AI/Abilities/Taxonomy.php:317
+msgid "Create %s Term"
+msgstr "%s-Begriff erstellen"
+
+#: src/AI/Abilities/PostType.php:78
+msgid "Register Custom Post Type"
+msgstr "Individuellen Inhaltstyp registrieren"
+
+#: src/AI/Abilities/PostType.php:42
+msgid "ACF Custom Post Types"
+msgstr "Individuelle ACF-Inhaltstypen"
 
 #: includes/fields/class-acf-field-file.php:159
 msgid "Edit file"
@@ -1359,11 +1464,11 @@ msgstr "Titel-Platzhalter"
 msgid "In the editor used as the placeholder of the title."
 msgstr "Wird im Editor als Platzhalter für den Titel verwendet."
 
-#: includes/admin/admin.php:390
+#: includes/admin/admin.php:394
 msgid "Support"
 msgstr "Hilfe"
 
-#: includes/admin/admin.php:392
+#: includes/admin/admin.php:396
 msgid "Feedback"
 msgstr "Feedback"
 
@@ -1371,7 +1476,7 @@ msgstr "Feedback"
 msgid "4 Months Free"
 msgstr "4 Monate kostenlos"
 
-#: includes/admin/admin.php:394
+#: includes/admin/admin.php:398
 msgid "ACF PRO"
 msgstr "ACF PRO"
 
@@ -1404,7 +1509,7 @@ msgstr "Options-Seite auswählen"
 
 #. translators: This text is prepended by a link to ACF's website, and appended
 #. by a link to WP Engine's website.
-#: includes/admin/admin.php:365
+#: includes/admin/admin.php:369
 msgid "is developed and maintained by"
 msgstr "wird entwickelt und gewartet von"
 
@@ -1842,7 +1947,7 @@ msgstr "Inhaltstyp"
 msgid "taxonomy"
 msgstr "Taxonomie"
 
-#: includes/admin/admin.php:56 includes/admin/admin.php:394
+#: includes/admin/admin.php:56 includes/admin/admin.php:398
 #: src/Site_Health/Site_Health.php:367
 msgid "ACF"
 msgstr "ACF"
@@ -2219,7 +2324,7 @@ msgid "This taxonomy could not be registered because its key is in use by anothe
 msgstr "Diese Taxonomie konnte nicht registriert werden, da der Schlüssel von einer anderen Taxonomie, die von einem anderen Plugin oder Theme registriert wurde, genutzt wird."
 
 #. translators: %s - URL to ACF tools page.
-#: includes/admin/admin.php:204
+#: includes/admin/admin.php:208
 msgid "Import Post Types and Taxonomies registered with Custom Post Type UI and manage them with ACF. <a href=\"%s\">Get Started</a>."
 msgstr "Importiere Inhaltstypen und Taxonomien, die mit Custom Post Type UI registriert wurden, und verwalte sie mit ACF. <a href=\"%s\">Jetzt starten</a>."
 
@@ -2839,10 +2944,6 @@ msgstr "Der für die Betrachtung ausgewählte Inhaltstyp ist ungültig."
 msgid "Importing a Post Type or Taxonomy with the same key as one that already exists will overwrite the settings for the existing Post Type or Taxonomy with those of the import."
 msgstr "Wenn ein Inhaltstyp oder eine Taxonomie mit einem Schlüssel importiert wird, der bereits vorhanden ist, werden die Einstellungen des vorhandenen Inhaltstyps oder der vorhandenen Taxonomie mit denen des Imports überschrieben."
 
-#: includes/admin/tools/class-acf-admin-tool-export.php:363
-msgid "The following code can be used to register a local version of the selected items. Storing field groups, post types, or taxonomies locally can provide many benefits such as faster load times, version control & dynamic fields/settings. Simply copy and paste the following code to your theme's functions.php file or include it within an external file, then deactivate or delete the items from the ACF admin."
-msgstr "Der folgende Code kann verwendet werden, um eine lokale Version der ausgewählten Elemente zu registrieren. Die lokale Speicherung von Feldgruppen, Inhaltstypen oder Taxonomien kann viele Vorteile bieten, wie z. B. schnellere Ladezeiten, Versionskontrolle und dynamische Felder/Einstellungen. Kopiere den folgenden Code in die Datei functions.php deines Themes oder füge ihn in eine externe Datei ein und deaktiviere oder lösche anschließend die Elemente in der ACF-Administration."
-
 #: includes/admin/tools/class-acf-admin-tool-import.php:239
 msgid "Nothing from Custom Post Type UI plugin selected for import."
 msgstr "Es wurde nichts aus dem Plugin Custom Post Type UI für den Import ausgewählt."
@@ -2853,6 +2954,10 @@ msgid "Imported %d item from Custom Post Type UI -"
 msgid_plural "Imported %d items from Custom Post Type UI -"
 msgstr[0] "Es wurde %d Element von Custom Post Type UI importiert -"
 msgstr[1] "Es wurden %d Elemente von Custom Post Type UI importiert -"
+
+#: includes/admin/tools/class-acf-admin-tool-export.php:363
+msgid "The following code can be used to register a local version of the selected items. Storing field groups, post types, or taxonomies locally can provide many benefits such as faster load times, version control & dynamic fields/settings. Simply copy and paste the following code to your theme's functions.php file or include it within an external file, then deactivate or delete the items from the ACF admin."
+msgstr "Der folgende Code kann verwendet werden, um eine lokale Version der ausgewählten Elemente zu registrieren. Die lokale Speicherung von Feldgruppen, Inhaltstypen oder Taxonomien kann viele Vorteile bieten, wie z. B. schnellere Ladezeiten, Versionskontrolle und dynamische Felder/Einstellungen. Kopiere den folgenden Code in die Datei functions.php deines Themes oder füge ihn in eine externe Datei ein und deaktiviere oder lösche anschließend die Elemente in der ACF-Administration."
 
 #: includes/admin/views/acf-post-type/basic-settings.php:97
 msgid "Select existing taxonomies to classify items of the post type."
@@ -3646,7 +3751,7 @@ msgstr "Aktivieren"
 msgid "Activate this item"
 msgstr "Dieses Element aktivieren"
 
-#: acf.php:580 includes/admin/admin-internal-post-type-list.php:264
+#: acf.php:581 includes/admin/admin-internal-post-type-list.php:264
 #: includes/admin/post-types/admin-field-group.php:304
 #: includes/admin/post-types/admin-post-type.php:283
 #: includes/admin/post-types/admin-taxonomy.php:285
@@ -3677,11 +3782,11 @@ msgstr[1] "%s Feldgruppen wurden deaktiviert."
 msgid "Move field group to trash?"
 msgstr "Soll die Feldgruppe in den Papierkorb verschoben werden?"
 
-#: acf.php:636
+#: acf.php:637
 msgid "Advanced Custom Fields and Advanced Custom Fields PRO should not be active at the same time. We've automatically deactivated Advanced Custom Fields."
 msgstr "Advanced Custom Fields und Advanced Custom Fields PRO sollten nicht gleichzeitig aktiviert sein. Advanced Custom Fields wurde automatisch deaktiviert."
 
-#: acf.php:638
+#: acf.php:639
 msgid "Advanced Custom Fields and Advanced Custom Fields PRO should not be active at the same time. We've automatically deactivated Advanced Custom Fields PRO."
 msgstr "Advanced Custom Fields und Advanced Custom Fields PRO sollten nicht gleichzeitig aktiviert sein. Advanced Custom Fields PRO wurde automatisch deaktiviert."
 
@@ -3837,23 +3942,23 @@ msgstr "Diff laden"
 msgid "Review local JSON changes"
 msgstr "Lokale JSON-Änderungen überprüfen"
 
-#: includes/admin/admin.php:179
+#: includes/admin/admin.php:183
 msgid "Visit website"
 msgstr "Website besuchen"
 
-#: includes/admin/admin.php:178
+#: includes/admin/admin.php:182
 msgid "View details"
 msgstr "Details anzeigen"
 
-#: includes/admin/admin.php:176
+#: includes/admin/admin.php:180
 msgid "Information"
 msgstr "Information"
 
-#: includes/admin/admin.php:153 includes/admin/admin.php:155
+#: includes/admin/admin.php:157 includes/admin/admin.php:159
 msgid "Help & Support"
 msgstr "Hilfe und Support"
 
-#: includes/admin/admin.php:136 includes/admin/admin.php:138
+#: includes/admin/admin.php:140 includes/admin/admin.php:142
 msgid "Overview"
 msgstr "Übersicht"
 
@@ -3862,7 +3967,7 @@ msgstr "Übersicht"
 msgid "Class \"%s\" does not exist."
 msgstr "Die Klasse „%s“ existiert nicht."
 
-#: includes/admin/admin.php:139
+#: includes/admin/admin.php:143
 msgid "The Advanced Custom Fields plugin provides a visual form builder to customize WordPress edit screens with extra fields, and an intuitive API to display custom field values in any theme template file."
 msgstr "Das Advanced-Custom-Fields-Plugin bietet einen visuellen Formular-Builder, um WordPress-Bearbeitungsansichten mit weiteren Feldern zu individualisieren und eine intuitive API, um individuelle Feldwerte in beliebigen Theme-Template-Dateien anzuzeigen."
 
@@ -3875,7 +3980,7 @@ msgstr "Importieren"
 msgid "Menu items"
 msgstr "Menüelemente"
 
-#: includes/admin/admin.php:156
+#: includes/admin/admin.php:160
 msgid "We are fanatical about support, and want you to get the best out of your website with ACF. If you run into any difficulties, there are several places you can find help:"
 msgstr "Wir legen großen Wert auf Support und möchten, dass du mit ACF das Beste aus deiner Website herausholst. Wenn du auf Schwierigkeiten stößt, gibt es mehrere Stellen, an denen du Hilfe finden kannst:"
 
@@ -3883,11 +3988,11 @@ msgstr "Wir legen großen Wert auf Support und möchten, dass du mit ACF das Bes
 msgid "Invalid field group parameter(s)."
 msgstr "Ungültige(r) Feldgruppen-Parameter."
 
-#: includes/admin/admin.php:144
+#: includes/admin/admin.php:148
 msgid "Please use the Help & Support tab to get in touch should you find yourself requiring assistance."
 msgstr "Falls du Hilfe benötigst, nutze bitte den Tab „Hilfe und Support“, um dich mit uns in Verbindung zu setzen."
 
-#: includes/admin/admin.php:141
+#: includes/admin/admin.php:145
 msgid "Before creating your first Field Group, we recommend first reading our <a href=\"%s\" target=\"_blank\">Getting started</a> guide to familiarize yourself with the plugin's philosophy and best practises."
 msgstr "Bevor du deine erste Feldgruppe erstellst, wird empfohlen, vorab die Anleitung <a href=\"%s\" target=\"_blank\">Erste Schritte (engl.)</a> durchzulesen, um dich mit der Philosophie hinter dem Plugin und den besten Praktiken vertraut zu machen."
 
@@ -3911,15 +4016,15 @@ msgstr "Ist zu finden in: %s"
 msgid "Awaiting save"
 msgstr "Ein Speichern wird erwartet"
 
-#: includes/admin/admin.php:159
+#: includes/admin/admin.php:163
 msgid "<a href=\"%s\" target=\"_blank\">Documentation</a>. Our extensive documentation contains references and guides for most situations you may encounter."
 msgstr "<a href=\"%s\" target=\"_blank\">Dokumentation (engl.)</a>. Diese umfassende Dokumentation beinhaltet Referenzen und Leitfäden zu den meisten Situationen, die du vorfinden wirst."
 
-#: includes/admin/admin.php:163
+#: includes/admin/admin.php:167
 msgid "<a href=\"%s\" target=\"_blank\">Discussions</a>. We have an active and friendly community on our Community Forums who may be able to help you figure out the 'how-tos' of the ACF world."
 msgstr "<a href=\"%s\" target=\"_blank\">Diskussionen</a>. Wir haben eine aktive und freundliche Community in unseren Community-Foren, die dir vielleicht dabei helfen kann, dich mit den „How-tos“ der ACF-Welt vertraut zu machen."
 
-#: includes/admin/admin.php:167
+#: includes/admin/admin.php:171
 msgid "<a href=\"%s\" target=\"_blank\">Help Desk</a>. The support professionals on our Help Desk will assist with your more in depth, technical challenges."
 msgstr "<a href=\"%s\" target=\"_blank\">Help-Desk</a>. Die Support-Experten unseres Help-Desks werden dir bei komplexeren technischen Herausforderungen unterstützend zur Seite stehen."
 
@@ -3928,7 +4033,7 @@ msgstr "<a href=\"%s\" target=\"_blank\">Help-Desk</a>. Die Support-Experten uns
 msgid "Location type \"%s\" is already registered."
 msgstr "Der Positionstyp „%s“ ist bereits registriert."
 
-#: includes/admin/admin.php:177
+#: includes/admin/admin.php:181
 msgid "Version %s"
 msgstr "Version %s"
 
@@ -3962,7 +4067,7 @@ msgid "Post Status"
 msgstr "Beitragsstatus"
 
 #: includes/acf-wp-functions.php:83
-#: includes/locations/class-acf-location-nav-menu.php:98
+#: includes/locations/class-acf-location-nav-menu.php:99
 msgid "Menus"
 msgstr "Menüs"
 
@@ -3994,7 +4099,7 @@ msgstr "Registrieren"
 msgid "Page Parent"
 msgstr "Übergeordnete Seite"
 
-#: includes/locations/class-acf-location-current-user-role.php:86
+#: includes/locations/class-acf-location-current-user-role.php:87
 msgid "Super Admin"
 msgstr "Super-Administrator"
 
@@ -4011,7 +4116,7 @@ msgstr "Beitrags-Template"
 msgid "Post Category"
 msgstr "Beitragskategorie"
 
-#: includes/locations/class-acf-location-attachment.php:93
+#: includes/locations/class-acf-location-attachment.php:94
 msgid "All %s formats"
 msgstr "Alle %s Formate"
 
@@ -4183,7 +4288,7 @@ msgstr "Duplizieren"
 msgid "Duplicate this item"
 msgstr "Dieses Element duplizieren"
 
-#: includes/admin/admin.php:388
+#: includes/admin/admin.php:392
 #: includes/admin/views/browse-fields-modal.php:112
 msgid "Documentation"
 msgstr "Dokumentation"
@@ -4563,9 +4668,9 @@ msgstr "Minimum"
 
 #: includes/fields/class-acf-field-file.php:234
 #: includes/fields/class-acf-field-image.php:208
-#: includes/locations/class-acf-location-attachment.php:82
+#: includes/locations/class-acf-location-attachment.php:83
 #: includes/locations/class-acf-location-comment.php:70
-#: includes/locations/class-acf-location-nav-menu.php:83
+#: includes/locations/class-acf-location-nav-menu.php:84
 #: includes/locations/class-acf-location-taxonomy.php:72
 #: includes/locations/class-acf-location-user-form.php:80
 #: includes/locations/class-acf-location-user-role.php:87
@@ -4717,41 +4822,41 @@ msgstr "Zoom"
 msgid "Return Format"
 msgstr "Rückgabeformat"
 
-#: acf.php:544
+#: acf.php:545
 msgid "View Field"
 msgstr "Feld anzeigen"
 
-#: acf.php:543 includes/admin/views/acf-field-group/fields.php:124
+#: acf.php:544 includes/admin/views/acf-field-group/fields.php:124
 msgid "New Field"
 msgstr "Neues Feld"
 
-#: acf.php:542
+#: acf.php:543
 msgid "Edit Field"
 msgstr "Feld bearbeiten"
 
-#: acf.php:539
+#: acf.php:540
 msgid "Field"
 msgstr "Feld"
 
-#: acf.php:538 includes/admin/post-types/admin-field-group.php:179
+#: acf.php:539 includes/admin/post-types/admin-field-group.php:179
 #: includes/admin/post-types/admin-field-groups.php:98
 #: includes/admin/views/acf-field-group/fields.php:42
 msgid "Fields"
 msgstr "Felder"
 
-#: acf.php:511
+#: acf.php:512
 msgid "Search Field Groups"
 msgstr "Feldgruppen durchsuchen"
 
-#: acf.php:510
+#: acf.php:511
 msgid "View Field Group"
 msgstr "Feldgruppe anzeigen"
 
-#: acf.php:509
+#: acf.php:510
 msgid "New Field Group"
 msgstr "Neue Feldgruppe"
 
-#: acf.php:508
+#: acf.php:509
 msgid "Edit Field Group"
 msgstr "Feldgruppe bearbeiten"
 
@@ -4759,11 +4864,11 @@ msgstr "Feldgruppe bearbeiten"
 msgid "Import Field Groups"
 msgstr "Feldgruppen importieren"
 
-#: acf.php:505
+#: acf.php:506
 msgid "Field Group"
 msgstr "Feldgruppe"
 
-#: acf.php:504 includes/admin/post-types/admin-field-groups.php:61
+#: acf.php:505 includes/admin/post-types/admin-field-groups.php:61
 #: includes/admin/post-types/admin-post-types.php:118
 #: includes/admin/post-types/admin-taxonomies.php:117
 msgid "Field Groups"
@@ -4985,7 +5090,7 @@ msgstr "HTML maskieren"
 msgid "Link Array"
 msgstr "Link-Array"
 
-#: acf.php:545
+#: acf.php:546
 msgid "Search Fields"
 msgstr "Felder suchen"
 
@@ -5350,7 +5455,7 @@ msgstr "Backend anzeigen"
 msgid "Menu Item"
 msgstr "Menüelement"
 
-#: includes/locations/class-acf-location-nav-menu.php:89
+#: includes/locations/class-acf-location-nav-menu.php:90
 msgid "Menu Locations"
 msgstr "Menüpositionen"
 
@@ -5405,7 +5510,7 @@ msgid "Parent Page (has children)"
 msgstr "Übergeordnete Seite (hat Unterseiten)"
 
 #. translators: counts for inactive field groups
-#: acf.php:586
+#: acf.php:587
 msgid "Inactive <span class=\"count\">(%s)</span>"
 msgid_plural "Inactive <span class=\"count\">(%s)</span>"
 msgstr[0] "Deaktiviert <span class=\"count\">(%s)</span>"
@@ -5517,15 +5622,15 @@ msgstr "Auswahl"
 msgid "Conditional Logic"
 msgstr "Bedingte Logik"
 
-#: acf.php:541
+#: acf.php:542
 msgid "Add New Field"
 msgstr "Neues Feld hinzufügen"
 
-#: acf.php:507
+#: acf.php:508
 msgid "Add New Field Group"
 msgstr "Neue Feldgruppe hinzufügen"
 
-#: acf.php:506 acf.php:540
+#: acf.php:507 acf.php:541
 #: includes/admin/views/acf-post-type/advanced-settings.php:244
 #: includes/post-types/class-acf-post-type.php:102
 #: includes/post-types/class-acf-taxonomy.php:101
@@ -5615,10 +5720,6 @@ msgstr "Einbettungs-Größe"
 #: includes/admin/views/acf-field-group/options.php:120
 msgid "Normal (after content)"
 msgstr "Normal (nach Inhalt)"
-
-#: includes/fields/class-acf-field-image.php:335
-msgid "Preview Size"
-msgstr "Vorschau-Größe"
 
 #. translators: %d - number of results available in select field
 #: includes/fields/class-acf-field-select.php:91
@@ -6033,19 +6134,19 @@ msgstr "Die Feldgruppe wurde gelöscht."
 msgid "Field group published."
 msgstr "Die Feldgruppe wurde veröffentlicht."
 
-#: acf.php:512
+#: acf.php:513
 msgid "No Field Groups found"
 msgstr "Es wurden keine Feldgruppen gefunden"
 
-#: acf.php:513
+#: acf.php:514
 msgid "No Field Groups found in Trash"
 msgstr "Es wurden keine Feldgruppen im Papierkorb gefunden"
 
-#: acf.php:546
+#: acf.php:547
 msgid "No Fields found"
 msgstr "Es wurden keine Felder gefunden"
 
-#: acf.php:547
+#: acf.php:548
 msgid "No Fields found in Trash"
 msgstr "Es wurden keine Felder im Papierkorb gefunden"
 
@@ -6290,7 +6391,11 @@ msgstr "Seitenlink"
 msgid "Archives"
 msgstr "Archiv"
 
+#: includes/fields/class-acf-field-image.php:335
+msgid "Preview Size"
+msgstr "Vorschaugröße"
+
 #. Plugin Name of the plugin
-#: acf.php acf.php:347
+#: acf.php acf.php:348
 msgid "Advanced Custom Fields"
 msgstr "Advanced Custom Fields"

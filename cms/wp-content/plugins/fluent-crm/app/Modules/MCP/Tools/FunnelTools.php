@@ -48,7 +48,7 @@ class FunnelTools
         $sortType = strtoupper(sanitize_text_field((string) ($params['sort_type'] ?? 'DESC')));
         $sortType = in_array($sortType, ['ASC', 'DESC'], true) ? $sortType : 'DESC';
 
-        $query = Funnel::withCount('subscribers')->orderBy($sortBy, $sortType);
+        $query = Funnel::query()->orderBy($sortBy, $sortType);
 
         if ($search !== '') {
             global $wpdb;
@@ -67,18 +67,89 @@ class FunnelTools
 
         $items = [];
         $triggerLabels = self::triggerLabelMap();
-        foreach ($paginated->items() as $funnel) {
-            $items[] = [
+        $funnels = $paginated->items();
+        $funnelIds = array_map(function ($funnel) {
+            return (int) $funnel->id;
+        }, $funnels);
+
+        // One grouped query for every funnel on the current page replaces the
+        // previous per-row inProgressCount() call. Keep the exact historical
+        // in-progress definition (active + waiting), and make the completed
+        // field match get-automation instead of counting every status.
+        $subscriberCounts = [];
+        if ($funnelIds) {
+            $countRows = FunnelSubscriber::whereIn('funnel_id', $funnelIds)
+                ->whereIn('status', ['active', 'waiting', 'completed'])
+                ->select(['funnel_id', 'status'])
+                ->selectRaw('COUNT(id) as total')
+                ->groupBy('funnel_id')
+                ->groupBy('status')
+                ->get();
+
+            foreach ($countRows as $row) {
+                $funnelId = (int) $row->funnel_id;
+                if (!isset($subscriberCounts[$funnelId])) {
+                    $subscriberCounts[$funnelId] = [
+                        'in_progress' => 0,
+                        'completed'   => 0,
+                    ];
+                }
+
+                if (in_array($row->status, ['active', 'waiting'], true)) {
+                    $subscriberCounts[$funnelId]['in_progress'] += (int) $row->total;
+                } elseif ($row->status === 'completed') {
+                    $subscriberCounts[$funnelId]['completed'] = (int) $row->total;
+                }
+            }
+        }
+
+        // Last time this funnel's trigger actually fired, for spotting
+        // automations that are still published but nothing enters any more.
+        //
+        // Deliberately MAX(created_at) — enrollment — and NOT
+        // MAX(last_executed_time): a funnel keeps executing steps for contacts
+        // who entered months ago, so last_executed_time stays fresh long after
+        // the trigger went dead and would report retired funnels as active.
+        //
+        // Also deliberately unfiltered by status, unlike the counts above: a
+        // contact who entered and was later cancelled still proves the trigger
+        // fired. Opt-in because fc_funnel_subscribers is indexed on funnel_id
+        // alone, so the MAX walks each funnel's rows.
+        $lastEnrolled = [];
+        if (!empty($params['include_last_enrolled']) && $funnelIds) {
+            $enrollRows = FunnelSubscriber::whereIn('funnel_id', $funnelIds)
+                ->select(['funnel_id'])
+                ->selectRaw('MAX(created_at) as last_enrolled_at')
+                ->groupBy('funnel_id')
+                ->get();
+
+            foreach ($enrollRows as $row) {
+                $lastEnrolled[(int) $row->funnel_id] = $row->last_enrolled_at;
+            }
+        }
+
+        foreach ($funnels as $funnel) {
+            $counts = $subscriberCounts[(int) $funnel->id] ?? [
+                'in_progress' => 0,
+                'completed'   => 0,
+            ];
+            $item = [
                 'id'                            => (int) $funnel->id,
                 'title'                         => $funnel->title,
                 'status'                        => $funnel->status,
                 'trigger_name'                  => $funnel->trigger_name,
                 'trigger_label'                 => $triggerLabels[$funnel->trigger_name] ?? $funnel->trigger_name,
-                'in_progress_subscribers_count' => self::inProgressCount((int) $funnel->id),
-                'completed_subscribers_count'   => (int) ($funnel->subscribers_count ?? 0),
+                'in_progress_subscribers_count' => $counts['in_progress'],
+                'completed_subscribers_count'   => $counts['completed'],
                 'created_at'                    => MCPHelper::toIso8601($funnel->created_at),
                 'updated_at'                    => MCPHelper::toIso8601($funnel->updated_at),
             ];
+
+            if (!empty($params['include_last_enrolled'])) {
+                $item['last_enrolled_at'] = MCPHelper::toIso8601($lastEnrolled[(int) $funnel->id] ?? null);
+            }
+
+            $items[] = $item;
         }
 
         return [
@@ -109,9 +180,15 @@ class FunnelTools
         }
 
         $defaultIncludes = ['sequences', 'report'];
-        $include = isset($params['include']) && is_array($params['include']) && $params['include']
-            ? array_values(array_intersect($params['include'], ['sequences', 'report']))
-            : $defaultIncludes;
+        // array_key_exists (not truthiness): omitted => defaults, [] =>
+        // metadata only, explicit list => exactly those (TRC-005). The schema
+        // documents "[] for metadata only"; the old truthy check restored the
+        // defaults on [], contradicting it.
+        if (array_key_exists('include', $params) && is_array($params['include'])) {
+            $include = array_values(array_intersect($params['include'], ['sequences', 'report']));
+        } else {
+            $include = $defaultIncludes;
+        }
 
         $triggerLabels = self::triggerLabelMap();
 

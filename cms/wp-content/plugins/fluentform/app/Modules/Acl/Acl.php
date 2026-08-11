@@ -436,6 +436,21 @@ class Acl
             $user->add_cap($permission);
         }
 
+        /**
+         * Fires after per-user FluentForm permissions are attached.
+         *
+         * Role-level changes already announce themselves via
+         * fluentform/after_permission_set_assignment; this is the per-user
+         * equivalent, so caches keyed on a user's effective permissions can be
+         * invalidated when an individual manager is granted or revoked.
+         *
+         * @since 6.2.5
+         *
+         * @param \WP_User $user        The user whose permissions changed.
+         * @param array    $permissions The permissions now attached.
+         */
+        do_action('fluentform/after_user_permissions_attached', $user, $permissions);
+
         return $user;
     }
 }

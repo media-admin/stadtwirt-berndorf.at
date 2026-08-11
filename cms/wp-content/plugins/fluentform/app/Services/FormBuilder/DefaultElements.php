@@ -1623,7 +1623,7 @@ $fluentformDefaultElements = [
                 'is_width_auto_calc' => true,
             ],
             'columns' => [
-                ['width' => '', 'left' => '', 'fields' => []],
+                ['width' => 100, 'left' => '', 'fields' => []],
             ],
             'editor_options' => [
                 'title'      => __('One Column Container', 'fluentform'),

@@ -33,24 +33,9 @@ class MCPInit
         // whatever else the user has installed.
         add_action('mcp_adapter_init', [$this, 'registerCustomServer']);
 
-        // Invalidate the cached `get-crm-context` payload when reference data
-        // an agent might have just learned changes — keeps stale enums or
-        // missing tags out of the next session.
-        $invalidate = [\FluentCrm\App\Modules\MCP\Tools\ContextTools::class, 'invalidateCache'];
-        foreach ([
-            'fluent_crm_tag_created',
-            'fluent_crm_tag_updated',
-            'fluent_crm_tag_deleted',
-            'fluent_crm_list_created',
-            'fluent_crm_list_updated',
-            'fluent_crm_list_deleted',
-            'fluent_crm/custom_field_added',
-            'fluent_crm/custom_field_updated',
-            'fluent_crm/custom_field_deleted',
-            'fluent_crm/global_email_settings_saved',
-        ] as $hook) {
-            add_action($hook, $invalidate);
-        }
+        // No cache-invalidation hooks: get-crm-context reads live. See
+        // ContextTools::getContext() for why caching it was not worth its
+        // machinery.
     }
 
     public function registerCategory()

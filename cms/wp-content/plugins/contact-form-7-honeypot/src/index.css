@@ -4,6 +4,33 @@
 @font-face {
     font-family: degular;
     src: url(/assets/fonts/degular-14/Degular-Regular.otf);
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: degular;
+    src: url(/assets/fonts/degular-14/Degular-Medium.otf);
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: degular;
+    src: url(/assets/fonts/degular-14/Degular-Semibold.otf);
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: degular;
+    src: url(/assets/fonts/degular-14/Degular-Bold.otf);
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
 }
 
 :root {
@@ -81,13 +108,11 @@
 .components-button.is-secondary.is-busy,
 .components-button.is-secondary.is-busy:disabled,
 .components-button.is-secondary.is-busy[aria-disabled="true"] {
-    background-image: linear-gradient(
-        -45deg,
-        var(--cf7apps-tertiary-color-2) 33%,
-        var(--cf7apps-tertiary-color) 0,
-        var(--cf7apps-tertiary-color) 70%,
-        var(--cf7apps-tertiary-color-2) 0
-    );
+    background-image: linear-gradient(-45deg,
+            var(--cf7apps-tertiary-color-2) 33%,
+            var(--cf7apps-tertiary-color) 0,
+            var(--cf7apps-tertiary-color) 70%,
+            var(--cf7apps-tertiary-color-2) 0);
     background-size: 100px 100%;
     animation: cf7apps-loading-stripes 1s linear infinite;
     color: var(--cf7apps-primary-white);
@@ -99,6 +124,7 @@
     0% {
         background-position: 0 0;
     }
+
     100% {
         background-position: 100px 0;
     }
@@ -107,13 +133,11 @@
 .cf7apps-btn.tertiary-secondary.is-busy,
 .cf7apps-btn.tertiary-secondary.is-busy:disabled,
 .cf7apps-btn.tertiary-secondary.is-busy[aria-disabled="true"] {
-    background-image: linear-gradient(
-        -45deg,
-        var(--cf7apps-tertiary-color-11) 33%,
-        var(--cf7apps-primary-white) 0,
-        var(--cf7apps-primary-white) 70%,
-        var(--cf7apps-tertiary-color-11) 0
-    );
+    background-image: linear-gradient(-45deg,
+            var(--cf7apps-tertiary-color-11) 33%,
+            var(--cf7apps-primary-white) 0,
+            var(--cf7apps-primary-white) 70%,
+            var(--cf7apps-tertiary-color-11) 0);
     background-size: 100px 100%;
     animation: cf7apps-loading-stripes 1s linear infinite;
     color: var(--cf7apps-tertiary-color);
@@ -125,6 +149,7 @@
     0% {
         background-position: 0 0;
     }
+
     100% {
         background-position: 100px 0;
     }
@@ -138,7 +163,7 @@
     font-family: degular !important;
 }
 
-a, 
+a,
 button {
     text-decoration: none;
 }
@@ -149,7 +174,7 @@ button:focus {
 }
 
 #wpwrap {
-    background: #ebf4f8;
+    background: #f8f9fa;
 }
 
 #wpcontent {
@@ -157,7 +182,9 @@ button:focus {
 }
 
 .cf7apps-main-content {
-    margin: 15px;
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 52px);
 }
 
 .cf7apps-migration {
@@ -187,10 +214,12 @@ button:focus {
 .cf7apps-migration-modal {
     background: linear-gradient(135deg, #ffffff 0%, #c2e9f5 100%);
     width: 600px;
+    max-width: calc(100% - 32px);
     padding: 50px 0;
     border-radius: 10px;
     border: 1px solid var(--cf7apps-primary-white);
     text-align: center;
+    box-sizing: border-box;
 }
 
 .cf7apps-modal-content {
@@ -208,10 +237,65 @@ button:focus {
     margin: 15px 0 20px 0;
 }
 
+/* Sticky on normal page scroll — no inner scroll container */
+.cf7apps-header-wrap {
+    position: sticky;
+    top: 32px;
+    z-index: 100;
+    margin-bottom: 0;
+    background: var(--cf7apps-primary-white);
+}
+
+@media screen and (max-width: 782px) {
+    .cf7apps-header-wrap {
+        top: 46px;
+    }
+}
+
 .cf7apps-header {
     background: var(--cf7apps-primary-white);
     border-radius: 10px;
-    padding: 8px;
+    padding: 10px 12px;
+}
+
+.cf7apps-header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    min-height: 40px;
+}
+
+.cf7apps-header-left {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    min-width: 0;
+}
+
+.cf7apps-header-logo {
+    display: inline-flex;
+    align-items: center;
+    line-height: 0;
+    text-decoration: none;
+}
+
+.cf7apps-header-logo-img {
+    display: block;
+    height: 36px;
+    width: auto;
+    max-width: 150px;
+    object-fit: contain;
+    object-position: left center;
+}
+
+.cf7apps-header .cf7apps-expand-menu-btn {
+    float: none;
+    margin-right: 0;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
 }
 
 .cf7apps-header-right {
@@ -225,12 +309,14 @@ button:focus {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 4px 10px;
-    border-radius: 6px;
-    background: #FFFFFF;
-    color: #A7AAAD;
-    font-weight: 600;
-    font-size: 13px;
+    padding: 5px 8px;
+    border: 1px solid #0d2149;
+    border-radius: 9px;
+    background: #ffffff;
+    color: #0d2149;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 1;
 }
 
 .cf7apps-header-icon-button {
@@ -246,6 +332,13 @@ button:focus {
     padding: 0;
 }
 
+.cf7apps-header-icon-button.cf7apps-header-doc-button {
+    width: auto;
+    height: auto;
+    border-radius: 0;
+    background: transparent;
+}
+
 .cf7apps-header-icon-button svg {
     color: var(--cf7apps-tertiary-color);
 }
@@ -256,8 +349,18 @@ button:focus {
     display: block;
 }
 
+.cf7apps-header-doc-icon {
+    width: 20px;
+    height: 17px;
+}
+
 .cf7apps-header-icon-button:hover {
     background: var(--cf7apps-primary-color-11);
+}
+
+.cf7apps-header-icon-button.cf7apps-header-doc-button:hover {
+    background: transparent;
+    opacity: 0.8;
 }
 
 .cf7apps-header-back-btn {
@@ -267,19 +370,433 @@ button:focus {
 .cf7apps-layout {
     margin-top: 15px;
     display: flex;
+    align-items: stretch;
+    gap: 0;
+    background: var(--cf7apps-primary-white);
+    border-radius: 0 0 10px 10px;
+    overflow: visible;
+    min-height: calc(100vh - 130px);
+}
+
+.cf7apps-layout:has(.cf7apps-dashboard) {
+    background: #f8f9fa;
+}
+
+.cf7apps-nav-shell {
+    flex-shrink: 0;
+    align-self: stretch;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    transition: width 0.25s ease;
+    /* z-index: 9999; */
 }
 
 .cf7apps-menu-bar {
-    float: left;
-    width: 250px;
-    padding-top: 18px;
-    position: relative;
-    transition: all 0.3s;
+    background: var(--cf7apps-primary-white);
+    border-right: 1px solid #ddd;
+    flex: 1 1 auto;
+    height: 100%;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 10px 0 24px;
+    box-sizing: border-box;
+    transition: width 0.25s ease, box-shadow 0.25s ease;
+    border-radius: 0 0 0 10px;
+}
+
+.cf7apps-nav-panel-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.cf7apps-menu-bar--hover-overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    height: auto;
+    min-height: 100%;
+    z-index: 100;
+    box-shadow: 4px 0 24px rgba(13, 33, 73, 0.14);
+}
+
+.cf7apps-menu-bar--hover-overlay .cf7apps-nav-panel-body,
+.cf7apps-menu-bar--open .cf7apps-nav-panel-body {
+    overflow-y: auto;
+}
+
+.cf7apps-menu-bar--hover-overlay .cf7apps-menu-container {
+    flex: 1;
+}
+
+.cf7apps-nav-logo-text {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--cf7apps-tertiary-color);
+}
+
+.cf7apps-nav-toggle {
+    flex-shrink: 0;
+}
+
+.cf7apps-nav-loading {
+    padding: 12px 16px 0;
+}
+
+.cf7apps-menu-icon-only {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 0;
+    flex: 1;
+    width: 100%;
+}
+
+.cf7apps-menu-icon-only-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    box-sizing: border-box;
+}
+
+.cf7apps-menu-icon-only-item:hover {
+    background: var(--cf7apps-primary-color-11);
+}
+
+.cf7apps-menu-parent-icon {
+    display: block;
+    object-fit: contain;
+    filter: grayscale(1) brightness(0.58);
+    opacity: 0.72;
+    transition: filter 0.2s ease, opacity 0.2s ease;
+}
+
+.cf7apps-menu-icon-only-item.is-active {
+    background: var(--cf7apps-primary-color-11);
+}
+
+.cf7apps-menu-icon-only-item.is-active .cf7apps-menu-parent-icon,
+.cf7apps-menu-heading.is-active .cf7apps-menu-parent-icon {
+    filter: none;
+    opacity: 1;
+}
+
+.cf7apps-menu-bar--icons .cf7apps-menu-label,
+.cf7apps-menu-bar--icons .cf7apps-menu-routes-container,
+.cf7apps-menu-bar--icons .MuiAccordionSummary-expandIconWrapper {
+    display: none !important;
+}
+
+.cf7apps-menu-bar--open .cf7apps-menu-heading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.cf7apps-menu-bar--open .cf7apps-menu-label {
+    font-size: 16px;
+    font-weight: 500;
+    color: #2c3338;
+    white-space: nowrap;
+}
+
+.cf7apps-page-shell {
+    display: flex;
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    min-width: 0;
+    min-height: 0;
+    gap: 0 20px;
+    padding: 20px;
+    box-sizing: border-box;
+    background: #f8f9fa;
+}
+
+.cf7apps-page-shell:has(.cf7apps-dashboard) {
+    align-items: flex-start;
+}
+
+.cf7apps-layout.cf7apps-layout--nav-expanded {
+    box-shadow: 4px 0 24px rgba(13, 33, 73, 0.14);
+}
+
+.cf7apps-layout.cf7apps-layout--nav-expanded .cf7apps-menu-bar {
+    border-right: none;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.cf7apps-layout.cf7apps-layout--nav-expanded .cf7apps-page-shell {
+    background: #f8f9fa;
+}
+
+.cf7apps-page-main {
+    flex: 1 1 640px;
+    min-width: 0;
 }
 
 .cf7apps-right-bar {
-    width: 180px;
-    float: right;
+    width: 328px;
+    max-width: 100%;
+    flex: 0 0 328px;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.cf7apps-page-main:has(.cf7apps-dashboard)~.cf7apps-right-bar {
+    padding-top: 0;
+}
+
+.cf7apps-page-main:has(.cf7apps-dashboard-settings)~.cf7apps-right-bar {
+    padding-top: 0;
+    padding-right: 20px;
+}
+
+.cf7apps-layout--no-side-nav {
+    background: #f8f9fa;
+}
+
+.cf7apps-layout--no-side-nav .cf7apps-page-shell {
+    flex: 1 1 auto;
+    width: 100%;
+    border-radius: 0 0 10px 0;
+}
+
+.cf7apps-dashboard-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+}
+
+.cf7apps-sidebar-block {
+    background: #ffffff;
+    border: 1px solid #dddddd;
+    border-radius: 10px;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.cf7apps-sidebar-block__title {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: normal;
+    color: #181833;
+}
+
+.cf7apps-recommended-plugins {
+    width: 100%;
+}
+
+.cf7apps-recommended-plugin {
+    background: #ffffff;
+    border-radius: 5px;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.cf7apps-recommended-plugin+.cf7apps-recommended-plugin {
+    margin-top: 10px;
+}
+
+.cf7apps-recommended-plugin__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.cf7apps-recommended-plugin__brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.cf7apps-recommended-plugin__icon-wrap {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cf7apps-recommended-plugin__icon {
+    display: block;
+    object-fit: contain;
+}
+
+.cf7apps-recommended-plugin__title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: normal;
+    color: #181833;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.cf7apps-recommended-plugin__title--smtp {
+    color: #5368ad;
+}
+
+.cf7apps-recommended-plugin__title--pp {
+    color: #5647b6;
+}
+
+.cf7apps-recommended-plugin__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    border: 0.5px solid #208aae;
+    border-radius: 4px;
+    background: #edfbfc;
+    color: #208aae;
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 1;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    font-family: inherit;
+}
+
+.cf7apps-recommended-plugin__btn:hover:not(:disabled) {
+    background: #dcf7f9;
+}
+
+.cf7apps-recommended-plugin__btn:disabled {
+    opacity: 0.7;
+    cursor: wait;
+}
+
+.cf7apps-recommended-plugin__btn--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.cf7apps-recommended-plugin__desc {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: normal;
+    color: #181833;
+    word-break: break-word;
+}
+
+.cf7apps-quick-access__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.cf7apps-quick-access__item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 5px;
+    background: #ffffff;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+    color: #181833;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    box-sizing: border-box;
+}
+
+.cf7apps-quick-access__item:hover {
+    color: #208aae;
+}
+
+.cf7apps-quick-access__icon {
+    display: block;
+    width: auto;
+    height: 14px;
+    max-width: 14px;
+    flex-shrink: 0;
+    object-fit: contain;
+}
+
+@media (max-width: 1400px) {
+    .cf7apps-right-bar {
+        width: 300px;
+    flex: 0 0 300px;
+    }
+}
+
+@media (max-width: 1200px) {
+    .cf7apps-page-main {
+        flex: 1 1 100%;
+    }
+
+.cf7apps-right-bar {
+        width: 100%;
+    flex: 1 1 100%;
+    padding: 0 20px 24px 20px;
+    }
+
+.cf7apps-page-main:has(.cf7apps-dashboard-settings)~.cf7apps-right-bar {
+        padding-top: 0;
+    margin-top: 4px;
+    }
+
+.cf7apps-dashboard__toolbar {
+        flex-wrap: wrap;
+    align-items: stretch;
+    gap: 12px;
+    }
+
+.cf7apps-dashboard__search {
+        flex: 1 1 100%;
+    width: 100%;
+    }
+
+.cf7apps-dashboard__filters {
+        flex: 1 1 100%;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    }
+
+.cf7apps-dashboard__panel {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 782px) {
+    .cf7apps-recommended-plugins {
+        max-width: 100%;
+    }
+
+.cf7apps-recommended-plugin__btn {
+        font-size: 9px;
+    padding: 6px 8px;
+    }
+}
+
+.cf7apps-body {
+    background: #f8f9fa;
 }
 
 .cf7apps-body {
@@ -372,120 +889,764 @@ button:focus {
     margin-top: 10px;
 }
 
-.cf7apps-apps-header {
-    border-bottom: 1px solid #EBF4F8;
+.cf7apps-dashboard {
+    width: 100%;
+    min-width: 0;
 }
 
-.cf7apps-apps-header h2 {
-    font-size: 22px;
-    margin-bottom: 0px;
-}
-
-.cf7apps-apps-header p {
-    color: #65728B;
-    font-size: 16px;
-    margin-top: 8px;
-}
-
-.cf7apps-apps-section h2 {
-    font-size: 18px;
-    color: #65728B;
-    border-left: 2px solid #65728B;
-    padding: 10px;
-}
-
-.cf7apps-app-section p {
-    max-width: 200px;
-}
-
-.cf7apps-apps-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    /* justify-content: space-between; */
-    margin-bottom: 30px;
-}
-
-.cf7apps-app {
-    border: 1px solid #DAE2E5;
+.cf7apps-dashboard__panel {
+    background: #ffffff;
+    border: 1px solid #dddddd;
     border-radius: 10px;
-    flex: 0 1 calc(33.333% - 16px);
+    padding: 20px;
     box-sizing: border-box;
-    position: relative;
-}
-
-.cf7apps-app > div:first-child {
-    padding: 20px 0;
-    min-height: 250px;
-}
-
-.cf7apps-app-container {
-    width: 85%;
-    margin: 0 auto;
-}
-
-.cf7apps-app-header {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    max-width: none;
+    container-type: inline-size;
+    container-name: cf7apps-dashboard;
 }
 
-.cf7apps-app-header .cf7apps-app-settings a {
+.cf7apps-dashboard__hero {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+}
+
+.cf7apps-dashboard__hero-title {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: normal;
+    color: #181833;
+}
+
+.cf7apps-dashboard__hero-subtitle {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: normal;
+    color: #2c3338;
+}
+
+.cf7apps-dashboard-notice {
+    margin: 0;
+}
+
+.cf7apps-acf-install-notice {
+    margin: 0 0 4px;
+}
+
+.cf7apps-acf-install-notice .cf7apps-notice {
+    margin-bottom: 0;
+    border-radius: 8px;
+    border-left-width: 4px;
+    box-shadow: 0 1px 2px rgba(24, 24, 51, 0.06);
+}
+
+.cf7apps-acf-install-notice .cf7apps-notice p {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 14px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.45;
+}
+
+.cf7apps-acf-install-notice .cf7apps-notice .MuiSvgIcon-root {
+    margin: 1px 0 0;
+    flex-shrink: 0;
+    font-size: 20px;
+}
+
+.cf7apps-acf-install-notice .cf7apps-notice span {
+    flex: 1;
+}
+
+.cf7apps-acf-notice-link {
+    color: inherit;
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+.cf7apps-acf-notice-link:hover,
+.cf7apps-acf-notice-link:focus {
+    text-decoration: none;
+}
+
+.cf7apps-app-toggle:disabled,
+.cf7apps-app-toggle[aria-disabled="true"] {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.cf7apps-app-toggle.is-loading {
+    cursor: wait;
+}
+
+.cf7apps-app-toggle__spinner {
+    display: block;
+    box-sizing: border-box;
+    width: 8px;
+    height: 8px;
+    border: 1.5px solid rgba(44, 51, 56, 0.2);
+    border-top-color: #2c3338;
+    border-radius: 50%;
+    animation: cf7apps-toggle-spin 0.55s linear infinite;
+}
+
+.cf7apps-app-toggle.is-on .cf7apps-app-toggle__spinner {
+    border-color: rgba(44, 51, 56, 0.25);
+    border-top-color: #2c3338;
+}
+
+@keyframes cf7apps-toggle-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.cf7apps-dashboard__toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: nowrap;
+    width: 100%;
+    min-height: 31px;
+}
+
+.cf7apps-dashboard__search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 0 0 270px;
+    width: 270px;
+    max-width: 100%;
+    min-width: 0;
+    min-height: 31px;
+    margin: 0;
+    padding: 0px 10px;
+    border: 1px solid #e2e2e2;
+    border-radius: 6px;
+    background: #ffffff;
+    box-sizing: border-box;
+    cursor: text;
+}
+
+.cf7apps-dashboard__search-icon {
+    display: block;
+    width: 13px;
+    height: 13px;
+    max-width: 13px;
+    flex-shrink: 0;
+    object-fit: contain;
+    pointer-events: none;
+}
+
+.cf7apps-dashboard__search-input {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    color: #2c3338 !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    font-family: inherit !important;
+    line-height: normal !important;
+    box-shadow: none !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+}
+
+.cf7apps-dashboard__search-input::placeholder {
+    color: #a7aaad;
+    opacity: 1;
+}
+
+.cf7apps-dashboard__search-input:focus {
+    outline: none;
+}
+
+.cf7apps-dashboard__search:focus-within {
+    border-color: #e2e2e2;
+    box-shadow: none;
+}
+
+.cf7apps-dashboard__filters {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    flex: 0 1 auto;
+    min-width: 0;
+}
+
+.cf7apps-dashboard__filter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border: none;
+    border-radius: 6px;
+    background: #f0f0f1;
+    color: #717171;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: inherit;
+    line-height: normal;
     cursor: pointer;
-    color: #368DB2;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.cf7apps-dashboard__filter:hover {
+    background: #e8e8e9;
+}
+
+.cf7apps-dashboard__filter.is-active {
+    background: #208aae;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.cf7apps-dashboard__filter.is-active:hover {
+    background: #208aae;
+}
+
+.cf7apps-dashboard__filter-icon {
+    display: block;
+    width: auto;
+    height: 12px;
+    max-width: 12px;
+    flex-shrink: 0;
+    object-fit: contain;
+}
+
+.cf7apps-dashboard__filter.is-active .cf7apps-dashboard__filter-icon {
+    filter: brightness(0) invert(1);
+}
+
+.cf7apps-dashboard__filter-label {
+    line-height: normal;
+}
+
+.cf7apps-dashboard-empty {
+    grid-column: 1 / -1;
+    margin: 0;
+    color: #717171;
     font-size: 14px;
 }
 
-.cf7apps-app-header .cf7apps-app-settings svg {
-    width: 14px;
-    vertical-align: middle;
-    margin-right: 4px;
+.cf7apps-apps-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    width: 100%;
+    max-width: none;
+    align-items: stretch;
 }
 
-.cf7apps-app .cf7apps-app-footer {
-    position: absolute;
-    padding: 16px 0;
-    bottom: 0px;
-    right: 0px;
-    left: 0px;
+.cf7apps-apps-container .cf7apps-app {
+    align-self: stretch;
+    transition: opacity 0.22s ease, transform 0.22s ease;
+    will-change: opacity, transform;
 }
 
-.cf7apps-app-footer a {
-    line-height: 100px;
-    color: #368DB2;
+.cf7apps-apps-container.is-exiting .cf7apps-app {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+    pointer-events: none;
 }
 
-.cf7apps-app-btn-container {
-    position: absolute;
-    right: 1px;
-    left: 1px;
-    bottom: 1px;
-    padding: 15px 0;
-    background: #EBF4F8;
-    border: transparent;
-    border-bottom-right-radius: 10px;
-    border-bottom-left-radius: 10px;
+.cf7apps-apps-container.is-entering .cf7apps-app {
+    animation: cf7apps-app-enter 0.34s ease forwards;
 }
 
-.cf7apps-app-switch-container {
-    float: right;
+.cf7apps-apps-container.is-entering .cf7apps-app:nth-child(1) {
+    animation-delay: 0ms;
+}
+
+.cf7apps-apps-container.is-entering .cf7apps-app:nth-child(2) {
+    animation-delay: 45ms;
+}
+
+.cf7apps-apps-container.is-entering .cf7apps-app:nth-child(3) {
+    animation-delay: 90ms;
+}
+
+.cf7apps-apps-container.is-entering .cf7apps-app:nth-child(4) {
+    animation-delay: 135ms;
+}
+
+.cf7apps-apps-container.is-entering .cf7apps-app:nth-child(5) {
+    animation-delay: 180ms;
+}
+
+.cf7apps-apps-container.is-entering .cf7apps-app:nth-child(6) {
+    animation-delay: 225ms;
+}
+
+.cf7apps-apps-container.is-entering .cf7apps-app:nth-child(n + 7) {
+    animation-delay: 260ms;
+}
+
+@keyframes cf7apps-app-enter {
+    from {
+        opacity: 0;
+    transform: translateY(14px);
+    }
+
+    to {
+        opacity: 1;
+    transform: translateY(0);
+    }
+}
+
+.cf7apps-dashboard-empty.is-entering {
+    animation: cf7apps-app-enter 0.3s ease forwards;
+}
+
+.cf7apps-dashboard-empty.is-exiting {
+    opacity: 0;
+    transition: opacity 0.18s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .cf7apps-apps-container .cf7apps-app,
+    .cf7apps-apps-container.is-exiting .cf7apps-app,
+    .cf7apps-apps-container.is-entering .cf7apps-app,
+    .cf7apps-dashboard-empty.is-entering,
+    .cf7apps-dashboard-empty.is-exiting {
+        transition: none;
+    animation: none;
+    opacity: 1;
+    transform: none;
+    }
+}
+
+/* Medium screens: 2 cards per row */
+@media (min-width: 900px) {
+    .cf7apps-apps-container {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* Large screens: 3 cards per row */
+@media (min-width: 1280px) {
+    .cf7apps-apps-container {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 782px) {
+    .cf7apps-dashboard__toolbar {
+        flex-direction: column;
+    align-items: stretch;
+    flex-wrap: wrap;
+    }
+
+.cf7apps-dashboard__search {
+        flex: 1 1 auto;
+    width: 100%;
+    }
+
+.cf7apps-dashboard__filters {
+        width: 100%;
+    flex-wrap: wrap;
+    }
+}
+
+.cf7apps-app {
+    box-sizing: border-box;
+    min-width: 0;
     display: flex;
+    flex-direction: column;
+    min-height: 210px;
+    height: 100%;
 }
 
-.cf7apps-app-status {
-    margin-right: 10px;
-    color: #8FA8B2;
+.cf7apps-app-card {
+    --cf7apps-card-border: #4f6797;
+    --cf7apps-card-badge-bg: #e9f0ff;
+    --cf7apps-card-enabled-bg: #e9f0ff;
+    --cf7apps-card-text-width: min(250px, calc(62% - 4px));
+    position: relative;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 210px;
+    height: 100%;
+    border: 1px solid var(--cf7apps-card-border);
+    border-radius: 10px;
+    background: #ffffff;
+    overflow: hidden;
+    text-align: left;
+    transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
-.cf7apps-app-status-active {
-    color: #368DB2;
+.cf7apps-app.is-enabled .cf7apps-app-card {
+    background: var(--cf7apps-card-enabled-bg);
+    border-color: var(--cf7apps-card-border);
 }
 
-.cf7apps-app-switch {
-    margin: 0 !important;
+.cf7apps-app.is-pro-teaser .cf7apps-app-card {
+    background: var(--cf7apps-card-enabled-bg);
+    border-color: var(--cf7apps-card-border);
 }
 
-.cf7apps-app-switch label {
-    display: none;
+.cf7apps-app.is-pro-teaser .cf7apps-app-card__decor-img {
+    opacity: 1;
+}
+
+.cf7apps-app-stripe .cf7apps-app-card__decor,
+.cf7apps-app-paypal .cf7apps-app-card__decor,
+.cf7apps-app-square .cf7apps-app-card__decor {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 66%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    overflow: visible;
+}
+
+.cf7apps-app-stripe .cf7apps-app-card__decor-img,
+.cf7apps-app-paypal .cf7apps-app-card__decor-img,
+.cf7apps-app-square .cf7apps-app-card__decor-img {
+    position: static;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    object-position: right bottom;
+}
+
+.cf7apps-app-card__decor {
+    position: absolute;
+    top: 0;
+    right: -8px;
+    bottom: 0;
+    left: 66%;
+    pointer-events: none;
+    z-index: 0;
+    overflow: visible;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+}
+
+.cf7apps-app-card__decor-img {
+    position: relative;
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 102%;
+    margin-right: -2px;
+    margin-bottom: -10px;
+    opacity: 0.5;
+    object-fit: contain;
+    object-position: right bottom;
+    flex-shrink: 0;
+    transition: opacity 0.25s ease, filter 0.25s ease;
+}
+
+.cf7apps-app-card__decor-img.is-active,
+.cf7apps-app.is-enabled .cf7apps-app-card__decor-img {
+    opacity: 1;
+    filter: none;
+}
+
+.cf7apps-app-card__inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: 17px;
+    min-height: 0;
+    height: 100%;
+    padding: 14px;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.cf7apps-app-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-height: 21px;
+    width: 100%;
+}
+
+.cf7apps-app-card__badges {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    flex-wrap: wrap;
+}
+
+.cf7apps-app-card__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    height: 21px;
+    padding: 5px;
+    border-radius: 5px;
+    background: var(--cf7apps-card-badge-bg);
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.cf7apps-app-card__badge-icon {
+    display: block;
+    flex-shrink: 0;
+    background-color: var(--cf7apps-card-badge-icon, var(--cf7apps-card-border));
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+}
+
+.cf7apps-app-card__badge-label {
+    font-size: 11px;
+    font-weight: 600;
+    line-height: normal;
+    color: #2c3338;
+    white-space: nowrap;
+}
+
+.cf7apps-app-card__pro-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 21px;
+    padding: 5px;
+    border-radius: 5px;
+    background: linear-gradient(108.77deg, #0d2149 14.75%, #0d3948 98.73%);
+    flex-shrink: 0;
+    box-sizing: border-box;
+}
+
+.cf7apps-app-card__pro-tag-icon {
+    display: block;
+    width: 12px;
+    height: 10px;
+    flex-shrink: 0;
+    object-fit: contain;
+}
+
+.cf7apps-app-card__pro-tag-label {
+    font-size: 11px;
+    font-weight: 700;
+    line-height: normal;
+    color: #ffd114;
+    letter-spacing: 0;
+}
+
+.cf7apps-app-card__beta-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    height: 21px;
+    padding: 5px;
+    border-radius: 5px;
+    background: linear-gradient(109.06deg, #3f8cd8 14.75%, #214a72 98.73%);
+    flex-shrink: 0;
+    box-sizing: border-box;
+}
+
+.cf7apps-app-card__beta-tag-icon {
+    display: block;
+    width: 10px;
+    height: 10px;
+    flex-shrink: 0;
+    object-fit: contain;
+    object-position: center;
+}
+
+.cf7apps-app-card__beta-tag-label {
+    font-size: 11px;
+    font-weight: 600;
+    line-height: normal;
+    color: #ffffff;
+}
+
+.cf7apps-app-card__settings {
+    position: relative;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 19px;
+    height: 20px;
+    margin-left: auto;
+    flex-shrink: 0;
+    text-decoration: none;
+    line-height: 0;
+}
+
+.cf7apps-app-card__settings-icon {
+    display: block;
+    width: 18.757px;
+    height: 20px;
+    background-color: #cfcfcf;
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+}
+
+.cf7apps-app.is-enabled .cf7apps-app-card__settings-icon {
+    background-color: var(--cf7apps-card-border);
+}
+
+.cf7apps-app-card__settings:hover .cf7apps-app-card__settings-icon {
+    background-color: #208aae;
+}
+
+.cf7apps-app-card__content {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 1 1 auto;
+    min-height: 0;
+    max-width: var(--cf7apps-card-text-width);
+    position: relative;
+    z-index: 2;
+}
+
+.cf7apps-app-card__title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: normal;
+    color: #2c3338;
+}
+
+.cf7apps-app-card__title-image {
+    display: block;
+    height: 18px;
+    width: auto;
+    max-width: 120px;
+    object-fit: contain;
+    object-position: left center;
+}
+
+.cf7apps-app-card__title-wordmark {
+    display: block;
+    width: auto;
+    height: 18px;
+    max-width: 100%;
+    object-fit: contain;
+    object-position: left center;
+}
+
+.cf7apps-app-card__desc {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.35;
+    color: #2c3338;
+    word-break: break-word;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    overflow: hidden;
+}
+
+.cf7apps-dashboard .cf7apps-app-card__doc-link,
+.cf7apps-dashboard .cf7apps-app-card__doc-link:visited {
+    font-size: 13px;
+    font-weight: 500;
+    color: #2c3338;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.cf7apps-dashboard .cf7apps-app-card__doc-link:hover {
+    color: #208aae;
+}
+
+.cf7apps-app-card__footer {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: auto;
+    flex-shrink: 0;
+    min-height: 21px;
+    padding-top: 0;
+    max-width: var(--cf7apps-card-text-width);
+    position: relative;
+    z-index: 2;
+}
+
+.cf7apps-app-card__status-label {
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 18px;
+    color: #999999;
+}
+
+.cf7apps-app.is-enabled .cf7apps-app-card__status-label {
+    color: #2c3338;
+}
+
+.cf7apps-app-toggle {
+    position: relative;
+    width: 33px;
+    height: 18px;
+    padding: 0;
+    border: none;
+    border-radius: 18px;
+    background: #cfcfcf;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background-color 0.25s ease;
+}
+
+.cf7apps-app-toggle.is-on {
+    background: #2c3338;
+}
+
+.cf7apps-app-toggle__thumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 1.8px 3.7px rgba(39, 39, 39, 0.1);
+    transition: transform 0.2s ease;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cf7apps-app-toggle.is-on .cf7apps-app-toggle__thumb {
+    transform: translateX(15px);
 }
 
 .cf7apps-settings-radio .cf7apps-app-switch label {
@@ -504,20 +1665,6 @@ button:focus {
 
 .cf7apps-settings-radio .cf7apps-form-group {
     margin-top: 0;
-}
-
-.cf7apps-app-switch .components-form-toggle.is-checked .components-form-toggle__track {
-    background-color: #368DB2;
-    border-color: #368DB2;
-}
-
-.cf7apps-app-switch span.components-form-toggle__thumb {
-    background: var(--cf7apps-primary-white) !important;
-}
-
-.cf7apps-app-switch .components-form-toggle .components-form-toggle__track {
-    background-color: #CCD5D9;
-    border: 1px solid transparent;
 }
 
 .cf7apps-coming-soon {
@@ -544,8 +1691,1572 @@ button:focus {
     font-weight: 700;
 }
 
+/* Settings inside dashboard panel */
+.cf7apps-dashboard-settings .cf7apps-settings-panel {
+    gap: 0;
+    overflow: hidden;
+}
+
+.cf7apps-dashboard-settings .cf7apps-settings-panel.cf7apps-entries-settings {
+    overflow: visible;
+}
+
+.cf7apps-settings-panel__header {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #dddddd;
+    margin-bottom: 4px;
+}
+
+.cf7apps-settings-panel__back {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: 8px;
+    background: #f3f4f6;
+    color: #65728b;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.cf7apps-settings-panel__back:hover,
+.cf7apps-settings-panel__back:focus-visible {
+    color: var(--cf7apps-settings-accent, var(--cf7apps-primary-color));
+    background: color-mix(in srgb,
+            var(--cf7apps-settings-accent, var(--cf7apps-primary-color)) 12%,
+            #ffffff);
+    outline: none;
+}
+
+.cf7apps-settings-panel__back svg {
+    width: 20px;
+    height: 20px;
+}
+
+.cf7apps-settings-panel__title-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.cf7apps-settings-panel__header-main {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: min(520px, calc(100% - 96px));
+}
+
+.cf7apps-settings-panel__badges {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.cf7apps-settings-panel__title {
+    margin: 0;
+    flex: 1;
+    min-width: 0;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: normal;
+    color: #181833;
+}
+
+.cf7apps-settings-panel__desc {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.45;
+    color: #2c3338;
+}
+
+.cf7apps-settings-panel__decor {
+    position: absolute;
+    top: -8px;
+    right: -12px;
+    width: 96px;
+    height: 96px;
+    pointer-events: none;
+    opacity: 0.55;
+}
+
+.cf7apps-settings-panel__decor img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: bottom right;
+}
+
+.cf7apps-dashboard-settings .cf7apps-dashboard-notice,
+.cf7apps-dashboard-settings .cf7apps-notice {
+    margin-top: 16px;
+}
+
 .cf7apps-app-setting-section {
-    padding: 10px 0;
+    padding: 4px 0 0;
+}
+
+.cf7apps-dashboard-settings .cf7apps-settings-tab.MuiTab-textColorPrimary {
+    color: #65728b !important;
+    text-transform: capitalize !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    min-height: 40px !important;
+}
+
+.cf7apps-dashboard-settings .cf7apps-settings-tab.Mui-selected {
+    color: var(--cf7apps-settings-accent, var(--cf7apps-primary-color)) !important;
+}
+
+.cf7apps-dashboard-settings .cf7apps-settings-tablist {
+    border-bottom: 1px solid #eeeeee;
+}
+
+.cf7apps-dashboard-settings .cf7apps-settings-tablist .MuiTabs-indicator {
+    background: var(--cf7apps-settings-accent, var(--cf7apps-primary-color));
+    height: 2px;
+}
+
+.cf7apps-dashboard-settings .cf7apps-app-setting-section .MuiTabPanel-root {
+    padding: 24px 0 8px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.cf7apps-dashboard-settings .cf7apps-form-input,
+.cf7apps-dashboard-settings textarea.cf7apps-form-input,
+.cf7apps-dashboard-settings select.cf7apps-form-input {
+    border-radius: 6px;
+    border-color: #bbbbbb;
+    font-size: 14px;
+}
+
+.cf7apps-dashboard-settings .cf7apps-form-input.xl,
+.cf7apps-dashboard-settings textarea.cf7apps-form-input {
+    width: min(500px, 100%);
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.cf7apps-dashboard-settings .cf7apps-btn.tertiary-primary {
+    border-radius: 6px;
+    background: var(--cf7apps-settings-accent, var(--cf7apps-primary-color));
+    border-color: var(--cf7apps-settings-accent, var(--cf7apps-primary-color));
+}
+
+.cf7apps-dashboard-settings .cf7apps-btn.tertiary-primary:hover:not(:disabled) {
+    filter: brightness(0.92);
+}
+
+/* Card-theme matched controls inside settings */
+.cf7apps-dashboard-settings .cf7apps-app-toggle.is-on {
+    background: var(--cf7apps-settings-accent, #2c3338);
+}
+
+.cf7apps-dashboard-settings .cf7apps-app-toggle:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.cf7apps-dashboard-settings .cf7apps-app-toggle:focus-visible {
+    outline: 2px solid var(--cf7apps-settings-accent, var(--cf7apps-primary-color));
+    outline-offset: 2px;
+}
+
+.cf7apps-dashboard-settings .cf7apps-settings-panel__header {
+    border-bottom-color: color-mix(in srgb,
+            var(--cf7apps-settings-accent, #dddddd) 22%,
+            #dddddd);
+}
+
+.cf7apps-dashboard-settings .cf7apps-settings-collapsible-trigger:not([style*="background-color"]) {
+    background-color: var(--cf7apps-settings-accent-soft, #e8f4f8);
+}
+
+.cf7apps-dashboard-settings .cf7apps-settings-collapsible-trigger:not([style*="background-color"]):hover {
+    background-color: color-mix(in srgb,
+            var(--cf7apps-settings-accent, #208aae) 16%,
+            #ffffff);
+}
+
+.cf7apps-dashboard-settings .cf7apps-form-input:focus,
+.cf7apps-dashboard-settings textarea.cf7apps-form-input:focus,
+.cf7apps-dashboard-settings select.cf7apps-form-input:focus {
+    border-color: var(--cf7apps-settings-accent, var(--cf7apps-primary-color)) !important;
+    box-shadow: 0 0 0 1px var(--cf7apps-settings-accent, var(--cf7apps-primary-color)) !important;
+}
+
+.cf7apps-dashboard-settings .cf7apps-show-more-text {
+    color: var(--cf7apps-settings-accent, #368db2);
+}
+
+.cf7apps-dashboard-settings .cf7apps-show-more-text:hover {
+    filter: brightness(0.88);
+}
+
+.cf7apps-dashboard-settings .cf7apps-app-card__doc-link,
+.cf7apps-dashboard-settings .cf7apps-app-card__doc-link:visited {
+    color: var(--cf7apps-settings-accent, #208aae);
+}
+
+.cf7apps-dashboard-settings input[type="radio"],
+.cf7apps-dashboard-settings input[type="checkbox"] {
+    accent-color: var(--cf7apps-settings-accent, var(--cf7apps-primary-color));
+}
+
+.cf7apps-dashboard-settings .cf7apps-notice-info {
+    background: var(--cf7apps-settings-accent-soft, #eefbff);
+    border-left-color: var(--cf7apps-settings-accent, #208aae);
+    color: var(--cf7apps-settings-accent, #208aae);
+}
+
+.cf7apps-dashboard-settings .cf7apps-notice-info .MuiSvgIcon-root {
+    color: var(--cf7apps-settings-accent, #208aae);
+}
+
+.cf7apps-dashboard-settings .cf7apps-template-honeypot-forms .cf7apps-btn:not(.tertiary-secondary),
+.cf7apps-dashboard-settings .cf7apps-template-cf7-entries .cf7apps-btn:not(.tertiary-secondary) {
+    background: var(--cf7apps-settings-accent, var(--cf7apps-primary-color));
+    border-color: var(--cf7apps-settings-accent, var(--cf7apps-primary-color));
+    color: #ffffff;
+}
+
+.cf7apps-dashboard-settings .cf7apps-template-honeypot-forms .cf7apps-btn:not(.tertiary-secondary):hover,
+.cf7apps-dashboard-settings .cf7apps-template-cf7-entries .cf7apps-btn:not(.tertiary-secondary):hover {
+    filter: brightness(0.92);
+    color: #ffffff;
+}
+
+.cf7apps-show-more-text {
+    color: var(--cf7apps-settings-accent, #368db2);
+}
+
+.cf7apps-dashboard-settings .cf7apps-show-more-text:hover {
+    filter: brightness(0.88);
+}
+
+.cf7apps-dashboard-settings .cf7apps-app-card__doc-link,
+.cf7apps-dashboard-settings .cf7apps-app-card__doc-link:visited {
+    color: var(--cf7apps-settings-accent, #208aae);
+}
+
+.cf7apps-dashboard-settings input[type="radio"],
+.cf7apps-dashboard-settings input[type="checkbox"] {
+    accent-color: var(--cf7apps-settings-accent, var(--cf7apps-primary-color));
+}
+
+.cf7apps-dashboard-settings .cf7apps-notice-info {
+    background: var(--cf7apps-settings-accent-soft, #eefbff);
+    border-left-color: var(--cf7apps-settings-accent, #208aae);
+    color: var(--cf7apps-settings-accent, #208aae);
+}
+
+.cf7apps-dashboard-settings .cf7apps-notice-info .MuiSvgIcon-root {
+    color: var(--cf7apps-settings-accent, #208aae);
+}
+
+.cf7apps-dashboard-settings .cf7apps-template-honeypot-forms .cf7apps-btn:not(.tertiary-secondary),
+.cf7apps-dashboard-settings .cf7apps-template-cf7-entries .cf7apps-btn:not(.tertiary-secondary) {
+    background: var(--cf7apps-settings-accent, var(--cf7apps-primary-color));
+    border-color: var(--cf7apps-settings-accent, var(--cf7apps-primary-color));
+    color: #ffffff;
+}
+
+.cf7apps-dashboard-settings .cf7apps-template-honeypot-forms .cf7apps-btn:not(.tertiary-secondary):hover,
+.cf7apps-dashboard-settings .cf7apps-template-cf7-entries .cf7apps-btn:not(.tertiary-secondary):hover {
+    filter: brightness(0.92);
+    color: #ffffff;
+}
+
+.cf7apps-settings-tab.MuiTab-textColorPrimary {
+    color: #65728b !important;
+    text-transform: capitalize !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    min-height: 40px !important;
+}
+
+.cf7apps-dashboard-settings .cf7apps-settings-tab.Mui-selected {
+    color: var(--cf7apps-settings-accent, var(--cf7apps-primary-color)) !important;
+}
+
+.cf7apps-dashboard-settings .cf7apps-settings-tablist {
+    border-bottom: 1px solid #eeeeee;
+}
+
+.cf7apps-dashboard-settings .cf7apps-settings-tablist .MuiTabs-indicator {
+    background: var(--cf7apps-settings-accent, var(--cf7apps-primary-color));
+    height: 2px;
+}
+
+.cf7apps-dashboard-settings .cf7apps-app-setting-section .MuiTabPanel-root {
+    padding: 24px 0 8px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.cf7apps-dashboard-settings .cf7apps-form-input,
+.cf7apps-dashboard-settings textarea.cf7apps-form-input,
+.cf7apps-dashboard-settings select.cf7apps-form-input {
+    border-radius: 6px;
+    border-color: #bbbbbb;
+    font-size: 14px;
+}
+
+.cf7apps-dashboard-settings .cf7apps-form-input.xl,
+.cf7apps-dashboard-settings textarea.cf7apps-form-input {
+    width: min(500px, 100%);
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.cf7apps-dashboard-settings .cf7apps-btn.tertiary-primary {
+    border-radius: 6px;
+    background: var(--cf7apps-settings-accent, var(--cf7apps-primary-color));
+    border-color: var(--cf7apps-settings-accent, var(--cf7apps-primary-color));
+}
+
+.cf7apps-dashboard-settings .cf7apps-btn.tertiary-primary:hover:not(:disabled) {
+    filter: brightness(0.92);
+}
+
+/* Card-theme matched controls inside settings */
+.cf7apps-dashboard-settings .cf7apps-app-toggle.is-on {
+    background: var(--cf7apps-settings-accent, #2c3338);
+}
+
+.cf7apps-dashboard-settings .cf7apps-app-toggle:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.cf7apps-dashboard-settings .cf7apps-app-toggle:focus-visible {
+    outline: 2px solid var(--cf7apps-settings-accent, var(--cf7apps-primary-color));
+    outline-offset: 2px;
+}
+
+.cf7apps-dashboard-settings .cf7apps-settings-panel__header {
+    border-bottom-color: color-mix(in srgb,
+            var(--cf7apps-settings-accent, #dddddd) 22%,
+            #dddddd);
+}
+
+.cf7apps-dashboard-settings .cf7apps-settings-collapsible-trigger:not([style*="background-color"]) {
+    background-color: var(--cf7apps-settings-accent-soft, #e8f4f8);
+}
+
+.cf7apps-dashboard-settings .cf7apps-settings-collapsible-trigger:not([style*="background-color"]):hover {
+    background-color: color-mix(in srgb,
+            var(--cf7apps-settings-accent, #208aae) 16%,
+            #ffffff);
+}
+
+.cf7apps-dashboard-settings .cf7apps-form-input:focus,
+.cf7apps-dashboard-settings textarea.cf7apps-form-input:focus,
+.cf7apps-dashboard-settings select.cf7apps-form-input:focus {
+    border-color: var(--cf7apps-settings-accent, var(--cf7apps-primary-color)) !important;
+    box-shadow: 0 0 0 1px var(--cf7apps-settings-accent, var(--cf7apps-primary-color)) !important;
+}
+
+.cf7apps-dashboard-settings .cf7apps-show-more-text {
+    color: var(--cf7apps-settings-accent, #368db2);
+}
+
+.cf7apps-dashboard-settings .cf7apps-show-more-text:hover {
+    filter: brightness(0.88);
+}
+
+.cf7apps-dashboard-settings .cf7apps-app-card__doc-link,
+.cf7apps-dashboard-settings .cf7apps-app-card__doc-link:visited {
+    color: var(--cf7apps-settings-accent, #208aae);
+}
+
+.cf7apps-dashboard-settings input[type="radio"],
+.cf7apps-dashboard-settings input[type="checkbox"] {
+    accent-color: var(--cf7apps-settings-accent, var(--cf7apps-primary-color));
+}
+
+.cf7apps-dashboard-settings .cf7apps-notice-info {
+    background: var(--cf7apps-settings-accent-soft, #eefbff);
+    border-left-color: var(--cf7apps-settings-accent, #208aae);
+    color: var(--cf7apps-settings-accent, #208aae);
+}
+
+.cf7apps-dashboard-settings .cf7apps-notice-info .MuiSvgIcon-root {
+    color: var(--cf7apps-settings-accent, #208aae);
+}
+
+.cf7apps-dashboard-settings .cf7apps-template-honeypot-forms .cf7apps-btn:not(.tertiary-secondary),
+.cf7apps-dashboard-settings .cf7apps-template-cf7-entries .cf7apps-btn:not(.tertiary-secondary) {
+    background: var(--cf7apps-settings-accent, var(--cf7apps-primary-color));
+    border-color: var(--cf7apps-settings-accent, var(--cf7apps-primary-color));
+    color: #ffffff;
+}
+
+.cf7apps-dashboard-settings .cf7apps-template-honeypot-forms .cf7apps-btn:not(.tertiary-secondary):hover,
+.cf7apps-dashboard-settings .cf7apps-template-cf7-entries .cf7apps-btn:not(.tertiary-secondary):hover {
+    filter: brightness(0.92);
+    color: #ffffff;
+}
+
+.cf7apps-redirection-settings ,
+.cf7apps-entries-settings ,
+.cf7apps-webhook-settings ,
+.cf7apps-acf-settings ,
+.cf7apps-ai-form-settings  ,
+.cf7apps-honeypot-settings   ,
+.cf7apps-hcaptcha-settings   {
+
+    --cf7apps-app-settings-gap: 28px;
+}
+
+.cf7apps-redirection-settings.cf7apps-settings-panel ,
+.cf7apps-entries-settings.cf7apps-settings-panel ,
+.cf7apps-webhook-settings.cf7apps-settings-panel ,
+.cf7apps-acf-settings.cf7apps-settings-panel ,
+.cf7apps-ai-form-settings.cf7apps-settings-panel  ,
+.cf7apps-honeypot-settings.cf7apps-settings-panel   ,
+.cf7apps-hcaptcha-settings.cf7apps-settings-panel   {
+
+    gap: 20px;
+}
+
+.cf7apps-redirection-settings .cf7apps-app-settings-header ,
+.cf7apps-entries-settings .cf7apps-app-settings-header ,
+.cf7apps-webhook-settings .cf7apps-app-settings-header ,
+.cf7apps-acf-settings .cf7apps-app-settings-header ,
+.cf7apps-ai-form-settings .cf7apps-app-settings-header  ,
+.cf7apps-honeypot-settings .cf7apps-app-settings-header   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-settings-header   {
+
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+.cf7apps-redirection-settings .cf7apps-app-settings-header__top ,
+.cf7apps-entries-settings .cf7apps-app-settings-header__top ,
+.cf7apps-webhook-settings .cf7apps-app-settings-header__top ,
+.cf7apps-acf-settings .cf7apps-app-settings-header__top ,
+.cf7apps-ai-form-settings .cf7apps-app-settings-header__top  ,
+.cf7apps-honeypot-settings .cf7apps-app-settings-header__top   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-settings-header__top   {
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    width: 100%;
+}
+
+.cf7apps-redirection-settings .cf7apps-app-settings-header__brand ,
+.cf7apps-entries-settings .cf7apps-app-settings-header__brand ,
+.cf7apps-webhook-settings .cf7apps-app-settings-header__brand ,
+.cf7apps-acf-settings .cf7apps-app-settings-header__brand ,
+.cf7apps-ai-form-settings .cf7apps-app-settings-header__brand  ,
+.cf7apps-honeypot-settings .cf7apps-app-settings-header__brand   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-settings-header__brand   {
+
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    min-width: 0;
+    flex: 0 1 550px;
+    width: 100%;
+    max-width: 550px;
+}
+
+.cf7apps-redirection-settings .cf7apps-app-settings-header__icon ,
+.cf7apps-entries-settings .cf7apps-app-settings-header__icon ,
+.cf7apps-webhook-settings .cf7apps-app-settings-header__icon ,
+.cf7apps-acf-settings .cf7apps-app-settings-header__icon ,
+.cf7apps-ai-form-settings .cf7apps-app-settings-header__icon  ,
+.cf7apps-honeypot-settings .cf7apps-app-settings-header__icon   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-settings-header__icon   {
+
+    flex-shrink: 0;
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+    object-position: center;
+    image-rendering: auto;
+}
+
+.cf7apps-redirection-settings .cf7apps-app-settings-header__copy ,
+.cf7apps-entries-settings .cf7apps-app-settings-header__copy ,
+.cf7apps-webhook-settings .cf7apps-app-settings-header__copy ,
+.cf7apps-acf-settings .cf7apps-app-settings-header__copy ,
+.cf7apps-ai-form-settings .cf7apps-app-settings-header__copy  ,
+.cf7apps-honeypot-settings .cf7apps-app-settings-header__copy   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-settings-header__copy   {
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+.cf7apps-redirection-settings .cf7apps-app-settings-header__title ,
+.cf7apps-entries-settings .cf7apps-app-settings-header__title ,
+.cf7apps-webhook-settings .cf7apps-app-settings-header__title ,
+.cf7apps-acf-settings .cf7apps-app-settings-header__title ,
+.cf7apps-ai-form-settings .cf7apps-app-settings-header__title  ,
+.cf7apps-honeypot-settings .cf7apps-app-settings-header__title   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-settings-header__title   {
+
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: normal;
+    color: #181833;
+}
+
+.cf7apps-redirection-settings .cf7apps-app-settings-header__desc ,
+.cf7apps-entries-settings .cf7apps-app-settings-header__desc ,
+.cf7apps-webhook-settings .cf7apps-app-settings-header__desc ,
+.cf7apps-acf-settings .cf7apps-app-settings-header__desc ,
+.cf7apps-ai-form-settings .cf7apps-app-settings-header__desc  ,
+.cf7apps-honeypot-settings .cf7apps-app-settings-header__desc   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-settings-header__desc   {
+
+    margin: 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: normal;
+    color: #2c3338;
+}
+
+.cf7apps-redirection-settings .cf7apps-app-settings-header__desc-text ,
+.cf7apps-entries-settings .cf7apps-app-settings-header__desc-text ,
+.cf7apps-webhook-settings .cf7apps-app-settings-header__desc-text ,
+.cf7apps-acf-settings .cf7apps-app-settings-header__desc-text ,
+.cf7apps-ai-form-settings .cf7apps-app-settings-header__desc-text  ,
+.cf7apps-honeypot-settings .cf7apps-app-settings-header__desc-text   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-settings-header__desc-text   {
+
+    line-height: normal;
+}
+
+.cf7apps-redirection-settings .cf7apps-app-settings-header__doc-link,
+.cf7apps-entries-settings .cf7apps-app-settings-header__doc-link,
+.cf7apps-webhook-settings .cf7apps-app-settings-header__doc-link,
+.cf7apps-redirection-settings .cf7apps-app-settings-header__doc-link:visited ,
+.cf7apps-entries-settings .cf7apps-app-settings-header__doc-link:visited ,
+.cf7apps-webhook-settings .cf7apps-app-settings-header__doc-link:visited ,
+.cf7apps-acf-settings .cf7apps-app-settings-header__doc-link ,
+.cf7apps-ai-form-settings .cf7apps-app-settings-header__doc-link ,
+.cf7apps-honeypot-settings .cf7apps-app-settings-header__doc-link , ,
+.cf7apps-hcaptcha-settings .cf7apps-app-settings-header__doc-link , , ,
+.cf7apps-acf-settings .cf7apps-app-settings-header__doc-link:visited ,
+.cf7apps-ai-form-settings .cf7apps-app-settings-header__doc-link:visited  ,
+.cf7apps-honeypot-settings .cf7apps-app-settings-header__doc-link:visited   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-settings-header__doc-link:visited   {
+
+    color: var(--cf7apps-settings-accent, #208aae);
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-position: from-font;
+}
+
+.cf7apps-redirection-settings .cf7apps-app-settings-header__doc-link:hover,
+.cf7apps-entries-settings .cf7apps-app-settings-header__doc-link:hover,
+.cf7apps-webhook-settings .cf7apps-app-settings-header__doc-link:hover,
+.cf7apps-redirection-settings .cf7apps-app-settings-header__doc-link:focus-visible ,
+.cf7apps-entries-settings .cf7apps-app-settings-header__doc-link:focus-visible ,
+.cf7apps-webhook-settings .cf7apps-app-settings-header__doc-link:focus-visible ,
+.cf7apps-acf-settings .cf7apps-app-settings-header__doc-link:hover ,
+.cf7apps-ai-form-settings .cf7apps-app-settings-header__doc-link:hover ,
+.cf7apps-honeypot-settings .cf7apps-app-settings-header__doc-link:hover , ,
+.cf7apps-hcaptcha-settings .cf7apps-app-settings-header__doc-link:hover , , ,
+.cf7apps-acf-settings .cf7apps-app-settings-header__doc-link:focus-visible ,
+.cf7apps-ai-form-settings .cf7apps-app-settings-header__doc-link:focus-visible  ,
+.cf7apps-honeypot-settings .cf7apps-app-settings-header__doc-link:focus-visible   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-settings-header__doc-link:focus-visible   {
+
+    color: var(--cf7apps-settings-accent, #1a7595);
+    filter: brightness(0.88);
+}
+
+.cf7apps-redirection-settings .cf7apps-app-settings-header__back-pill ,
+.cf7apps-entries-settings .cf7apps-app-settings-header__back-pill ,
+.cf7apps-webhook-settings .cf7apps-app-settings-header__back-pill ,
+.cf7apps-acf-settings .cf7apps-app-settings-header__back-pill ,
+.cf7apps-ai-form-settings .cf7apps-app-settings-header__back-pill  ,
+.cf7apps-honeypot-settings .cf7apps-app-settings-header__back-pill   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-settings-header__back-pill   {
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex: 0 0 auto;
+    margin-left: auto;
+    min-height: 32px;
+    padding: 2px 12px;
+    border: none;
+    border-radius: 6px;
+    background: #f0f0f1;
+    color: #0d2149;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: normal;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color 0.2s ease;
+}
+
+.cf7apps-redirection-settings .cf7apps-app-settings-header__back-pill:hover,
+.cf7apps-entries-settings .cf7apps-app-settings-header__back-pill:hover,
+.cf7apps-webhook-settings .cf7apps-app-settings-header__back-pill:hover,
+.cf7apps-redirection-settings .cf7apps-app-settings-header__back-pill:focus-visible ,
+.cf7apps-entries-settings .cf7apps-app-settings-header__back-pill:focus-visible ,
+.cf7apps-webhook-settings .cf7apps-app-settings-header__back-pill:focus-visible ,
+.cf7apps-acf-settings .cf7apps-app-settings-header__back-pill:hover ,
+.cf7apps-ai-form-settings .cf7apps-app-settings-header__back-pill:hover ,
+.cf7apps-honeypot-settings .cf7apps-app-settings-header__back-pill:hover , ,
+.cf7apps-hcaptcha-settings .cf7apps-app-settings-header__back-pill:hover , , ,
+.cf7apps-acf-settings .cf7apps-app-settings-header__back-pill:focus-visible ,
+.cf7apps-ai-form-settings .cf7apps-app-settings-header__back-pill:focus-visible  ,
+.cf7apps-honeypot-settings .cf7apps-app-settings-header__back-pill:focus-visible   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-settings-header__back-pill:focus-visible   {
+
+    background: #e4e4e6;
+    color: #0d2149;
+    outline: none;
+}
+
+.cf7apps-redirection-settings .cf7apps-app-settings-header__back-icon ,
+.cf7apps-entries-settings .cf7apps-app-settings-header__back-icon ,
+.cf7apps-webhook-settings .cf7apps-app-settings-header__back-icon ,
+.cf7apps-acf-settings .cf7apps-app-settings-header__back-icon ,
+.cf7apps-ai-form-settings .cf7apps-app-settings-header__back-icon  ,
+.cf7apps-honeypot-settings .cf7apps-app-settings-header__back-icon   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-settings-header__back-icon   {
+
+    display: block;
+    width: 7px;
+    height: 12px;
+    flex: 0 0 7px;
+}
+
+.cf7apps-redirection-settings .cf7apps-app-settings-header__back-label ,
+.cf7apps-entries-settings .cf7apps-app-settings-header__back-label ,
+.cf7apps-webhook-settings .cf7apps-app-settings-header__back-label ,
+.cf7apps-acf-settings .cf7apps-app-settings-header__back-label ,
+.cf7apps-ai-form-settings .cf7apps-app-settings-header__back-label  ,
+.cf7apps-honeypot-settings .cf7apps-app-settings-header__back-label   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-settings-header__back-label   {
+
+    line-height: normal;
+}
+
+.cf7apps-redirection-settings .cf7apps-app-settings-header__divider ,
+.cf7apps-entries-settings .cf7apps-app-settings-header__divider ,
+.cf7apps-webhook-settings .cf7apps-app-settings-header__divider ,
+.cf7apps-acf-settings .cf7apps-app-settings-header__divider ,
+.cf7apps-ai-form-settings .cf7apps-app-settings-header__divider  ,
+.cf7apps-honeypot-settings .cf7apps-app-settings-header__divider   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-settings-header__divider   {
+
+    width: 100%;
+    height: 1px;
+    background: #d9d9d9;
+}
+
+.cf7apps-redirection-settings .cf7apps-app-setting-section ,
+.cf7apps-entries-settings .cf7apps-app-setting-section ,
+.cf7apps-webhook-settings .cf7apps-app-setting-section ,
+.cf7apps-acf-settings .cf7apps-app-setting-section ,
+.cf7apps-ai-form-settings .cf7apps-app-setting-section  ,
+.cf7apps-honeypot-settings .cf7apps-app-setting-section   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-setting-section   {
+
+    max-width: 500px;
+}
+
+.cf7apps-redirection-settings .cf7apps-app-settings-form ,
+.cf7apps-entries-settings .cf7apps-app-settings-form ,
+.cf7apps-webhook-settings .cf7apps-app-settings-form ,
+.cf7apps-acf-settings .cf7apps-app-settings-form ,
+.cf7apps-ai-form-settings .cf7apps-app-settings-form  ,
+.cf7apps-honeypot-settings .cf7apps-app-settings-form   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-settings-form   {
+
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 500px;
+}
+
+.cf7apps-redirection-settings .cf7apps-app-settings-form .MuiTabPanel-root ,
+.cf7apps-entries-settings .cf7apps-app-settings-form .MuiTabPanel-root ,
+.cf7apps-webhook-settings .cf7apps-app-settings-form .MuiTabPanel-root ,
+.cf7apps-acf-settings .cf7apps-app-settings-form .MuiTabPanel-root ,
+.cf7apps-ai-form-settings .cf7apps-app-settings-form .MuiTabPanel-root  ,
+.cf7apps-honeypot-settings .cf7apps-app-settings-form .MuiTabPanel-root   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-settings-form .MuiTabPanel-root   {
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--cf7apps-app-settings-gap, 28px);
+    width: 100%;
+    max-width: 500px;
+    margin: 0;
+    padding: 0 !important;
+}
+
+.cf7apps-redirection-settings .cf7apps-app-settings-form .cf7apps-form-group,
+.cf7apps-entries-settings .cf7apps-app-settings-form .cf7apps-form-group,
+.cf7apps-webhook-settings .cf7apps-app-settings-form .cf7apps-form-group,
+.cf7apps-redirection-settings .cf7apps-app-settings-form .cf7apps-form-toggle-field,
+.cf7apps-entries-settings .cf7apps-app-settings-form .cf7apps-form-toggle-field,
+.cf7apps-webhook-settings .cf7apps-app-settings-form .cf7apps-form-toggle-field,
+.cf7apps-redirection-settings .cf7apps-app-settings-form .cf7apps-app-radio-field,
+.cf7apps-entries-settings .cf7apps-app-settings-form .cf7apps-app-radio-field,
+.cf7apps-webhook-settings .cf7apps-app-settings-form .cf7apps-app-radio-field,
+.cf7apps-redirection-settings .cf7apps-app-settings-form .cf7apps-app-select-group,
+.cf7apps-entries-settings .cf7apps-app-settings-form .cf7apps-app-select-group,
+.cf7apps-webhook-settings .cf7apps-app-settings-form .cf7apps-app-select-group,
+.cf7apps-redirection-settings .cf7apps-app-settings-form .cf7apps-pro-toggle-teaser,
+.cf7apps-entries-settings .cf7apps-app-settings-form .cf7apps-pro-toggle-teaser,
+.cf7apps-webhook-settings .cf7apps-app-settings-form .cf7apps-pro-toggle-teaser,
+.cf7apps-redirection-settings .cf7apps-app-settings-form .cf7apps-form-settings-save ,
+.cf7apps-entries-settings .cf7apps-app-settings-form .cf7apps-form-settings-save ,
+.cf7apps-webhook-settings .cf7apps-app-settings-form .cf7apps-form-settings-save ,
+.cf7apps-acf-settings .cf7apps-app-settings-form .cf7apps-form-group ,
+.cf7apps-ai-form-settings .cf7apps-app-settings-form .cf7apps-form-group ,
+.cf7apps-honeypot-settings .cf7apps-app-settings-form .cf7apps-form-group , ,
+.cf7apps-hcaptcha-settings .cf7apps-app-settings-form .cf7apps-form-group , , ,
+.cf7apps-acf-settings .cf7apps-app-settings-form .cf7apps-form-toggle-field ,
+.cf7apps-ai-form-settings .cf7apps-app-settings-form .cf7apps-form-toggle-field ,
+.cf7apps-honeypot-settings .cf7apps-app-settings-form .cf7apps-form-toggle-field , ,
+.cf7apps-hcaptcha-settings .cf7apps-app-settings-form .cf7apps-form-toggle-field , , ,
+.cf7apps-acf-settings .cf7apps-app-settings-form .cf7apps-app-radio-field ,
+.cf7apps-ai-form-settings .cf7apps-app-settings-form .cf7apps-app-radio-field ,
+.cf7apps-honeypot-settings .cf7apps-app-settings-form .cf7apps-app-radio-field , ,
+.cf7apps-hcaptcha-settings .cf7apps-app-settings-form .cf7apps-app-radio-field , , ,
+.cf7apps-acf-settings .cf7apps-app-settings-form .cf7apps-app-select-group ,
+.cf7apps-ai-form-settings .cf7apps-app-settings-form .cf7apps-app-select-group ,
+.cf7apps-honeypot-settings .cf7apps-app-settings-form .cf7apps-app-select-group , ,
+.cf7apps-hcaptcha-settings .cf7apps-app-settings-form .cf7apps-app-select-group , , ,
+.cf7apps-acf-settings .cf7apps-app-settings-form .cf7apps-pro-toggle-teaser ,
+.cf7apps-ai-form-settings .cf7apps-app-settings-form .cf7apps-pro-toggle-teaser ,
+.cf7apps-honeypot-settings .cf7apps-app-settings-form .cf7apps-pro-toggle-teaser , ,
+.cf7apps-hcaptcha-settings .cf7apps-app-settings-form .cf7apps-pro-toggle-teaser , , ,
+.cf7apps-acf-settings .cf7apps-app-settings-form .cf7apps-form-settings-save ,
+.cf7apps-ai-form-settings .cf7apps-app-settings-form .cf7apps-form-settings-save  ,
+.cf7apps-honeypot-settings .cf7apps-app-settings-form .cf7apps-form-settings-save   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-settings-form .cf7apps-form-settings-save   {
+
+    margin: 0 !important;
+}
+
+.cf7apps-redirection-settings .cf7apps-app-settings-form input.cf7apps-form-input,
+.cf7apps-entries-settings .cf7apps-app-settings-form input.cf7apps-form-input,
+.cf7apps-webhook-settings .cf7apps-app-settings-form input.cf7apps-form-input,
+.cf7apps-redirection-settings .cf7apps-app-settings-form select.cf7apps-form-input ,
+.cf7apps-entries-settings .cf7apps-app-settings-form select.cf7apps-form-input ,
+.cf7apps-webhook-settings .cf7apps-app-settings-form select.cf7apps-form-input ,
+.cf7apps-acf-settings .cf7apps-app-settings-form input.cf7apps-form-input ,
+.cf7apps-ai-form-settings .cf7apps-app-settings-form input.cf7apps-form-input ,
+.cf7apps-honeypot-settings .cf7apps-app-settings-form input.cf7apps-form-input , ,
+.cf7apps-hcaptcha-settings .cf7apps-app-settings-form input.cf7apps-form-input , , ,
+.cf7apps-acf-settings .cf7apps-app-settings-form select.cf7apps-form-input ,
+.cf7apps-ai-form-settings .cf7apps-app-settings-form select.cf7apps-form-input  ,
+.cf7apps-honeypot-settings .cf7apps-app-settings-form select.cf7apps-form-input   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-settings-form select.cf7apps-form-input   {
+
+    margin-top: 0 !important;
+    color: #303030 !important;
+}
+
+.cf7apps-redirection-settings .cf7apps-app-settings-form input.cf7apps-app-select-field,
+.cf7apps-entries-settings .cf7apps-app-settings-form input.cf7apps-app-select-field,
+.cf7apps-webhook-settings .cf7apps-app-settings-form input.cf7apps-app-select-field,
+.cf7apps-redirection-settings .cf7apps-app-settings-form .cf7apps-app-select-group input.cf7apps-form-input ,
+.cf7apps-entries-settings .cf7apps-app-settings-form .cf7apps-app-select-group input.cf7apps-form-input ,
+.cf7apps-webhook-settings .cf7apps-app-settings-form .cf7apps-app-select-group input.cf7apps-form-input ,
+.cf7apps-acf-settings .cf7apps-app-settings-form input.cf7apps-app-select-field ,
+.cf7apps-ai-form-settings .cf7apps-app-settings-form input.cf7apps-app-select-field ,
+.cf7apps-honeypot-settings .cf7apps-app-settings-form input.cf7apps-app-select-field , ,
+.cf7apps-hcaptcha-settings .cf7apps-app-settings-form input.cf7apps-app-select-field , , ,
+.cf7apps-acf-settings .cf7apps-app-settings-form .cf7apps-app-select-group input.cf7apps-form-input ,
+.cf7apps-ai-form-settings .cf7apps-app-settings-form .cf7apps-app-select-group input.cf7apps-form-input  ,
+.cf7apps-honeypot-settings .cf7apps-app-settings-form .cf7apps-app-select-group input.cf7apps-form-input   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-settings-form .cf7apps-app-select-group input.cf7apps-form-input   {
+
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 36px;
+    height: auto;
+    padding: 8px 10px !important;
+    border: 0.6px solid #8a8a8a;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #303030 !important;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.4;
+    box-sizing: border-box;
+    box-shadow: 0 0.5px 0.75px rgba(0, 0, 0, 0.15);
+}
+
+.cf7apps-redirection-settings .cf7apps-app-settings-form input.cf7apps-app-select-field::placeholder ,
+.cf7apps-entries-settings .cf7apps-app-settings-form input.cf7apps-app-select-field::placeholder ,
+.cf7apps-webhook-settings .cf7apps-app-settings-form input.cf7apps-app-select-field::placeholder ,
+.cf7apps-acf-settings .cf7apps-app-settings-form input.cf7apps-app-select-field::placeholder ,
+.cf7apps-ai-form-settings .cf7apps-app-settings-form input.cf7apps-app-select-field::placeholder  ,
+.cf7apps-honeypot-settings .cf7apps-app-settings-form input.cf7apps-app-select-field::placeholder   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-settings-form input.cf7apps-app-select-field::placeholder   {
+
+    color: #8a8a8a;
+    opacity: 1;
+}
+
+.cf7apps-redirection-settings .cf7apps-form-toggle-field,
+.cf7apps-entries-settings .cf7apps-form-toggle-field,
+.cf7apps-webhook-settings .cf7apps-form-toggle-field,
+.cf7apps-redirection-settings .cf7apps-form-toggle-block ,
+.cf7apps-entries-settings .cf7apps-form-toggle-block ,
+.cf7apps-webhook-settings .cf7apps-form-toggle-block ,
+.cf7apps-acf-settings .cf7apps-form-toggle-field ,
+.cf7apps-ai-form-settings .cf7apps-form-toggle-field ,
+.cf7apps-honeypot-settings .cf7apps-form-toggle-field , ,
+.cf7apps-hcaptcha-settings .cf7apps-form-toggle-field , , ,
+.cf7apps-acf-settings .cf7apps-form-toggle-block ,
+.cf7apps-ai-form-settings .cf7apps-form-toggle-block  ,
+.cf7apps-honeypot-settings .cf7apps-form-toggle-block   ,
+.cf7apps-hcaptcha-settings .cf7apps-form-toggle-block   {
+
+    margin: 0;
+}
+
+.cf7apps-redirection-settings .cf7apps-form-toggle-block ,
+.cf7apps-entries-settings .cf7apps-form-toggle-block ,
+.cf7apps-webhook-settings .cf7apps-form-toggle-block ,
+.cf7apps-acf-settings .cf7apps-form-toggle-block ,
+.cf7apps-ai-form-settings .cf7apps-form-toggle-block  ,
+.cf7apps-honeypot-settings .cf7apps-form-toggle-block   ,
+.cf7apps-hcaptcha-settings .cf7apps-form-toggle-block   {
+
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+}
+
+.cf7apps-redirection-settings .cf7apps-form-toggle-block__row ,
+.cf7apps-entries-settings .cf7apps-form-toggle-block__row ,
+.cf7apps-webhook-settings .cf7apps-form-toggle-block__row ,
+.cf7apps-acf-settings .cf7apps-form-toggle-block__row ,
+.cf7apps-ai-form-settings .cf7apps-form-toggle-block__row  ,
+.cf7apps-honeypot-settings .cf7apps-form-toggle-block__row   ,
+.cf7apps-hcaptcha-settings .cf7apps-form-toggle-block__row   {
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    width: 100%;
+}
+
+.cf7apps-redirection-settings .cf7apps-form-toggle-block__label ,
+.cf7apps-entries-settings .cf7apps-form-toggle-block__label ,
+.cf7apps-webhook-settings .cf7apps-form-toggle-block__label ,
+.cf7apps-acf-settings .cf7apps-form-toggle-block__label ,
+.cf7apps-ai-form-settings .cf7apps-form-toggle-block__label  ,
+.cf7apps-honeypot-settings .cf7apps-form-toggle-block__label   ,
+.cf7apps-hcaptcha-settings .cf7apps-form-toggle-block__label   {
+
+    font-size: 16px;
+    font-weight: 600;
+    line-height: normal;
+    color: #0d2149;
+}
+
+.cf7apps-redirection-settings .cf7apps-app-field-label ,
+.cf7apps-entries-settings .cf7apps-app-field-label ,
+.cf7apps-webhook-settings .cf7apps-app-field-label ,
+.cf7apps-acf-settings .cf7apps-app-field-label ,
+.cf7apps-ai-form-settings .cf7apps-app-field-label ,
+.cf7apps-honeypot-settings .cf7apps-app-field-label ,
+.cf7apps-hcaptcha-settings .cf7apps-app-field-label {
+    display: block;
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: normal;
+    color: #0d2149;
+}
+
+.cf7apps-redirection-settings .cf7apps-form-toggle-block__help ,
+.cf7apps-entries-settings .cf7apps-form-toggle-block__help ,
+.cf7apps-webhook-settings .cf7apps-form-toggle-block__help ,
+.cf7apps-acf-settings .cf7apps-form-toggle-block__help ,
+.cf7apps-ai-form-settings .cf7apps-form-toggle-block__help  ,
+.cf7apps-honeypot-settings .cf7apps-form-toggle-block__help   ,
+.cf7apps-hcaptcha-settings .cf7apps-form-toggle-block__help   {
+
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: normal;
+    color: #717171;
+}
+
+.cf7apps-redirection-settings .cf7apps-settings-switch ,
+.cf7apps-entries-settings .cf7apps-settings-switch ,
+.cf7apps-webhook-settings .cf7apps-settings-switch ,
+.cf7apps-acf-settings .cf7apps-settings-switch ,
+.cf7apps-ai-form-settings .cf7apps-settings-switch  ,
+.cf7apps-honeypot-settings .cf7apps-settings-switch   ,
+.cf7apps-hcaptcha-settings .cf7apps-settings-switch   {
+
+    position: relative;
+    flex-shrink: 0;
+    width: 39.6px;
+    height: 22px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+.cf7apps-redirection-settings .cf7apps-settings-switch:disabled ,
+.cf7apps-entries-settings .cf7apps-settings-switch:disabled ,
+.cf7apps-webhook-settings .cf7apps-settings-switch:disabled ,
+.cf7apps-acf-settings .cf7apps-settings-switch:disabled ,
+.cf7apps-ai-form-settings .cf7apps-settings-switch:disabled  ,
+.cf7apps-honeypot-settings .cf7apps-settings-switch:disabled   ,
+.cf7apps-hcaptcha-settings .cf7apps-settings-switch:disabled   {
+
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.cf7apps-redirection-settings .cf7apps-settings-switch__track ,
+.cf7apps-entries-settings .cf7apps-settings-switch__track ,
+.cf7apps-webhook-settings .cf7apps-settings-switch__track ,
+.cf7apps-acf-settings .cf7apps-settings-switch__track ,
+.cf7apps-ai-form-settings .cf7apps-settings-switch__track  ,
+.cf7apps-honeypot-settings .cf7apps-settings-switch__track   ,
+.cf7apps-hcaptcha-settings .cf7apps-settings-switch__track   {
+
+    position: absolute;
+    inset: 0;
+    border-radius: 11px;
+    background: #cfcfcf;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.cf7apps-redirection-settings .cf7apps-settings-switch.is-on .cf7apps-settings-switch__track ,
+.cf7apps-entries-settings .cf7apps-settings-switch.is-on .cf7apps-settings-switch__track ,
+.cf7apps-webhook-settings .cf7apps-settings-switch.is-on .cf7apps-settings-switch__track ,
+.cf7apps-acf-settings .cf7apps-settings-switch.is-on .cf7apps-settings-switch__track ,
+.cf7apps-ai-form-settings .cf7apps-settings-switch.is-on .cf7apps-settings-switch__track  ,
+.cf7apps-honeypot-settings .cf7apps-settings-switch.is-on .cf7apps-settings-switch__track   ,
+.cf7apps-hcaptcha-settings .cf7apps-settings-switch.is-on .cf7apps-settings-switch__track   {
+
+    background: #208aae;
+}
+
+.cf7apps-redirection-settings .cf7apps-settings-switch__knob ,
+.cf7apps-entries-settings .cf7apps-settings-switch__knob ,
+.cf7apps-webhook-settings .cf7apps-settings-switch__knob ,
+.cf7apps-acf-settings .cf7apps-settings-switch__knob ,
+.cf7apps-ai-form-settings .cf7apps-settings-switch__knob  ,
+.cf7apps-honeypot-settings .cf7apps-settings-switch__knob   ,
+.cf7apps-hcaptcha-settings .cf7apps-settings-switch__knob   {
+
+    position: absolute;
+    top: 2.2px;
+    left: 2.2px;
+    width: 17.6px;
+    height: 17.6px;
+    border-radius: 8.8px;
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease;
+}
+
+.cf7apps-redirection-settings .cf7apps-settings-switch.is-on .cf7apps-settings-switch__knob ,
+.cf7apps-entries-settings .cf7apps-settings-switch.is-on .cf7apps-settings-switch__knob ,
+.cf7apps-webhook-settings .cf7apps-settings-switch.is-on .cf7apps-settings-switch__knob ,
+.cf7apps-acf-settings .cf7apps-settings-switch.is-on .cf7apps-settings-switch__knob ,
+.cf7apps-ai-form-settings .cf7apps-settings-switch.is-on .cf7apps-settings-switch__knob  ,
+.cf7apps-honeypot-settings .cf7apps-settings-switch.is-on .cf7apps-settings-switch__knob   ,
+.cf7apps-hcaptcha-settings .cf7apps-settings-switch.is-on .cf7apps-settings-switch__knob   {
+
+    transform: translateX(17.6px);
+}
+
+.cf7apps-redirection-settings .cf7apps-app-radio-field ,
+.cf7apps-entries-settings .cf7apps-app-radio-field ,
+.cf7apps-webhook-settings .cf7apps-app-radio-field ,
+.cf7apps-acf-settings .cf7apps-app-radio-field ,
+.cf7apps-ai-form-settings .cf7apps-app-radio-field  ,
+.cf7apps-honeypot-settings .cf7apps-app-radio-field   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-radio-field   {
+
+    margin: 0;
+}
+
+.cf7apps-redirection-settings .cf7apps-app-radio-field__inner ,
+.cf7apps-entries-settings .cf7apps-app-radio-field__inner ,
+.cf7apps-webhook-settings .cf7apps-app-radio-field__inner ,
+.cf7apps-acf-settings .cf7apps-app-radio-field__inner ,
+.cf7apps-ai-form-settings .cf7apps-app-radio-field__inner  ,
+.cf7apps-honeypot-settings .cf7apps-app-radio-field__inner   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-radio-field__inner   {
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+.cf7apps-redirection-settings .cf7apps-app-radio-field__title ,
+.cf7apps-entries-settings .cf7apps-app-radio-field__title ,
+.cf7apps-webhook-settings .cf7apps-app-radio-field__title ,
+.cf7apps-acf-settings .cf7apps-app-radio-field__title ,
+.cf7apps-ai-form-settings .cf7apps-app-radio-field__title  ,
+.cf7apps-honeypot-settings .cf7apps-app-radio-field__title   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-radio-field__title   {
+
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: normal;
+    color: #0d2149;
+}
+
+.cf7apps-redirection-settings .cf7apps-app-radio-field__options ,
+.cf7apps-entries-settings .cf7apps-app-radio-field__options ,
+.cf7apps-webhook-settings .cf7apps-app-radio-field__options ,
+.cf7apps-acf-settings .cf7apps-app-radio-field__options ,
+.cf7apps-ai-form-settings .cf7apps-app-radio-field__options  ,
+.cf7apps-honeypot-settings .cf7apps-app-radio-field__options   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-radio-field__options   {
+
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-items: center;
+    column-gap: 40px;
+    row-gap: 10px;
+    width: 100%;
+}
+
+.cf7apps-redirection-settings .cf7apps-app-radio-field__subfield ,
+.cf7apps-entries-settings .cf7apps-app-radio-field__subfield ,
+.cf7apps-webhook-settings .cf7apps-app-radio-field__subfield ,
+.cf7apps-acf-settings .cf7apps-app-radio-field__subfield ,
+.cf7apps-ai-form-settings .cf7apps-app-radio-field__subfield  ,
+.cf7apps-honeypot-settings .cf7apps-app-radio-field__subfield   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-radio-field__subfield   {
+
+    flex: 0 0 100%;
+    width: 100%;
+}
+
+.cf7apps-redirection-settings .cf7apps-app-radio-field__option label ,
+.cf7apps-entries-settings .cf7apps-app-radio-field__option label ,
+.cf7apps-webhook-settings .cf7apps-app-radio-field__option label ,
+.cf7apps-acf-settings .cf7apps-app-radio-field__option label ,
+.cf7apps-ai-form-settings .cf7apps-app-radio-field__option label  ,
+.cf7apps-honeypot-settings .cf7apps-app-radio-field__option label   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-radio-field__option label   {
+
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: normal;
+    color: #717171;
+    cursor: pointer;
+    position: relative;
+}
+
+.cf7apps-redirection-settings .cf7apps-app-radio-field__option label::before ,
+.cf7apps-entries-settings .cf7apps-app-radio-field__option label::before ,
+.cf7apps-webhook-settings .cf7apps-app-radio-field__option label::before ,
+.cf7apps-acf-settings .cf7apps-app-radio-field__option label::before ,
+.cf7apps-ai-form-settings .cf7apps-app-radio-field__option label::before  ,
+.cf7apps-honeypot-settings .cf7apps-app-radio-field__option label::before   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-radio-field__option label::before   {
+
+    content: "";
+    display: block;
+    flex: 0 0 14px;
+    width: 14px;
+    height: 14px;
+    min-width: 14px;
+    min-height: 14px;
+    border: 1.5px solid #8a8a8a;
+    border-radius: 50%;
+    background-color: #ffffff;
+    box-sizing: border-box;
+}
+
+.cf7apps-redirection-settings .cf7apps-app-radio-field__option label:has(> input[type="radio"]:checked)::before ,
+.cf7apps-entries-settings .cf7apps-app-radio-field__option label:has(> input[type="radio"]:checked)::before ,
+.cf7apps-webhook-settings .cf7apps-app-radio-field__option label:has(> input[type="radio"]:checked)::before ,
+.cf7apps-acf-settings .cf7apps-app-radio-field__option label:has(> input[type="radio"]:checked)::before ,
+.cf7apps-ai-form-settings .cf7apps-app-radio-field__option label:has(> input[type="radio"]:checked)::before  ,
+.cf7apps-honeypot-settings .cf7apps-app-radio-field__option label:has(> input[type="radio"]:checked)::before   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-radio-field__option label:has(> input[type="radio"]:checked)::before   {
+
+    border: 4px solid #208aae;
+    background-color: #ffffff;
+}
+
+.cf7apps-redirection-settings .cf7apps-app-radio-field__option input[type="radio"] ,
+.cf7apps-entries-settings .cf7apps-app-radio-field__option input[type="radio"] ,
+.cf7apps-webhook-settings .cf7apps-app-radio-field__option input[type="radio"] ,
+.cf7apps-acf-settings .cf7apps-app-radio-field__option input[type="radio"] ,
+.cf7apps-ai-form-settings .cf7apps-app-radio-field__option input[type="radio"]  ,
+.cf7apps-honeypot-settings .cf7apps-app-radio-field__option input[type="radio"]   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-radio-field__option input[type="radio"]   {
+
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 14px;
+    height: 14px;
+    min-width: 14px;
+    min-height: 14px;
+    max-width: 14px;
+    max-height: 14px;
+    margin: 0;
+    padding: 0;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 1;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border: none;
+    background: transparent;
+}
+
+.cf7apps-redirection-settings .cf7apps-app-radio-field__option input[type="radio"]:focus-visible ,
+.cf7apps-entries-settings .cf7apps-app-radio-field__option input[type="radio"]:focus-visible ,
+.cf7apps-webhook-settings .cf7apps-app-radio-field__option input[type="radio"]:focus-visible ,
+.cf7apps-acf-settings .cf7apps-app-radio-field__option input[type="radio"]:focus-visible ,
+.cf7apps-ai-form-settings .cf7apps-app-radio-field__option input[type="radio"]:focus-visible  ,
+.cf7apps-honeypot-settings .cf7apps-app-radio-field__option input[type="radio"]:focus-visible   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-radio-field__option input[type="radio"]:focus-visible   {
+
+    outline: none;
+}
+
+.cf7apps-redirection-settings .cf7apps-app-radio-field__option label:has(> input[type="radio"]:focus-visible)::before ,
+.cf7apps-entries-settings .cf7apps-app-radio-field__option label:has(> input[type="radio"]:focus-visible)::before ,
+.cf7apps-webhook-settings .cf7apps-app-radio-field__option label:has(> input[type="radio"]:focus-visible)::before ,
+.cf7apps-acf-settings .cf7apps-app-radio-field__option label:has(> input[type="radio"]:focus-visible)::before ,
+.cf7apps-ai-form-settings .cf7apps-app-radio-field__option label:has(> input[type="radio"]:focus-visible)::before  ,
+.cf7apps-honeypot-settings .cf7apps-app-radio-field__option label:has(> input[type="radio"]:focus-visible)::before   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-radio-field__option label:has(> input[type="radio"]:focus-visible)::before   {
+
+    outline: 2px solid rgba(32, 138, 174, 0.35);
+    outline-offset: 1px;
+}
+
+.cf7apps-redirection-settings .cf7apps-app-select-group ,
+.cf7apps-entries-settings .cf7apps-app-select-group ,
+.cf7apps-webhook-settings .cf7apps-app-select-group ,
+.cf7apps-acf-settings .cf7apps-app-select-group ,
+.cf7apps-ai-form-settings .cf7apps-app-select-group  ,
+.cf7apps-honeypot-settings .cf7apps-app-select-group   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-select-group   {
+
+    margin: 0;
+    width: 100%;
+}
+
+.cf7apps-redirection-settings .cf7apps-app-select-group > div ,
+.cf7apps-entries-settings .cf7apps-app-select-group > div ,
+.cf7apps-webhook-settings .cf7apps-app-select-group > div ,
+.cf7apps-acf-settings .cf7apps-app-select-group > div ,
+.cf7apps-ai-form-settings .cf7apps-app-select-group > div  ,
+.cf7apps-honeypot-settings .cf7apps-app-select-group > div   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-select-group > div   {
+
+    width: 100%;
+}
+
+.cf7apps-redirection-settings select.cf7apps-app-select-field,
+.cf7apps-entries-settings select.cf7apps-app-select-field,
+.cf7apps-webhook-settings select.cf7apps-app-select-field,
+.cf7apps-redirection-settings .cf7apps-app-select-group select.cf7apps-form-input ,
+.cf7apps-entries-settings .cf7apps-app-select-group select.cf7apps-form-input ,
+.cf7apps-webhook-settings .cf7apps-app-select-group select.cf7apps-form-input ,
+.cf7apps-acf-settings select.cf7apps-app-select-field ,
+.cf7apps-ai-form-settings select.cf7apps-app-select-field ,
+.cf7apps-honeypot-settings select.cf7apps-app-select-field , ,
+.cf7apps-hcaptcha-settings select.cf7apps-app-select-field , , ,
+.cf7apps-acf-settings .cf7apps-app-select-group select.cf7apps-form-input ,
+.cf7apps-ai-form-settings .cf7apps-app-select-group select.cf7apps-form-input  ,
+.cf7apps-honeypot-settings .cf7apps-app-select-group select.cf7apps-form-input   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-select-group select.cf7apps-form-input   {
+
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 36px;
+    height: auto;
+    padding: 8px 30px 8px 10px !important;
+    border: 0.6px solid #8a8a8a;
+    border-radius: 6px;
+    background-color: #ffffff !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M3 5L6 8L9 5' stroke='%23666666' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 10px center !important;
+    background-size: 12px 12px !important;
+    color: #303030 !important;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.4;
+    box-sizing: border-box;
+    box-shadow: 0 0.5px 0.75px rgba(0, 0, 0, 0.15);
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+}
+
+.cf7apps-redirection-settings .cf7apps-app-select-group div:has(> select.cf7apps-form-input) ,
+.cf7apps-entries-settings .cf7apps-app-select-group div:has(> select.cf7apps-form-input) ,
+.cf7apps-webhook-settings .cf7apps-app-select-group div:has(> select.cf7apps-form-input) ,
+.cf7apps-acf-settings .cf7apps-app-select-group div:has(> select.cf7apps-form-input) ,
+.cf7apps-ai-form-settings .cf7apps-app-select-group div:has(> select.cf7apps-form-input)  ,
+.cf7apps-honeypot-settings .cf7apps-app-select-group div:has(> select.cf7apps-form-input)   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-select-group div:has(> select.cf7apps-form-input)   {
+
+    position: relative;
+    display: block;
+    width: 100%;
+}
+
+.cf7apps-redirection-settings .cf7apps-app-select-group select.cf7apps-form-input + svg ,
+.cf7apps-entries-settings .cf7apps-app-select-group select.cf7apps-form-input + svg ,
+.cf7apps-webhook-settings .cf7apps-app-select-group select.cf7apps-form-input + svg ,
+.cf7apps-acf-settings .cf7apps-app-select-group select.cf7apps-form-input + svg ,
+.cf7apps-ai-form-settings .cf7apps-app-select-group select.cf7apps-form-input + svg  ,
+.cf7apps-honeypot-settings .cf7apps-app-select-group select.cf7apps-form-input + svg   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-select-group select.cf7apps-form-input + svg ,
+.cf7apps-form-group.cf7apps-settings .cf7apps-select-wrap > svg ,
+.cf7apps-app-select-group .cf7apps-select-wrap > svg {
+
+    display: none !important;
+}
+
+.cf7apps-redirection-settings .cf7apps-app-select-group div:has(> select.cf7apps-form-input) svg ,
+.cf7apps-entries-settings .cf7apps-app-select-group div:has(> select.cf7apps-form-input) svg ,
+.cf7apps-webhook-settings .cf7apps-app-select-group div:has(> select.cf7apps-form-input) svg ,
+.cf7apps-acf-settings .cf7apps-app-select-group div:has(> select.cf7apps-form-input) svg ,
+.cf7apps-ai-form-settings .cf7apps-app-select-group div:has(> select.cf7apps-form-input) svg  ,
+.cf7apps-honeypot-settings .cf7apps-app-select-group div:has(> select.cf7apps-form-input) svg   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-select-group div:has(> select.cf7apps-form-input) svg   {
+
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.cf7apps-redirection-settings .cf7apps-app-radio-field__subfield p,
+.cf7apps-entries-settings .cf7apps-app-radio-field__subfield p,
+.cf7apps-webhook-settings .cf7apps-app-radio-field__subfield p,
+.cf7apps-redirection-settings .cf7apps-app-select-group p ,
+.cf7apps-entries-settings .cf7apps-app-select-group p ,
+.cf7apps-webhook-settings .cf7apps-app-select-group p ,
+.cf7apps-acf-settings .cf7apps-app-radio-field__subfield p ,
+.cf7apps-ai-form-settings .cf7apps-app-radio-field__subfield p ,
+.cf7apps-honeypot-settings .cf7apps-app-radio-field__subfield p , ,
+.cf7apps-hcaptcha-settings .cf7apps-app-radio-field__subfield p , , ,
+.cf7apps-acf-settings .cf7apps-app-select-group p ,
+.cf7apps-ai-form-settings .cf7apps-app-select-group p  ,
+.cf7apps-honeypot-settings .cf7apps-app-select-group p   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-select-group p   {
+
+    margin: 0 !important;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: normal;
+    color: #717171;
+}
+
+.cf7apps-redirection-settings .cf7apps-show-more-text ,
+.cf7apps-entries-settings .cf7apps-show-more-text ,
+.cf7apps-webhook-settings .cf7apps-show-more-text ,
+.cf7apps-acf-settings .cf7apps-show-more-text ,
+.cf7apps-ai-form-settings .cf7apps-show-more-text  ,
+.cf7apps-honeypot-settings .cf7apps-show-more-text   ,
+.cf7apps-hcaptcha-settings .cf7apps-show-more-text   {
+
+    border: none;
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    color: #208aae;
+    font-size: inherit;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline;
+}
+
+.cf7apps-redirection-settings .cf7apps-form-toggle-block__help .cf7apps-show-more-text,
+.cf7apps-entries-settings .cf7apps-form-toggle-block__help .cf7apps-show-more-text,
+.cf7apps-webhook-settings .cf7apps-form-toggle-block__help .cf7apps-show-more-text,
+.cf7apps-redirection-settings .cf7apps-app-radio-field__subfield .cf7apps-show-more-text,
+.cf7apps-entries-settings .cf7apps-app-radio-field__subfield .cf7apps-show-more-text,
+.cf7apps-webhook-settings .cf7apps-app-radio-field__subfield .cf7apps-show-more-text,
+.cf7apps-redirection-settings .cf7apps-pro-toggle-teaser__help .cf7apps-show-more-text ,
+.cf7apps-entries-settings .cf7apps-pro-toggle-teaser__help .cf7apps-show-more-text ,
+.cf7apps-webhook-settings .cf7apps-pro-toggle-teaser__help .cf7apps-show-more-text ,
+.cf7apps-acf-settings .cf7apps-form-toggle-block__help .cf7apps-show-more-text ,
+.cf7apps-ai-form-settings .cf7apps-form-toggle-block__help .cf7apps-show-more-text ,
+.cf7apps-honeypot-settings .cf7apps-form-toggle-block__help .cf7apps-show-more-text , ,
+.cf7apps-hcaptcha-settings .cf7apps-form-toggle-block__help .cf7apps-show-more-text , , ,
+.cf7apps-acf-settings .cf7apps-app-radio-field__subfield .cf7apps-show-more-text ,
+.cf7apps-ai-form-settings .cf7apps-app-radio-field__subfield .cf7apps-show-more-text ,
+.cf7apps-honeypot-settings .cf7apps-app-radio-field__subfield .cf7apps-show-more-text , ,
+.cf7apps-hcaptcha-settings .cf7apps-app-radio-field__subfield .cf7apps-show-more-text , , ,
+.cf7apps-acf-settings .cf7apps-pro-toggle-teaser__help .cf7apps-show-more-text ,
+.cf7apps-ai-form-settings .cf7apps-pro-toggle-teaser__help .cf7apps-show-more-text  ,
+.cf7apps-honeypot-settings .cf7apps-pro-toggle-teaser__help .cf7apps-show-more-text   ,
+.cf7apps-hcaptcha-settings .cf7apps-pro-toggle-teaser__help .cf7apps-show-more-text   {
+
+    margin-left: 4px;
+}
+
+.cf7apps-redirection-settings .cf7apps-pro-toggle-teaser ,
+.cf7apps-entries-settings .cf7apps-pro-toggle-teaser ,
+.cf7apps-webhook-settings .cf7apps-pro-toggle-teaser ,
+.cf7apps-acf-settings .cf7apps-pro-toggle-teaser ,
+.cf7apps-ai-form-settings .cf7apps-pro-toggle-teaser  ,
+.cf7apps-honeypot-settings .cf7apps-pro-toggle-teaser   ,
+.cf7apps-hcaptcha-settings .cf7apps-pro-toggle-teaser   {
+
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+}
+
+.cf7apps-redirection-settings .cf7apps-pro-toggle-teaser__row ,
+.cf7apps-entries-settings .cf7apps-pro-toggle-teaser__row ,
+.cf7apps-webhook-settings .cf7apps-pro-toggle-teaser__row ,
+.cf7apps-acf-settings .cf7apps-pro-toggle-teaser__row ,
+.cf7apps-ai-form-settings .cf7apps-pro-toggle-teaser__row  ,
+.cf7apps-honeypot-settings .cf7apps-pro-toggle-teaser__row   ,
+.cf7apps-hcaptcha-settings .cf7apps-pro-toggle-teaser__row   {
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    width: 100%;
+}
+
+.cf7apps-redirection-settings .cf7apps-pro-toggle-teaser__label-wrap ,
+.cf7apps-entries-settings .cf7apps-pro-toggle-teaser__label-wrap ,
+.cf7apps-webhook-settings .cf7apps-pro-toggle-teaser__label-wrap ,
+.cf7apps-acf-settings .cf7apps-pro-toggle-teaser__label-wrap ,
+.cf7apps-ai-form-settings .cf7apps-pro-toggle-teaser__label-wrap  ,
+.cf7apps-honeypot-settings .cf7apps-pro-toggle-teaser__label-wrap   ,
+.cf7apps-hcaptcha-settings .cf7apps-pro-toggle-teaser__label-wrap   {
+
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+}
+
+.cf7apps-redirection-settings .cf7apps-pro-toggle-teaser__label ,
+.cf7apps-entries-settings .cf7apps-pro-toggle-teaser__label ,
+.cf7apps-webhook-settings .cf7apps-pro-toggle-teaser__label ,
+.cf7apps-acf-settings .cf7apps-pro-toggle-teaser__label ,
+.cf7apps-ai-form-settings .cf7apps-pro-toggle-teaser__label  ,
+.cf7apps-honeypot-settings .cf7apps-pro-toggle-teaser__label   ,
+.cf7apps-hcaptcha-settings .cf7apps-pro-toggle-teaser__label   {
+
+    font-size: 16px;
+    font-weight: 600;
+    line-height: normal;
+    color: #0d2149;
+}
+
+.cf7apps-redirection-settings .cf7apps-pro-toggle-teaser__badge ,
+.cf7apps-entries-settings .cf7apps-pro-toggle-teaser__badge ,
+.cf7apps-webhook-settings .cf7apps-pro-toggle-teaser__badge ,
+.cf7apps-acf-settings .cf7apps-pro-toggle-teaser__badge ,
+.cf7apps-ai-form-settings .cf7apps-pro-toggle-teaser__badge  ,
+.cf7apps-honeypot-settings .cf7apps-pro-toggle-teaser__badge   ,
+.cf7apps-hcaptcha-settings .cf7apps-pro-toggle-teaser__badge   {
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    min-height: 21px;
+    padding: 3px 5px;
+    border-radius: 5px;
+    background: linear-gradient(108.77deg, #208aae 14.75%, #0e4f66 98.73%);
+    color: #ffd114;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.cf7apps-redirection-settings .cf7apps-app-setting-section .MuiTabPanel-root ,
+.cf7apps-entries-settings .cf7apps-app-setting-section .MuiTabPanel-root ,
+.cf7apps-webhook-settings .cf7apps-app-setting-section .MuiTabPanel-root ,
+.cf7apps-acf-settings .cf7apps-app-setting-section .MuiTabPanel-root ,
+.cf7apps-ai-form-settings .cf7apps-app-setting-section .MuiTabPanel-root  ,
+.cf7apps-honeypot-settings .cf7apps-app-setting-section .MuiTabPanel-root   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-setting-section .MuiTabPanel-root   {
+
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+.cf7apps-redirection-settings .cf7apps-app-radio-field__subfield .cf7apps-form-group ,
+.cf7apps-entries-settings .cf7apps-app-radio-field__subfield .cf7apps-form-group ,
+.cf7apps-webhook-settings .cf7apps-app-radio-field__subfield .cf7apps-form-group ,
+.cf7apps-acf-settings .cf7apps-app-radio-field__subfield .cf7apps-form-group ,
+.cf7apps-ai-form-settings .cf7apps-app-radio-field__subfield .cf7apps-form-group  ,
+.cf7apps-honeypot-settings .cf7apps-app-radio-field__subfield .cf7apps-form-group   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-radio-field__subfield .cf7apps-form-group   {
+
+    margin: 0 !important;
+}
+
+.cf7apps-redirection-settings .cf7apps-app-radio-field__subfield .cf7apps-app-select-group > div ,
+.cf7apps-entries-settings .cf7apps-app-radio-field__subfield .cf7apps-app-select-group > div ,
+.cf7apps-webhook-settings .cf7apps-app-radio-field__subfield .cf7apps-app-select-group > div ,
+.cf7apps-acf-settings .cf7apps-app-radio-field__subfield .cf7apps-app-select-group > div ,
+.cf7apps-ai-form-settings .cf7apps-app-radio-field__subfield .cf7apps-app-select-group > div  ,
+.cf7apps-honeypot-settings .cf7apps-app-radio-field__subfield .cf7apps-app-select-group > div   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-radio-field__subfield .cf7apps-app-select-group > div   {
+
+    width: 100%;
+}
+
+.cf7apps-redirection-settings .cf7apps-form-toggle-block__help p ,
+.cf7apps-entries-settings .cf7apps-form-toggle-block__help p ,
+.cf7apps-webhook-settings .cf7apps-form-toggle-block__help p ,
+.cf7apps-acf-settings .cf7apps-form-toggle-block__help p ,
+.cf7apps-ai-form-settings .cf7apps-form-toggle-block__help p  ,
+.cf7apps-honeypot-settings .cf7apps-form-toggle-block__help p   ,
+.cf7apps-hcaptcha-settings .cf7apps-form-toggle-block__help p   {
+
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: normal;
+    color: #717171;
+}
+
+.cf7apps-redirection-settings .cf7apps-pro-toggle-teaser__help ,
+.cf7apps-entries-settings .cf7apps-pro-toggle-teaser__help ,
+.cf7apps-webhook-settings .cf7apps-pro-toggle-teaser__help ,
+.cf7apps-acf-settings .cf7apps-pro-toggle-teaser__help ,
+.cf7apps-ai-form-settings .cf7apps-pro-toggle-teaser__help  ,
+.cf7apps-honeypot-settings .cf7apps-pro-toggle-teaser__help   ,
+.cf7apps-hcaptcha-settings .cf7apps-pro-toggle-teaser__help   {
+
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: normal;
+    color: #717171;
+}
+
+.cf7apps-redirection-settings .cf7apps-app-settings-save-wrap ,
+.cf7apps-entries-settings .cf7apps-app-settings-save-wrap ,
+.cf7apps-webhook-settings .cf7apps-app-settings-save-wrap ,
+.cf7apps-acf-settings .cf7apps-app-settings-save-wrap ,
+.cf7apps-ai-form-settings .cf7apps-app-settings-save-wrap  ,
+.cf7apps-honeypot-settings .cf7apps-app-settings-save-wrap   ,
+.cf7apps-hcaptcha-settings .cf7apps-app-settings-save-wrap   {
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--cf7apps-app-settings-gap, 28px);
+    width: 100%;
+}
+
+.cf7apps-redirection-settings .cf7apps-form-settings-save ,
+.cf7apps-entries-settings .cf7apps-form-settings-save ,
+.cf7apps-webhook-settings .cf7apps-form-settings-save ,
+.cf7apps-acf-settings .cf7apps-form-settings-save ,
+.cf7apps-ai-form-settings .cf7apps-form-settings-save  ,
+.cf7apps-honeypot-settings .cf7apps-form-settings-save   ,
+.cf7apps-hcaptcha-settings .cf7apps-form-settings-save   {
+
+    margin: 0;
+}
+
+.cf7apps-redirection-settings .cf7apps-form-settings-save .cf7apps-btn.tertiary-primary ,
+.cf7apps-entries-settings .cf7apps-form-settings-save .cf7apps-btn.tertiary-primary ,
+.cf7apps-webhook-settings .cf7apps-form-settings-save .cf7apps-btn.tertiary-primary ,
+.cf7apps-acf-settings .cf7apps-form-settings-save .cf7apps-btn.tertiary-primary ,
+.cf7apps-ai-form-settings .cf7apps-form-settings-save .cf7apps-btn.tertiary-primary  ,
+.cf7apps-honeypot-settings .cf7apps-form-settings-save .cf7apps-btn.tertiary-primary   ,
+.cf7apps-hcaptcha-settings .cf7apps-form-settings-save .cf7apps-btn.tertiary-primary   {
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: auto;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    background: #0d2149 !important;
+    color: #ffffff !important;
+    font-size: 14px;
+    /* font-weight: 600; */
+    line-height: normal;
+}
+
+.cf7apps-redirection-settings .cf7apps-form-settings-save .cf7apps-btn.tertiary-primary:hover:not(:disabled) ,
+.cf7apps-entries-settings .cf7apps-form-settings-save .cf7apps-btn.tertiary-primary:hover:not(:disabled) ,
+.cf7apps-webhook-settings .cf7apps-form-settings-save .cf7apps-btn.tertiary-primary:hover:not(:disabled) ,
+.cf7apps-acf-settings .cf7apps-form-settings-save .cf7apps-btn.tertiary-primary:hover:not(:disabled) ,
+.cf7apps-ai-form-settings .cf7apps-form-settings-save .cf7apps-btn.tertiary-primary:hover:not(:disabled)  ,
+.cf7apps-honeypot-settings .cf7apps-form-settings-save .cf7apps-btn.tertiary-primary:hover:not(:disabled)   ,
+.cf7apps-hcaptcha-settings .cf7apps-form-settings-save .cf7apps-btn.tertiary-primary:hover:not(:disabled)   {
+
+    filter: brightness(0.92);
+    color: #ffffff !important;
 }
 
 .cf7apps-settings-tab.MuiTab-textColorPrimary {
@@ -560,22 +3271,19 @@ button:focus {
 
 .cf7apps-app-setting-section .MuiTabPanel-root {
     padding: 30px 5px;
-    width: 600px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .cf7apps-form {
     margin: 0;
 }
 
-.cf7apps-app-setting-section .MuiTabPanel-root:has(.cf7apps-template-honeypot-forms),
-.cf7apps-app-setting-section .MuiTabPanel-root:has(.cf7apps-template-cf7-entries) {
-    width: 100%;
-}
-
 .cf7apps-form h3,
 .cf7apps-form .cf7apps-help-text {
     margin: 0;
-} 
+}
 
 .cf7apps-form .cf7apps-help-text {
     color: #4F5E7B;
@@ -584,14 +3292,24 @@ button:focus {
 
 .cf7apps-settings-toggle {
     display: flex;
-    vertical-align: middle;
+    align-items: center;
     justify-content: space-between;
-    width: max-content;
+    gap: 24px;
+    width: min(500px, 100%);
 }
 
 .cf7apps-settings-toggle label,
 .cf7apps-settings-radio label {
     font-weight: bold;
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    padding-right: 8px;
+}
+
+.cf7apps-settings-toggle .cf7apps-app-toggle {
+    flex-shrink: 0;
+    margin-left: 0;
 }
 
 .cf7apps-form-group {
@@ -615,18 +3333,26 @@ select.cf7apps-form-input {
 
 .cf7apps-form-input.xs {
     width: 110px;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .cf7apps-form-input.sm {
     width: 180px;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .cf7apps-form-input.lg {
     width: 300px;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .cf7apps-form-input.xl {
     width: 500px;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .cf7apps-form-input:focus {
@@ -700,7 +3426,7 @@ select.cf7apps-form-input {
 .cf7apps-toast-notification .Toastify__toast--success {
     border-left: 3px solid #3E6654;
     background: #e7fff4;
-    
+
 }
 
 .Toastify__toast--success {
@@ -830,7 +3556,7 @@ select.cf7apps-form-input {
     max-width: 90vw;
     max-height: 80vh;
     overflow-y: auto;
-    
+
 }
 
 .cf7apps-popup-close {
@@ -845,10 +3571,10 @@ select.cf7apps-form-input {
 }
 
 .cf7apps-entry-date {
-    color: var( --cf7apps-primary-color );
+    color: var(--cf7apps-primary-color);
 }
 
-.cf7apps-entries-pagination button[ disabled ] {
+.cf7apps-entries-pagination button[ disabled] {
     cursor: not-allowed;
 }
 
@@ -860,7 +3586,7 @@ select.cf7apps-form-input {
     float: right;
     margin-right: 10px;
     border: none !important;
-    color: rgba( 0, 0, 0, 0.54 ) !important;
+    color: rgba(0, 0, 0, 0.54) !important;
     background-color: transparent !important;
     border-radius: 50px !important;
     width: 45px;
@@ -889,12 +3615,1103 @@ select.cf7apps-form-input {
     color: #2271b1 !important;
 }
 
-.cf7apps-form-input + svg {
+.cf7apps-form-input+svg {
     /* right: 20px !important; */
     margin-top: 5px !important;
 }
 
-.cf7apps-bulk-action-select-field + svg , .cf7apps-filter-select-field + svg {
+.cf7apps-bulk-action-select-field+svg,
+.cf7apps-filter-select-field+svg {
     margin-top: 0px !important;
     right: 20px !important;
+}
+
+.cf7apps-webhook-settings .cf7apps-app-field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+}
+
+.cf7apps-webhook-settings .cf7apps-webhook-method-row {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    gap: 16px 24px;
+    width: 100%;
+    max-width: 500px;
+    box-sizing: border-box;
+}
+
+.cf7apps-dashboard-settings .cf7apps-webhook-settings .cf7apps-app-setting-section,
+.cf7apps-dashboard-settings .cf7apps-webhook-settings .cf7apps-app-settings-form {
+    width: min(500px, 100%);
+    max-width: 500px;
+}
+
+.cf7apps-dashboard-settings .cf7apps-acf-settings .cf7apps-app-setting-section,
+.cf7apps-dashboard-settings .cf7apps-ai-form-settings .cf7apps-app-setting-section,
+.cf7apps-dashboard-settings .cf7apps-hcaptcha-settings .cf7apps-app-setting-section,
+.cf7apps-dashboard-settings .cf7apps-acf-settings .cf7apps-app-settings-form ,
+.cf7apps-dashboard-settings .cf7apps-ai-form-settings .cf7apps-app-settings-form ,
+.cf7apps-dashboard-settings .cf7apps-hcaptcha-settings .cf7apps-app-settings-form {
+    width: min(500px, 100%);
+    max-width: 500px;
+}
+
+.cf7apps-hcaptcha-settings .cf7apps-app-settings-form select.cf7apps-app-select-field.xs,
+.cf7apps-hcaptcha-settings .cf7apps-app-settings-form .cf7apps-app-select-group select.cf7apps-form-input.xs {
+    width: 100%;
+    max-width: 100%;
+}
+
+.cf7apps-webhook-settings .cf7apps-app-settings-form .cf7apps-form-group.cf7apps-settings:has(.cf7apps-settings-collapsible-trigger) {
+    width: 100%;
+    max-width: 500px;
+    align-self: flex-start;
+    box-sizing: border-box;
+}
+
+.cf7apps-webhook-settings .cf7apps-webhook-method-row .cf7apps-form-group,
+.cf7apps-webhook-settings .cf7apps-webhook-method-row .cf7apps-app-select-group,
+.cf7apps-webhook-settings .cf7apps-webhook-method-row .cf7apps-app-field-group {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    width: auto !important;
+    max-width: none !important;
+    margin: 0 !important;
+    box-sizing: border-box;
+}
+
+.cf7apps-webhook-settings .cf7apps-webhook-method-row select.cf7apps-form-input,
+.cf7apps-webhook-settings .cf7apps-webhook-method-row .cf7apps-select-wrap {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+@media (max-width: 782px) {
+    .cf7apps-webhook-settings .cf7apps-webhook-method-row {
+        flex-wrap: wrap;
+    }
+
+    .cf7apps-webhook-settings .cf7apps-webhook-method-row .cf7apps-form-group,
+    .cf7apps-webhook-settings .cf7apps-webhook-method-row .cf7apps-app-select-group,
+    .cf7apps-webhook-settings .cf7apps-webhook-method-row .cf7apps-app-field-group {
+        flex: 1 1 100% !important;
+        min-width: 100% !important;
+    }
+}
+
+.cf7apps-webhook-settings .cf7apps-settings-collapsible-trigger,
+.cf7apps-webhook-settings .cf7apps-form-settings-collapsible {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+    max-width: 100%;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: none;
+    background: rgba(70, 141, 180, 0.12);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    box-sizing: border-box;
+}
+
+.cf7apps-webhook-settings .cf7apps-settings-collapsible-trigger:hover,
+.cf7apps-webhook-settings .cf7apps-form-settings-collapsible:hover {
+    background: rgba(70, 141, 180, 0.18);
+}
+
+.cf7apps-webhook-settings .cf7apps-settings-collapsible-trigger label,
+.cf7apps-webhook-settings .cf7apps-form-settings-collapsible label {
+    margin: 0;
+    font-weight: 500;
+    font-size: 14px;
+    color: #0d2149;
+    cursor: inherit;
+}
+
+.cf7apps-collapsible-chevron,
+.cf7apps-settings-collapsible-trigger .cf7apps-collapsible-chevron,
+.cf7apps-form-settings-collapsible .cf7apps-collapsible-chevron {
+    display: block !important;
+    flex-shrink: 0;
+    width: 12px !important;
+    height: 12px !important;
+    margin-left: auto;
+    background-color: transparent !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M3 5L6 8L9 5' stroke='%230d2149' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    background-size: 12px 12px !important;
+    transition: transform 0.2s ease;
+}
+
+.cf7apps-collapsible-chevron.is-open,
+.cf7apps-settings-collapsible-trigger[aria-expanded="true"] .cf7apps-collapsible-chevron {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M3 7L6 4L9 7' stroke='%230d2149' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
+}
+
+.cf7apps-webhook-settings .cf7apps-app-collapsible-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.cf7apps-webhook-settings .cf7apps-app-collapsible-panel .cf7apps-pre-text,
+.cf7apps-webhook-settings .cf7apps-app-collapsible-panel .cf7apps-post-text {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.cf7apps-webhook-settings .cf7apps-pre-text,
+.cf7apps-webhook-settings .cf7apps-post-text {
+    margin: 0;
+    color: #717171;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.5;
+}
+
+.cf7apps-webhook-settings .cf7apps-post-text p {
+    margin: 0 0 8px;
+}
+
+.cf7apps-webhook-settings .cf7apps-post-text textarea[readonly] {
+    display: block;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 150px !important;
+    margin-top: 8px;
+    padding: 10px !important;
+    border: 1px solid #dddddd !important;
+    border-radius: 6px;
+    background: #f8f9fa !important;
+    color: #303030 !important;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.4;
+    box-sizing: border-box;
+    pointer-events: none;
+    resize: none;
+}
+
+.cf7apps-webhook-settings .cf7apps-settings textarea.cf7apps-form-input {
+    width: 100%;
+    max-width: 100%;
+    min-height: 120px;
+    box-sizing: border-box;
+    padding: 12px;
+    border: 0.6px solid #8a8a8a;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #303030;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.4;
+    box-shadow: 0 0.5px 0.75px rgba(0, 0, 0, 0.15);
+}
+
+.cf7apps-entries-settings {
+    --cf7apps-entries-accent: #4f6797;
+    --cf7apps-entries-accent-soft: #e9f0ff;
+}
+
+.cf7apps-entries-settings .cf7apps-app-setting-section {
+    max-width: none;
+    overflow: visible;
+}
+
+.cf7apps-entries-settings .cf7apps-app-settings-form {
+    max-width: none;
+    gap: 20px;
+}
+
+.cf7apps-entries-settings .cf7apps-app-settings-form .cf7apps-app-settings-tabpanel-general {
+    max-width: 500px;
+    padding-top: 0 !important;
+}
+
+.cf7apps-entries-settings .cf7apps-app-settings-form .cf7apps-app-settings-tabpanel-entries {
+    width: 100%;
+    max-width: none;
+    padding: 0 !important;
+    gap: 20px;
+    overflow: visible;
+}
+
+.cf7apps-entries-settings .cf7apps-template-cf7-entries {
+    width: 100%;
+    overflow: visible;
+}
+
+.cf7apps-calendar-popup {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.cf7apps-entries-settings .cf7apps-app-settings-tabs {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    gap: 20px;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    border-bottom: none;
+}
+
+.cf7apps-entries-settings .cf7apps-app-settings-tabs::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: #dddddd;
+    pointer-events: none;
+}
+
+.cf7apps-entries-settings .cf7apps-app-settings-tabs__tab {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-width: 80px;
+    width: 80px;
+    height: 41px;
+    margin: 0;
+    padding: 10px 13.5px;
+    border: none;
+    border-bottom: none;
+    border-radius: 0;
+    background: transparent;
+    color: #717171;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 21px;
+    white-space: nowrap;
+    cursor: pointer;
+    box-shadow: none;
+    transition: color 0.15s ease;
+}
+
+.cf7apps-entries-settings .cf7apps-app-settings-tabs__tab.is-active {
+    color: #0d2149;
+    font-weight: 600;
+    background: transparent;
+    box-shadow: inset 0 -2px 0 #208aae;
+}
+
+.cf7apps-entries-settings .cf7apps-app-settings-tabs__tab:not(.is-active):hover {
+    color: #717171;
+    background: transparent;
+    box-shadow: none;
+}
+
+.cf7apps-entries-settings .cf7apps-app-settings-tabs__tab.is-active:hover {
+    color: #0d2149;
+    background: transparent;
+    box-shadow: inset 0 -2px 0 #208aae;
+}
+
+.cf7apps-entries-settings .cf7apps-app-settings-tabs__tab:focus-visible {
+    outline: 2px solid #208aae;
+    outline-offset: 2px;
+}
+
+.cf7apps-entries-settings .cf7apps-entries-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: nowrap;
+    width: 100%;
+    margin-bottom: 10px;
+    overflow: visible;
+}
+
+.cf7apps-entries-settings .cf7apps-entries-toolbar::after {
+    display: none;
+}
+
+.cf7apps-entries-settings .cf7apps-entries-toolbar .cf7apps-left,
+.cf7apps-entries-settings .cf7apps-entries-toolbar .cf7apps-right {
+    float: none;
+}
+
+.cf7apps-entries-settings .cf7apps-entries-toolbar__left,
+.cf7apps-entries-settings .cf7apps-entries-toolbar__right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+}
+
+.cf7apps-entries-settings .cf7apps-entries-toolbar__right {
+    justify-content: flex-end;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.cf7apps-entries-settings .cf7apps-entries-toolbar__field {
+    flex: 0 0 auto;
+    width: auto;
+    max-width: none;
+}
+
+.cf7apps-entries-settings .cf7apps-entries-toolbar__field .cf7apps-form-group,
+.cf7apps-entries-settings .cf7apps-entries-toolbar__field .cf7apps-app-select-group {
+    display: block !important;
+    width: auto !important;
+    max-width: none !important;
+    margin: 0 !important;
+}
+
+.cf7apps-entries-settings .cf7apps-entries-toolbar__field .cf7apps-form-group > div,
+.cf7apps-entries-settings .cf7apps-entries-toolbar__field .cf7apps-app-select-group > div,
+.cf7apps-entries-settings .cf7apps-entries-toolbar__field .cf7apps-app-select-group div:has(> select.cf7apps-form-input) {
+    width: auto !important;
+    max-width: none !important;
+    margin: 0 !important;
+    position: relative;
+}
+
+.cf7apps-entries-settings .cf7apps-entries-toolbar select.cf7apps-form-input,
+.cf7apps-entries-settings .cf7apps-entries-toolbar input.cf7apps-form-input,
+.cf7apps-entries-settings .cf7apps-entries-toolbar input.cf7apps-app-select-field,
+.cf7apps-entries-settings .cf7apps-entries-toolbar .cf7apps-app-select-group select.cf7apps-form-input,
+.cf7apps-entries-settings .cf7apps-entries-toolbar .cf7apps-app-select-group input.cf7apps-app-select-field {
+    width: 117px !important;
+    min-width: 117px;
+    max-width: 117px !important;
+    min-height: 32px !important;
+    height: 32px !important;
+    margin: 0 !important;
+    padding: 6px 22px 6px 10px !important;
+    border: 0.6px solid #8a8a8a;
+    border-radius: 6px;
+    font-size: 12px;
+    line-height: 1.2;
+    box-sizing: border-box;
+    box-shadow: 0 0.5px 0.75px rgba(0, 0, 0, 0.15);
+    text-overflow: ellipsis;
+}
+
+.cf7apps-entries-settings .cf7apps-entries-toolbar .cf7apps-bulk-action-select-field + svg,
+.cf7apps-entries-settings .cf7apps-entries-toolbar .cf7apps-filter-select-field + svg,
+.cf7apps-entries-settings .cf7apps-entries-toolbar .cf7apps-app-select-group div:has(> select.cf7apps-form-input) svg {
+    position: absolute !important;
+    right: 8px !important;
+    left: auto !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    margin: 0 !important;
+    pointer-events: none;
+}
+
+.cf7apps-entries-settings .cf7apps-entries-toolbar__field--calendar .cf7apps-calendar-wrapper {
+    display: block;
+    width: auto;
+}
+
+.cf7apps-entries-settings .cf7apps-entries-toolbar__field--calendar .cf7apps-calendar-wrapper input.cf7apps-form-input {
+    width: 140px !important;
+    min-width: 140px;
+    max-width: 140px !important;
+    cursor: pointer;
+}
+
+.cf7apps-entries-settings .cf7apps-entries-toolbar__apply {
+    flex: 0 0 auto;
+    min-width: 63px;
+    white-space: nowrap;
+}
+
+.cf7apps-entries-settings .cf7apps-entries-toolbar__clear {
+    flex: 0 0 auto;
+    min-width: 78px;
+    height: 32px !important;
+    min-height: 32px !important;
+    padding: 0 12px !important;
+    border: 0.6px solid #8a8a8a !important;
+    border-radius: 6px !important;
+    background: #ffffff !important;
+    color: #0d2149 !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    box-shadow: 0 0.5px 0.75px rgba(0, 0, 0, 0.15) !important;
+    white-space: nowrap;
+    text-decoration: none !important;
+}
+
+.cf7apps-entries-settings .cf7apps-entries-toolbar__clear:hover,
+.cf7apps-entries-settings .cf7apps-entries-toolbar__clear:focus-visible {
+    background: #f5f7fa !important;
+    color: #0d2149 !important;
+    text-decoration: none !important;
+}
+
+.cf7apps-entries-settings .cf7apps-entries-toolbar.cf7apps-table-nav.cf7apps-nav-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: nowrap;
+    margin-bottom: 10px;
+}
+
+.cf7apps-entries-settings .cf7apps-entries-toolbar.cf7apps-table-nav.cf7apps-nav-header .cf7apps-left,
+.cf7apps-entries-settings .cf7apps-entries-toolbar.cf7apps-table-nav.cf7apps-nav-header .cf7apps-right {
+    float: none;
+}
+
+.cf7apps-entries-settings .cf7apps-entries-toolbar.cf7apps-table-nav.cf7apps-nav-header .cf7apps-right {
+    display: flex;
+    flex-wrap: nowrap !important;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.cf7apps-entries-settings .cf7apps-bulk-action {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.cf7apps-entries-settings .cf7apps-bulk-action-select-field,
+.cf7apps-entries-settings .cf7apps-filter-select-field,
+.cf7apps-entries-settings .cf7apps-filter-text-field {
+    margin: 0;
+    min-height: 32px;
+}
+
+.cf7apps-entries-settings .cf7apps-template-cf7-entries table {
+    width: 100%;
+    border: 1px solid #d4d4e4;
+    border-radius: 6px;
+    border-collapse: separate;
+    border-spacing: 0;
+    overflow: hidden;
+}
+
+.cf7apps-entries-settings .cf7apps-template-cf7-entries thead {
+    background: #f9f9f9;
+}
+
+.cf7apps-entries-settings .cf7apps-template-cf7-entries thead th,
+.cf7apps-entries-settings .cf7apps-template-cf7-entries tbody td {
+    padding: 10px 19px;
+    font-size: 14px;
+    line-height: 16px;
+    color: #39496a;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.cf7apps-entries-settings .cf7apps-template-cf7-entries thead th {
+    font-weight: 600;
+    color: #0d2149;
+    border-bottom: 1px solid #d4d4e4;
+}
+
+.cf7apps-entries-settings .cf7apps-template-cf7-entries tbody tr {
+    height: 36px;
+}
+
+.cf7apps-entries-settings .cf7apps-template-cf7-entries tbody td {
+    border-top: 1px solid #eef0f4;
+}
+
+.cf7apps-entries-settings .cf7apps-entries-row-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cf7apps-entries-settings .cf7apps-entries-row-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 45px;
+    height: 24px;
+    padding: 0 8px;
+    border: 0.6px solid #d4d4e4;
+    border-radius: 4px;
+    background: #ffffff;
+    color: var(--cf7apps-entries-accent, #4f6797);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 0.5px 0.75px rgba(0, 0, 0, 0.08);
+}
+
+.cf7apps-entries-settings .cf7apps-entries-row-action--delete {
+    min-width: 53px;
+    color: #a61b1b;
+    border-color: #e5c5c5;
+}
+
+.cf7apps-entries-settings .cf7apps-entries-row-action:hover {
+    filter: brightness(0.97);
+}
+
+.cf7apps-entries-settings .cf7apps-template-cf7-entries tbody td a {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--cf7apps-entries-accent, #4f6797);
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.cf7apps-entries-settings .cf7apps-template-cf7-entries tbody td a:hover {
+    text-decoration: underline;
+}
+
+.cf7apps-entries-settings .cf7apps-btn.tertiary-primary,
+.cf7apps-entries-settings .cf7apps-btn.tertiary-secondary {
+    min-height: 32px;
+    height: 32px;
+    padding: 0 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.cf7apps-entries-settings .cf7apps-table-nav.cf7apps-nav-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 12px;
+}
+
+.cf7apps-entries-settings .cf7apps-table-nav.cf7apps-nav-footer .cf7apps-left,
+.cf7apps-entries-settings .cf7apps-table-nav.cf7apps-nav-footer .cf7apps-right {
+    float: none;
+}
+
+.cf7apps-entries-settings .cf7apps-datatable-count {
+    margin: 0;
+    font-size: 14px;
+    color: #717171;
+}
+
+.cf7apps-entries-settings .cf7apps-entries-pagination {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.cf7apps-entries-settings .cf7apps-template-cf7-entries thead th:first-child,
+.cf7apps-entries-settings .cf7apps-template-cf7-entries tbody td:first-child {
+    width: 40px;
+    text-align: center;
+}
+
+.cf7apps-entries-settings .cf7apps-template-cf7-entries thead th:nth-child(2),
+.cf7apps-entries-settings .cf7apps-template-cf7-entries tbody td:nth-child(2) {
+    width: 250px;
+}
+
+.cf7apps-entries-settings .cf7apps-form-toggle-field {
+    max-width: 500px;
+}
+
+.cf7apps-entries-settings .cf7apps-app-setting-section .MuiTabPanel-root:has(.cf7apps-template-cf7-entries) {
+    width: 100%;
+    max-width: none;
+}
+
+.cf7apps-honeypot-settings .cf7apps-app-setting-section {
+    max-width: none;
+    overflow: visible;
+}
+
+.cf7apps-honeypot-settings .cf7apps-app-settings-form {
+    max-width: none;
+    gap: 20px;
+}
+
+.cf7apps-honeypot-settings .cf7apps-app-settings-form .cf7apps-app-settings-tabpanel-general {
+    max-width: 500px;
+    padding-top: 0 !important;
+}
+
+.cf7apps-honeypot-settings .cf7apps-app-settings-form .cf7apps-app-settings-tabpanel-forms {
+    width: 100%;
+    max-width: none;
+    padding: 0 !important;
+    gap: 20px;
+    overflow: visible;
+}
+
+.cf7apps-honeypot-settings .cf7apps-template-honeypot-forms {
+    width: 100%;
+    overflow: visible;
+}
+
+.cf7apps-honeypot-settings .cf7apps-app-settings-tabs {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    gap: 20px;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    border-bottom: none;
+}
+
+.cf7apps-honeypot-settings .cf7apps-app-settings-tabs::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: #dddddd;
+    pointer-events: none;
+}
+
+.cf7apps-honeypot-settings .cf7apps-app-settings-tabs__tab {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-width: 80px;
+    width: 80px;
+    height: 41px;
+    margin: 0;
+    padding: 10px 13.5px;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    color: #717171;
+    font-family: degular, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.cf7apps-honeypot-settings .cf7apps-app-settings-tabs__tab.is-active {
+    color: #0d2149;
+    font-weight: 600;
+    box-shadow: inset 0 -2px 0 0 #208aae;
+}
+
+.cf7apps-honeypot-settings .cf7apps-app-settings-tabs__tab:not(.is-active):hover {
+    color: #0d2149;
+}
+
+.cf7apps-honeypot-settings .cf7apps-app-settings-tabs__tab.is-active:hover {
+    color: #0d2149;
+}
+
+.cf7apps-honeypot-settings .cf7apps-app-settings-tabs__tab:focus-visible {
+    outline: 2px solid #208aae;
+    outline-offset: 2px;
+}
+
+.cf7apps-honeypot-settings .cf7apps-form-toggle-field,
+.cf7apps-honeypot-settings .cf7apps-app-field-group,
+.cf7apps-honeypot-settings .cf7apps-app-select-group {
+    max-width: 500px;
+}
+
+.cf7apps-honeypot-settings .cf7apps-app-settings-form input.cf7apps-app-select-field.xs {
+    width: 110px;
+    max-width: 110px;
+}
+
+.cf7apps-honeypot-settings .cf7apps-template-honeypot-forms table {
+    width: 100%;
+    border: 1px solid #dddddd;
+    border-radius: 6px;
+    border-collapse: separate;
+    border-spacing: 0;
+    overflow: hidden;
+}
+
+.cf7apps-honeypot-settings .cf7apps-template-honeypot-forms thead {
+    background: #f9f9f9;
+}
+
+.cf7apps-honeypot-settings .cf7apps-template-honeypot-forms thead th,
+.cf7apps-honeypot-settings .cf7apps-template-honeypot-forms tbody td {
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 14px;
+    color: #39496a;
+}
+
+.cf7apps-honeypot-settings .cf7apps-template-honeypot-forms thead th {
+    font-weight: 600;
+    color: #0d2149;
+    border-bottom: 1px solid #dddddd;
+}
+
+.cf7apps-honeypot-settings .cf7apps-template-honeypot-forms tbody td {
+    border-top: 1px solid #eeeeee;
+}
+
+.cf7apps-honeypot-settings .cf7apps-template-honeypot-forms tbody td:nth-child(2) {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 12px;
+}
+
+.cf7apps-honeypot-settings .cf7apps-template-honeypot-forms .cf7apps-btn.tertiary-secondary {
+    min-height: 32px;
+    height: 32px;
+    padding: 0 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.cf7apps-honeypot-settings .cf7apps-table-nav.cf7apps-nav-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 12px;
+}
+
+.cf7apps-honeypot-settings .cf7apps-table-nav.cf7apps-nav-footer .cf7apps-left,
+.cf7apps-honeypot-settings .cf7apps-table-nav.cf7apps-nav-footer .cf7apps-right {
+    float: none;
+}
+
+.cf7apps-honeypot-settings .cf7apps-datatable-count {
+    margin: 0;
+    font-size: 14px;
+    color: #717171;
+}
+
+.cf7apps-honeypot-settings .cf7apps-honeypot-forms-pagination {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.cf7apps-honeypot-settings .cf7apps-app-setting-section .MuiTabPanel-root:has(.cf7apps-template-honeypot-forms) {
+    width: 100%;
+    max-width: none;
+}
+
+/* HFCF7-544 — Mobile / folded WP admin responsiveness */
+@media (max-width: 782px) {
+    #root,
+    .cf7apps-main-content,
+    .cf7apps-layout,
+    .cf7apps-page-shell,
+    .cf7apps-page-main,
+    .cf7apps-dashboard,
+    .cf7apps-dashboard__panel,
+    .cf7apps-dashboard-settings,
+    .cf7apps-settings-panel,
+    .cf7apps-body,
+    .cf7apps-form {
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+
+    .cf7apps-main-content {
+        overflow-x: clip;
+    }
+
+    .cf7apps-page-shell {
+        padding: 12px;
+        gap: 16px 0;
+    }
+
+    .cf7apps-header {
+        padding: 8px 10px;
+        border-radius: 0;
+    }
+
+    .cf7apps-header-inner {
+        flex-wrap: wrap;
+        row-gap: 8px;
+    }
+
+    .cf7apps-header-right {
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: flex-start;
+    }
+
+    .cf7apps-header-logo-img {
+        max-width: 120px;
+        height: 30px;
+    }
+
+    .cf7apps-dashboard__panel {
+        padding: 14px;
+        gap: 16px;
+    }
+
+    .cf7apps-dashboard__hero-title {
+        font-size: 20px;
+    }
+
+    .cf7apps-dashboard__filters {
+        justify-content: flex-start;
+        gap: 8px;
+    }
+
+    .cf7apps-dashboard__filter {
+        flex: 0 1 auto;
+    }
+
+    .cf7apps-app-card {
+        --cf7apps-card-text-width: min(220px, calc(68% - 4px));
+        min-height: 160px;
+    }
+
+    .cf7apps-app-card__inner {
+        padding: 12px;
+        gap: 12px;
+    }
+
+    .cf7apps-app-card__title {
+        font-size: 16px;
+    }
+
+    .cf7apps-app-card__desc {
+        font-size: 12px;
+        line-height: 1.35;
+    }
+
+    .cf7apps-migration-modal {
+        width: calc(100% - 24px);
+        max-width: 600px;
+        padding: 28px 0;
+    }
+
+    .cf7apps-migration-modal h2 {
+        font-size: 20px;
+        padding: 0 12px;
+    }
+
+    .cf7apps-migration-modal p {
+        font-size: 15px;
+    }
+
+    .cf7apps-settings-panel__header-main {
+        max-width: 100%;
+    }
+
+    .cf7apps-redirection-settings .cf7apps-app-settings-header__top,
+    .cf7apps-entries-settings .cf7apps-app-settings-header__top,
+    .cf7apps-webhook-settings .cf7apps-app-settings-header__top,
+    .cf7apps-acf-settings .cf7apps-app-settings-header__top,
+    .cf7apps-ai-form-settings .cf7apps-app-settings-header__top,
+    .cf7apps-honeypot-settings .cf7apps-app-settings-header__top,
+    .cf7apps-hcaptcha-settings .cf7apps-app-settings-header__top {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .cf7apps-redirection-settings .cf7apps-app-settings-header__brand,
+    .cf7apps-entries-settings .cf7apps-app-settings-header__brand,
+    .cf7apps-webhook-settings .cf7apps-app-settings-header__brand,
+    .cf7apps-acf-settings .cf7apps-app-settings-header__brand,
+    .cf7apps-ai-form-settings .cf7apps-app-settings-header__brand,
+    .cf7apps-honeypot-settings .cf7apps-app-settings-header__brand,
+    .cf7apps-hcaptcha-settings .cf7apps-app-settings-header__brand {
+        flex: 1 1 auto;
+        width: 100%;
+        max-width: 100%;
+        gap: 12px;
+    }
+
+    .cf7apps-redirection-settings .cf7apps-app-settings-header__icon,
+    .cf7apps-entries-settings .cf7apps-app-settings-header__icon,
+    .cf7apps-webhook-settings .cf7apps-app-settings-header__icon,
+    .cf7apps-acf-settings .cf7apps-app-settings-header__icon,
+    .cf7apps-ai-form-settings .cf7apps-app-settings-header__icon,
+    .cf7apps-honeypot-settings .cf7apps-app-settings-header__icon,
+    .cf7apps-hcaptcha-settings .cf7apps-app-settings-header__icon {
+        width: 48px;
+        height: 48px;
+    }
+
+    .cf7apps-redirection-settings .cf7apps-app-settings-header__title,
+    .cf7apps-entries-settings .cf7apps-app-settings-header__title,
+    .cf7apps-webhook-settings .cf7apps-app-settings-header__title,
+    .cf7apps-acf-settings .cf7apps-app-settings-header__title,
+    .cf7apps-ai-form-settings .cf7apps-app-settings-header__title,
+    .cf7apps-honeypot-settings .cf7apps-app-settings-header__title,
+    .cf7apps-hcaptcha-settings .cf7apps-app-settings-header__title {
+        font-size: 20px;
+        word-break: break-word;
+    }
+
+    .cf7apps-redirection-settings .cf7apps-app-settings-header__back-pill,
+    .cf7apps-entries-settings .cf7apps-app-settings-header__back-pill,
+    .cf7apps-webhook-settings .cf7apps-app-settings-header__back-pill,
+    .cf7apps-acf-settings .cf7apps-app-settings-header__back-pill,
+    .cf7apps-ai-form-settings .cf7apps-app-settings-header__back-pill,
+    .cf7apps-honeypot-settings .cf7apps-app-settings-header__back-pill,
+    .cf7apps-hcaptcha-settings .cf7apps-app-settings-header__back-pill {
+        align-self: flex-start;
+    }
+
+    .cf7apps-redirection-settings .cf7apps-app-setting-section,
+    .cf7apps-entries-settings .cf7apps-app-setting-section,
+    .cf7apps-webhook-settings .cf7apps-app-setting-section,
+    .cf7apps-acf-settings .cf7apps-app-setting-section,
+    .cf7apps-ai-form-settings .cf7apps-app-setting-section,
+    .cf7apps-honeypot-settings .cf7apps-app-setting-section,
+    .cf7apps-hcaptcha-settings .cf7apps-app-setting-section,
+    .cf7apps-redirection-settings .cf7apps-app-settings-form,
+    .cf7apps-entries-settings .cf7apps-app-settings-form,
+    .cf7apps-webhook-settings .cf7apps-app-settings-form,
+    .cf7apps-acf-settings .cf7apps-app-settings-form,
+    .cf7apps-ai-form-settings .cf7apps-app-settings-form,
+    .cf7apps-honeypot-settings .cf7apps-app-settings-form,
+    .cf7apps-hcaptcha-settings .cf7apps-app-settings-form,
+    .cf7apps-redirection-settings .cf7apps-app-settings-form .MuiTabPanel-root,
+    .cf7apps-entries-settings .cf7apps-app-settings-form .MuiTabPanel-root,
+    .cf7apps-webhook-settings .cf7apps-app-settings-form .MuiTabPanel-root,
+    .cf7apps-acf-settings .cf7apps-app-settings-form .MuiTabPanel-root,
+    .cf7apps-ai-form-settings .cf7apps-app-settings-form .MuiTabPanel-root,
+    .cf7apps-honeypot-settings .cf7apps-app-settings-form .MuiTabPanel-root,
+    .cf7apps-hcaptcha-settings .cf7apps-app-settings-form .MuiTabPanel-root,
+    .cf7apps-entries-settings .cf7apps-app-settings-form .cf7apps-app-settings-tabpanel-general,
+    .cf7apps-honeypot-settings .cf7apps-app-settings-form .cf7apps-app-settings-tabpanel-general,
+    .cf7apps-entries-settings .cf7apps-form-toggle-field,
+    .cf7apps-honeypot-settings .cf7apps-form-toggle-field {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .cf7apps-form-input.xs,
+    .cf7apps-form-input.sm,
+    .cf7apps-form-input.lg,
+    .cf7apps-form-input.xl,
+    input.cf7apps-form-input,
+    select.cf7apps-form-input,
+    textarea.cf7apps-form-input {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box;
+    }
+
+    .cf7apps-settings-toggle {
+        width: 100%;
+        gap: 12px;
+    }
+
+    .cf7apps-form-settings-save .cf7apps-btn,
+    .cf7apps-app-settings-save-wrap .cf7apps-btn {
+        width: 100%;
+        max-width: 100%;
+        justify-content: center;
+        white-space: normal;
+    }
+
+    .cf7apps-entries-settings .cf7apps-entries-toolbar,
+    .cf7apps-entries-settings .cf7apps-entries-toolbar.cf7apps-table-nav.cf7apps-nav-header,
+    .cf7apps-entries-settings .cf7apps-entries-toolbar__left,
+    .cf7apps-entries-settings .cf7apps-entries-toolbar__right,
+    .cf7apps-entries-settings .cf7apps-table-nav.cf7apps-nav-footer,
+    .cf7apps-honeypot-settings .cf7apps-table-nav.cf7apps-nav-footer {
+        flex-wrap: wrap;
+        align-items: stretch;
+    }
+
+    .cf7apps-entries-settings .cf7apps-entries-toolbar__left,
+    .cf7apps-entries-settings .cf7apps-entries-toolbar__right {
+        width: 100%;
+        flex: 1 1 100%;
+        justify-content: flex-start;
+    }
+
+    .cf7apps-entries-settings .cf7apps-entries-toolbar__field,
+    .cf7apps-entries-settings .cf7apps-entries-toolbar__apply,
+    .cf7apps-entries-settings .cf7apps-entries-toolbar__clear {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .cf7apps-entries-settings .cf7apps-entries-toolbar select.cf7apps-form-input,
+    .cf7apps-entries-settings .cf7apps-entries-toolbar input.cf7apps-form-input,
+    .cf7apps-entries-settings .cf7apps-entries-toolbar input.cf7apps-app-select-field,
+    .cf7apps-entries-settings .cf7apps-entries-toolbar .cf7apps-app-select-group select.cf7apps-form-input,
+    .cf7apps-entries-settings .cf7apps-entries-toolbar .cf7apps-app-select-group input.cf7apps-app-select-field,
+    .cf7apps-entries-settings .cf7apps-entries-toolbar__field--calendar .cf7apps-calendar-wrapper input.cf7apps-form-input {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+    }
+
+    .cf7apps-entries-settings .cf7apps-entries-toolbar__field .cf7apps-form-group,
+    .cf7apps-entries-settings .cf7apps-entries-toolbar__field .cf7apps-app-select-group,
+    .cf7apps-entries-settings .cf7apps-entries-toolbar__field--calendar .cf7apps-calendar-wrapper {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .cf7apps-template-honeypot-forms,
+    .cf7apps-template-cf7-entries {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .cf7apps-template-honeypot-forms table,
+    .cf7apps-template-cf7-entries table {
+        min-width: 560px;
+    }
+
+    .cf7apps-entries-settings .cf7apps-template-cf7-entries thead th:nth-child(2),
+    .cf7apps-entries-settings .cf7apps-template-cf7-entries tbody td:nth-child(2) {
+        width: auto;
+        min-width: 140px;
+    }
+
+    .cf7apps-webhook-settings .cf7apps-webhook-method-row {
+        flex-direction: column;
+        flex-wrap: wrap;
+    }
+
+    .cf7apps-dashboard-settings .cf7apps-settings-panel {
+        overflow: visible;
+    }
+
+    .cf7apps-popup-content {
+        width: calc(100% - 24px);
+        max-width: 90vw;
+        padding: 16px;
+    }
 }

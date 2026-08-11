@@ -137,6 +137,7 @@ function honeypot4cf7_get_config( $context = false ) {
             'nomessage'							=> $cf7apps_settings['honeypot']['accessibility_label'] == 1 ? array( 'true' ) : array( 'false' ),
             'timecheck_enabled'					=> $cf7apps_settings['honeypot']['enable_time_check'] == 1 ? array( 'true' ) : array( 'false' ),
             'timecheck_value'					=> $cf7apps_settings['honeypot']['time_check'],
+            'silent_spam_response'				=> ! empty( $cf7apps_settings['honeypot']['silent_spam_response'] ) ? 1 : 0,
             'honeypot_count'					=> empty( $cf7apps_settings['honeypot']['honeypot_count'] ) ? 0 : $cf7apps_settings['honeypot']['honeypot_count'],
             'honeypot_install_date'				=> empty( $cf7apps_settings['honeypot']['honeypot_install_date'] ) ? time() : $cf7apps_settings['honeypot']['honeypot_install_date'],
             'honeypot_cf7_req_msg_dismissed'	=> empty( $cf7apps_settings['honeypot']['honeypot_cf7_req_msg_dismissed'] ) ? 0 : $cf7apps_settings['honeypot']['honeypot_cf7_req_msg_dismissed'],
@@ -153,6 +154,7 @@ function honeypot4cf7_get_config( $context = false ) {
             'nomessage'							=> ( 'reset' == $context || empty( $honeypot4cf7_config['nomessage'] ) ) ?  array( 'false' ) : $honeypot4cf7_config['nomessage'],
             'timecheck_enabled'					=> ( 'reset' == $context || empty( $honeypot4cf7_config['timecheck_enabled'] ) ) ?  array( 'false' ) : $honeypot4cf7_config['timecheck_enabled'],
             'timecheck_value'					=> ( 'reset' == $context || empty( $honeypot4cf7_config['timecheck_value'] ) ) ?  4 : $honeypot4cf7_config['timecheck_value'],
+            'silent_spam_response'				=> ( 'reset' == $context || empty( $honeypot4cf7_config['silent_spam_response'] ) ) ? 0 : (int) $honeypot4cf7_config['silent_spam_response'],
             'honeypot_count'					=> ( empty( $honeypot4cf7_config['honeypot_count'] ) ) ? 0 : $honeypot4cf7_config['honeypot_count'],
             'honeypot_install_date'				=> ( empty( $honeypot4cf7_config['honeypot_install_date'] ) ) ? time() : $honeypot4cf7_config['honeypot_install_date'],
             'honeypot_cf7_req_msg_dismissed'	=> ( 'reset' == $context || empty( $honeypot4cf7_config['honeypot_cf7_req_msg_dismissed'] ) ) ? 0 : $honeypot4cf7_config['honeypot_cf7_req_msg_dismissed'],
@@ -252,6 +254,7 @@ function honeypot4cf7_general_tab_content() {
                 'accessibility_label'		=> ( isset( $_POST['honeypot4cf7_nomessage'] ) ) ? 1 : 0,
                 'enable_time_check'			=> ( isset( $_POST['honeypot4cf7_timecheck_enabled'] ) ) ? 1 : 0,
                 'time_check'			    => ( isset( $_POST['honeypot4cf7_timecheck_value'] ) ) ? $_POST['honeypot4cf7_timecheck_value'] : 0,
+                'silent_spam_response'		=> ( isset( $_POST['honeypot4cf7_silent_spam_response'] ) ) ? 1 : 0,
             );
             
             cf7apps_save_app_settings( 'honeypot', $honeypot4cf7_config_update );
@@ -271,6 +274,7 @@ function honeypot4cf7_general_tab_content() {
                 'nomessage'					=> ( isset( $_POST['honeypot4cf7_nomessage'] ) ) ? $_POST['honeypot4cf7_nomessage'] : array( 'false' ),
                 'timecheck_enabled'			=> ( isset( $_POST['honeypot4cf7_timecheck_enabled'] ) ) ? $_POST['honeypot4cf7_timecheck_enabled'] : array( 'false' ),
                 'timecheck_value'			=> ( isset( $_POST['honeypot4cf7_timecheck_value'] ) ) ? $_POST['honeypot4cf7_timecheck_value'] : 0,
+                'silent_spam_response'		=> ( isset( $_POST['honeypot4cf7_silent_spam_response'] ) ) ? 1 : 0,
             );
 
             $honeypot4cf7_config = array_replace( $honeypot4cf7_config, $honeypot4cf7_config_update );
@@ -379,6 +383,18 @@ function honeypot4cf7_general_tab_content() {
                     </tr>
                     <tr valign="top">
                         <td class="description" colspan="2"><?php esc_html_e( 'If enabled, this will perform an additional check for spam bots using the time it takes to submit the form under the idea that bots submit forms faster than people. The value is set to 4 seconds by default, but adjust based on your needs. If you\'re not sure, leave this unchecked.', 'contact-form-7-honeypot' ); ?></td>
+                    </tr>
+
+                    <tr valign="top">
+                        <th><label for="honeypot4cf7__silent_spam_response"><?php esc_html_e( 'Silent Success for Blocked Bots', 'contact-form-7-honeypot' ); ?></label></th>
+                        <td>
+                            <input type="checkbox" name="honeypot4cf7_silent_spam_response" id="honeypot4cf7__silent_spam_response" value="1" <?php checked( ! empty( $honeypot4cf7_config['silent_spam_response'] ), true ); ?>>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <td class="description" colspan="2">
+							<?php esc_html_e( 'When enabled, submissions blocked by the honeypot will receive a normal success response instead of a spam error. No email is sent, but bots are less likely to detect the honeypot. Recommended for high-spam sites. Real users incorrectly blocked will also see a success message.', 'contact-form-7-honeypot' ); ?>
+                        </td>
                     </tr>
                     </tbody>
                 </table>

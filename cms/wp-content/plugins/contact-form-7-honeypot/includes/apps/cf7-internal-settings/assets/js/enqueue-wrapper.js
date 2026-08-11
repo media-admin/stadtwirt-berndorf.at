@@ -22,9 +22,20 @@
         window.addEventListener( 'beforeunload', preventFirstWarning, true );
     } )();
 
-    $( '#contact-form-editor' ).append(
-        `<div id="cf7apps-root" class="cf7apps-internal-settings"></div>`
-    );
+    const $editor = $( '#contact-form-editor' );
+
+    if ( $editor.length && ! $editor.find( '#cf7apps-root' ).length ) {
+        const $layout = $( '<div class="cf7apps-cf7-edit-layout"></div>' );
+
+        $layout.append(
+            '<div id="cf7apps-root" class="cf7apps-internal-settings"></div>'
+        );
+        $layout.append(
+            '<div id="cf7apps-form-promo-root" class="cf7apps-form-promo-root"></div>'
+        );
+
+        $editor.append( $layout );
+    }
 
     if ( '1' === cf7appsWrapperObjects.cf7appsRedirectionEnabled || '1' === cf7appsWrapperObjects.cf7appsWebhookEnabled ) {
         $( '#form-panel' ).css( 'position', 'relative' ).append(

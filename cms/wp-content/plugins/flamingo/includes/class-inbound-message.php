@@ -31,8 +31,30 @@ class Flamingo_Inbound_Message {
 				'name' => __( 'Flamingo Inbound Messages', 'flamingo' ),
 				'singular_name' => __( 'Flamingo Inbound Message', 'flamingo' ),
 			),
+			'public' => false,
+			'show_in_rest' => false,
 			'rewrite' => false,
 			'query_var' => false,
+			'capability_type' => array(
+			    'flamingo_edit_options',
+				'flamingo_edit_options',
+			),
+			'capabilities' => array(
+          		'edit_post' => 'flamingo_edit_inbound_message',
+          		'read_post' => 'flamingo_edit_inbound_message',
+          		'delete_post' => 'flamingo_delete_inbound_message',
+          		'edit_posts' => 'flamingo_edit_inbound_messages',
+          		'edit_others_posts' => 'flamingo_edit_inbound_messages',
+          		'delete_posts' => 'flamingo_delete_inbound_messages',
+          		'publish_posts' => 'flamingo_edit_inbound_messages',
+          		'read_private_posts' => 'flamingo_edit_inbound_messages',
+          		'read' => 'flamingo_edit_inbound_messages',
+          		'delete_private_posts' => 'flamingo_delete_inbound_messages',
+          		'delete_published_posts' => 'flamingo_delete_inbound_messages',
+          		'delete_others_posts' => 'flamingo_delete_inbound_messages',
+          		'edit_private_posts' => 'flamingo_edit_inbound_messages',
+          		'edit_published_posts' => 'flamingo_edit_inbound_messages',
+			),
 		) );
 
 		register_post_status( self::spam_status, array(
@@ -49,9 +71,16 @@ class Flamingo_Inbound_Message {
 				'singular_name' => __( 'Flamingo Inbound Message Channel', 'flamingo' ),
 			),
 			'public' => false,
+			'show_in_rest' => false,
 			'hierarchical' => true,
 			'rewrite' => false,
 			'query_var' => false,
+			'capabilities' => array(
+				'manage_terms' => 'flamingo_edit_options',
+				'edit_terms' => 'flamingo_edit_options',
+				'delete_terms' => 'flamingo_edit_options',
+				'assign_terms' => 'flamingo_edit_options',
+			),
 		) );
 	}
 

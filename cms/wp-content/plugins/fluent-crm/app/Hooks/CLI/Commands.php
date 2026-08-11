@@ -77,8 +77,13 @@ class Commands
         $contactStatus = \WP_CLI\Utils\get_flag_value($assoc_args, 'contact_status', 'subscribed');
         $fire_event = \WP_CLI\Utils\get_flag_value($assoc_args, 'event', 'no');
 
-        if (!in_array($contactStatus, ['pending', 'subscribed'])) {
-            \WP_CLI::error('Possible contact_status value: pending|subscribed');
+        // Allow the same statuses the admin import UI offers (subscribed, pending,
+        // unsubscribed, transactional) so CLI imports match admin behavior. Sourced
+        // from the shared helper so it stays in sync if editable statuses change.
+        $editableStatuses = fluentcrm_subscriber_editable_statuses();
+
+        if (!in_array($contactStatus, $editableStatuses)) {
+            \WP_CLI::error('Possible contact_status value: ' . implode('|', $editableStatuses));
         }
 
         $formattedTags = [];
@@ -297,8 +302,13 @@ class Commands
         $contactStatus = \WP_CLI\Utils\get_flag_value($assoc_args, 'contact_status', 'subscribed');
         $fire_event = \WP_CLI\Utils\get_flag_value($assoc_args, 'event', 'no');
 
-        if (!in_array($contactStatus, ['pending', 'subscribed'])) {
-            \WP_CLI::error('Possible contact_status value: pending|subscribed');
+        // Allow the same statuses the admin import UI offers (subscribed, pending,
+        // unsubscribed, transactional) so CLI imports match admin behavior. Sourced
+        // from the shared helper so it stays in sync if editable statuses change.
+        $editableStatuses = fluentcrm_subscriber_editable_statuses();
+
+        if (!in_array($contactStatus, $editableStatuses)) {
+            \WP_CLI::error('Possible contact_status value: ' . implode('|', $editableStatuses));
         }
 
         $formattedTags = [];
@@ -517,8 +527,13 @@ class Commands
         $contactStatus = \WP_CLI\Utils\get_flag_value($assoc_args, 'contact_status', 'subscribed');
         $fire_event = \WP_CLI\Utils\get_flag_value($assoc_args, 'event', 'no');
 
-        if (!in_array($contactStatus, ['pending', 'subscribed'])) {
-            \WP_CLI::error('Possible contact_status value: pending|subscribed');
+        // Allow the same statuses the admin import UI offers (subscribed, pending,
+        // unsubscribed, transactional) so CLI imports match admin behavior. Sourced
+        // from the shared helper so it stays in sync if editable statuses change.
+        $editableStatuses = fluentcrm_subscriber_editable_statuses();
+
+        if (!in_array($contactStatus, $editableStatuses)) {
+            \WP_CLI::error('Possible contact_status value: ' . implode('|', $editableStatuses));
         }
 
         $formattedTags = [];
@@ -1059,7 +1074,24 @@ class Commands
      * enabled — it is a parallel sender and shares the cross-process rate budget
      * that only exists in multi-thread mode. No-ops when the flag is off.
      * basic usage: wp fluent_crm cli_send
-     * advanced usage: wp fluent_crm cli_send --force=yes --option_key=fluentcrm_is_sending_cli_emails --run_time=50 --offset=200 --min_pending=300 --silent=yes
+     * advanced usage: wp fluent_crm cli_send --force=yes --option_key=fluentcrm_is_sending_cli_emails --run_time=50 --min_pending=300 --modulo=2 --remainder=0 --silent=yes
+     *
+     * Partitioning: each worker claims rows where (id % modulo) = remainder.
+     * Default 2/0 = even ids; the multi-thread web worker always claims odd
+     * ids (id % 2 = 1). CLI workers must therefore partition WITHIN the even
+     * space: for N parallel CLI workers use --modulo=2N with a distinct EVEN
+     * --remainder each (N=2 -> 4/0 and 4/2; N=3 -> 6/0, 6/2, 6/4), plus a
+     * distinct --option_key per worker. An odd modulo overlaps the web
+     * worker's odd-id partition and re-creates the claim contention this
+     * scheme exists to avoid. A lone CLI worker on an install where the web
+     * multi-thread sender is not actually running can pass --modulo=1 to
+     * claim the whole queue. --modulo is capped at 100 (claims scan ~modulo ×
+     * chunk index entries, so an absurd value would make every claim a huge
+     * locking scan). The old --offset flag is deprecated and ignored.
+     *
+     * Custom --option_key values are auto-prefixed with fluentcrm_is_sending_
+     * so the stale-reset defer can discover the worker's lock; dead custom
+     * lock rows are swept automatically at the start of each CLI run.
      */
     public function cli_send($args, $assoc_args)
     {
@@ -1089,11 +1121,19 @@ class Commands
             \WP_CLI::halt(1);
         }
 
-        $pendingEmails = Helper::getUpcomingEmailCount();
+        // Start/continue hysteresis: the command only STARTS when a real
+        // backlog exists (500+, or --min_pending when set higher), then the
+        // handler keeps sending until fewer than --min_pending (default 300)
+        // remain — so a run drains below its own start gate instead of
+        // thrashing on the boundary.
+        $minPending = (int)\WP_CLI\Utils\get_flag_value($assoc_args, 'min_pending', 300);
+        $startGate = max(500, $minPending);
 
-        if ($pendingEmails < 500) {
+        $pendingEmails = Helper::getUpcomingEmailCount($startGate);
+
+        if ($pendingEmails < $startGate) {
             if ($showLogs) {
-                \WP_CLI::error('Pending Emails must need be atleast 500. Currently you have ' . $pendingEmails);
+                \WP_CLI::error('Pending Emails must need be atleast ' . $startGate . '. Currently you have ' . $pendingEmails);
             }
             return;
         }
@@ -1107,11 +1147,39 @@ class Commands
         }
 
         $optionKey = \WP_CLI\Utils\get_flag_value($assoc_args, 'option_key', 'fluentcrm_is_sending_cli_emails');
-        $runTime = \WP_CLI\Utils\get_flag_value($assoc_args, 'run_time', 50);
-        $offset = \WP_CLI\Utils\get_flag_value($assoc_args, 'offset', 200);
-        $minPending = \WP_CLI\Utils\get_flag_value($assoc_args, 'min_pending', 300);
 
-        $handler = new CliSendingHandler($optionKey, $runTime, $offset, $minPending);
+        // Normalize custom keys onto the shared sender-lock prefix: the
+        // stale-reset defer discovers live sender locks by this prefix, and an
+        // unprefixed key would be invisible to it — its claimed rows could be
+        // reset mid-batch during a long rate-limit wait. The check includes
+        // the trailing underscore so near-prefix keys (fluentcrm_is_sendingX)
+        // can't hide from that discovery or from the stale-row cleanup.
+        if (strpos($optionKey, 'fluentcrm_is_sending_') !== 0) {
+            $optionKey = 'fluentcrm_is_sending_' . sanitize_key($optionKey);
+        }
+        $runTime = \WP_CLI\Utils\get_flag_value($assoc_args, 'run_time', 50);
+
+        $modulo = max(1, (int)\WP_CLI\Utils\get_flag_value($assoc_args, 'modulo', 2));
+        if ($modulo > CliSendingHandler::MAX_MODULO) {
+            if ($showLogs) {
+                \WP_CLI::warning(sprintf(
+                    '--modulo=%d exceeds the supported maximum; clamped to %d (see CliSendingHandler::MAX_MODULO).',
+                    $modulo,
+                    CliSendingHandler::MAX_MODULO
+                ));
+            }
+            $modulo = CliSendingHandler::MAX_MODULO;
+        }
+        $remainder = (int)\WP_CLI\Utils\get_flag_value($assoc_args, 'remainder', 0);
+        if ($remainder < 0 || $remainder >= $modulo) {
+            $remainder = 0;
+        }
+
+        if (\WP_CLI\Utils\get_flag_value($assoc_args, 'offset', null) !== null && $showLogs) {
+            \WP_CLI::warning('--offset is deprecated and ignored; use --modulo/--remainder partitioning instead.');
+        }
+
+        $handler = new CliSendingHandler($optionKey, $runTime, 0, $minPending, $modulo, $remainder);
 
         $result = $handler->handle();
 

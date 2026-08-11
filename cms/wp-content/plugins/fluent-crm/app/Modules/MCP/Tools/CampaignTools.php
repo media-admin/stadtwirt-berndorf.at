@@ -52,7 +52,11 @@ class CampaignTools
         }
         $sortType = strtoupper(sanitize_text_field((string) ($params['sort_type'] ?? 'DESC')));
         $sortType = in_array($sortType, ['ASC', 'DESC'], true) ? $sortType : 'DESC';
-        $includeStats = !isset($params['include_stats']) ? true : (bool) $params['include_stats'];
+        // Stats add several aggregate queries per campaign. Keep title/status
+        // scans cheap by default; callers that need engagement data opt in.
+        $includeStats = array_key_exists('include_stats', $params)
+            ? (bool) $params['include_stats']
+            : false;
         // One-off sends (created by send-email-to-contact) live in
         // fc_campaigns with type='custom_email_campaign'. The Campaign
         // model's global scope hides them by default; let agents opt in
@@ -114,17 +118,29 @@ class CampaignTools
             return MCPHelper::error('not_found', __('Campaign not found', 'fluent-crm'), ['campaign_id' => $campaignId]);
         }
 
+        // Resolve body_format before the type branch so one-off emails honor
+        // it too (the early return used to skip it). text|html|both — default
+        // both for backward compatibility. Default resolved before the enum
+        // test so an omitted key doesn't warn (see ContactTools::getContact).
+        $bodyFormat = $params['body_format'] ?? 'both';
+        if (!in_array($bodyFormat, ['text', 'html', 'both'], true)) {
+            $bodyFormat = 'both';
+        }
+
         if ($campaign->type === 'custom_email_campaign') {
-            return self::formatOneOffEmail($campaign);
+            return self::formatOneOffEmail($campaign, $bodyFormat);
         }
 
         $defaultIncludes = ['stats'];
-        $include = isset($params['include']) && is_array($params['include']) && $params['include']
-            ? array_values(array_intersect($params['include'], ['stats', 'subjects', 'link_report', 'recipients_estimate']))
-            : $defaultIncludes;
+        // array_key_exists: omitted => defaults, [] => none, explicit => those.
+        if (array_key_exists('include', $params) && is_array($params['include'])) {
+            $include = array_values(array_intersect($params['include'], ['stats', 'subjects', 'link_report', 'recipients_estimate']));
+        } else {
+            $include = $defaultIncludes;
+        }
 
         $body = (string) $campaign->email_body;
-        $bodyShape = MCPHelper::dualBodyShape($body);
+        $bodyShape = MCPHelper::dualBodyShape($body, $bodyFormat);
 
         $settings = is_array($campaign->settings) ? $campaign->settings : (array) $campaign->settings;
 
@@ -142,22 +158,23 @@ class CampaignTools
             ? MCPHelper::toIso8601($campaign->updated_at)
             : null;
 
-        $data = [
+        // Merge $bodyShape in the middle so an unrequested body key is omitted
+        // entirely (not emitted as null) when body_format narrows the output.
+        $data = array_merge([
             'id'                => (int) $campaign->id,
             'title'             => $campaign->title,
             'email_subject'     => $campaign->email_subject,
             'email_pre_header'  => $campaign->email_pre_header,
             'status'            => $campaign->status,
             'design_template'   => $campaign->design_template,
-            'body_html'         => $bodyShape['body_html'],
-            'body_text'         => $bodyShape['body_text'],
+        ], $bodyShape, [
             'settings'          => self::settingsForOutput($settings),
             'recipients'        => $recipients,
             'scheduled_at'      => MCPHelper::toIso8601($campaign->scheduled_at),
             'scheduled_at_resolved' => MCPHelper::formatScheduledAtDual($campaign->scheduled_at),
             'sent_at'           => $sentAt,
             'created_at'        => MCPHelper::toIso8601($campaign->created_at),
-        ];
+        ]);
 
         if (in_array('stats', $include, true)) {
             $data['stats'] = MCPHelper::campaignStatsCompact($campaign);
@@ -181,16 +198,19 @@ class CampaignTools
 
     /**
      * Render a one-off send (`type=custom_email_campaign`) for get-campaign.
-     * One-offs don't have a marketing lifecycle — the row's `status` column
-     * stays 'draft' even after delivery (the real status lives on the
-     * single fc_campaign_emails row). Surface a `one_off_status` field
-     * that reflects what actually happened, plus the recipient. Operator-
-     * test report 2026-05-07 #4.
+     * One-offs don't have a marketing lifecycle — the row's `status` column is
+     * written once at creation ('published') and never advances, so it says
+     * nothing about delivery. The real status lives on the single
+     * fc_campaign_emails row, so surface it as `one_off_status` along with the
+     * recipient. Operator-test report 2026-05-07 #4.
+     *
+     * Note: rows created before the status fix carry 'draft'. Nothing here
+     * reads $campaign->status, so those keep rendering correctly.
      */
-    private static function formatOneOffEmail($campaign)
+    private static function formatOneOffEmail($campaign, $bodyFormat = 'both')
     {
         $body      = (string) $campaign->email_body;
-        $bodyShape = MCPHelper::dualBodyShape($body);
+        $bodyShape = MCPHelper::dualBodyShape($body, $bodyFormat);
 
         // The one and only campaign-email row for this send.
         $email = \FluentCrm\App\Models\CampaignEmail::withoutGlobalScope('type')
@@ -203,36 +223,47 @@ class CampaignTools
             ? MCPHelper::toIso8601($email->updated_at)
             : null;
 
+        // The recipient block is contact PII and this tool is gated on
+        // `fcrm_read_emails` alone, so an email-only manager must not read
+        // identities out of it — same boundary render-email-preview enforces by
+        // demanding both caps. Skip the lookup entirely when unauthorized (one
+        // less query) and still confirm that a recipient exists. PR #2026
+        // review finding 2.
+        $canReadContacts = \FluentCrm\App\Services\PermissionManager::currentUserCan('fcrm_read_contacts');
+
         $recipient = null;
         if ($email && $email->subscriber_id) {
-            $sub = \FluentCrm\App\Models\Subscriber::find($email->subscriber_id);
-            if ($sub) {
-                $recipient = [
-                    'id'    => (int) $sub->id,
-                    'email' => $sub->email,
-                    'full_name' => trim((string) $sub->full_name),
-                ];
+            if (!$canReadContacts) {
+                $recipient = ['note' => __('Recipient hidden — requires contact read permission.', 'fluent-crm')];
+            } else {
+                $sub = \FluentCrm\App\Models\Subscriber::find($email->subscriber_id);
+                if ($sub) {
+                    $recipient = [
+                        'id'    => (int) $sub->id,
+                        'email' => $sub->email,
+                        'full_name' => trim((string) $sub->full_name),
+                    ];
+                }
             }
         }
 
         $settings = is_array($campaign->settings) ? $campaign->settings : (array) $campaign->settings;
 
-        return [
+        return array_merge([
             'id'                => (int) $campaign->id,
             'kind'              => 'one_off_email',
-            'title'             => $campaign->title,
+            'title'             => MCPHelper::oneOffTitleForOutput($campaign->title),
             'email_subject'     => $campaign->email_subject,
             'email_pre_header'  => $campaign->email_pre_header,
             'one_off_status'    => $oneOffStatus,
             'design_template'   => $campaign->design_template,
-            'body_html'         => $bodyShape['body_html'],
-            'body_text'         => $bodyShape['body_text'],
+        ], $bodyShape, [
             'settings'          => self::settingsForOutput($settings),
             'recipient'         => $recipient,
             'sent_at'           => $sentAt,
             'created_at'        => MCPHelper::toIso8601($campaign->created_at),
             'note'              => __('This is a one-off send (not a marketing campaign). It supports change-campaign-status action=delete only — schedule/pause/resume/duplicate are not applicable.', 'fluent-crm'),
-        ];
+        ]);
     }
 
     /**
@@ -474,6 +505,15 @@ class CampaignTools
             return $validation;
         }
 
+        // TRC-006: validate + sanitize the settings closed shapes BEFORE the
+        // draft is created, then merge the sanitized value (not raw params)
+        // below. A late settings failure must not leave an orphan draft.
+        $sanitizedSettings = MCPHelper::sanitizeSettingsShape($params['settings'] ?? null);
+        if (is_wp_error($sanitizedSettings)) {
+            return $sanitizedSettings;
+        }
+        $params['settings'] = $sanitizedSettings;
+
         $titleConflictWarning = null;
         if ($isNew) {
             // Title uniqueness: by default we auto-suffix on conflict so
@@ -527,10 +567,21 @@ class CampaignTools
             $updateData['design_template'] = sanitize_key((string) $updateData['design_template']);
         }
 
+        // Shared allowlist with send-email-to-contact — unknown utm keys were
+        // already rejected in validateUpsertInput(); this no longer loops
+        // arbitrary keys into utm_<anything> columns (TRC-006 gate 4).
         if (!empty($params['utm']) && is_array($params['utm'])) {
-            foreach ($params['utm'] as $key => $value) {
-                $col = 'utm_' . sanitize_key($key);
-                $updateData[$col] = sanitize_text_field((string) $value);
+            $utm = $params['utm'];
+            if (array_key_exists('status', $utm)) {
+                $updateData['utm_status'] = !empty($utm['status']) ? 1 : 0;
+            }
+            foreach (MCPHelper::utmAllowedKeys() as $key) {
+                if ($key === 'status') {
+                    continue;
+                }
+                if (isset($utm[$key])) {
+                    $updateData['utm_' . $key] = sanitize_text_field((string) $utm[$key]);
+                }
             }
         }
 
@@ -657,6 +708,15 @@ class CampaignTools
             }
         }
 
+        // A present-but-non-object recipients/exclude would slip past the
+        // is_array guards below and be silently ignored — hard-error instead
+        // (direct REST callers bypass the adapter type check).
+        foreach (['recipients', 'exclude_recipients'] as $rk) {
+            if (array_key_exists($rk, $params) && $params[$rk] !== null && !is_array($params[$rk])) {
+                return MCPHelper::invalidTypeError($rk, 'an object');
+            }
+        }
+
         if (!empty($params['recipients']) && is_array($params['recipients'])) {
             $reject = self::rejectUnsupportedRecipientKeys($params['recipients'], 'recipients');
             if (is_wp_error($reject)) {
@@ -669,6 +729,39 @@ class CampaignTools
             if (is_wp_error($reject)) {
                 return $reject;
             }
+        }
+
+        // The `settings` passthrough is deliberately extensible and is merged
+        // with array_replace_recursive, so audience-targeting keys smuggled
+        // through it would bypass EVERY recipient check above — the rejection
+        // of unsupported `recipients` keys, and filterToCampaignSegment()'s
+        // id-resolution. Verified: settings={sending_filter:'dynamic_segment',
+        // dynamic_segment:{id:99}} persisted verbatim and flipped the campaign's
+        // targeting mode to a segment MCP never validated; settings.subscribers
+        // writes the recipient list raw when no `recipients` param is present.
+        // Same blast radius as the round-4 P0 audience-inflation bug, so these
+        // keys are refused wherever they appear.
+        if (!empty($params['settings']) && is_array($params['settings'])) {
+            $targeting = ['subscribers', 'excludedSubscribers', 'sending_filter', 'dynamic_segment', 'advanced_filters'];
+            $smuggled  = array_values(array_intersect(array_keys($params['settings']), $targeting));
+            if ($smuggled) {
+                return MCPHelper::error('invalid_param', sprintf(
+                    /* translators: %s: comma-separated rejected setting keys */
+                    __('settings may not carry audience-targeting keys: %s. Recipients are set through the `recipients` / `exclude_recipients` parameters (tags + lists only) so they can be validated; writing them through settings would skip that entirely. To target a status/engagement/contact-type segment, apply a temporary tag via apply-segments-to-contacts (dry_run first), use that tag in recipients, then remove it after the send.', 'fluent-crm'),
+                    implode(', ', $smuggled)
+                ), [
+                    'rejected_setting_keys' => $smuggled,
+                    'use_instead'           => ['recipients', 'exclude_recipients'],
+                ]);
+            }
+        }
+
+        // TRC-006: reject unknown/mistyped utm keys before any write. settings
+        // are validated + sanitized in upsertCampaign so the sanitized value is
+        // what gets merged (not the raw params).
+        $utmError = MCPHelper::validateUtm($params);
+        if (is_wp_error($utmError)) {
+            return $utmError;
         }
 
         return true;
@@ -686,13 +779,18 @@ class CampaignTools
      * Round-4 review P0 #1 — single most damaging bug, 3.5x audience
      * inflation in one test.
      *
+     * `sending_filter` is NOT in the supported set either: filterToCampaignSegment()
+     * only reads tags + lists, so accepting it would have been the same silent
+     * drop this method exists to prevent. Campaign targeting through MCP is
+     * list/tag only by design.
+     *
      * @param array  $recipients
      * @param string $paramName Either 'recipients' or 'exclude_recipients'
      * @return true|\WP_Error
      */
     private static function rejectUnsupportedRecipientKeys($recipients, $paramName)
     {
-        $supported = ['lists', 'tags', 'sending_filter'];
+        $supported = ['lists', 'tags'];
         $unsupported = array_values(array_diff(array_keys($recipients), $supported));
         if (!empty($unsupported)) {
             return MCPHelper::error('invalid_param', sprintf(
@@ -703,7 +801,13 @@ class CampaignTools
             ), [
                 'unsupported_keys' => $unsupported,
                 'supported_keys'   => $supported,
-                'workaround'       => '1) apply-segments-to-contacts(filter={...}, add_tags=["temp-X"], dry_run=true); 2) re-run without dry_run; 3) upsert-campaign(recipients={tags:["temp-X"]}); 4) after change-campaign-status(action=schedule), apply-segments-to-contacts(filter={tags:["temp-X"]}, remove_tags=["temp-X"]); 5) manage-tag(action=delete, tag_id=X)',
+                // Step 4 is deliberately gated on the SEND finishing, not on
+                // scheduling. change-campaign-status(action=schedule) only
+                // records the intent — recipients are materialized later by the
+                // cron processor, so detaching the tag right after scheduling
+                // shrinks the audience before it has been computed and the
+                // campaign goes out to a fraction of the intended list.
+                'workaround'       => '1) apply-segments-to-contacts(filter={...}, add_tags=["temp-X"], dry_run=true); 2) re-run without dry_run; 3) upsert-campaign(recipients={tags:["temp-X"]}); 4) change-campaign-status(action=schedule), then WAIT until get-campaign reports status=archived (recipients are materialized by the cron processor after scheduling — removing the tag before that shrinks the audience mid-send); 5) apply-segments-to-contacts(filter={tags:["temp-X"]}, remove_tags=["temp-X"]); 6) manage-tag(action=delete, tag_id=X)',
             ]);
         }
         return true;

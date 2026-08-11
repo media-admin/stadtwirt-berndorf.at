@@ -1240,74 +1240,128 @@ class ReportHelper
         return ['dates' => $dates, 'labels' => $labels];
     }
     
-    public static function getPaymentsByType($startDate, $endDate, $type, $formId = 0)
+    /**
+     * All payment figures in ONE transaction scan, keyed 'onetime' / 'subscription'
+     * / 'all' (disabled module → each empty []). 'all' counts every transaction type
+     * with no filter, preserving getPaymentsByType()'s legacy no-type-filter contract.
+     * Each block keeps getPaymentsByType()'s shape — blended per-status totals for the
+     * admin consumer — plus a by_currency split for callers that must not blend
+     * currencies (MCP). One scan so consumers needing both types don't pay for two.
+     */
+    public static function getPaymentBreakdown($startDate, $endDate, $formId = 0)
     {
         $paymentSettings = get_option('__fluentform_payment_module_settings');
         if (!$paymentSettings || !Arr::isTrue($paymentSettings, 'status')) {
-            return []; // Return empty if payment module is disabled
+            return ['onetime' => [], 'subscription' => [], 'all' => []];
         }
         list($startDate, $endDate) = self::processDateRange($startDate, $endDate);
-        
-        // Base query for transactions
+
         $query = \FluentForm\App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate]);
-        
-        // Filter by transaction type if specified
-        if ($type === 'subscription') {
-            $query->whereIn('transaction_type', ['subscription', 'subscription_signup_fee']);
-        } elseif ($type === 'onetime') {
-            $query->where('transaction_type', 'onetime');
-        }
-        
         self::scopeQueryToAllowedForms($query, $formId);
-        
-        // Get payments grouped by status
-        $payments = $query->select('status')
+        $payments = $query->select('transaction_type', 'status', 'currency')
             ->selectRaw('SUM(payment_total) as total_amount')
             ->selectRaw('COUNT(*) as count')
-            ->groupBy('status')
+            ->groupBy('transaction_type', 'status', 'currency')
             ->get();
-        
-        // Get the total payment amount
-        $totalAmount = 0;
-        foreach ($payments as $payment) {
-            $totalAmount += $payment->total_amount;
-        }
-        
-        $formattedData = [];
-        foreach ($payments as $payment) {
-            $status = strtolower($payment->status);
-            $amount = $payment->total_amount / 100; // Convert from cents to dollars
-            $percentage = $totalAmount > 0 ? round(($payment->total_amount / $totalAmount) * 100, 2) : 0;
-            
-            $formattedData[$status] = [
-                'amount' => $amount,
-                'percentage' => $percentage,
-                'count' => $payment->count
-            ];
-        }
-        
-        // Calculate weekly average paid amount
+
         $daysInRange = self::getDateDifference($startDate, $endDate);
         $weeksInRange = max(1, round($daysInRange / 7, 1));
-        
+        $currencySign = Arr::get(PaymentHelper::getCurrencyConfig($formId), 'currency_sign', '$');
+        $defaultCurrency = strtoupper((string) Arr::get(PaymentHelper::getCurrencyConfig($formId), 'currency', 'USD'));
+
+        $blended     = ['onetime' => [], 'subscription' => [], 'all' => []];
+        $perCurrency = ['onetime' => [], 'subscription' => [], 'all' => []];
+        foreach ($payments as $payment) {
+            $status = strtolower((string) $payment->status);
+            $cents  = (int) $payment->total_amount;
+            $count  = (int) $payment->count;
+            $currency = strtoupper(trim((string) $payment->currency));
+            if ('' === $currency) {
+                $currency = $defaultCurrency;
+            }
+
+            self::addPaymentRow($blended['all'], $perCurrency['all'], $status, $currency, $cents, $count);
+
+            if ('onetime' === $payment->transaction_type) {
+                $type = 'onetime';
+            } elseif (in_array($payment->transaction_type, ['subscription', 'subscription_signup_fee'], true)) {
+                $type = 'subscription';
+            } else {
+                continue;
+            }
+            self::addPaymentRow($blended[$type], $perCurrency[$type], $status, $currency, $cents, $count);
+        }
+
+        $out = [];
+        foreach (['onetime', 'subscription', 'all'] as $type) {
+            $byCurrency = [];
+            foreach ($perCurrency[$type] as $currency => $statuses) {
+                $symbol = html_entity_decode(PaymentHelper::getCurrencySymbol($currency), ENT_QUOTES);
+                $byCurrency[$currency] = self::formatPaymentStatuses($statuses, $weeksInRange, $symbol);
+            }
+            $block = self::formatPaymentStatuses($blended[$type], $weeksInRange, $currencySign);
+            $block['by_currency'] = $byCurrency;
+            $out[$type] = $block;
+        }
+
+        return $out;
+    }
+
+    private static function addPaymentRow(array &$blended, array &$perCurrency, $status, $currency, $cents, $count)
+    {
+        if (!isset($blended[$status])) {
+            $blended[$status] = ['amount' => 0, 'count' => 0];
+        }
+        $blended[$status]['amount'] += $cents;
+        $blended[$status]['count']  += $count;
+
+        if (!isset($perCurrency[$currency][$status])) {
+            $perCurrency[$currency][$status] = ['amount' => 0, 'count' => 0];
+        }
+        $perCurrency[$currency][$status]['amount'] += $cents;
+        $perCurrency[$currency][$status]['count']  += $count;
+    }
+
+    public static function getPaymentsByType($startDate, $endDate, $type, $formId = 0)
+    {
+        return Arr::get(self::getPaymentBreakdown($startDate, $endDate, $formId), $type, []);
+    }
+
+    /**
+     * Shape a status => ['amount' => cents, 'count' => int] map into the payment
+     * block used by both the admin Reports payment overview and MCP: whole-unit
+     * amounts (cents ÷ 100), per-status share of the block total, integer counts,
+     * and the paid weekly average. One formatter so the two callers can never drift.
+     */
+    private static function formatPaymentStatuses(array $statuses, $weeksInRange, $currencySymbol)
+    {
+        $totalCents = 0;
+        foreach ($statuses as $bucket) {
+            $totalCents += $bucket['amount'];
+        }
+
+        $formatted = [];
         $paidAmount = 0;
-        foreach ($formattedData as $status => $data) {
-            if ($status === 'paid') {
-                $paidAmount = $data['amount'];
-                break;
+        foreach ($statuses as $status => $bucket) {
+            $amount = $bucket['amount'] / 100; // Convert from cents to dollars
+            $formatted[$status] = [
+                'amount'     => $amount,
+                'percentage' => $totalCents > 0 ? round(($bucket['amount'] / $totalCents) * 100, 2) : 0,
+                'count'      => (int) $bucket['count'],
+            ];
+            if ('paid' === $status) {
+                $paidAmount = $amount;
             }
         }
-        
-        $weeklyAverage = $paidAmount / $weeksInRange;
-        
+
         return [
-            'currency_symbol' => Arr::get(PaymentHelper::getCurrencyConfig($formId), 'currency_sign', '$'),
-            'payment_statuses' => $formattedData,
-            'total_amount'     => $totalAmount / 100, // Convert from cents to dollars
-            'weekly_average'   => round($weeklyAverage, 2)
+            'currency_symbol'  => $currencySymbol,
+            'payment_statuses' => $formatted,
+            'total_amount'     => $totalCents / 100, // Convert from cents to dollars
+            'weekly_average'   => round($paidAmount / $weeksInRange, 2),
         ];
     }
-    
+
     /**
      * Format payment method name for display
      */

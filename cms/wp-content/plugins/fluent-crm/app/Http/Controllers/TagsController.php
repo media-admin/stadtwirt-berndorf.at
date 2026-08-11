@@ -35,8 +35,34 @@ class TagsController extends Controller
             ->paginate();
 
         if (!$request->get('exclude_counts')) {
+            // One grouped pivot-join count for the whole page instead of a
+            // JOIN + COUNT query per tag.
+            $tagIds = [];
             foreach ($tags as $tag) {
-                $tag->subscribersCount = $tag->countByStatus('subscribed');
+                $tagIds[] = $tag->id;
+            }
+
+            $counts = [];
+            if ($tagIds) {
+                $countRows = fluentCrmDb()->table('fc_subscriber_pivot')
+                    ->where('fc_subscriber_pivot.object_type', 'FluentCrm\App\Models\Tag')
+                    ->whereIn('fc_subscriber_pivot.object_id', $tagIds)
+                    ->join('fc_subscribers', 'fc_subscribers.id', '=', 'fc_subscriber_pivot.subscriber_id')
+                    ->where('fc_subscribers.status', 'subscribed')
+                    ->groupBy('fc_subscriber_pivot.object_id')
+                    ->select([
+                        'fc_subscriber_pivot.object_id',
+                        fluentCrmDb()->raw('COUNT(*) as total')
+                    ])
+                    ->get();
+
+                foreach ($countRows as $countRow) {
+                    $counts[$countRow->object_id] = (int)$countRow->total;
+                }
+            }
+
+            foreach ($tags as $tag) {
+                $tag->subscribersCount = isset($counts[$tag->id]) ? $counts[$tag->id] : 0;
             }
         }
 

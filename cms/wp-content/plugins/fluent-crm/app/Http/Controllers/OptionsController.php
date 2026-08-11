@@ -578,7 +578,9 @@ class OptionsController extends Controller
 
             $items = $objectModel
                 ->when($search, function ($query) use ($search) {
-                    return $query->where('title', 'LIKE', "%$search%");
+                    // Escape LIKE wildcards (%, _) so the term matches literally.
+                    global $wpdb;
+                    return $query->where('title', 'LIKE', '%' . $wpdb->esc_like($search) . '%');
                 })
                 ->limit(20)
                 ->orderBy('id', 'DESC')

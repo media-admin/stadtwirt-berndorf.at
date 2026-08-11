@@ -36,9 +36,6 @@ class FunnelController extends Controller
 {
     public function funnels(Request $request)
     {
-
-        $this->maybeMigrateDB();
-
         $orderBy = $request->getSafe('sort_by', 'sanitize_sql_orderby', 'id');
         $orderType = $request->getSafe('sort_type', 'sanitize_sql_orderby', 'DESC');
 
@@ -105,12 +102,12 @@ class FunnelController extends Controller
         $funnelIds = $funnels->pluck('id')->toArray();
         $inProgressCounts = $this->getInProgressSubscriberCounts($funnelIds);
 
-        // Batch fetch descriptions from fc_meta
-        $descriptions = Meta::whereIn('object_id', $funnelIds)
+        // Batch fetch descriptions + sticky notes from fc_meta in a single pass
+        $funnelMeta = Meta::whereIn('object_id', $funnelIds)
             ->where('object_type', 'FluentCrm\App\Models\Funnel')
-            ->where('key', 'description')
+            ->whereIn('key', ['description', FunnelHelper::STICKY_NOTE_META_KEY])
             ->get()
-            ->keyBy('object_id');
+            ->groupBy('object_id');
 
         // Batch fetch labels via term_relations + labels
         $termRelations = TermRelation::whereIn('object_id', $funnelIds)
@@ -124,8 +121,24 @@ class FunnelController extends Controller
         foreach ($funnels as $funnel) {
             $funnel->in_progress_subscribers_count = $inProgressCounts[(int) $funnel->id] ?? 0;
 
-            $meta = $descriptions[$funnel->id] ?? null;
-            $funnel->description = $meta ? $meta->value : '';
+            $funnel->description = '';
+            // A short preview, not the full note: the list shows it inline, and notes can
+            // run to 2000 chars which would bloat every page of this response.
+            $funnel->sticky_note = null;
+            foreach ($funnelMeta[$funnel->id] ?? [] as $meta) {
+                if ($meta->key === FunnelHelper::STICKY_NOTE_META_KEY) {
+                    $content = is_string($meta->value) ? $meta->value : Arr::get((array)$meta->value, 'content');
+                    if (!empty($content)) {
+                        $preview = mb_substr($content, 0, 300);
+                        $funnel->sticky_note = [
+                            'preview'      => $preview,
+                            'is_truncated' => $preview !== $content
+                        ];
+                    }
+                } else {
+                    $funnel->description = $meta->value;
+                }
+            }
 
             $funnelTerms = $termRelations[$funnel->id] ?? [];
             $funnel->labels = [];
@@ -324,6 +337,7 @@ class FunnelController extends Controller
         $funnel = apply_filters('fluentcrm_funnel_editor_details_' . $funnel->trigger_name, $funnel);
 
         $funnel->description = $funnel->getMeta('description');
+        $funnel->sticky_note = FunnelHelper::getStickyNote($funnel);
         $inProgressCounts = $this->getInProgressSubscriberCounts([$funnel->id]);
         $funnel->in_progress_subscribers_count = $inProgressCounts[(int) $funnel->id] ?? 0;
 
@@ -427,6 +441,7 @@ class FunnelController extends Controller
 
         $funnel->deleteMeta('description');
         $funnel->deleteMeta('funnel_label');
+        $funnel->deleteMeta(FunnelHelper::STICKY_NOTE_META_KEY);
         $funnel->delete();
 
         (new FunnelHandler())->resetFunnelIndexes();
@@ -582,7 +597,13 @@ class FunnelController extends Controller
     {
         $data = $request->all();
 
-        $funnel = FunnelHelper::saveFunnelSequence($funnelId, $data);
+        try {
+            $funnel = FunnelHelper::saveFunnelSequence($funnelId, $data);
+        } catch (\Exception $e) {
+            return $this->sendError([
+                'message' => $e->getMessage()
+            ], 422);
+        }
 
         return [
             'sequences' => $this->getFunnelSequences($funnel, true),
@@ -910,6 +931,14 @@ class FunnelController extends Controller
         $funnel = Funnel::create($newFunnelData);
         $funnel->attachLabels($labelIds);
 
+        // Carry the sticky note into the copy: its warnings ("this delay is deliberate")
+        // apply to the clone too, and a copy is exactly when that context is easiest to lose.
+        // Re-stamped to the current user/time, since this is a new note on a new automation.
+        $oldNote = FunnelHelper::getStickyNote($oldFunnel);
+        if ($oldNote && ($stickyNote = FunnelHelper::sanitizeStickyNote($oldNote['content']))) {
+            $funnel->updateMeta(FunnelHelper::STICKY_NOTE_META_KEY, $stickyNote);
+        }
+
         $sequences = FunnelHelper::getFunnelSequences($oldFunnel, true);
 
         $sequenceIds = [];
@@ -1152,11 +1181,29 @@ class FunnelController extends Controller
         }
 
         // Advance to the target sequence
-        // Find the sequence just before the target so SequencePoints includes the target in its query
-        $prevSequence = FunnelSequence::where('funnel_id', intval($funnelId))
+        // Find the sequence just before the target so SequencePoints includes the
+        // target in its query. Branch-aware: when the target lives inside a
+        // conditional branch, the previous step must be a sibling in the SAME branch
+        // (or the parent conditional when the target is the branch's first child) —
+        // an ordinal-only pick can land in the other branch and skip the target.
+        $prevQuery = FunnelSequence::where('funnel_id', intval($funnelId))
             ->where('sequence', '<', $targetSequence->sequence)
-            ->orderBy('sequence', 'DESC')
-            ->first();
+            ->orderBy('sequence', 'DESC');
+
+        if ($targetSequence->parent_id) {
+            $prevQuery->where(function ($q) use ($targetSequence) {
+                $q->where(function ($sibling) use ($targetSequence) {
+                    $sibling->where('parent_id', $targetSequence->parent_id)
+                        ->where('condition_type', $targetSequence->condition_type);
+                })->orWhere('id', $targetSequence->parent_id);
+            });
+        } else {
+            $prevQuery->where(function ($q) {
+                $q->whereNull('parent_id')->orWhere('parent_id', '0');
+            });
+        }
+
+        $prevSequence = $prevQuery->first();
 
         $funnelSubscriber->last_sequence_id = $prevSequence ? $prevSequence->id : 0;
         $funnelSubscriber->next_sequence_id = $targetSequence->id;
@@ -1175,34 +1222,6 @@ class FunnelController extends Controller
             'message'           => __('Subscriber has been advanced', 'fluent-crm'),
             'funnel_subscriber' => $funnelSubscriber
         ];
-    }
-
-    private function maybeMigrateDB()
-    {
-        // Temp
-        Funnel::whereNull('trigger_name')
-            ->where('status', 'draft')
-            ->whereNull('created_by')
-            ->delete();
-
-
-        $sequence = \FluentCrm\App\Models\FunnelSequence::first();
-        $isMigrated = false;
-        global $wpdb;
-        if ($sequence) {
-            $attributes = $sequence->getAttributes();
-            if (isset($attributes['parent_id'])) {
-                $isMigrated = true;
-            }
-        } else {
-            $isMigrated = $wpdb->get_col($wpdb->prepare("SELECT * FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND COLUMN_NAME='parent_id' AND TABLE_NAME=%s", $wpdb->prefix . 'fc_funnel_sequences'));
-        }
-
-        if (!$isMigrated) {
-            $sequenceTable = $wpdb->prefix . 'fc_funnel_sequences';
-            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared 
-            $wpdb->query("ALTER TABLE {$sequenceTable} ADD COLUMN `parent_id` bigint NOT NULL DEFAULT '0', ADD `condition_type` varchar(192) NULL AFTER `parent_id`");
-        }
     }
 
     public function getEmailReports(Request $request, $funnelId)
@@ -1501,6 +1520,17 @@ class FunnelController extends Controller
 
         $funnel = Funnel::create($newFunnelData);
 
+        // Preserve the sticky note across export/import — handing an automation to someone
+        // else is precisely when its "why" matters most. Accepts either the exported
+        // {content: ...} shape or a bare string.
+        $importedNote = Arr::get($funnelArray, 'sticky_note');
+        if (is_array($importedNote)) {
+            $importedNote = Arr::get($importedNote, 'content');
+        }
+        if ($stickyNote = FunnelHelper::sanitizeStickyNote($importedNote)) {
+            $funnel->updateMeta(FunnelHelper::STICKY_NOTE_META_KEY, $stickyNote);
+        }
+
         $funnelLabels = Arr::get($funnelArray, 'labels', []);
         if (isset($funnelLabels) && !empty($funnelLabels)) {
             $newLabels = [];
@@ -1557,6 +1587,19 @@ class FunnelController extends Controller
                 $delay = FunnelHelper::getDelayInSecond($sequence['settings']);
                 $cDelay += $delay;
             }
+
+            // Imported payloads carry the SOURCE site's campaign ids inside
+            // settings.campaign / settings.reference_campaign. Auto-increment ids
+            // from another database must never be treated as local: if the new
+            // funnel's id happens to equal the payload's campaign parent_id, the
+            // email step's saving filter would UPDATE an unrelated local
+            // FunnelCampaign instead of creating one. Strip them so email steps
+            // always create a fresh local campaign from the payload's content.
+            if (!empty($sequence['settings']['campaign']) && is_array($sequence['settings']['campaign'])) {
+                unset($sequence['settings']['campaign']['id'], $sequence['settings']['campaign']['parent_id']);
+            }
+            unset($sequence['settings']['reference_campaign']);
+
             /**
              * Determine the funnel sequence before saving.
              *
@@ -1771,7 +1814,26 @@ class FunnelController extends Controller
             $data['payload']['body'] = json_encode($data['payload']['body']);
         }
 
-        $response = wp_remote_request($data['remote_url'], $data['payload']);
+        /**
+         * Whether to allow the test webhook to reach internal / private-network hosts
+         * (e.g. a self-hosted n8n instance or an internal API on the LAN).
+         *
+         * Default false: the request goes through wp_safe_remote_request(), which runs the
+         * URL through WordPress core's wp_http_validate_url() and blocks private/reserved IP
+         * ranges and non-standard ports — preventing SSRF (cloud metadata, internal service
+         * probing, port scanning). Site owners who intentionally test against internal
+         * endpoints can return true to fall back to the unrestricted request.
+         *
+         * @param bool   $allowInternal Whether to allow internal/private hosts. Default false.
+         * @param string $remoteUrl     The target URL being tested.
+         */
+        $allowInternal = apply_filters('fluent_crm/allow_internal_webhook_test', false, $data['remote_url']);
+
+        if ($allowInternal) {
+            $response = wp_remote_request($data['remote_url'], $data['payload']);
+        } else {
+            $response = wp_safe_remote_request($data['remote_url'], $data['payload']);
+        }
 
         if (is_wp_error($response)) {
             return $this->sendError([
@@ -1839,6 +1901,41 @@ class FunnelController extends Controller
         return [
             /* translators: %s: the new funnel title */
             'message' => sprintf(esc_html__('Title has been updated to %s', 'fluent-crm'), $newTitle)
+        ];
+    }
+
+    /**
+     * Create, update or clear an automation's sticky note.
+     *
+     * The note is a plain-text reminder pinned at the top of the funnel editor, meant to
+     * warn whoever opens the automation next ("don't shorten this delay, it's tied to the
+     * webinar"). Sending an empty `content` removes the note.
+     *
+     * Intentionally its own endpoint rather than a field on save-funnel-sequences: that
+     * path rewrites Funnel::settings from the client's snapshot and deletes the
+     * description meta when the key is absent, so folding the note in there would make it
+     * silently vanish on the AJAX fallback save.
+     */
+    public function updateStickyNote(Request $request, $funnelId)
+    {
+        $funnel = Funnel::findOrFail($funnelId);
+
+        $note = FunnelHelper::sanitizeStickyNote($request->get('content'));
+
+        if (!$note) {
+            $funnel->deleteMeta(FunnelHelper::STICKY_NOTE_META_KEY);
+
+            return [
+                'message'     => __('Sticky note has been removed', 'fluent-crm'),
+                'sticky_note' => null
+            ];
+        }
+
+        $funnel->updateMeta(FunnelHelper::STICKY_NOTE_META_KEY, $note);
+
+        return [
+            'message'     => __('Sticky note has been saved', 'fluent-crm'),
+            'sticky_note' => FunnelHelper::getStickyNote($funnel)
         ];
     }
 

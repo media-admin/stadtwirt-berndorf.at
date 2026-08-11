@@ -2,6 +2,48 @@
 	'use strict';
 
 	/**
+	 * Restore honeypot tabindex after Popup Maker accessibility overrides it.
+	 *
+	 * Popup Maker stores the original tabindex in jQuery data and sets tabindex="0"
+	 * on all [tabindex] elements inside popups for focus management.
+	 *
+	 * @param {Document|Element} context
+	 */
+	function cf7appsRestoreHoneypotTabindex( context ) {
+		var root = context && context.querySelectorAll ? context : document;
+
+		root.querySelectorAll( '[data-cf7apps-honeypot] input[type="text"]' ).forEach( function ( input ) {
+			var tabindex = input.getAttribute( 'data-cf7apps-tabindex' );
+
+			if ( ( null === tabindex || '' === tabindex ) && typeof jQuery !== 'undefined' ) {
+				tabindex = jQuery( input ).data( 'tabindex' );
+			}
+
+			if ( null === tabindex || '' === tabindex ) {
+				tabindex = '-1';
+			}
+
+			input.setAttribute( 'tabindex', String( tabindex ) );
+		} );
+	}
+
+	function cf7appsBindPopupMakerCompatibility() {
+		if ( typeof jQuery === 'undefined' ) {
+			return;
+		}
+
+		jQuery( document ).on( 'pumInit pumAfterOpen', '.pum', function () {
+			var popup = this;
+
+			window.setTimeout( function () {
+				cf7appsRestoreHoneypotTabindex( popup );
+			}, 0 );
+		} );
+	}
+
+	cf7appsBindPopupMakerCompatibility();
+
+	/**
 	 * Apply honeypot refill data to a CF7 form.
 	 *
 	 * @param {HTMLFormElement} form
@@ -35,6 +77,25 @@
 				hashInput.value = token.random_hash;
 			}
 
+			const timeTokenInput = form.querySelector(
+				'input[name="' + fieldName + '-time-token"]'
+			);
+
+			if ( timeTokenInput && token.time_token ) {
+				timeTokenInput.value = token.time_token;
+			} else if ( token.time_token ) {
+				const newTimeInput = document.createElement( 'input' );
+				newTimeInput.type = 'hidden';
+				newTimeInput.name = fieldName + '-time-token';
+				newTimeInput.value = token.time_token;
+
+				if ( wrapper ) {
+					wrapper.appendChild( newTimeInput );
+				} else if ( hashInput && hashInput.parentNode ) {
+					hashInput.parentNode.appendChild( newTimeInput );
+				}
+			}
+
 			const honeypotInput = wrapper.querySelector(
 				'input.wpcf7-form-control[type="text"]'
 			);
@@ -42,6 +103,7 @@
 			if ( honeypotInput ) {
 				honeypotInput.setAttribute( 'name', token.field_name );
 				honeypotInput.value = '';
+				cf7appsRestoreHoneypotTabindex( form );
 			}
 		} );
 	}
@@ -100,6 +162,10 @@
 		} );
 
 		form.addEventListener( 'wpcf7submit', function ( event ) {
+			if ( event.detail && event.detail.status === 'spam' ) {
+				return;
+			}
+
 			if ( event.detail && event.detail.apiResponse && event.detail.apiResponse.honeypot ) {
 				applyHoneypotRefill( form, event.detail.apiResponse.honeypot );
 			}

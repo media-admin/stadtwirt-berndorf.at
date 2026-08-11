@@ -55,7 +55,7 @@ class Subscribers
                 `last_activity` TIMESTAMP NULL,
                 `updated_at` TIMESTAMP NULL,
                  INDEX `{$indexPrefix}_subscriber_user_id_idx` (`user_id` ASC),
-                 INDEX `{$indexPrefix}_subscriber_status_idx` (`status` ASC)
+                 INDEX `subscriber_status_created_idx` (`status`, `created_at`)
             ) $charsetCollate;";
 
             dbDelta($sql);
@@ -66,6 +66,13 @@ class Subscribers
             $sql = "ALTER TABLE {$table} MODIFY {$column_name} VARCHAR(40) NULL;";
             // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
             $wpdb->query($sql);
+
+            // Reporting index — owned by DbPerformanceService so the migration and
+            // the runtime health-check/repair path share one definition. Its leading
+            // `status` column also covers status-only queries, which is why fresh
+            // installs no longer create a separate plain `status` index (existing
+            // installs keep their legacy one — harmless duplication).
+            \FluentCrm\App\Services\DbPerformanceService::ensureCriticalIndex('subscriber_status_created_idx');
         }
     }
 }

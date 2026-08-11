@@ -420,10 +420,26 @@ class Updater
         return '';
     }
 
-    public function sanitizeRgbColor($value) {
-        if (preg_match('/^rgba?\((\d{1,3}\s*,\s*){2,3}(0|1|0?\.\d+)\)$/', $value)) {
+    public function sanitizeRgbColor($value)
+    {
+        if (!is_string($value)) {
+            return '';
+        }
+
+        // rgb() takes three 0-255 channels; rgba() takes those plus an alpha.
+        // A single combined pattern cannot express that, and treating the last
+        // component as an alpha in both cases discarded every rgb() whose blue
+        // channel was not 0 or 1 - white included.
+        $channel = '\s*(?:25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\s*';
+        $alpha = '\s*(?:0|1|0?\.[0-9]+|1\.0+)\s*';
+
+        $rgb = '/^rgb\(' . $channel . ',' . $channel . ',' . $channel . '\)$/';
+        $rgba = '/^rgba\(' . $channel . ',' . $channel . ',' . $channel . ',' . $alpha . '\)$/';
+
+        if (preg_match($rgb, $value) || preg_match($rgba, $value)) {
             return $value;
         }
+
         return '';
     }
 }

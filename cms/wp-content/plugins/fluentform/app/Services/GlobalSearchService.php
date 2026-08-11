@@ -4,6 +4,7 @@ namespace FluentForm\App\Services;
 
 use FluentForm\App\Helpers\Helper;
 use FluentForm\App\Models\Form;
+use FluentForm\App\Services\Manager\FormManagerService;
 
 class GlobalSearchService
 {
@@ -386,7 +387,11 @@ class GlobalSearchService
             ]);
         }
 
+        $allowedForms = FormManagerService::getUserAllowedFormsScope();
         $forms = Form::where('status', 'published')
+            ->when(false !== $allowedForms, function ($q) use ($allowedForms) {
+                $q->whereIn('id', $allowedForms ?: [0]);
+            })
             ->select(['id', 'title', 'type'])->get();
         if (count($forms) > 0) {
             foreach ($forms as $form) {

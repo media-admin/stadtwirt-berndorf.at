@@ -13,38 +13,51 @@ class Stats
 {
     public function getCounts()
     {
+        // These COUNT(*)s scan millions of rows on large sites and the dashboard runs
+        // them on every load — cache the raw numbers for 5 minutes. Titles/routes are
+        // built per-request so translations always match the viewer's locale.
+        $counts = fluentCrmGetFromCache('dashboard_stat_counts', function () {
+            return [
+                'total_subscribers' => Subscriber::where('status', 'subscribed')->count(),
+                'total_campaigns'   => Campaign::count(),
+                'email_sent'        => CampaignEmail::where('status', 'sent')->count(),
+                'total_automations' => Funnel::where('status', 'published')->count(),
+                'email_pending'     => CampaignEmail::whereIn('status', ['pending', 'scheduled', 'processing'])->count()
+            ];
+        }, 300);
+
         $data = [
             'total_subscribers' => [
                 'title' => __('Active Contacts', 'fluent-crm'),
-                'count' => Subscriber::where('status', 'subscribed')->count(),
+                'count' => $counts['total_subscribers'],
                 'route' => [
                     'name' => 'subscribers'
                 ]
             ],
             'total_campaigns'   => [
                 'title' => __('Campaigns', 'fluent-crm'),
-                'count' => Campaign::count(),
+                'count' => $counts['total_campaigns'],
                 'route' => [
                     'name' => 'campaigns'
                 ]
             ],
             'email_sent'        => [
                 'title' => __('Emails Sent', 'fluent-crm'),
-                'count' => CampaignEmail::where('status', 'sent')->count(),
+                'count' => $counts['email_sent'],
                 'route' => [
                     'name' => 'all_emails'
                 ]
             ],
             'total_automations'   => [
                 'title' => __('Active Automations', 'fluent-crm'),
-                'count' => Funnel::where('status', 'published')->count(),
+                'count' => $counts['total_automations'],
                 'route' => [
                     'name' => 'funnels'
                 ]
             ]
         ];
 
-        $pendingEmails = CampaignEmail::whereIn('status', ['pending', 'scheduled', 'processing'])->count();
+        $pendingEmails = $counts['email_pending'];
 
         if ($pendingEmails) {
             $data['email_pending'] = [

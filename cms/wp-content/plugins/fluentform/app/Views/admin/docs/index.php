@@ -40,7 +40,7 @@ defined('ABSPATH') or die;
                                 <div class="mask-3"></div>
                             </div>
                             <h3><?php esc_html_e('To unlock more features consider upgrading to PRO', 'fluentform') ?></h3>
-                            <a target="_blank" rel="nofollow" class="el-button ff_upgrade_btn_large" href="https://fluentforms.com/pricing/?utm_source=plugin&utm_medium=wp_install&utm_campaign=ff_upgrade&theme_style=kadence"><?php esc_html_e('Upgrade to Pro', 'fluentform'); ?></a>
+                            <a target="_blank" rel="nofollow" class="el-button ff_upgrade_btn_large" href="<?php echo esc_url(fluentform_upgrade_url('settings_support')); ?>"><?php esc_html_e('Upgrade to Pro', 'fluentform'); ?></a>
                         </div>
                     </div><!-- .el-col -->
                 <?php endif; ?>

@@ -97,10 +97,10 @@ class FluentCartDriver extends AbstractCartDriver
         }
 
         return add_query_arg([
-            'fluentcrm'  => 1,
-            'route'      => 'general',
-            'handler'    => $this->getHandlerName(),
-            'fc_ab_hash' => $cart->checkout_key
+            FLUENTCRM_EXTERNAL_URL_PARAM => 1,
+            'route'                      => 'general',
+            'handler'                    => $this->getHandlerName(),
+            'fc_ab_hash'                 => $cart->checkout_key
         ], home_url());
     }
 

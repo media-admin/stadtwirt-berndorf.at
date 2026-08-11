@@ -17,7 +17,9 @@ class EmailPatternController extends Controller
             ->orderBy('id', 'desc');
 
         if ($search = $request->getSafe('search', 'sanitize_text_field')) {
-            $query->where('value', 'LIKE', '%' . $search . '%');
+            // Escape LIKE wildcards (%, _) so the term matches literally, not as wildcards.
+            global $wpdb;
+            $query->where('value', 'LIKE', '%' . $wpdb->esc_like($search) . '%');
         }
 
         $patterns = $query->paginate();
@@ -239,7 +241,9 @@ class EmailPatternController extends Controller
         if (filter_var($request->get('select_all'), FILTER_VALIDATE_BOOLEAN)) {
             $search = $request->getSafe('search', 'sanitize_text_field', '');
             if ($search !== '') {
-                $query->where('value', 'LIKE', '%' . $search . '%');
+                // Escape LIKE wildcards (%, _) so the term matches literally, not as wildcards.
+                global $wpdb;
+                $query->where('value', 'LIKE', '%' . $wpdb->esc_like($search) . '%');
             }
         } else {
             $patternIds = array_map('intval', (array) $request->get('pattern_ids', []));

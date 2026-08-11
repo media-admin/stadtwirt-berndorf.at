@@ -179,6 +179,9 @@ $router->prefix('templates')->withPolicy('TemplatePolicy')->group(function ($rou
     $router->get('/all', [TemplateController::class, 'allTemplates']);
     $router->get('/smartcodes', [TemplateController::class, 'getSmartCodes']);
     $router->post('/', [TemplateController::class, 'create']);
+    // $router->get('default-campaign-template', [TemplateController::class, 'getDefaultCampaignTemplate']);
+    // $router->post('default-campaign-template', [TemplateController::class, 'setDefaultCampaignTemplate']);
+    // $router->delete('default-campaign-template', [TemplateController::class, 'deleteDefaultCampaignTemplate']);
 
     $router->get('{id}', [TemplateController::class, 'template'])->int('id');
     $router->put('{id}', [TemplateController::class, 'update'])->int('id');
@@ -240,6 +243,7 @@ $router->prefix('funnels')->withPolicy('FunnelPolicy')->group(function ($router)
     $router->put('{id}/change-trigger', [FunnelController::class, 'changeTrigger'])->int('id');
     $router->post('{id}/sequences', [FunnelController::class, 'saveSequences'])->int('id');
     $router->put('funnel/{id}/title', [FunnelController::class, 'updateFunnelTitle'])->int('id');
+    $router->put('{id}/sticky-note', [FunnelController::class, 'updateStickyNote'])->int('id');
 
     $router->post('{id}/sequences/save-email-action', [FunnelController::class, 'saveEmailAction'])->int('id');
 

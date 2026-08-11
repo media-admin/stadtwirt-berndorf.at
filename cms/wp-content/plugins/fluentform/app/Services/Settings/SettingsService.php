@@ -189,6 +189,24 @@ class SettingsService
 
         $key = sanitize_text_field(Arr::get($attributes, 'meta_key'));
 
+        // SECURITY (FINDING-14): this generic settings store accepted an arbitrary meta_key with no
+        // allowlist, letting a forms_manager overwrite meta owned by dedicated, capability-gated
+        // endpoints — most importantly the unfiltered_html-gated custom JS/CSS keys (bypassing the
+        // boundary Customizer::store() enforces) and payment settings. Reject those keys here; each
+        // has its own proper route. Filterable so first-party code can extend the protected set.
+        $protectedKeys = apply_filters('fluentform/protected_form_meta_keys', [
+            '_custom_form_js',
+            '_custom_form_css',
+            '_payment_settings',
+        ]);
+        if (in_array($key, $protectedKeys, true)) {
+            throw new \FluentForm\Framework\Validator\ValidationException('', 422, null, [
+                'errors' => [
+                    'meta_key' => [__('This settings key cannot be modified from this endpoint.', 'fluentform')],
+                ],
+            ]);
+        }
+
         if ('formSettings' == $key) {
             Validator::validate(
                 'confirmations',

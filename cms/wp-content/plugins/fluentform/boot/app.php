@@ -29,9 +29,15 @@ return function ($file) {
                 add_action('fluentform/after_form_menu', $renderNotice);
             });
         }
+
+        fluentform_maybe_disable_contaminated_pro();
     });
 
     $app = new Application($file);
+
+    // Boot the MCP server (Abilities API tools + endpoint). Self-guards: ships
+    // off, and its Abilities/adapter hooks fire only when those systems exist.
+    \FluentForm\App\Modules\MCP\MCPInit::boot();
 
     register_activation_hook($file, function ($network_wide) use ($app) {
         ($app->make(ActivationHandler::class))->handle($network_wide);
@@ -112,7 +118,7 @@ return function ($file) {
                 'developer_docs' => '<a rel="noopener" href="https://developers.fluentforms.com" style="color: #197efb;font-weight: 600;" aria-label="' . esc_attr__('Developer Docs', 'fluentform') . '" target="_blank">' . esc_html__('Developer Docs', 'fluentform') . '</a>',
             ];
             if (!defined('FLUENTFORMPRO')) {
-                $row_meta['pro'] = '<a rel="noopener" href="https://fluentforms.com" style="color: #7742e6;font-weight: bold;" aria-label="' . esc_attr__('Upgrade to Pro', 'fluentform') . '" target="_blank">' . esc_html__('Upgrade to Pro', 'fluentform') . '</a>';
+                $row_meta['pro'] = '<a rel="noopener" href="' . esc_url(fluentform_upgrade_url('plugin_row_meta')) . '" style="color: #7742e6;font-weight: bold;" aria-label="' . esc_attr__('Upgrade to Pro', 'fluentform') . '" target="_blank">' . esc_html__('Upgrade to Pro', 'fluentform') . '</a>';
             }
             return array_merge($links, $row_meta);
         }

@@ -2712,12 +2712,13 @@
         'imports' => [
             '_vendor-element-plus.js',
             '_vendor.js',
-            '_fc-bits-ui.js',
             '_SettingsHeader.js',
             '_SaveButton.js',
             '_ItemCopier2.js',
             '_PromoCard.js',
-            '_SettingsRow.js'
+            '_SettingsRow.js',
+            '_BaseCard.js',
+            '_fc-bits-ui.js'
         ],
         'assets' => [
             'sms_settings.png'

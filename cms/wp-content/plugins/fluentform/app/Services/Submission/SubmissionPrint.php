@@ -2,7 +2,6 @@
 
 namespace FluentForm\App\Services\Submission;
 
-
 use FluentForm\App\Helpers\Helper;
 use FluentForm\App\Models\Submission;
 use FluentForm\App\Services\FormBuilder\ShortCodeParser;
@@ -34,7 +33,7 @@ class SubmissionPrint
 
     protected function getBody($submissions, $form)
     {
-        $pdfBody = "";
+        $pdfBody = '';
         foreach ($submissions as $index => $submission) {
             $formData = json_decode($submission->response, true);
             $htmlBody = ShortCodeParser::parse('{all_data}', $submission, $formData, $form, false, true);
@@ -62,7 +61,7 @@ class SubmissionPrint
                 } else {
                     $label = '' . $note->name . ' - ' . $note->created_at;
                 }
-                $notesHtml .= '<tr class="field-label"><th style="padding: 6px 12px; background-color: #f8f8f8; text-align: left;"><strong>' . $label . '</strong></th></tr><tr class="field-value"><td style="padding: 6px 12px 12px 12px;">' . wp_kses_post($note->value) . '</td></tr>';
+                $notesHtml .= '<tr class="field-label"><th style="padding: 6px 12px; background-color: #f8f8f8; text-align: left;"><strong>' . esc_html($label) . '</strong></th></tr><tr class="field-value"><td style="padding: 6px 12px 12px 12px;">' . wp_kses_post($note->value) . '</td></tr>';
             }
             $htmlBody = $htmlBody . $notesHtml . '</tbody></table>';
         }
@@ -78,32 +77,56 @@ class SubmissionPrint
         ob_start();
         ?>
         .ff_pdf_wrapper, p, li, td, th {
-        color: <?php
-        echo esc_attr($mainColor); ?>;
-        font-size: <?php
-        echo esc_attr($fontSize); ?>px;
+        color: 
+        <?php
+        echo esc_attr($mainColor);
+        ?>
+        ;
+        font-size: 
+        <?php
+        echo esc_attr($fontSize);
+        ?>
+        px;
         }
 
         .ff_all_data, table {
         empty-cells: show;
         border-collapse: collapse;
-        border: 1px solid <?php
-        echo esc_attr($secondaryColor); ?>;
+        border: 1px solid 
+        <?php
+        echo esc_attr($secondaryColor);
+        ?>
+        ;
         width: 100%;
-        color: <?php
-        echo esc_attr($mainColor); ?>;
+        color: 
+        <?php
+        echo esc_attr($mainColor);
+        ?>
+        ;
         }
         hr {
-        color: <?php
-        echo esc_attr($secondaryColor); ?>;
-        background-color: <?php
-        echo esc_attr($secondaryColor); ?>;
+        color: 
+        <?php
+        echo esc_attr($secondaryColor);
+        ?>
+        ;
+        background-color: 
+        <?php
+        echo esc_attr($secondaryColor);
+        ?>
+        ;
         }
         .ff_all_data th {
-        border-bottom: 1px solid <?php
-        echo esc_attr($secondaryColor); ?>;
-        border-top: 1px solid <?php
-        echo esc_attr($secondaryColor); ?>;
+        border-bottom: 1px solid 
+        <?php
+        echo esc_attr($secondaryColor);
+        ?>
+        ;
+        border-top: 1px solid 
+        <?php
+        echo esc_attr($secondaryColor);
+        ?>
+        ;
         padding-bottom: 10px !important;
         }
         .ff_all_data tr td {
@@ -113,8 +136,11 @@ class SubmissionPrint
         }
 
         .ff_all_data tr td, .ff_all_data tr th {
-        border: 1px solid <?php
-        echo esc_attr($secondaryColor); ?>;
+        border: 1px solid 
+        <?php
+        echo esc_attr($secondaryColor);
+        ?>
+        ;
         text-align: left;
         }
 

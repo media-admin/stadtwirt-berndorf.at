@@ -1,0 +1,2131 @@
+# Translation of Plugins - CF7 Apps – Honeypot, Database, Redirection, Webhook, and Addons for Contact Form 7 - Stable (latest release) in Russian
+# This file is distributed under the same license as the Plugins - CF7 Apps – Honeypot, Database, Redirection, Webhook, and Addons for Contact Form 7 - Stable (latest release) package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2026-06-23 16:54:06+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : ((n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14)) ? 1 : 2);\n"
+"X-Generator: GlotPress/4.0.3\n"
+"Language: ru\n"
+"Project-Id-Version: Plugins - CF7 Apps – Honeypot, Database, Redirection, Webhook, and Addons for Contact Form 7 - Stable (latest release)\n"
+
+#. translators: 1: honeypot field ID 2: dynamic field name
+#: legacy-honeypot/includes/honeypot4cf7.php:652
+msgid "Something is stuck in the honey. Field ID = %1$s (dynamic field: %2$s)"
+msgstr "Что-то застряло в мёде. Идентификатор поля = %1$s (динамическое поле: %2$s)"
+
+#. translators: %s: honeypot field ID
+#: legacy-honeypot/includes/honeypot4cf7.php:619
+msgid "Honeypot detected form submitted without time check. Field ID = %s"
+msgstr "Обнаружена форма, отправленная ловушкой для бота без проверки времени. ID поля = %s"
+
+#. translators: 1: submission interval integer 2: honeypot field ID 3: required
+#. time
+#: legacy-honeypot/includes/honeypot4cf7.php:586
+msgid "Honeypot detected form submitted too fast (%1$s seconds, required: %3$s seconds). Field ID = %2$s"
+msgstr "Обнаружена ловушка для бота: форма отправлена слишком быстро (%1$s секунд, требуется: %3$s секунд). ID поля = %2$s"
+
+#. translators: 1: honeypot field ID 2: age in hours
+#: legacy-honeypot/includes/honeypot4cf7.php:552
+msgid "Honeypot detected stale timestamp (replay attack, age: %2$.1f hours). Field ID = %1$s"
+msgstr "В ловушке для бота обнаружена устаревшая отметка времени (атака повторного воспроизведения, время прохождения: %2$.1f часов). ID поля = %1$s"
+
+#. translators: 1: honeypot field ID 2: future timestamp
+#: legacy-honeypot/includes/honeypot4cf7.php:519
+msgid "Honeypot detected future timestamp (timestamp: %2$s). Field ID = %1$s"
+msgstr "Ловушка обнаружила будущую временную метку (timetag: %2$s). Идентификатор поля = %1$s"
+
+#. translators: 1: honeypot field ID 2: expected dynamic field name
+#: legacy-honeypot/includes/honeypot4cf7.php:458
+msgid "Honeypot expected dynamic field \"%2$s\" was missing. Field ID = %1$s"
+msgstr "В ловушке для бота отсутствовало динамическое поле %2$s. ID поля = %1$s"
+
+#. translators: %s: honeypot field ID
+#: legacy-honeypot/includes/honeypot4cf7.php:428
+msgid "Honeypot missing dynamic field metadata. Field ID = %s"
+msgstr "У ловушки отсутствуют метаданные динамического поля. Идентификатор поля = %s"
+
+#. translators: %s: honeypot field ID
+#: legacy-honeypot/includes/honeypot4cf7.php:394
+msgid "Honeypot detected form submitted without valid time check data. Field ID = %s"
+msgstr "Обнаружена форма, отправленная в ловушку для бота без действительных данных проверки времени. Идентификатор поля = %s"
+
+#. translators: %s: honeypot field ID
+#: legacy-honeypot/includes/honeypot4cf7.php:360
+msgid "Honeypot detected invalid or missing random hash. Field ID = %s"
+msgstr "В системе ловушки для бота обнаружен неверный или отсутствующий случайный хэш. ID поля = %s"
+
+#: includes/apps/ai-form-generator/includes/class-cf7-ai-middleware-client.php:442
+msgid "AI returned no form code. Try a clearer description or check middleware logs."
+msgstr "Искусственный интеллект не вернул код формы. Попробуйте дать более понятное описание или проверьте журналы промежуточного ПО."
+
+#: includes/apps/ai-form-generator/includes/class-cf7-ai-middleware-client.php:427
+#: includes/apps/ai-form-generator/includes/class-cf7-ai-middleware-client.php:432
+msgid "AI request failed."
+msgstr "Запрос к ИИ не удался."
+
+#: includes/apps/ai-form-generator/includes/class-cf7-ai-middleware-client.php:422
+msgid "AI server returned an invalid response."
+msgstr "Сервер ИИ вернул недействительный ответ."
+
+#. translators: %s error message
+#: includes/apps/ai-form-generator/includes/class-cf7-ai-middleware-client.php:409
+msgid "Could not reach AI server: %s"
+msgstr "Не удалось подключиться к серверу ИИ: %s"
+
+#: includes/apps/ai-form-generator/includes/class-cf7-ai-middleware-client.php:375
+msgid "No license key is available for the middleware. Check provision-free response or set CF7APPS_AI_MIDDLEWARE_LICENSE_KEY."
+msgstr "Для промежуточного ПО отсутствует лицензионный ключ. Проверьте ответ без указания условий или установите значение CF7APPS_AI_MIDDLEWARE_LICENSE_KEY."
+
+#: includes/apps/ai-form-generator/includes/class-cf7-ai-middleware-client.php:291
+msgid "License provisioning failed."
+msgstr "Сбой при предоставлении лицензии."
+
+#. translators: %s error message
+#: includes/apps/ai-form-generator/includes/class-cf7-ai-middleware-client.php:274
+msgid "Could not provision license: %s"
+msgstr "Не удалось предоставить лицензию: %s"
+
+#: includes/apps/ai-form-generator/includes/class-cf7-ai-middleware-client.php:226
+msgid "The middleware requires a license key, and this site could not obtain one (empty provision secret after filters). Set CF7APPS_AI_MIDDLEWARE_LICENSE_KEY or fix CF7APPS_AI_PROVISION_SECRET."
+msgstr "Для работы промежуточного ПО требуется лицензионный ключ, а этот сайт не смог его получить (пустой секретный ключ после применения фильтров). Установите значение CF7APPS_AI_MIDDLEWARE_LICENSE_KEY или исправьте значение CF7APPS_AI_PROVISION_SECRET."
+
+#: includes/apps/ai-form-generator/ai-form-generator.php:251
+msgid "Please enter form details or select a template to continue."
+msgstr "Пожалуйста, введите данные формы или выберите шаблон, чтобы продолжить."
+
+#: includes/apps/ai-form-generator/ai-form-generator.php:229
+#: includes/apps/ai-form-generator/includes/class-cf7-ai-middleware-client.php:234
+#: includes/apps/ai-form-generator/includes/class-cf7-ai-middleware-client.php:362
+msgid "AI middleware base URL is not set. Define CF7APPS_AI_MIDDLEWARE_BASE_URL in wp-config.php."
+msgstr "Базовый URL промежуточного ПО AI не задан. Определите переменную CF7APPS_AI_MIDDLEWARE_BASE_URL в файле wp-config.php."
+
+#: includes/apps/ai-form-generator/ai-form-generator.php:220
+msgid "AI Form Generator is disabled."
+msgstr "Генератор форм на основе ИИ отключен."
+
+#: includes/apps/ai-form-generator/ai-form-generator.php:211
+msgid "Permission denied."
+msgstr "Доступ запрещен."
+
+#: includes/apps/ai-form-generator/ai-form-generator.php:196
+msgid "Could not copy."
+msgstr "Копирование не удалось."
+
+#: includes/apps/ai-form-generator/ai-form-generator.php:195
+msgid "Copied to clipboard."
+msgstr "Скопировано в буфер обмена."
+
+#: includes/apps/ai-form-generator/ai-form-generator.php:194
+msgid "This field is required."
+msgstr "Это поле обязательно к заполнению."
+
+#: includes/apps/ai-form-generator/ai-form-generator.php:193
+msgid "Reset"
+msgstr "Сброс"
+
+#: includes/apps/ai-form-generator/ai-form-generator.php:192
+msgid "Insert"
+msgstr "Вставить"
+
+#: includes/apps/ai-form-generator/ai-form-generator.php:191
+msgid "Copy"
+msgstr "Копия"
+
+#: includes/apps/ai-form-generator/ai-form-generator.php:190
+msgid "Generated form code"
+msgstr "Сгенерированный код формы"
+
+#: includes/apps/ai-form-generator/ai-form-generator.php:188
+msgid "e.g., Create a customer feedback form with rating scale, comments section, and contact information fields..."
+msgstr "напр.: создайте форму обратной связи с клиентами, содержащую шкалу рейтингов, раздел для комментариев и поля для контактной информации..."
+
+#: includes/apps/ai-form-generator/ai-form-generator.php:187
+msgid "Describe the form you want to create"
+msgstr "Опишите форму, которую вы хотите создать"
+
+#: includes/apps/ai-form-generator/ai-form-generator.php:185
+#: includes/apps/ai-form-generator/ai-form-generator.php:186
+#: includes/apps/ai-form-generator/ai-form-generator.php:189
+msgid "Generate Form with AI"
+msgstr "Создание формы с помощью ИИ"
+
+#: includes/apps/ai-form-generator/ai-form-generator.php:126
+msgid "Create a contact and inquiry form for real estate property listings."
+msgstr "Создайте форму обратной связи и форму запроса для размещения объявлений о продаже недвижимости."
+
+#: includes/apps/ai-form-generator/ai-form-generator.php:125
+msgid "For real estate property listings"
+msgstr "Объявления о продаже недвижимости"
+
+#: includes/apps/ai-form-generator/ai-form-generator.php:124
+msgid "Contact & Inquiry Form"
+msgstr "Форма обратной связи и запросов"
+
+#: includes/apps/ai-form-generator/ai-form-generator.php:121
+msgid "Create a customer feedback and rating form for after a purchase."
+msgstr "Создайте форму обратной связи и оценки для клиентов после покупки."
+
+#: includes/apps/ai-form-generator/ai-form-generator.php:120
+msgid "For customers after a purchase"
+msgstr "Для клиентов после покупки"
+
+#: includes/apps/ai-form-generator/ai-form-generator.php:119
+msgid "Feedback & Rating Form"
+msgstr "Форма обратной связи и оценки"
+
+#: includes/apps/ai-form-generator/ai-form-generator.php:116
+msgid "Create an appointment booking form for my clinic or healthcare service."
+msgstr "Создайте форму записи на прием в моей клинике или медицинской службе."
+
+#: includes/apps/ai-form-generator/ai-form-generator.php:115
+msgid "For my clinic or healthcare service"
+msgstr "Для моей клиники или медицинского учреждения"
+
+#: includes/apps/ai-form-generator/ai-form-generator.php:114
+msgid "Appointment Booking Form"
+msgstr "Форма записи на прием"
+
+#: includes/apps/ai-form-generator/ai-form-generator.php:111
+msgid "Create a job application form for my company's career page."
+msgstr "Создайте форму заявки на вакансию для страницы вакансий моей компании."
+
+#: includes/apps/ai-form-generator/ai-form-generator.php:110
+msgid "For my company's career page"
+msgstr "Для страницы вакансий моей компании"
+
+#: includes/apps/ai-form-generator/ai-form-generator.php:109
+msgid "Job Application Form"
+msgstr "Заявление о приеме на работу"
+
+#: includes/apps/ai-form-generator/ai-form-generator.php:76
+msgid "Enable AI-powered form suggestions for Contact Form 7, allowing users to quickly generate complex form templates with ease."
+msgstr "Включите функцию подсказок на основе искусственного интеллекта для Contact Form 7, которая позволит пользователям быстро и легко создавать сложные шаблоны форм."
+
+#: includes/apps/ai-form-generator/ai-form-generator.php:73
+msgid "Enable AI Form Generator"
+msgstr "Включить генератор форм на основе ИИ"
+
+#: includes/apps/ai-form-generator/ai-form-generator.php:44
+msgid "Generate Contact Form 7 field tags from a short description or templates, powered by AI."
+msgstr "Создавайте теги полей для Contact Form 7 на основе краткого описания или шаблонов с помощью искусственного интеллекта."
+
+#: includes/apps/ai-form-generator/ai-form-generator.php:43
+#: includes/apps/ai-form-generator/ai-form-generator.php:58
+msgid "AI Form Generator"
+msgstr "Генератор форм на основе ИИ"
+
+#: src/screens/AppSettings.js:337
+msgid "This integration requires the Advanced Custom Fields plugin to be installed and active."
+msgstr "Для этой интеграции требуется, чтобы плагин Advanced Custom Fields был установлен и активен."
+
+#: src/screens/Apps.js:141
+msgid "Integrations"
+msgstr "Интеграции"
+
+#: src/screens/Apps.js:68 src/screens/AppSettings.js:853
+msgid "This integration requires the Advanced Custom Fields plugin to be installed and active. %s"
+msgstr "Для этой интеграции необходимо установить и активировать плагин Advanced Custom Fields. %s"
+
+#. translators: %d: post ID.
+#: includes/cf7apps-functions.php:125
+msgid "(no title) (ID: %d)"
+msgstr "(без заголовка) (ID: %d)"
+
+#: includes/apps/hcaptcha/hcaptcha.php:444
+msgid "for more settings/info"
+msgstr "для получения дополнительных настроек/информации"
+
+#: includes/apps/hcaptcha/hcaptcha.php:441
+msgid "Generate a form-tag for adding an hCaptcha verification widget to stop spam bots. Check out"
+msgstr "Создайте тег формы для добавления виджета проверки hCaptcha, чтобы остановить спам-ботов. Подробнее здесь."
+
+#: includes/apps/acf-integration/includes/class-cf7-acf-integration.php:843
+msgid "Please enter a field name before inserting the tag."
+msgstr "Пожалуйста, введите название поля перед вставкой тега."
+
+#: includes/apps/acf-integration/includes/class-cf7-acf-integration.php:835
+msgid "Please select an ACF field from the dropdown before inserting the tag."
+msgstr "Перед вставкой тега выберите поле ACF из выпадающего списка."
+
+#: includes/apps/acf-integration/includes/class-cf7-acf-integration.php:672
+msgid "Please enter no more than %d characters."
+msgstr "Пожалуйста, введите не более %d символов."
+
+#: includes/apps/acf-integration/includes/class-cf7-acf-integration.php:664
+msgid "Please enter a number less than or equal to %s."
+msgstr "Пожалуйста, введите число, меньшее или равное %s."
+
+#: includes/apps/acf-integration/includes/class-cf7-acf-integration.php:661
+msgid "Please enter a number greater than or equal to %s."
+msgstr "Пожалуйста, введите число, большее или равное %s."
+
+#: includes/apps/acf-integration/includes/class-cf7-acf-integration.php:657
+msgid "Please enter a valid number."
+msgstr "Укажите действующий номер."
+
+#: includes/apps/acf-integration/includes/class-cf7-acf-integration.php:445
+msgid "ACF field not found."
+msgstr "Поле ACF не найдено."
+
+#: includes/apps/acf-integration/includes/class-cf7-acf-integration.php:439
+msgid "Advanced Custom Fields plugin is required for this field to work."
+msgstr "Для работы этого поля необходим плагин Advanced Custom Fields."
+
+#: includes/apps/acf-integration/includes/class-cf7-acf-integration.php:432
+msgid "Should be:"
+msgstr "Должно быть:"
+
+#: includes/apps/acf-integration/includes/class-cf7-acf-integration.php:431
+msgid "Current tag:"
+msgstr "Текущий тег:"
+
+#: includes/apps/acf-integration/includes/class-cf7-acf-integration.php:430
+msgid "The field key will be automatically added"
+msgstr "Ключ поля будет добавлен автоматически"
+
+#: includes/apps/acf-integration/includes/class-cf7-acf-integration.php:429
+msgid "Enter field name and SELECT an ACF field from the dropdown"
+msgstr "Введите название поля и выберите поле ACF из выпадающего списка"
+
+#: includes/apps/acf-integration/includes/class-cf7-acf-integration.php:428
+msgid "Click \"Insert Tag\" → \"ACF Field\""
+msgstr "Нажмите «Вставить тег» → «Поле ACF»"
+
+#: includes/apps/acf-integration/includes/class-cf7-acf-integration.php:427
+msgid "Delete this tag from your form"
+msgstr "Удалите этот тег из вашей формы"
+
+#: includes/apps/acf-integration/includes/class-cf7-acf-integration.php:426
+msgid "How to fix:"
+msgstr "Как исправить:"
+
+#: includes/apps/acf-integration/includes/class-cf7-acf-integration.php:425
+msgid "ACF field key is missing from the tag."
+msgstr "В теге отсутствует ключ поля ACF."
+
+#: includes/apps/acf-integration/includes/class-cf7-acf-integration.php:348
+msgid "ACF Field: Field name is missing."
+msgstr "Поле ACF: Отсутствует название поля."
+
+#: includes/apps/acf-integration/includes/class-cf7-acf-integration.php:260
+msgid "Field Group"
+msgstr "Группа поля"
+
+#: includes/apps/acf-integration/includes/class-cf7-acf-integration.php:219
+msgid "This field key is automatically populated when you select an ACF field above."
+msgstr "Этот ключ поля заполняется автоматически при выборе поля ACF выше."
+
+#: includes/apps/acf-integration/includes/class-cf7-acf-integration.php:217
+msgid "Select a field above to see the key"
+msgstr "Выберите поле выше, чтобы увидеть ключ"
+
+#: includes/apps/acf-integration/includes/class-cf7-acf-integration.php:213
+msgid "Field Key"
+msgstr "Ключ поля"
+
+#: includes/apps/acf-integration/includes/class-cf7-acf-integration.php:206
+msgid "The field key will be automatically added when you select a field above."
+msgstr "Ключ поля будет добавлен автоматически при выборе поля выше."
+
+#: includes/apps/acf-integration/includes/class-cf7-acf-integration.php:203
+msgid "⚠️ Please select an ACF field before inserting the tag."
+msgstr "⚠️ Перед вставкой тега выберите поле ACF."
+
+#: includes/apps/acf-integration/includes/class-cf7-acf-integration.php:199
+msgid "-- Select ACF Field (Required) --"
+msgstr "-- Выберите поле ACF (обязательно) --"
+
+#: includes/apps/acf-integration/includes/class-cf7-acf-integration.php:182
+msgid "Field name"
+msgstr "Название поля"
+
+#: includes/apps/acf-integration/includes/class-cf7-acf-integration.php:154
+msgid "Create form-tags using ACF fields to automatically populate and manage dynamic form data. Visit the <a href=\"%s\">ACF Integration settings.</a>"
+msgstr "Создавайте теги форм, используя поля ACF, для автоматического заполнения и управления динамическими данными форм. Перейдите в <a href=\"%s\">настройки интеграции ACF</a>"
+
+#: includes/apps/acf-integration/includes/class-cf7-acf-integration.php:114
+#: includes/apps/acf-integration/includes/class-cf7-acf-integration.php:127
+#: includes/apps/acf-integration/includes/class-cf7-acf-integration.php:149
+#: includes/apps/acf-integration/includes/class-cf7-acf-integration.php:193
+msgid "ACF Field"
+msgstr "Поле ACF"
+
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-url.php:94
+#: includes/apps/acf-integration/includes/class-cf7-acf-integration.php:651
+msgid "Please enter a valid URL."
+msgstr "Пожалуйста, введите действительный URL-адрес."
+
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-url.php:19
+msgid "CF7Apps URL"
+msgstr "URL CF7Apps"
+
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-textarea.php:74
+msgid "Sets the textarea height"
+msgstr "Задает высоту текстового поля"
+
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-textarea.php:73
+msgid "Rows"
+msgstr "Ряды"
+
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-textarea.php:19
+msgid "CF7Apps Textarea"
+msgstr "CF7Apps Текстовое поле"
+
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-text.php:63
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-textarea.php:62
+msgid "Character Limit"
+msgstr "Ограничение по количеству символов"
+
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-text.php:19
+msgid "CF7Apps Text"
+msgstr "Текст CF7Apps"
+
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-number.php:110
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-text.php:86
+msgid "Appears after the input"
+msgstr "Появляется после ввода"
+
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-number.php:109
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-text.php:85
+msgid "Append"
+msgstr "Добавить"
+
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-number.php:99
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-text.php:75
+msgid "Appears before the input"
+msgstr "Появляется перед полем ввода"
+
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-number.php:98
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-text.php:74
+msgid "Prepend"
+msgstr "Добавить в начало"
+
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-number.php:88
+msgid "Increment/decrement amount"
+msgstr "Величина увеличения/уменьшения"
+
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-number.php:87
+msgid "Step Size"
+msgstr "Размер шага"
+
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-number.php:76
+msgid "Maximum Value"
+msgstr "Максимальное значение"
+
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-number.php:66
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-number.php:77
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-text.php:64
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-textarea.php:63
+msgid "Leave blank for no limit"
+msgstr "Оставьте поле пустым, чтобы не было ограничений."
+
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-number.php:65
+msgid "Minimum Value"
+msgstr "Минимальное значение"
+
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-number.php:19
+msgid "CF7Apps Number"
+msgstr "Номер CF7Apps"
+
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-email.php:94
+#: includes/apps/acf-integration/includes/class-cf7-acf-integration.php:645
+msgid "Please enter a valid email address."
+msgstr "Пожалуйста, введите действительный адрес электронной почты."
+
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-email.php:50
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-number.php:55
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-text.php:53
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-textarea.php:52
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-url.php:50
+msgid "Appears within the input"
+msgstr "Отображается внутри поля ввода"
+
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-email.php:49
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-number.php:54
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-text.php:52
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-textarea.php:51
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-url.php:49
+msgid "Placeholder Text"
+msgstr "Текст-заполнитель"
+
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-email.php:39
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-number.php:44
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-text.php:42
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-textarea.php:41
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-url.php:39
+msgid "Appears when creating a new post"
+msgstr "Отображается при создании новой записи"
+
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-email.php:38
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-number.php:43
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-text.php:41
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-textarea.php:40
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-url.php:38
+msgid "Default Value"
+msgstr "Значение по умолчанию"
+
+#: includes/apps/acf-integration/includes/class-acf-field-cf7apps-email.php:19
+msgid "CF7Apps Email"
+msgstr "CF7Apps Email"
+
+#: includes/apps/acf-integration/acf-integration.php:188
+msgid "When enabled, the ACF integration bridge is created between Contact Form 7 and Advanced Custom Fields."
+msgstr "При включении этой функции создается интеграционный мост ACF между Contact Form 7 и Advanced Custom Fields."
+
+#: includes/apps/acf-integration/acf-integration.php:185
+msgid "Enable Advanced Custom Fields"
+msgstr "Включить расширенные пользовательские поля"
+
+#: includes/apps/acf-integration/acf-integration.php:180
+msgid "ACF Integration"
+msgstr "Интеграция ACF"
+
+#: includes/apps/acf-integration/acf-integration.php:172 src/screens/Apps.js:69
+#: src/screens/AppSettings.js:854
+msgid "Install ACF Plugin"
+msgstr "Установите плагин ACF"
+
+#. translators: %s: Install plugin link
+#: includes/apps/acf-integration/acf-integration.php:171
+msgid "This integration requires the Advanced Custom Fields plugin to be active. %s"
+msgstr "Для этой интеграции необходимо активировать плагин Advanced Custom Fields. %s"
+
+#: includes/apps/acf-integration/acf-integration.php:131
+msgid "This integration requires the Advanced Custom Fields plugin to be active."
+msgstr "Для этой интеграции требуется, чтобы плагин Advanced Custom Fields был активным."
+
+#: includes/apps/acf-integration/acf-integration.php:130
+msgid "CF7 Apps ACF Integration:"
+msgstr "Интеграция CF7 Apps с ACF:"
+
+#: includes/apps/acf-integration/acf-integration.php:27
+msgid "Connect Advanced Custom Fields with Contact Form 7. Create CF7Apps field types in ACF and use them directly in your CF7 forms."
+msgstr "Подключите расширенные пользовательские поля к Contact Form 7. Создавайте типы полей CF7Apps в ACF и используйте их непосредственно в своих формах CF7."
+
+#: includes/apps/acf-integration/acf-integration.php:26
+msgid "Advanced Custom Fields"
+msgstr "Advanced Custom Fields"
+
+#: src/templates/cf7Entries/cf7Entries.js:364
+msgid "Search"
+msgstr "Поиск"
+
+#: includes/apps/cf7-internal-settings/src/components/CF7AppsHeader.js:76
+#: src/components/CF7AppsHeader.js:79
+msgid "Share idea"
+msgstr "Поделиться идеей"
+
+#: includes/apps/cf7-internal-settings/src/components/CF7AppsHeader.js:67
+#: includes/apps/cf7-internal-settings/src/components/CF7AppsHeader.js:71
+#: src/components/CF7AppsHeader.js:70 src/components/CF7AppsHeader.js:74
+msgid "Share your idea with us"
+msgstr "Поделитесь с нами своей идеей"
+
+#: includes/apps/cf7-internal-settings/src/components/CF7AppsHeader.js:52
+#: includes/apps/cf7-internal-settings/src/components/CF7AppsHeader.js:56
+#: src/components/CF7AppsHeader.js:54 src/components/CF7AppsHeader.js:58
+msgid "View documentation"
+msgstr "Просмотреть документацию"
+
+#: includes/apps/webhook/webhook.php:30
+msgid "Send Contact Form 7 data to third-party apps instantly using webhook endpoints."
+msgstr "Отправляйте данные из Contact Form 7 в сторонние приложения мгновенно, используя конечные точки веб-перехватчиков."
+
+#: includes/apps/cf7-internal-settings/src/screens/CF7AppsSettings.js:297
+#: src/screens/AppSettings.js:405
+msgid "Webhook URL must start with http:// or https://"
+msgstr "URL веб-перехватчика должен начинаться с http:// или https://"
+
+#: includes/apps/cf7-internal-settings/src/screens/CF7AppsSettings.js:288
+#: src/screens/AppSettings.js:396
+msgid "Webhook URL cannot be empty."
+msgstr "URL веб-перехватчика не может быть пустым."
+
+#: includes/apps/webhook/webhook.php:224
+msgid "Use {{form_id}} and {{fields}} placeholders."
+msgstr "Используйте заполнители {{form_id}} и {{fields}}."
+
+#: includes/apps/webhook/webhook.php:172
+msgid "Enable Webhook"
+msgstr "Включить веб-перехватчик"
+
+#: includes/apps/webhook/webhook.php:118 includes/apps/webhook/webhook.php:228
+msgid "To create your own body, you can replace values like in mail body (case sensitive).<br>Example: {\"message\": \"Sir [your-name] from [your-city].\" }<br><br>We will send your form data as JSON:<br><br><textarea style=\"width: 500px; min-height: 150px; font-family: monospace; background: #f8f9fa; border: 1px solid #ddd; padding: 10px; pointer-events: none;\" readonly>%s</textarea><br><br>This is just an example of field names and will not reflect actual data or customizations."
+msgstr "Чтобы создать собственное тело сообщения, вы можете заменить значения, как в теле письма (с учетом регистра).<br>Пример: {\"message\": \"Сэр [ваше-имя] из [ваш-город].\" }<br><br>Мы отправим данные вашей формы в формате JSON:<br><br><textarea style=\"width: 500px; min-height: 150px; font-family: monospace; background: #f8f9fa; border: 1px solid #ddd; padding: 10px; pointer-events: none;\" readonly>%s</textarea><br><br>Это всего лишь пример названий полей и не будет отражать фактические данные или настройки."
+
+#: includes/apps/webhook/webhook.php:117 includes/apps/webhook/webhook.php:227
+msgid "When you need customize your request.<br><br><strong style=\"color: #A61B1B;\">BE CAREFUL!</strong> This can break your integration (check your quotes).<br>REMEMBER: You can change field name with webhook config: [email* your_email webhook:email]"
+msgstr "Когда вам нужно настроить свой запрос.<br><br><strong style=\"color: #A61B1B;\">БУДЬТЕ ОСТОРОЖНЫ!</strong> Это может нарушить вашу интеграцию (проверьте кавычки).<br>ПОМНИТЕ: Вы можете изменить имя поля в конфигурации веб-хука: [email* your_email webhook:email]"
+
+#: includes/apps/webhook/webhook.php:114
+msgid "Use {{form_id}} and {{fields}} placeholders. {{fields}} will be a JSON object of submitted fields."
+msgstr "Используйте заполнители {{form_id}} и {{fields}}. {{fields}} будет представлять собой JSON-объект с заполненными полями."
+
+#: includes/apps/webhook/webhook.php:111 includes/apps/webhook/webhook.php:220
+msgid "Request Body"
+msgstr "Текст запроса"
+
+#: includes/apps/webhook/webhook.php:107 includes/apps/webhook/webhook.php:216
+msgid "One header by line, separated by colon. Example: Authorization: Bearer 99999999999999999999"
+msgstr "Заголовок на каждой строке, разделённый двоеточием. Пример: Authorization: Bearer 99999999999999999999"
+
+#: includes/apps/webhook/webhook.php:106 includes/apps/webhook/webhook.php:215
+msgid "When you need authentication/authorization.<br>You can add %s to your webhook request."
+msgstr "Когда вам требуется аутентификация/авторизация.<br>Вы можете добавить %s в свой запрос веб-перехватчика."
+
+#: includes/apps/webhook/webhook.php:103 includes/apps/webhook/webhook.php:212
+msgid "Optional JSON object of headers to send with the webhook request."
+msgstr "Необязательный JSON-объект с заголовками, которые будут отправлены вместе с запросом веб-перехватчика."
+
+#: includes/apps/webhook/webhook.php:99 includes/apps/webhook/webhook.php:207
+msgid "Request Headers"
+msgstr "Заголовки запроса"
+
+#: includes/apps/webhook/webhook.php:93 includes/apps/webhook/webhook.php:200
+msgid "Form Data"
+msgstr "Данные формы"
+
+#: includes/apps/webhook/webhook.php:93 includes/apps/webhook/webhook.php:200
+msgid "JSON"
+msgstr "JSON"
+
+#: includes/apps/webhook/webhook.php:91 includes/apps/webhook/webhook.php:198
+msgid "Data Type"
+msgstr "Тип данных"
+
+#: includes/apps/webhook/webhook.php:80 includes/apps/webhook/webhook.php:189
+msgid "Method"
+msgstr "Метод"
+
+#: includes/apps/webhook/webhook.php:71 includes/apps/webhook/webhook.php:179
+msgid "Webhook URL *"
+msgstr "URL веб-перехватчика *"
+
+#: includes/apps/webhook/webhook.php:58
+msgid "Enable Webhook App"
+msgstr "Включить приложение веб-перехватчика"
+
+#: includes/apps/acf-integration/acf-integration.php:35
+#: includes/apps/ai-form-generator/ai-form-generator.php:50
+#: includes/apps/webhook/webhook.php:37
+msgid "Integration"
+msgstr "Интеграция"
+
+#: includes/apps/webhook/webhook.php:29 includes/apps/webhook/webhook.php:54
+#: includes/apps/webhook/webhook.php:167
+msgid "Webhook"
+msgstr "Веб-перехватчик"
+
+#: includes/apps/cf7-redirection/cf7-redirection.php:393
+msgid "Redirection settings not found."
+msgstr "Настройки перенаправления не найдены."
+
+#: includes/apps/cf7-redirection/cf7-redirection.php:378
+#: includes/apps/cf7-redirection/cf7-redirection.php:407
+#: includes/apps/cf7-redirection/cf7-redirection.php:426
+msgid "Redirection is not enabled for this form."
+msgstr "Для этой формы перенаправление не включено."
+
+#: includes/apps/cf7-redirection/cf7-redirection.php:175
+msgid "Enable Redirection"
+msgstr "Включить перенаправление"
+
+#: includes/apps/cf7-redirection/cf7-redirection.php:84
+#: includes/apps/cf7-redirection/cf7-redirection.php:185
+msgid "Internal URL"
+msgstr "Внутренний URL"
+
+#: includes/apps/cf7-redirection/cf7-redirection.php:77
+#: includes/apps/webhook/webhook.php:67
+msgid "Enable global settings, so they apply across all forms. These global settings will automatically sync with each individual form, where they can still be modified if needed."
+msgstr "Включите глобальные настройки, чтобы они применялись ко всем формам. Эти глобальные настройки будут автоматически синхронизироваться с каждой отдельной формой, и при необходимости их можно будет изменить."
+
+#: src/components/CF7AppsSpamCount.js:38
+msgid "spam submissions since"
+msgstr "спам-сообщения с тех пор"
+
+#: src/components/CF7AppsSpamCount.js:36
+msgid "Honeypot has stopped"
+msgstr "Работа ловушки для бота приостановлена"
+
+#: includes/apps/cf7-internal-settings/src/components/CF7AppsDisabledOverlay.js:17
+msgid "To Enable, Go to Settings"
+msgstr "Чтобы включить эту функцию, перейдите в Настройки"
+
+#: includes/apps/cf7-redirection/cf7-redirection.php:465
+msgid "Redirection app is not enabled."
+msgstr "Приложение для перенаправления не включено."
+
+#: includes/apps/cf7-redirection/cf7-redirection.php:457
+msgid "Form ID is required."
+msgstr "Требуется идентификатор формы."
+
+#: includes/apps/cf7-redirection/cf7-redirection.php:113
+#: includes/apps/cf7-redirection/cf7-redirection.php:215
+msgid "Open the redirection link in a new browser tab."
+msgstr "Откройте ссылку перенаправления в новой вкладке браузера."
+
+#: includes/apps/cf7-redirection/cf7-redirection.php:110
+#: includes/apps/cf7-redirection/cf7-redirection.php:212
+msgid "Open in New Tab"
+msgstr "Открыть в новой вкладке"
+
+#: includes/apps/cf7-redirection/cf7-redirection.php:103
+#: includes/apps/cf7-redirection/cf7-redirection.php:204
+msgid "Enter the external URL to redirect users to after form submission. Make sure to include the full URL (e.g., https://example.com)."
+msgstr "Введите внешний URL-адрес, на который будут перенаправлены пользователи после отправки формы. Обязательно укажите полный URL-адрес (например, https://example.com)."
+
+#: includes/apps/cf7-redirection/cf7-redirection.php:95
+#: includes/apps/cf7-redirection/cf7-redirection.php:196
+msgid "Choose the post type to redirect users to after form submission."
+msgstr "Выберите тип записи, на которую будут перенаправлены пользователи после отправки формы."
+
+#: includes/apps/cf7-redirection/cf7-redirection.php:91
+#: includes/apps/cf7-redirection/cf7-redirection.php:192
+msgid "Select Post Type"
+msgstr "Выберите тип записи"
+
+#: includes/apps/cf7-redirection/cf7-redirection.php:85
+#: includes/apps/cf7-redirection/cf7-redirection.php:99
+#: includes/apps/cf7-redirection/cf7-redirection.php:186
+#: includes/apps/cf7-redirection/cf7-redirection.php:200
+msgid "External URL"
+msgstr "Внешний URL"
+
+#: includes/apps/cf7-redirection/cf7-redirection.php:81
+#: includes/apps/cf7-redirection/cf7-redirection.php:182
+msgid "Redirection Type"
+msgstr "Тип перенаправления"
+
+#: includes/apps/cf7-redirection/cf7-redirection.php:74
+#: includes/apps/webhook/webhook.php:64
+msgid "Global Settings"
+msgstr "Глобальные настройки"
+
+#: includes/apps/cf7-redirection/cf7-redirection.php:68
+msgid "Enable Redirection App"
+msgstr "Включить приложение перенаправления"
+
+#: includes/apps/cf7-redirection/cf7-redirection.php:35
+msgid "Easily redirect users to a specific URL after form submission, enhancing user experience and engagement."
+msgstr "Удобная переадресация пользователей на определенный URL-адрес после отправки формы улучшает пользовательский опыт и вовлеченность."
+
+#: includes/apps/cf7-redirection/cf7-redirection.php:34
+#: includes/apps/cf7-redirection/cf7-redirection.php:63
+#: includes/apps/cf7-redirection/cf7-redirection.php:167
+msgid "Redirection"
+msgstr "Перенаправление"
+
+#. translators: %s: Documentation URL
+#. translators: %s: documentation link HTML
+#: includes/apps/acf-integration/acf-integration.php:179
+#: includes/apps/ai-form-generator/ai-form-generator.php:68
+#: includes/apps/cf7-entries/cf7-entries.php:260
+#: includes/apps/cf7-redirection/cf7-redirection.php:62
+#: includes/apps/cf7-redirection/cf7-redirection.php:166
+#: includes/apps/webhook/webhook.php:54 includes/apps/webhook/webhook.php:167
+msgid "Stuck? Check our Documentation on %s"
+msgstr "Возникли трудности? Ознакомьтесь с нашей документацией по %s"
+
+#: src/templates/cf7Entries/cf7Entries.js:461
+msgid "Page"
+msgstr "Страница"
+
+#: src/templates/cf7Entries/cf7Entries.js:461
+msgid "entries"
+msgstr "записи"
+
+#: src/templates/cf7Entries/cf7Entries.js:461
+msgid "Showing"
+msgstr "Показано"
+
+#: src/templates/cf7Entries/cf7Entries.js:450
+msgid "No records found."
+msgstr "Записи не найдены."
+
+#: src/templates/cf7Entries/cf7Entries.js:434
+msgid "View"
+msgstr "Вид"
+
+#: src/templates/cf7Entries/cf7Entries.js:412
+msgid "Date & Time"
+msgstr "Дата и время"
+
+#: src/templates/cf7Entries/cf7Entries.js:411
+msgid "Email"
+msgstr "Электронная почта"
+
+#: src/templates/cf7Entries/cf7Entries.js:410
+msgid "Form Name"
+msgstr "Название формы"
+
+#: src/templates/cf7Entries/cf7Entries.js:394
+msgid "Clear Filter"
+msgstr "Очистить фильтр"
+
+#: src/templates/cf7Entries/cf7Entries.js:372
+msgid "Select Date Range"
+msgstr "Выберите диапазон дат"
+
+#: src/templates/cf7Entries/cf7Entries.js:350
+msgid "Apply"
+msgstr "Применять"
+
+#: src/templates/cf7Entries/cf7Entries.js:338
+msgid "Please select at least one entry"
+msgstr "Пожалуйста, выберите хотя бы один вариант ответа"
+
+#: src/templates/cf7Entries/cf7Entries.js:329
+#: src/templates/cf7Entries/cf7Entries.js:440
+msgid "Delete"
+msgstr "Удалить"
+
+#: src/templates/cf7Entries/cf7Entries.js:328
+msgid "Bulk Actions"
+msgstr "Массовые действия"
+
+#: src/templates/cf7Entries/cf7Entries.js:309
+msgid "No data found."
+msgstr "Данные не найдены."
+
+#: src/templates/cf7Entries/cf7Entries.js:292
+msgid "Values"
+msgstr "Значения"
+
+#: src/templates/cf7Entries/cf7Entries.js:291
+msgid "Fields"
+msgstr "Поля"
+
+#: src/templates/cf7Entries/cf7Entries.js:281
+msgid "Email Details"
+msgstr "Информация об электронной почте"
+
+#: src/templates/cf7Entries/cf7Entries.js:138
+msgid "An error occurred while deleting entries"
+msgstr "Произошла ошибка при удалении записей"
+
+#: src/templates/cf7Entries/cf7Entries.js:134
+msgid "Failed to delete entries"
+msgstr "Не удалось удалить записи"
+
+#: src/templates/cf7Entries/cf7Entries.js:124
+msgid "Entries deleted successfully"
+msgstr "Записи успешно удалены"
+
+#: src/templates/cf7Entries/cf7Entries.js:117
+msgid "Are you sure you want to delete the selected entries?"
+msgstr "Вы уверены, что хотите удалить выбранные записи?"
+
+#: src/templates/cf7Entries/cf7Entries.js:112
+msgid "Please select an action"
+msgstr "Пожалуйста, выберите действие"
+
+#: src/templates/cf7Entries/cf7Entries.js:99
+msgid "An error occurred while deleting the entry"
+msgstr "Произошла ошибка при удалении записи"
+
+#: src/templates/cf7Entries/cf7Entries.js:95
+msgid "Failed to delete entry"
+msgstr "Не удалось удалить запись"
+
+#: src/templates/cf7Entries/cf7Entries.js:86
+msgid "Entry deleted successfully"
+msgstr "Запись успешно удалена"
+
+#: src/templates/cf7Entries/cf7Entries.js:79
+msgid "Are you sure you want to delete this entry?"
+msgstr "Вы уверены, что хотите удалить эту запись?"
+
+#: includes/apps/ai-form-generator/ai-form-generator.php:197
+#: src/components/CF7AppsPopup.js:7
+msgid "Close"
+msgstr "Закрыть"
+
+#: includes/rest-api/wp-admin/v1/rest-api.php:440
+msgid "All Forms"
+msgstr "Все формы"
+
+#: includes/apps/cf7-entries/cf7-entries.php:266
+msgid "Show Entries"
+msgstr "Показать записи"
+
+#: includes/apps/cf7-entries/cf7-entries.php:253
+msgid "Entries Settings"
+msgstr "Настройки записей"
+
+#: includes/apps/cf7-entries/cf7-entries.php:27
+msgid "Access and manage all Contact Form 7 submissions in a centralized database with filtering and export options."
+msgstr "Получайте доступ ко всем отправленным через Contact Form 7 данным и управляйте ими в централизованной базе данных с возможностью фильтрации и экспорта."
+
+#: includes/apps/cf7-entries/cf7-entries.php:26
+#: includes/apps/cf7-entries/cf7-entries.php:36
+#: includes/apps/cf7-entries/cf7-entries.php:210
+#: includes/apps/cf7-entries/cf7-entries.php:261
+msgid "Entries"
+msgstr "Записи"
+
+#. Plugin Name of the plugin
+#. Author of the plugin
+#: honeypot.php
+msgid "CF7 Apps"
+msgstr "Приложения CF7"
+
+#: src/templates/honeypot/HoneypotForms.js:54
+msgid "No forms found."
+msgstr "Формы не найдены."
+
+#: includes/apps/cf7-internal-settings/src/screens/CF7AppsSettings.js:508
+#: src/screens/AppSettings.js:845
+msgid "%s Settings"
+msgstr "Настройки %s"
+
+#: includes/apps/cf7-internal-settings/src/screens/CF7AppsSettings.js:315
+#: src/screens/AppSettings.js:422
+msgid "Error! Something Went Wrong"
+msgstr "Ошибка! Что-то пошло не так"
+
+#: includes/apps/cf7-internal-settings/src/screens/CF7AppsSettings.js:312
+#: src/screens/AppSettings.js:419
+msgid "Great! Settings Saved Successfully"
+msgstr "Отлично! Настройки успешно сохранены"
+
+#: includes/apps/cf7-internal-settings/src/screens/CF7AppsSettings.js:277
+#: src/screens/AppSettings.js:384
+msgid "Error! Please fill all required fields."
+msgstr "Ошибка! Пожалуйста, заполните все обязательные поля."
+
+#: includes/apps/cf7-internal-settings/src/screens/CF7AppsSettings.js:256
+#: includes/apps/cf7-internal-settings/src/screens/CF7AppsSettings.js:264
+#: src/screens/AppSettings.js:350 src/screens/AppSettings.js:362
+#: src/screens/AppSettings.js:371
+msgid "Please fill all required fields."
+msgstr "Пожалуйста, заполните все обязательные поля."
+
+#: src/screens/Apps.js:110
+msgid "Spam Protection Apps"
+msgstr "Приложения для защиты от спама"
+
+#: src/screens/Apps.js:58
+msgid "Simplify, customize, and enhance your form building experience."
+msgstr "Упростите, настройте и улучшите процесс создания форм."
+
+#: src/screens/Apps.js:56
+msgid "Unleash the full potential of Contact Form 7!"
+msgstr "Раскройте весь потенциал Contact Form 7!"
+
+#: src/index.js:68
+msgid "Yes, Migrate to CF7 Apps"
+msgstr "Да, переходите на приложения CF7"
+
+#: src/index.js:67
+msgid "You can still use both, but we recommend switching now."
+msgstr "Вы по-прежнему можете использовать оба варианта, но мы рекомендуем переключиться на другой сейчас."
+
+#: src/index.js:66
+msgid "For enhanced security and additional features, we have developed CF7 Apps. You can now move your Honeypot settings to the new Honeypot App inside CF7 Apps."
+msgstr "Для повышения безопасности и расширения функционала мы разработали CF7 Apps. Теперь вы можете перенести настройки вашей ловушки Honeypot в новое приложение Honeypot, входящее в состав CF7 Apps."
+
+#: src/index.js:65
+msgid "Attention: Introducing CF7 Apps 🎉"
+msgstr "Внимание: Представляем приложения CF7 🎉"
+
+#: src/index.js:47
+msgid "Oops! Migration failed, please try again."
+msgstr "Ой! Миграция не удалась, пожалуйста, попробуйте еще раз."
+
+#: src/index.js:42
+msgid "Great! Migration completed successfully, Enjoy CF7 Apps 🥳."
+msgstr "Отлично! Миграция успешно завершена. Наслаждайтесь приложениями CF7 🥳."
+
+#: src/components/CF7AppsHelpText.js:17
+msgid "Show More"
+msgstr "Показать больше"
+
+#: src/components/CF7AppsHelpText.js:17
+msgid "Show Less"
+msgstr "Показать меньше"
+
+#: includes/apps/cf7-internal-settings/src/components/CF7AppsHeader.js:85
+#: src/components/CF7AppsHeader.js:91
+msgid "Back"
+msgstr "Назад"
+
+#: src/components/CF7AppsApp.js:91
+msgid "Disabled"
+msgstr "Отключить"
+
+#: src/components/CF7AppsApp.js:91
+msgid "Enabled"
+msgstr "Включено"
+
+#: src/components/CF7AppsApp.js:84
+msgid "Learn more"
+msgstr "Узнать больше"
+
+#: src/components/CF7AppsApp.js:43
+msgid "App disabled"
+msgstr "Приложение отключено"
+
+#: src/components/CF7AppsApp.js:40
+msgid "App enabled"
+msgstr "Приложение включено"
+
+#: legacy-honeypot/includes/honeypot4cf7-admin.php:511
+msgid "CF7 Apps' Honeypot App."
+msgstr "Приложение Honeypot от CF7 Apps."
+
+#: legacy-honeypot/includes/honeypot4cf7-admin.php:509
+msgid "We've moved your Honeypot settings to the Honeypot App in CF7 Apps. You can still use both, but we recommend using the"
+msgstr "Мы перенесли ваши настройки Honeypot в приложение Honeypot в разделе приложений CF7. Вы по-прежнему можете использовать оба приложения, но мы рекомендуем использовать Honeypot."
+
+#: legacy-honeypot/includes/honeypot4cf7-admin.php:505
+msgid "Welcome to CF7 Apps!"
+msgstr "Добро пожаловать в CF7 Apps!"
+
+#: includes/rest-api/wp-admin/v1/rest-api.php:294
+msgid "No"
+msgstr "Нет"
+
+#: includes/rest-api/wp-admin/v1/rest-api.php:294
+msgid "Yes"
+msgstr "Да"
+
+#: includes/class-cf7apps.php:74
+msgid "Install Contact Form 7"
+msgstr "Установите Contact Form 7"
+
+#: includes/class-cf7apps.php:72
+msgid "%s requires Contact Form 7 to be installed and activated. %s"
+msgstr "Для работы %s требуется установленная и активированная версия Contact Form 7. %s"
+
+#: includes/apps/honeypot/honeypot.php:92
+msgid "Time Check Value (Seconds)"
+msgstr "Контрольная величина времени (в секундах)"
+
+#: includes/apps/honeypot/honeypot.php:83
+msgid "If checked, the accessibility label will not be generated. This is not recommended, but may improve."
+msgstr "Если этот параметр отмечен, метка доступности не будет сгенерирована. Это не рекомендуется, но может улучшить ситуацию."
+
+#: includes/apps/honeypot/honeypot.php:76
+msgid "By default Honeypot uses inline CSS on the honeypot field to hide it. Checking this box moves."
+msgstr "По умолчанию Honeypot использует встроенный CSS в поле приманки, чтобы скрыть его. Установка этого флажка перемещается."
+
+#: includes/apps/honeypot/honeypot.php:69
+msgid "To assure the honeypot isn't auto-completed by a browser, we add an atypical \"autocomplete\" ."
+msgstr "Чтобы гарантировать, что ловушка не будет автоматически дополняться браузером, мы добавляем нетипичный механизм \"автозаполнения\"."
+
+#: includes/apps/honeypot/honeypot.php:61
+msgid "You can customize the (hidden) accessibility message, or just leave it the default value: Please leave this field empty."
+msgstr "Вы можете настроить (скрытое) сообщение о доступности или просто оставить для него значение по умолчанию: Оставьте это поле пустым."
+
+#: includes/apps/honeypot/honeypot.php:50
+msgid "(Recommended) By default the Honeypot field is not stored with other fields in form-saving plugins like Flamingo. However, saving the field can be useful to see what spam bots are leaving behind to help you improve your spam stopping superpowers. If you'd like to store the value of the field, simply check this box (and install Flamingo)."
+msgstr "(Рекомендуется) По умолчанию поле Honeypot не сохраняется вместе с другими полями в плагинах сохранения форм, таких как Flamingo. Однако сохранение этого поля может быть полезно для просмотра того, что оставляют спам-боты, и поможет вам улучшить эффективность защиты от спама. Если вы хотите сохранить значение поля, просто установите этот флажок (и установите Flamingo)."
+
+#: includes/apps/honeypot/honeypot.php:42
+msgid "Enable Honeypot App"
+msgstr "Включить приложение Honeypot"
+
+#: includes/apps/honeypot/honeypot.php:14
+msgid "Add invisible honeypot fields to your forms to trap spambots, ensuring spam-free form submission."
+msgstr "Добавьте в свои формы невидимые поля-ловушки для спам-ботов, чтобы обеспечить отправку форм без спама."
+
+#: includes/apps/hcaptcha/hcaptcha.php:532
+msgid "Choose the theme for the hCaptcha widget."
+msgstr "Выберите тему оформления для виджета hCaptcha."
+
+#: includes/apps/hcaptcha/hcaptcha.php:529
+msgid "Dark"
+msgstr "Темный"
+
+#: includes/apps/hcaptcha/hcaptcha.php:528
+msgid "Light"
+msgstr "Светлый"
+
+#: includes/apps/hcaptcha/hcaptcha.php:525
+msgid "Theme"
+msgstr "Тема"
+
+#: includes/apps/hcaptcha/hcaptcha.php:520
+msgid "Add custom CSS classes to the hCaptcha widget."
+msgstr "Добавьте пользовательские CSS-классы к виджету hCaptcha."
+
+#: includes/apps/hcaptcha/hcaptcha.php:516
+msgid "Custom CSS"
+msgstr "Пользовательский CSS"
+
+#: includes/apps/hcaptcha/hcaptcha.php:511
+msgid "Choose the size of the hCaptcha widget."
+msgstr "Выберите размер виджета hCaptcha."
+
+#: includes/apps/hcaptcha/hcaptcha.php:508
+msgid "Compact"
+msgstr "Компактный"
+
+#: includes/apps/hcaptcha/hcaptcha.php:507
+msgid "Normal"
+msgstr "Нормальный"
+
+#: includes/apps/hcaptcha/hcaptcha.php:504
+msgid "Size"
+msgstr "Размер"
+
+#: includes/apps/hcaptcha/hcaptcha.php:484
+msgid "Language"
+msgstr "Язык"
+
+#: includes/apps/hcaptcha/hcaptcha.php:476
+msgid "Error message"
+msgstr "Сообщение ошибке"
+
+#: includes/apps/acf-integration/includes/class-cf7-acf-integration.php:172
+#: includes/apps/hcaptcha/hcaptcha.php:454
+#: legacy-honeypot/includes/honeypot4cf7.php:858
+#: includes/apps/cf7-internal-settings/src/components/CF7AppsHeader.js:61
+#: src/components/CF7AppsHeader.js:63
+msgid "Documentation"
+msgstr "Документация"
+
+#: includes/apps/acf-integration/includes/class-cf7-acf-integration.php:170
+#: includes/apps/hcaptcha/hcaptcha.php:452
+#: legacy-honeypot/includes/honeypot4cf7.php:856
+msgid "Need help setting this up? Check out our"
+msgstr "Нужна помощь в настройке? Ознакомьтесь с нашими"
+
+#: includes/apps/acf-integration/acf-integration.php:194
+#: includes/apps/ai-form-generator/ai-form-generator.php:80
+#: includes/apps/cf7-entries/cf7-entries.php:273
+#: includes/apps/cf7-redirection/cf7-redirection.php:118
+#: includes/apps/cf7-redirection/cf7-redirection.php:221
+#: includes/apps/hcaptcha/hcaptcha.php:206
+#: includes/apps/honeypot/honeypot.php:101
+#: includes/apps/webhook/webhook.php:123 includes/apps/webhook/webhook.php:233
+msgid "Save Settings"
+msgstr "Сохраните настройки"
+
+#: includes/apps/hcaptcha/hcaptcha.php:200
+#: includes/apps/hcaptcha/hcaptcha.php:499
+msgid "Choose a language for your CAPTCHA display."
+msgstr "Выберите язык для отображения CAPTCHA."
+
+#: includes/apps/hcaptcha/hcaptcha.php:196
+msgid "Force hCaptcha to render in a specific language."
+msgstr "Принудительно отображать hCaptcha на определенном языке."
+
+#: includes/apps/hcaptcha/hcaptcha.php:192
+#: includes/apps/hcaptcha/hcaptcha.php:480
+msgid "Enter a custom message to display when CAPTCHA validation fails."
+msgstr "Введите пользовательское сообщение, которое будет отображаться при неудачной проверке CAPTCHA."
+
+#: includes/apps/hcaptcha/hcaptcha.php:191
+#: includes/apps/hcaptcha/hcaptcha.php:331
+msgid "Invalid Captcha"
+msgstr "Неверная капча"
+
+#: includes/apps/hcaptcha/hcaptcha.php:189
+msgid "Invalid Captcha error message"
+msgstr "Сообщение об ошибке \"Неверная капча\""
+
+#: includes/apps/hcaptcha/hcaptcha.php:185
+msgid "Enter your secret key. Don't have one? <a href=\"https://dashboard.hcaptcha.com/settings/secrets\" target=\"_blank\">Click here</a> to generate a new key."
+msgstr "Введите свой секретный ключ. У вас его нет? <a href=\"https://dashboard.hcaptcha.com/settings/secrets\" target=\"_blank\">Нажмите здесь</a>, чтобы сгенерировать новый ключ."
+
+#: includes/apps/hcaptcha/hcaptcha.php:184
+msgid "Secret key is required."
+msgstr "Требуется секретный ключ."
+
+#: includes/apps/hcaptcha/hcaptcha.php:181
+msgid "Secret Key"
+msgstr "Секретный ключ"
+
+#: includes/apps/hcaptcha/hcaptcha.php:177
+msgid "Enter your site key. Don't have one? <a href=\"https://dashboard.hcaptcha.com/sites\" target=\"_blank\">Click here</a> to generate a new key."
+msgstr "Введите ключ вашего сайта. У вас его нет? <a href=\"https://dashboard.hcaptcha.com/sites\" target=\"_blank\">Нажмите здесь</a>, чтобы сгенерировать новый ключ."
+
+#: includes/apps/hcaptcha/hcaptcha.php:176
+msgid "Site key is required."
+msgstr "Требуется ключ сайта."
+
+#: includes/apps/hcaptcha/hcaptcha.php:173
+msgid "Site Key"
+msgstr "Ключ сайта"
+
+#: includes/apps/hcaptcha/hcaptcha.php:168
+msgid "Enable hCaptcha App"
+msgstr "Включить приложение hCaptcha"
+
+#: includes/apps/hcaptcha/hcaptcha.php:165
+#: includes/apps/hcaptcha/hcaptcha.php:443
+msgid "hCaptcha Settings"
+msgstr "настройки hCaptcha"
+
+#: includes/apps/hcaptcha/hcaptcha.php:148
+#: includes/apps/honeypot/honeypot.php:20
+msgid "Spam Protection"
+msgstr "Защита от спама"
+
+#: includes/apps/hcaptcha/hcaptcha.php:142
+#: includes/apps/hcaptcha/hcaptcha.php:166
+msgid "Add hCaptcha to Contact Form 7 for secure, spam-free forms."
+msgstr "Добавьте hCaptcha в Contact Form 7 для создания безопасных форм, защищенных от спама."
+
+#: includes/apps/hcaptcha/hcaptcha.php:141
+#: includes/apps/hcaptcha/hcaptcha.php:413
+msgid "hCaptcha"
+msgstr "hCaptcha"
+
+#: includes/apps/hcaptcha/hcaptcha.php:136
+msgid "Zulu"
+msgstr "Зулусский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:135
+msgid "Yoruba"
+msgstr "Йоруба"
+
+#: includes/apps/hcaptcha/hcaptcha.php:134
+msgid "Yiddish"
+msgstr "Идиш"
+
+#: includes/apps/hcaptcha/hcaptcha.php:133
+msgid "Xhosa"
+msgstr "Коса"
+
+#: includes/apps/hcaptcha/hcaptcha.php:132
+msgid "Welsh"
+msgstr "Валлийский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:131
+msgid "Vietnamese"
+msgstr "Вьетнамский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:130
+msgid "Uzbek"
+msgstr "Узбекский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:129
+msgid "Urdu"
+msgstr "Урду"
+
+#: includes/apps/hcaptcha/hcaptcha.php:128
+msgid "Ukrainian"
+msgstr "Украинский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:127
+msgid "Uyghur"
+msgstr "Уйгур"
+
+#: includes/apps/hcaptcha/hcaptcha.php:126
+msgid "Turkmen"
+msgstr "Туркменский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:125
+msgid "Turkish"
+msgstr "Турецкий"
+
+#: includes/apps/hcaptcha/hcaptcha.php:124
+msgid "Thai"
+msgstr "Тайский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:123
+msgid "Teluga"
+msgstr "Телуга"
+
+#: includes/apps/hcaptcha/hcaptcha.php:122
+msgid "Tatar"
+msgstr "Татарский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:121
+msgid "Tamil"
+msgstr "Тамильский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:120
+msgid "Tajik"
+msgstr "Таджикский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:119
+msgid "Tagalog"
+msgstr "Тагальский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:118
+msgid "Swedish"
+msgstr "Шведский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:117
+msgid "Swahili"
+msgstr "Суахили"
+
+#: includes/apps/hcaptcha/hcaptcha.php:116
+msgid "Sundanese"
+msgstr "Сунданский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:115
+msgid "Spanish"
+msgstr "Испанский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:114
+msgid "Southern Sotho"
+msgstr "Северный сото"
+
+#: includes/apps/hcaptcha/hcaptcha.php:113
+msgid "Somali"
+msgstr "Сомали"
+
+#: includes/apps/hcaptcha/hcaptcha.php:112
+msgid "Slovenian"
+msgstr "Словенский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:111
+msgid "Slovak"
+msgstr "Словацкий"
+
+#: includes/apps/hcaptcha/hcaptcha.php:110
+msgid "Serbian"
+msgstr "Сербский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:109
+msgid "Sinhalese"
+msgstr "Сингальский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:108
+msgid "Sindhi"
+msgstr "Синдхи"
+
+#: includes/apps/hcaptcha/hcaptcha.php:107
+msgid "Shona"
+msgstr "Шона"
+
+#: includes/apps/hcaptcha/hcaptcha.php:106
+msgid "Samoan"
+msgstr "Самоанский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:105
+msgid "Russian"
+msgstr "Русский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:104
+msgid "Romanian"
+msgstr "Румынский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:103
+msgid "Punjabi"
+msgstr "Панджабский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:102
+msgid "Pashto"
+msgstr "Пушту"
+
+#: includes/apps/hcaptcha/hcaptcha.php:101
+msgid "Portuguese"
+msgstr "Португальский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:100
+msgid "Polish"
+msgstr "Польский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:99
+msgid "Oriya"
+msgstr "Орийский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:98
+msgid "Nyanja"
+msgstr "Ньянджа"
+
+#: includes/apps/hcaptcha/hcaptcha.php:97
+msgid "Norwegian"
+msgstr "Норвежский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:96
+msgid "Nepali"
+msgstr "Непальский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:95
+msgid "Montenegrin (as Bosnian)"
+msgstr "Черногорский (как боснийский)"
+
+#: includes/apps/hcaptcha/hcaptcha.php:94
+msgid "Mongolian"
+msgstr "Монгольский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:93
+msgid "Marathi"
+msgstr "Маратхский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:92
+msgid "Maori"
+msgstr "Маори"
+
+#: includes/apps/hcaptcha/hcaptcha.php:91
+msgid "Maltese"
+msgstr "Мальтийский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:90
+msgid "Malayalam"
+msgstr "Малайялам"
+
+#: includes/apps/hcaptcha/hcaptcha.php:89
+msgid "Malay"
+msgstr "Малайский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:88
+msgid "Malagasy"
+msgstr "Малагасийский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:87
+msgid "Macedonian"
+msgstr "Македонский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:86
+msgid "Luxembourgish"
+msgstr "Люксембургский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:85
+msgid "Lithuanian"
+msgstr "Литовский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:84
+msgid "Latvian"
+msgstr "Латвийский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:83
+msgid "Latin"
+msgstr "Латиница"
+
+#: includes/apps/hcaptcha/hcaptcha.php:82
+msgid "Lao"
+msgstr "Лаосский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:81
+msgid "Kurdish"
+msgstr "Курдский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:80
+msgid "Korean"
+msgstr "Корейский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:79
+msgid "Kirghiz"
+msgstr "Киргизский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:78
+msgid "Kinyarwanda"
+msgstr "Киньяруандский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:77
+msgid "Khmer"
+msgstr "Кхмерский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:76
+msgid "Kazakh"
+msgstr "Казахский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:75
+msgid "Kannada"
+msgstr "Каннада"
+
+#: includes/apps/hcaptcha/hcaptcha.php:74
+msgid "Javanese"
+msgstr "Яванский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:73
+msgid "Japanese"
+msgstr "Японская"
+
+#: includes/apps/hcaptcha/hcaptcha.php:72
+msgid "Italian"
+msgstr "Итальянский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:71
+msgid "Irish"
+msgstr "Ирландский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:70
+msgid "Indonesian"
+msgstr "Индонезийский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:69
+msgid "Igbo"
+msgstr "Игбо"
+
+#: includes/apps/hcaptcha/hcaptcha.php:68
+msgid "Icelandic"
+msgstr "Исландский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:67
+msgid "Hungarian"
+msgstr "Венгерский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:66
+msgid "Hmong"
+msgstr "Хмонг"
+
+#: includes/apps/hcaptcha/hcaptcha.php:65
+msgid "Hindi"
+msgstr "Хинди"
+
+#: includes/apps/hcaptcha/hcaptcha.php:64
+msgid "Hebrew"
+msgstr "Иврит"
+
+#: includes/apps/hcaptcha/hcaptcha.php:63
+msgid "Hawaiian"
+msgstr "Гавайский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:62
+msgid "Hausa"
+msgstr "Хауса"
+
+#: includes/apps/hcaptcha/hcaptcha.php:61
+msgid "Haitian"
+msgstr "Гаитянский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:60
+msgid "Gujurati"
+msgstr "Гуджарати"
+
+#: includes/apps/hcaptcha/hcaptcha.php:59
+msgid "Greek"
+msgstr "Греческий"
+
+#: includes/apps/hcaptcha/hcaptcha.php:58
+msgid "German"
+msgstr "Немецкий"
+
+#: includes/apps/hcaptcha/hcaptcha.php:57
+msgid "Georgian"
+msgstr "Грузинский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:56
+msgid "Galacian"
+msgstr "Галисийский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:55
+msgid "Gaelic"
+msgstr "Гэльский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:54
+msgid "Frisian"
+msgstr "Фризский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:53
+msgid "French"
+msgstr "Французский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:52
+msgid "Finnish"
+msgstr "Финский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:51
+msgid "Farsi/ Persian"
+msgstr "Фарси/Персидский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:50
+msgid "Estonian"
+msgstr "Эстонский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:49
+msgid "Esperanto"
+msgstr "Эсперанто"
+
+#: includes/apps/hcaptcha/hcaptcha.php:26
+msgid "English"
+msgstr "Английский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:48
+msgid "Dutch"
+msgstr "Голландский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:47
+msgid "Danish"
+msgstr "Датский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:46
+msgid "Czech"
+msgstr "Чешский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:45
+msgid "Croatian"
+msgstr "Хорватский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:44
+msgid "Corsican"
+msgstr "Корсиканский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:43
+msgid "Chinese Traditional"
+msgstr "Китайский традиционный"
+
+#: includes/apps/hcaptcha/hcaptcha.php:42
+msgid "Chinese Simplified"
+msgstr "Китайский упрощенный"
+
+#: includes/apps/hcaptcha/hcaptcha.php:41
+msgid "Chinese"
+msgstr "Китайский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:40
+msgid "Cebuano"
+msgstr "Себуанский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:39
+msgid "Catalan"
+msgstr "Каталонский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:38
+msgid "Burmese"
+msgstr "Бирманский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:37
+msgid "Bosnian"
+msgstr "Боснийский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:36
+msgid "Bulgarian"
+msgstr "Болгарский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:35
+msgid "Bengali"
+msgstr "Бенгальский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:34
+msgid "Belarusian"
+msgstr "Беларусский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:33
+msgid "Basque"
+msgstr "Баскский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:32
+msgid "Azerbaijani"
+msgstr "Азербайджанский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:31
+msgid "Armenian"
+msgstr "Армянский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:30
+msgid "Arabic"
+msgstr "Арабский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:29
+msgid "Amharic"
+msgstr "Амхарский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:28
+msgid "Albanian"
+msgstr "Албанский"
+
+#: includes/apps/hcaptcha/hcaptcha.php:27
+msgid "Afrikaans"
+msgstr "Африканский"
+
+#. Description of the plugin
+#: honeypot.php
+msgid "Contact Form 7 Apps is a collection of useful modules and extensions for Contact Form 7."
+msgstr "Contact Form 7 Apps — это набор полезных модулей и расширений для Contact Form 7."
+
+#. Plugin URI of the plugin
+#. Author URI of the plugin
+#: honeypot.php
+msgid "https://cf7apps.com/"
+msgstr "https://cf7apps.com/"
+
+#: legacy-honeypot/includes/honeypot4cf7.php:911
+msgid "disable Accessibility Label"
+msgstr "отключить Метку Доступности"
+
+#: legacy-honeypot/includes/class-honeypot4cf7-data-table.php:81
+#: src/templates/honeypot/HoneypotForms.js:48
+msgid "Edit"
+msgstr "Изменить"
+
+#: legacy-honeypot/includes/class-honeypot4cf7-data-table.php:69
+msgid "no"
+msgstr "нет"
+
+#: legacy-honeypot/includes/class-honeypot4cf7-data-table.php:66
+msgid "yes"
+msgstr "да"
+
+#: legacy-honeypot/includes/class-honeypot4cf7-data-table.php:18
+#: src/templates/cf7Entries/cf7Entries.js:413
+#: src/templates/honeypot/HoneypotForms.js:35
+msgid "Action"
+msgstr "Действие"
+
+#: legacy-honeypot/includes/class-honeypot4cf7-data-table.php:17
+#: src/templates/honeypot/HoneypotForms.js:34
+msgid "Date"
+msgstr "Дата"
+
+#: legacy-honeypot/includes/class-honeypot4cf7-data-table.php:15
+#: src/templates/honeypot/HoneypotForms.js:32
+msgid "Shortcode"
+msgstr "Быстрый код"
+
+#: legacy-honeypot/includes/class-honeypot4cf7-data-table.php:14
+#: src/templates/honeypot/HoneypotForms.js:31
+msgid "Title"
+msgstr "Название"
+
+#: includes/apps/honeypot/honeypot.php:23
+#: legacy-honeypot/includes/honeypot4cf7-admin.php:193
+msgid "Forms"
+msgstr "Формы"
+
+#: includes/apps/cf7-entries/cf7-entries.php:33
+#: includes/apps/cf7-entries/cf7-entries.php:35
+#: includes/apps/cf7-redirection/cf7-redirection.php:42
+#: includes/apps/honeypot/honeypot.php:22
+#: legacy-honeypot/includes/honeypot4cf7-admin.php:189 src/screens/Apps.js:76
+msgid "General"
+msgstr "Общие"
+
+#: legacy-honeypot/includes/honeypot4cf7.php:789
+#: legacy-honeypot/includes/honeypot4cf7.php:904
+msgid "Move inline CSS"
+msgstr "Переместить встроенный CSS"
+
+#: legacy-honeypot/includes/honeypot4cf7.php:771
+#: legacy-honeypot/includes/honeypot4cf7.php:890
+msgid "Placeholder"
+msgstr "Подсказка"
+
+#: legacy-honeypot/includes/honeypot4cf7.php:762
+#: legacy-honeypot/includes/honeypot4cf7.php:883
+msgid "Wrapper ID"
+msgstr "ID обёртки"
+
+#: legacy-honeypot/includes/honeypot4cf7.php:753
+msgid "Class"
+msgstr "Класс"
+
+#: legacy-honeypot/includes/honeypot4cf7.php:744
+msgid "ID"
+msgstr "ID"
+
+#: legacy-honeypot/includes/honeypot4cf7.php:738
+msgid "Optional Settings"
+msgstr "Дополнительные настройки"
+
+#: legacy-honeypot/includes/honeypot4cf7.php:733
+msgid "For better security, change \"honeypot\" to something more appealing to a bot, such as text including \"email\" or \"website\"."
+msgstr "Для большей безопасности измените «приманку» на что-то более привлекательное для бота, например текст, включающий «email» или «website»."
+
+#. translators: %s: Link to Honeypot settings page
+#: legacy-honeypot/includes/honeypot4cf7.php:717
+#: legacy-honeypot/includes/honeypot4cf7.php:841
+msgid "Generate a form-tag for a spam-stopping honeypot field. Check out %s for more settings/info."
+msgstr "Создайте тег формы для поля приманки для предотвращения спама. Проверьте %s для получения дополнительных настроек/информации."
+
+#: legacy-honeypot/includes/honeypot4cf7.php:704
+msgid "Honeypot for CF7"
+msgstr "Honeypot for CF7"
+
+#. translators: 1: spam count 2: install date
+#: legacy-honeypot/includes/honeypot4cf7-admin.php:409
+msgid "Honeypot has stopped %1$s spam submissions since %2$s"
+msgstr "Honeypot остановил отправку спама %1$s с %2$s"
+
+#: legacy-honeypot/includes/honeypot4cf7-admin.php:387
+msgid "Reset to Defaults"
+msgstr "Восстановить настройки по умолчанию"
+
+#: legacy-honeypot/includes/honeypot4cf7-admin.php:386
+msgid "Save"
+msgstr "Сохранить"
+
+#: includes/apps/honeypot/honeypot.php:87
+#: includes/apps/honeypot/honeypot.php:93
+#: legacy-honeypot/includes/honeypot4cf7-admin.php:381
+msgid "If enabled, this will perform an additional check for spam bots using the time it takes to submit the form under the idea that bots submit forms faster than people. The value is set to 4 seconds by default, but adjust based on your needs. If you're not sure, leave this unchecked."
+msgstr "Если этот параметр включен, будет выполняться дополнительная проверка спам-ботов с использованием времени, необходимого для отправки формы, поскольку боты отправляют формы быстрее, чем люди. Значение установлено на 4 секунды по умолчанию, но настраивайте его в соответствии с вашими потребностями. Если вы не уверены, не устанавливайте этот флажок."
+
+#: legacy-honeypot/includes/honeypot4cf7-admin.php:377
+#: legacy-honeypot/includes/honeypot4cf7.php:811
+#: legacy-honeypot/includes/honeypot4cf7.php:921
+msgid "seconds"
+msgstr "секунды"
+
+#: includes/apps/honeypot/honeypot.php:86
+#: legacy-honeypot/includes/honeypot4cf7-admin.php:375
+#: legacy-honeypot/includes/honeypot4cf7.php:807
+#: legacy-honeypot/includes/honeypot4cf7.php:918
+msgid "Enable Time Check"
+msgstr "Включить проверку времени"
+
+#: includes/apps/honeypot/honeypot.php:79
+#: legacy-honeypot/includes/honeypot4cf7-admin.php:365
+#: legacy-honeypot/includes/honeypot4cf7.php:798
+msgid "Disable Accessibility Label"
+msgstr "Отключить ярлык доступности"
+
+#: includes/apps/honeypot/honeypot.php:73
+#: legacy-honeypot/includes/honeypot4cf7-admin.php:361
+msgid "By default Honeypot uses inline CSS on the honeypot field to hide it. Checking this box moves that CSS to the footer of the page. It may help confuse bots."
+msgstr "По умолчанию Honeypot использует встроенный CSS в поле honeypot, чтобы скрыть его. Установка этого флажка перемещает этот CSS в нижний колонтитул страницы. Это может помочь запутать ботов."
+
+#: includes/apps/honeypot/honeypot.php:72
+#: legacy-honeypot/includes/honeypot4cf7-admin.php:355
+msgid "Move Inline CSS"
+msgstr "Переместить встроенный CSS"
+
+#: includes/apps/honeypot/honeypot.php:66
+#: legacy-honeypot/includes/honeypot4cf7-admin.php:351
+msgid "To assure the honeypot isn't auto-completed by a browser, we add an atypical \"autocomplete\" attribute value. If you have any problems with this, you can switch it to the more standard (but less effective) \"off\" value. If you're unsure, leave this unchecked."
+msgstr "Чтобы убедиться, что браузер не заполняет приманку автоматически, мы добавляем нетипичное значение атрибута «autocomplete». Если у вас возникли проблемы с этим, вы можете переключить его на более стандартное (но менее эффективное) значение «off». Если вы не уверены, не устанавливайте этот флажок."
+
+#: includes/apps/honeypot/honeypot.php:65
+#: legacy-honeypot/includes/honeypot4cf7-admin.php:345
+#: legacy-honeypot/includes/honeypot4cf7.php:780
+#: legacy-honeypot/includes/honeypot4cf7.php:897
+msgid "Use Standard Autocomplete Value"
+msgstr "Используйте стандартное значение автозаполнения"
+
+#. translators: %s: default value
+#: legacy-honeypot/includes/honeypot4cf7-admin.php:337
+msgid "You can customize the (hidden) accessibility message, or just leave it the default value: %s"
+msgstr "Вы можете настроить (скрытое) сообщение о специальных возможностях или просто оставить значение по умолчанию: %s"
+
+#: includes/apps/honeypot/honeypot.php:59
+#: legacy-honeypot/includes/honeypot4cf7-admin.php:327
+msgid "Accessibility Message"
+msgstr "Сообщение о доступности"
+
+#: includes/apps/honeypot/honeypot.php:55
+#: legacy-honeypot/includes/honeypot4cf7-admin.php:323
+msgid "If using placeholders on other fields, this can help honeypot mimic a \"real\" field. This can be overridden in the contact form. If you're unsure, leave blank."
+msgstr "При использовании заполнителей в других полях это может помочь приманке имитировать «настоящее» поле. Это можно переопределить в контактной форме. Если вы не уверены, оставьте поле пустым."
+
+#: includes/apps/honeypot/honeypot.php:53
+#: legacy-honeypot/includes/honeypot4cf7-admin.php:317
+msgid "Global Placeholder"
+msgstr "Глобальный заполнитель"
+
+#: legacy-honeypot/includes/honeypot4cf7-admin.php:310
+msgid "Flamingo"
+msgstr "Flamingo"
+
+#. translators: 1: Link to Flamingo plugin page
+#: legacy-honeypot/includes/honeypot4cf7-admin.php:309
+msgid "(Recommended) By default the Honeypot field is not stored with other fields in form-saving plugins like %1$s. However, saving the field can be useful to see what spam bots are leaving behind to help you improve your spam stopping superpowers. If you'd like to store the value of the field, simply check this box (and install %1$s)."
+msgstr "(Рекомендуется) По умолчанию поле Honeypot не хранится вместе с другими полями в плагинах для сохранения форм, таких как %1$s. Тем не менее, сохранение поля может быть полезно, чтобы увидеть, что оставляют спам-боты, чтобы помочь вам улучшить свои суперсилы по борьбе со спамом. Если вы хотите сохранить значение поля, просто установите этот флажок (и установите %1$s)."
+
+#: includes/apps/honeypot/honeypot.php:47
+#: legacy-honeypot/includes/honeypot4cf7-admin.php:299
+msgid "Store Honeypot Value"
+msgstr "Сохранение значения приманки"
+
+#: includes/apps/honeypot/honeypot.php:40
+#: legacy-honeypot/includes/honeypot4cf7-admin.php:295
+msgid "Below are global settings for the Honeypot plugin. Many of these settings can be overridden when inserting the Honeypot field shortcode when creating your CF7 contact form."
+msgstr "Ниже приведены глобальные настройки плагина Honeypot. Многие из этих настроек могут быть переопределены при вставке шорткода поля Honeypot при создании контактной формы CF7."
+
+#: includes/apps/honeypot/honeypot.php:39
+#: legacy-honeypot/includes/honeypot4cf7-admin.php:294
+#: legacy-honeypot/includes/honeypot4cf7.php:714
+#: legacy-honeypot/includes/honeypot4cf7.php:838
+msgid "Honeypot Settings"
+msgstr "Настройки Honeypot"
+
+#: legacy-honeypot/includes/honeypot4cf7-admin.php:292
+msgid "Get Support"
+msgstr "Получить поддержку"
+
+#: legacy-honeypot/includes/honeypot4cf7-admin.php:281
+msgid "The changes have been saved."
+msgstr "Изменения были сохранены."
+
+#: legacy-honeypot/includes/honeypot4cf7-admin.php:239
+msgid "The settings have been reset to their defaults."
+msgstr "Настройки были сброшены на значения по умолчанию."
+
+#: legacy-honeypot/includes/honeypot4cf7-admin.php:100
+#: src/components/CF7AppsApp.js:72
+msgid "Settings"
+msgstr "Настройки"
+
+#. translators: %s: Link to Contact Form 7 plugin page.
+#: legacy-honeypot/includes/honeypot4cf7-admin.php:64
+msgid "The version of %s that is installed will not work with this version of Honeypot for CF7."
+msgstr "Установленная версия %s не будет работать с этой версией Honeypot для CF7."
+
+#: legacy-honeypot/includes/honeypot4cf7-admin.php:49
+#: legacy-honeypot/includes/honeypot4cf7-admin.php:65
+msgid "Contact Form 7"
+msgstr "Contact Form 7"
+
+#: legacy-honeypot/includes/honeypot4cf7-admin.php:179
+#: legacy-honeypot/includes/honeypot4cf7-admin.php:204
+msgid "Honeypot for Contact Form 7"
+msgstr "Honeypot for Contact Form 7"
+
+#: includes/apps/honeypot/honeypot.php:80
+#: legacy-honeypot/includes/honeypot4cf7-admin.php:371
+msgid "If checked, the accessibility label will not be generated. This is not recommended, but may improve spam blocking. If you're unsure, leave this unchecked."
+msgstr "Если флажок установлен, метка доступности не будет создаваться. Это не рекомендуется, но может улучшить блокировку спама. Если вы не уверены, оставьте этот флажок не отмеченным."
+
+#: includes/apps/acf-integration/includes/class-cf7-acf-integration.php:230
+#: legacy-honeypot/includes/honeypot4cf7.php:823
+msgid "Insert Tag"
+msgstr "Вставить метку"
+
+#: legacy-honeypot/includes/honeypot4cf7.php:726
+msgid "Name"
+msgstr "Название"
+
+#: legacy-honeypot/includes/honeypot4cf7.php:703
+msgid "Generate a form-tag for a spam-stopping honeypot field. For more details, see %s."
+msgstr "Генерирует тег формы для поля, препятствующего спаму. Для получения более подробной информации см. раздел %s."
+
+#: includes/apps/honeypot/honeypot.php:13
+#: legacy-honeypot/includes/class-honeypot4cf7-data-table.php:16
+#: legacy-honeypot/includes/honeypot4cf7-admin.php:180
+#: legacy-honeypot/includes/honeypot4cf7.php:697
+#: legacy-honeypot/includes/honeypot4cf7.php:868
+#: src/templates/honeypot/HoneypotForms.js:33
+msgid "Honeypot"
+msgstr "Honeypot (ловушка для спамботов)"
+
+#: legacy-honeypot/includes/honeypot4cf7-admin.php:338
+#: legacy-honeypot/includes/honeypot4cf7.php:165
+msgid "Please leave this field empty."
+msgstr "Оставьте это поле пустым."
+
+#. translators: %s: Link to Contact Form 7 plugin page.
+#: legacy-honeypot/includes/honeypot4cf7-admin.php:48
+msgid "%s must be installed and activated for the CF7 Honeypot plugin to work"
+msgstr "%s должен быть установлен и активирован для работы плагина CF7 Honeypot"
+
+msgid "Expand sidebar"
+msgstr "Развернуть боковую панель"
+
+msgid "Collapse sidebar"
+msgstr "Свернуть боковую панель"
+
+msgid "Quick Access"
+msgstr "Быстрый доступ"
+
+msgid "Open Support Ticket"
+msgstr "Открыть заявку в поддержку"
+
+msgid "Help Center"
+msgstr "Справочный центр"
+
+msgid "Leave Us a Review"
+msgstr "Оставить отзыв"
+
+msgid "Supercharge Your Workflow"
+msgstr "Ускорьте свой рабочий процесс"
+
+msgid "Dashboard sidebar"
+msgstr "Боковая панель панели управления"
+
+msgid "CF7 Apps navigation"
+msgstr "Навигация CF7 Apps"
+
+msgid "CF7 Apps form settings navigation"
+msgstr "Навигация настроек формы CF7 Apps"
+
+msgid "Back to Dashboard"
+msgstr "Назад к панели управления"
+
+msgid "Back to all apps"
+msgstr "Назад ко всем приложениям"
+
+msgid "Go back"
+msgstr "Назад"
+
+msgid "Beta"
+msgstr "Бета"
+
+msgid "All"
+msgstr "Все"
+
+msgid "Payment"
+msgstr "Оплата"
+
+msgid "Search apps"
+msgstr "Поиск приложений"
+
+msgid "Filter apps"
+msgstr "Фильтр приложений"
+
+msgid "No apps match your search or filter."
+msgstr "Нет приложений, соответствующих поиску или фильтру."
+
+msgid "Enable app"
+msgstr "Включить приложение"
+
+msgid "Disable app"
+msgstr "Отключить приложение"
+
+msgid "Conditional Redirection"
+msgstr "Условное перенаправление"
+
+msgid "Conditional redirection will redirect users based on specific form field values or submission conditions. Upgrade to PRO to unlock this feature."
+msgstr "Условное перенаправление отправляет пользователей на разные страницы в зависимости от значений полей формы или условий отправки. Обновитесь до PRO, чтобы разблокировать эту функцию."
+
+msgid "PRO"
+msgstr "PRO"
+
+msgid "Silent Success for Blocked Bots"
+msgstr "Тихий успех для заблокированных ботов"
+
+msgid "When enabled, submissions blocked by the honeypot will receive a normal success response instead of a spam error. No email is sent, but bots are less likely to detect the honeypot."
+msgstr "Если включено, отправки, заблокированные honeypot, получат обычный ответ об успехе вместо ошибки спама. Письмо не отправляется, но ботам сложнее обнаружить ловушку."
+
+msgid "Recommended for high-spam sites. Real users incorrectly blocked will also see a success message."
+msgstr "Рекомендуется для сайтов с большим количеством спама. Настоящие пользователи, заблокированные по ошибке, также увидят сообщение об успехе."
+
+msgid "When enabled, submissions blocked by the honeypot will receive a normal success response instead of a spam error. No email is sent, but bots are less likely to detect the honeypot. Recommended for high-spam sites. Real users incorrectly blocked will also see a success message."
+msgstr "Если включено, отправки, заблокированные honeypot, получат обычный ответ об успехе вместо ошибки спама. Письмо не отправляется, но ботам сложнее обнаружить ловушку. Рекомендуется для сайтов с большим количеством спама. Настоящие пользователи, заблокированные по ошибке, также увидят сообщение об успехе."
+
+msgid "You have %1$d of %2$d AI form generations remaining."
+msgstr "У вас осталось %1$d из %2$d генераций форм с помощью ИИ."
+
+msgid "You have %d AI form generations remaining."
+msgstr "У вас осталось %d генераций форм с помощью ИИ."
+
+msgid "You have used all free AI form generations."
+msgstr "Вы использовали все бесплатные генерации форм с помощью ИИ."
+
+msgid "Generating..."
+msgstr "Генерация..."
+
+msgid "Upgrade"
+msgstr "Обновить"
+
+msgid "%s Integration Settings"
+msgstr "Настройки интеграции %s"
+
+msgid "of"
+msgstr "из"
+
+msgid "Activate"
+msgstr "Активировать"
+
+msgid "Active"
+msgstr "Активно"
+
+msgid "Install & Activate"
+msgstr "Установить и активировать"
+
+msgid "Activate Post SMTP"
+msgstr "Активировать Post SMTP"
+
+msgid "Install Post SMTP Now"
+msgstr "Установить Post SMTP сейчас"
+
+msgid "Could not install Post SMTP. Please try again."
+msgstr "Не удалось установить Post SMTP. Пожалуйста, попробуйте ещё раз."
+
+msgid "Could not install or activate the plugin. Please try again."
+msgstr "Не удалось установить или активировать плагин. Пожалуйста, попробуйте ещё раз."
+
+msgid "Plugin activated successfully."
+msgstr "Плагин успешно активирован."
+
+msgid "Plugin installed and activated successfully."
+msgstr "Плагин успешно установлен и активирован."
+
+msgid "Plugin install failed."
+msgstr "Не удалось установить плагин."
+
+msgid "Please wait…"
+msgstr "Пожалуйста, подождите…"
+
+msgid "Please wait..."
+msgstr "Пожалуйста, подождите..."
+
+msgid "Fix Your WordPress Email Delivery Issues with Post SMTP"
+msgstr "Решите проблемы с доставкой почты WordPress с помощью Post SMTP"
+
+msgid "Reliable WordPress email delivery with logs and SMTP integrations."
+msgstr "Надёжная доставка почты WordPress с журналами и SMTP-интеграциями."
+
+msgid "Post SMTP"
+msgstr "Post SMTP"
+
+msgid "Post SMTP - Fix Contact Form 7 not sending emails error via Post SMTP"
+msgstr "Post SMTP — исправление ошибки отправки писем Contact Form 7 через Post SMTP"
+
+msgid "Post SMTP activated successfully."
+msgstr "Post SMTP успешно активирован."
+
+msgid "Post SMTP installed and activated successfully."
+msgstr "Post SMTP успешно установлен и активирован."
+
+msgid "Post SMTP promotion"
+msgstr "Реклама Post SMTP"
+
+msgid "Password Protected"
+msgstr "Password Protected"
+
+msgid "Password protect your site, posts, and pages."
+msgstr "Защитите паролем сайт, записи и страницы."
+
+msgid "Protect your WordPress Site Content in Minutes with Password Protected"
+msgstr "Защитите контент WordPress-сайта за минуты с помощью Password Protected"
+
+msgid "Unknown plugin."
+msgstr "Неизвестный плагин."
+
+msgid "You do not have permission to install plugins."
+msgstr "У вас нет прав на установку плагинов."
+
+msgid "Stripe"
+msgstr "Stripe"
+
+msgid "PayPal"
+msgstr "PayPal"
+
+msgid "Square"
+msgstr "Square"
+
+msgid "Accept payments in Contact Form 7 using Stripe, including one-time and subscription payments."
+msgstr "Принимайте платежи в Contact Form 7 через Stripe, включая разовые платежи и подписки."
+
+msgid "Accept payments in Contact Form 7 using PayPal, including one-time and subscription payments."
+msgstr "Принимайте платежи в Contact Form 7 через PayPal, включая разовые платежи и подписки."
+
+msgid "Accept payments in Contact Form 7 using Square, including one-time and subscription payments."
+msgstr "Принимайте платежи в Contact Form 7 через Square, включая разовые платежи и подписки."
+
+msgid "Upgrade to CF7 Apps Pro to use payment gateways."
+msgstr "Обновитесь до CF7 Apps Pro, чтобы использовать платёжные шлюзы."
+
+msgid "Honeypot detected invalid or missing time token. Field ID = %s"
+msgstr "В ловушке для бота обнаружен неверный или отсутствующий токен времени. ID поля = %s"
+
+msgid "Honeypot detected stale day hash (cached page). Field ID = %s"
+msgstr "В ловушке для бота обнаружен устаревший хеш дня (кэшированная страница). ID поля = %s"
+
+msgid "Honeypot token field mismatch."
+msgstr "Несоответствие поля токена honeypot."
+
+msgid "Honeypot token has a future timestamp."
+msgstr "Токен honeypot содержит будущую временную метку."
+
+msgid "Honeypot token has expired."
+msgstr "Срок действия токена honeypot истёк."
+
+msgid "Honeypot token missing timestamp."
+msgstr "В токене honeypot отсутствует временная метка."
+
+msgid "Honeypot token replay detected."
+msgstr "Обнаружено повторное использование токена honeypot."
+
+msgid "Invalid honeypot token encoding."
+msgstr "Неверная кодировка токена honeypot."
+
+msgid "Invalid honeypot token format."
+msgstr "Неверный формат токена honeypot."
+
+msgid "Invalid honeypot token payload."
+msgstr "Неверные данные токена honeypot."
+
+msgid "Invalid honeypot token signature."
+msgstr "Неверная подпись токена honeypot."

@@ -27,6 +27,17 @@ abstract class BaseHandler
 
     protected $lastLockRefreshAt = 0;
 
+    /**
+     * The fc_campaign_emails id currently inside Mailer::send(). The send loop
+     * is strictly sequential, so when wp_mail_failed fires there is exactly one
+     * candidate row — this lets the failure hook update by primary key instead
+     * of guessing by email address. Null whenever no CRM send is in flight, so
+     * failures from OTHER plugins' emails in the same request are ignored.
+     */
+    protected $currentSendingEmailId = null;
+
+    protected $currentSendingEmailAddress = null;
+
     abstract protected function isTimeUp();
 
     protected function sendEmails($campaignEmails)
@@ -45,29 +56,43 @@ abstract class BaseHandler
         $sendableStatuses = ['subscribed', 'transactional'];
         $table = $wpdb->prefix . 'fc_campaign_emails';
 
+        $reachedCount = 0;
+
         foreach ($campaignEmails as $email) {
             // Stop starting new emails once the runtime budget is spent. The
             // rate-limit wait below counts against wall-clock, so check every
-            // iteration; any rows we already claimed but don't reach stay
-            // 'processing' and are recovered by the stale-row reset.
+            // iteration. Rows this batch claimed but never reached are handed
+            // straight back to 'pending' (claim-token guarded) — during a
+            // healthy chained send the stale-row reset defers to the fresh
+            // sender lock, so without this they would strand in 'processing'
+            // until the whole queue drained.
             if ($this->isTimeUp()) {
+                $this->releaseUnreachedClaims($campaignEmails, $reachedCount);
                 break;
             }
+
+            $reachedCount++;
 
             // Check again if the contact is in subscribed status or not
             // If not then we will cancel the email
             if ($email->subscriber && !in_array($email->subscriber->status, $sendableStatuses, true)) {
                 $email->status = 'cancelled';
+                // Campaign rows carry no body since the bulk-insert change, but
+                // funnel/sequence rows store per-row parsed bodies — clear on
+                // cancel so they don't hold LONGTEXT forever.
+                $email->email_body = '';
                 $email->save();
                 continue;
             }
 
-            $emailData = $email->data();
-
-            // for the same id
+            // Duplicate guard BEFORE the body render — data() is the expensive
+            // step (block parse, smartcodes, click-tracking rewrite); a skipped
+            // email must not pay for it. Pure in-memory key check, no data deps.
             if (Helper::wasProcessedByKeyId('mail_' . $email->id . '_' . $email->email_address)) {
                 continue;
             }
+
+            $emailData = $email->data();
 
             // Wait for this email's global rate-limit slot BEFORE marking it
             // sent, so a crash/timeout during the wait leaves the row in
@@ -121,8 +146,18 @@ abstract class BaseHandler
             $this->sentCount++;
 
             // Already throttled above (before mark-sent); skip the in-Mailer
-            // reservation so this email isn't rate-limited twice.
-            $response = Mailer::send($emailData, $email->subscriber, $email, true);
+            // reservation so this email isn't rate-limited twice. The id is
+            // pinned around the call (and cleared in finally, so a Throwable
+            // from a mail-layer filter can't leave a stale id that would let a
+            // later unrelated failure in this process mark this row failed).
+            $this->currentSendingEmailId = $email->id;
+            $this->currentSendingEmailAddress = $email->email_address;
+            try {
+                $response = Mailer::send($emailData, $email->subscriber, $email, true);
+            } finally {
+                $this->currentSendingEmailId = null;
+                $this->currentSendingEmailAddress = null;
+            }
 
             // wp_mail() returns false on failure (not WP_Error) in most cases.
             // We must catch both to avoid marking undelivered emails as 'sent'.
@@ -171,6 +206,58 @@ abstract class BaseHandler
 
     abstract protected function getNextBatchEmails();
 
+    /**
+     * Lock and return up to $limit due queue ids for ONE status value, in
+     * scheduled_at order, optionally restricted to a (id % modulo) partition.
+     *
+     * Single status on purpose: with `status IN ('pending','scheduled')` the
+     * (status, scheduled_at) index covers the WHERE but cannot deliver the
+     * ORDER BY across the two status ranges, so MySQL filesorts EVERY due row
+     * — and because the claim is a locking read, it locks the entire backlog
+     * on each claim, serializing all senders and defeating the id partitions.
+     * One status = one index range read in key order with early exit at
+     * LIMIT, so the locked set stays around modulo × limit index entries no
+     * matter how large the backlog is. Callers claim 'pending' first, then
+     * top up from 'scheduled' — the SAME order everywhere, so two claimers
+     * can never each hold one status range while waiting on the other.
+     *
+     * Must run inside the caller's open transaction, before the UPDATE that
+     * flips the claimed rows to 'processing'.
+     *
+     * @param string $status    Single queue status: 'pending' or 'scheduled'.
+     * @param string $until     Due cutoff (MySQL datetime, WP timezone).
+     * @param int    $limit     Maximum ids to lock.
+     * @param string $order     'ASC' (oldest first) or 'DESC' (newest first).
+     * @param int    $modulo    Id-partition size; 1 = no partition clause.
+     * @param int    $remainder Partition slot: rows where id % modulo = remainder.
+     * @return array Locked ids.
+     */
+    protected function lockClaimableIds($status, $until, $limit, $order = 'ASC', $modulo = 1, $remainder = 0)
+    {
+        global $wpdb;
+
+        if ($limit <= 0) {
+            return [];
+        }
+
+        $table = $wpdb->prefix . 'fc_campaign_emails';
+        $order = strtoupper($order) === 'DESC' ? 'DESC' : 'ASC';
+
+        $sql = "SELECT id FROM {$table} WHERE status = %s AND scheduled_at <= %s";
+        $params = [$status, $until];
+
+        if ($modulo > 1) {
+            $sql .= " AND (id %% %d) = %d";
+            $params[] = $modulo;
+            $params[] = $remainder;
+        }
+
+        $sql .= " ORDER BY scheduled_at {$order} LIMIT %d FOR UPDATE";
+        $params[] = $limit;
+
+        return wp_list_pluck($wpdb->get_results($wpdb->prepare($sql, $params)), 'id');
+    }
+
     protected function logSentCount()
     {
         if ($this->sentCount) {
@@ -197,6 +284,57 @@ abstract class BaseHandler
         return apply_filters('fluentcrm_memory_exceeded', $memory_exceeded, $this);
     }
 
+    /**
+     * Hand claimed-but-unreached rows back to the queue on a time-up break.
+     *
+     * Only rows the time budget cut off are reset — rows the loop reached and
+     * deliberately skipped (cancelled contact, duplicate guard, lost claim)
+     * keep their state. The UPDATE reuses the mark-sent claim-token guard
+     * (status='processing' AND updated_at = <claim time>) so a row another
+     * sender re-claimed in the meantime is never touched. Rows claimed in one
+     * batch share a single claim timestamp, so this is one UPDATE in practice.
+     *
+     * @param \FluentCrm\Framework\Support\Collection|array $campaignEmails The full claimed batch.
+     * @param int $reachedCount How many rows the send loop actually entered.
+     */
+    protected function releaseUnreachedClaims($campaignEmails, $reachedCount)
+    {
+        global $wpdb;
+
+        $idsByToken = [];
+        $index = 0;
+        foreach ($campaignEmails as $email) {
+            if ($index++ < $reachedCount) {
+                continue;
+            }
+            // Raw attribute, not the model cast — see the mark-sent claim-token
+            // note in sendEmails() for why.
+            $token = Arr::get($email->getAttributes(), 'updated_at');
+            if (!$token) {
+                // No raw claim token (shouldn't happen for a claimed row) —
+                // leave it to the stale-reset crash net instead of building a
+                // WHERE updated_at = '' that silently matches nothing.
+                Helper::debugLog('releaseUnreachedClaims', 'missing claim token for row ' . $email->id, 'extended');
+                continue;
+            }
+            $idsByToken[(string)$token][] = (int)$email->id;
+        }
+
+        if (!$idsByToken) {
+            return;
+        }
+
+        $table = $wpdb->prefix . 'fc_campaign_emails';
+
+        foreach ($idsByToken as $token => $ids) {
+            $idsPlaceholder = implode(',', array_fill(0, count($ids), '%d'));
+            $wpdb->query($wpdb->prepare(
+                "UPDATE {$table} SET status = 'pending' WHERE id IN ($idsPlaceholder) AND status = 'processing' AND updated_at = %s",
+                array_merge($ids, [$token])
+            ));
+        }
+    }
+
     protected function updateEmailsStatus($ids, $status)
     {
         if (!$ids) {
@@ -214,22 +352,55 @@ abstract class BaseHandler
     protected function handleFailedLog()
     {
         add_action('wp_mail_failed', function ($error) {
-            $data = $error->get_error_data();
-            $to = Arr::get($data, 'to');
-            if ($to) {
-                if (is_array($to)) {
-                    $to = $to[0];
-                }
-            }
-
-            if (!$to || !\is_string($to) || !is_email($to)) {
+            // Only handle failures from THIS handler's in-flight send. The old
+            // address-match approach ran a full-table-scan UPDATE per failure
+            // (email_address is deliberately unindexed on this multi-million-row
+            // table) — degrading the sender to one scan per email during an SMTP
+            // outage — and could mark the wrong row when a contact had emails in
+            // flight from two campaigns, or when another plugin's email to the
+            // same address failed in the same request.
+            if (!$this->currentSendingEmailId) {
                 return;
             }
 
-            CampaignEmail::where('email_address', $to)
-                ->limit(1)
-                ->whereIn('status', ['processing', 'sent', 'failed'])
-                ->orderBy('updated_at', 'DESC')
+            // Recipient cross-check as a VETO only, never a selector: plugins
+            // can fire their own wp_mail() from inside the mail stack
+            // (loggers, failure notifiers), and their failure would otherwise
+            // mark OUR delivered row failed — inviting duplicate resends.
+            // When the error payload names recipients and none of them is the
+            // pinned address, the failure is not ours. Missing/unparseable
+            // recipient data keeps the current behavior: a failure during our
+            // send is almost always ours.
+            if ($this->currentSendingEmailAddress && is_wp_error($error)) {
+                $errorData = (array)$error->get_error_data();
+
+                if (!empty($errorData['to'])) {
+                    $sawRecipient = false;
+                    $isOurs = false;
+
+                    foreach ((array)$errorData['to'] as $recipient) {
+                        if (!is_string($recipient) || $recipient === '') {
+                            continue;
+                        }
+                        $sawRecipient = true;
+                        // Substring match so "Name <a@b.c>" and comma-joined
+                        // recipient strings can't cause a false veto.
+                        if (stripos($recipient, $this->currentSendingEmailAddress) !== false) {
+                            $isOurs = true;
+                            break;
+                        }
+                    }
+
+                    if ($sawRecipient && !$isOurs) {
+                        return;
+                    }
+                }
+            }
+
+            // This builder update also bumps updated_at — fine while 'failed'
+            // rows never re-enter claim flows (claim tokens only guard
+            // 'processing' rows); revisit if failed ever becomes claimable.
+            CampaignEmail::where('id', $this->currentSendingEmailId)
                 ->update([
                     'status' => 'failed',
                     'note'   => $error->get_error_message()
@@ -259,7 +430,23 @@ abstract class BaseHandler
         // rate limit. The DB row lock has no such gap. See Helper::acquireDbLock().
         $lockTimeout = $this->maximumProcessingTime + 30;
 
-        return Helper::acquireDbLock($this->optionKey, $lockTimeout);
+        $acquired = Helper::acquireDbLock($this->optionKey, $lockTimeout);
+
+        if ($acquired) {
+            /**
+             * A bulk sending session is starting: one lock-winning sender run,
+             * up to ~50s spanning many claimed batches. Transport plugins can
+             * hold a reusable connection open for this window — FluentSMTP
+             * uses it for SMTP keep-alive and HTTP connection reuse — and must
+             * clean up on the matching session_ended action.
+             *
+             * @param string $optionKey The sender lock key (identifies the cron,
+             *                          multi-thread, or CLI sender).
+             */
+            do_action('fluent_crm/email_sender_session_started', $this->optionKey);
+        }
+
+        return $acquired;
     }
 
     /**
@@ -302,5 +489,15 @@ abstract class BaseHandler
     protected function releaseLock()
     {
         Helper::releaseDbLock($this->optionKey);
+
+        /**
+         * The bulk sending session ended — transport plugins should close any
+         * connection they held open for it. May fire without a matching
+         * session_started (releaseLock is safe to call unheld) and can fire
+         * more than once per run: listeners must be idempotent.
+         *
+         * @param string $optionKey The sender lock key.
+         */
+        do_action('fluent_crm/email_sender_session_ended', $this->optionKey);
     }
 }

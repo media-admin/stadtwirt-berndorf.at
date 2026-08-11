@@ -116,6 +116,12 @@ if ( ! class_exists( 'CF7Apps_Internal_Settings_Apps' ) ) :
                         true
                     );
 
+                    wp_set_script_translations(
+                        'cf7apps-internal-settings-app',
+                        'cf7apps',
+                        CF7APPS_PLUGIN_DIR . '/languages'
+                    );
+
                     wp_localize_script(
                         'cf7apps-internal-settings-app',
                         'CF7AppsInternalSettings',
@@ -125,6 +131,9 @@ if ( ! class_exists( 'CF7Apps_Internal_Settings_Apps' ) ) :
                             'nonce'     => wp_create_nonce( 'wp_rest' ),
                             'formID'    => $form_id,
                             'appIndexURL' => admin_url( 'admin.php?page=cf7apps' ),
+                            'formEditorAssetsURL' => $dir_url . 'assets/images/form-editor/',
+                            'formPromoAssetsURL'  => $dir_url . 'assets/images/form-promo/',
+                            'postSmtpIconUrl'     => CF7APPS_PLUGIN_DIR_URL . '/assets/images/dashboard/recommended/post-smtp.gif',
                             'pluginVersion' => CF7APPS_VERSION,
                         )
                     );

@@ -738,10 +738,10 @@ class FluentCartTrackingInit
                 return Arr::get($abCart->cart, 'checkout_data.form_data.' . $valueKey, $defaultValue);
             case 'recovery_url':
                 return add_query_arg([
-                    'fluentcrm'  => 1,
-                    'route'      => 'general',
-                    'handler'    => 'fc_cart_fluent_cart',
-                    'fc_ab_hash' => $abCart->checkout_key
+                    FLUENTCRM_EXTERNAL_URL_PARAM => 1,
+                    'route'                      => 'general',
+                    'handler'                    => 'fc_cart_fluent_cart',
+                    'fc_ab_hash'                 => $abCart->checkout_key
                 ], home_url());
             case 'cart_items_table':
                 return $abCart->getCartItemsHtml();

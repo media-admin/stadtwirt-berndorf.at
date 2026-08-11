@@ -1,99 +1,81 @@
 import { useEffect, useState } from '@wordpress/element';
 import CF7AppsSkeletonLoader from './CF7AppsSkeletonLoader';
-import {Link, useLocation, useNavigate } from 'react-router';
-import { Button, Flex, FlexItem, Tooltip } from '@wordpress/components';
-import { KeyboardArrowLeft } from '@mui/icons-material';
+import { Tooltip } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 const CF7AppsHeader = () => {
-    let path = useLocation();
-    const navigate = useNavigate();
-    const [ isLoading, setIsLoading ] = useState( true );
+	const [ isLoading, setIsLoading ] = useState( true );
 
-    useEffect( () => {
-        const timer = setTimeout( () => {
-            setIsLoading( false );
-        }, 500 );
+	useEffect( () => {
+		const timer = setTimeout( () => {
+			setIsLoading( false );
+		}, 500 );
 
-        return () => clearTimeout( timer );
-    }, [] );
+		return () => clearTimeout( timer );
+	}, [] );
 
-    const handleBackClick = () => {
-        navigate( -1 )
-    }
+	const assetsBase = CF7AppsInternalSettings?.assetsURL || '';
 
-    return (
-        <div>
+	return (
+		<div className="cf7apps-header-wrap cf7apps-form-editor-header-wrap">
+			{ isLoading ? (
+				<div>
+					<CF7AppsSkeletonLoader count={ 1 } height={ 48 } />
+				</div>
+			) : (
+				<div className="cf7apps-header cf7apps-form-editor-header">
+					<div className="cf7apps-header-inner">
+						<div className="cf7apps-header-left">
+							<span className="cf7apps-header-logo" title={ __( 'CF7 Apps', 'cf7apps' ) }>
+								{ assetsBase ? (
+									<img
+										src={ `${ assetsBase }images/logo.png` }
+										alt={ __( 'CF7 Apps', 'cf7apps' ) }
+										className="cf7apps-header-logo-img"
+										height={ 36 }
+										decoding="async"
+									/>
+								) : (
+									<span className="cf7apps-nav-logo-text">CF7 Apps</span>
+								) }
+							</span>
+						</div>
 
-            {
-                isLoading
-                ?
-                    <div>
-                        <CF7AppsSkeletonLoader count={1} height={85} />
-                    </div>
-                :
-                    <div className={ 'cf7apps-header' }>
-                        <div className={ 'container' }>
-                            <Flex>
-                                <FlexItem>
-                                    <Link to={ '/' }>
-                                        <img src={ `${ CF7AppsInternalSettings.assetsURL }/images/logo.png` } width={ '250px' } alt={ 'CF7 Apps Logo' } />
-                                    </Link>
-                                </FlexItem>
+						<div className="cf7apps-header-right">
+							<Tooltip text={ __( 'View documentation', 'cf7apps' ) } position="bottom">
+								<button
+									type="button"
+									className="cf7apps-header-icon-button cf7apps-form-editor-header__doc"
+									aria-label={ __( 'View documentation', 'cf7apps' ) }
+									onClick={ () =>
+										window.open(
+											'https://cf7apps.com/docs/?utm_source=plugin&utm_medium=header&utm_campaign=documentation',
+											'_blank'
+										)
+									}
+								>
+									<img
+										src={ `${ assetsBase }images/book.svg` }
+										alt={ __( 'Documentation', 'cf7apps' ) }
+										className="cf7apps-header-icon-img cf7apps-header-doc-icon"
+										width={ 20 }
+										height={ 17 }
+										decoding="async"
+									/>
+								</button>
+							</Tooltip>
 
-                                <FlexItem>
-                                    <div className="cf7apps-header-right">
-                                        { CF7AppsInternalSettings?.pluginVersion && (
-                                            <span className="cf7apps-header-version">
-                                                { CF7AppsInternalSettings.pluginVersion }
-                                            </span>
-                                        ) }
-
-                                        <Tooltip text={ __( 'View documentation', 'cf7apps' ) } position="bottom">
-                                            <button
-                                                type="button"
-                                                className="cf7apps-header-icon-button"
-                                                aria-label={ __( 'View documentation', 'cf7apps' ) }
-                                                onClick={ () => window.open( 'https://cf7apps.com/docs/?utm_source=plugin&utm_medium=header&utm_campaign=documentation', '_blank' ) }
-                                            >
-                                                <img
-                                                    src={ `${ CF7AppsInternalSettings.assetsURL }/images/document-text.png` }
-                                                    alt={ __( 'Documentation', 'cf7apps' ) }
-                                                    className="cf7apps-header-icon-img"
-                                                />
-                                            </button>
-                                        </Tooltip>
-
-                                        <Tooltip text={ __( 'Share your idea with us', 'cf7apps' ) } position="bottom">
-                                            <button
-                                                type="button"
-                                                className="cf7apps-header-icon-button"
-                                                aria-label={ __( 'Share your idea with us', 'cf7apps' ) }
-                                                onClick={ () => window.open( 'https://cf7apps.com/submit-idea/?utm_source=plugin&utm_medium=header&utm_campaign=idea', '_blank' ) }
-                                            >
-                                                <img
-                                                    src={ `${ CF7AppsInternalSettings.assetsURL }/images/lamp-charge.png` }
-                                                    alt={ __( 'Share idea', 'cf7apps' ) }
-                                                    className="cf7apps-header-icon-img"
-                                                />
-                                            </button>
-                                        </Tooltip>
-
-                                        { undefined !== path.pathname && '/' !== path.pathname && (
-                                            <Button onClick={ handleBackClick } className="cf7apps-btn icon tertiary-secondary cf7apps-header-back-btn">
-                                                <KeyboardArrowLeft />
-                                                { __( 'Back', 'cf7apps' ) }
-                                            </Button>
-                                        ) }
-                                    </div>
-                                </FlexItem>
-                            </Flex>
-                        </div>
-                    </div>
-            }
-
-        </div>
-    );
-}
+							{ CF7AppsInternalSettings?.pluginVersion && (
+								<span className="cf7apps-header-version cf7apps-form-editor-header__version">
+									V { CF7AppsInternalSettings.pluginVersion }
+								</span>
+							) }
+						</div>
+					</div>
+				</div>
+			) }
+		</div>
+	);
+};
 
 export default CF7AppsHeader;

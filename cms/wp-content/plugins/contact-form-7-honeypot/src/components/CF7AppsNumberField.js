@@ -1,7 +1,8 @@
 import { __ } from "@wordpress/i18n";
 import CF7AppsHelpText from "./CF7AppsHelpText";
 
-const CF7AppsNumberField = ({ label, value, name, description, onChange, className, placeholder, disabled, min }) => {
+const CF7AppsNumberField = ({ label, value, name, description, onChange, className, placeholder, disabled, min, variant }) => {
+    const isAppShell = variant === 'app';
     const isLabelInline = (className || '').indexOf('label-inline') !== -1;
 
     const handleChange = (e) => {
@@ -14,7 +15,6 @@ const CF7AppsNumberField = ({ label, value, name, description, onChange, classNa
             }
         }
 
-        // Pass a minimal event-like object that matches what the parent expects.
         onChange({
             target: {
                 name,
@@ -22,6 +22,29 @@ const CF7AppsNumberField = ({ label, value, name, description, onChange, classNa
             },
         });
     };
+
+    if (isAppShell) {
+        return (
+            <div className="cf7apps-form-group cf7apps-settings cf7apps-app-field-group cf7apps-app-select-group">
+                {label ? (
+                    <label className="cf7apps-app-field-label">{label}</label>
+                ) : null}
+                <div>
+                    <input
+                        type="number"
+                        value={value}
+                        name={name}
+                        onChange={handleChange}
+                        className={`cf7apps-form-input cf7apps-app-select-field ${className || ''}`}
+                        placeholder={placeholder}
+                        disabled={disabled}
+                        min={min}
+                    />
+                </div>
+                <CF7AppsHelpText description={description} />
+            </div>
+        );
+    }
 
     if ( isLabelInline ) {
         return (

@@ -1449,15 +1449,17 @@ class Component
                 'param' => '',
             ], $atts);
             
+            if ('' === $atts['param']) {
+                return '';
+            }
+
             $value = $this->app->request->get($atts['param']);
 
-            if ($atts['param'] && $value) {
-                if (is_array($value)) {
-                    return implode(', ', $value);
-                }
-                return esc_html($value);
+            if (null === $value || '' === $value) {
+                return '';
             }
-            return '';
+
+            return esc_html(Helper::flattenRequestValue($value));
         });
 
         $this->app->addShortcode('ff_entry',function($atts){

@@ -30,7 +30,7 @@ if ( ! class_exists( 'CF7Apps_Entries_App' ) && class_exists( 'CF7Apps_App' ) ) 
 			$this->is_pro             = false;
 			$this->by_default_enabled = false;
 			$this->documentation_url  = 'https://cf7apps.com/docs/general/entries';
-			$this->parent_menu        = __( 'General', 'cf7apps' );
+			$this->parent_menu        = 'general';
 			$this->setting_tabs       = array(
 				'general' => __( 'General', 'cf7apps' ),
 				'entries' => __( 'Entries', 'cf7apps' ),

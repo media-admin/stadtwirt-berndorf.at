@@ -7,6 +7,33 @@ use FluentForm\App\Modules\Payments\PaymentHelper;
 use FluentForm\App\Services\Manager\FormManagerService;
 use FluentForm\Framework\Support\Arr;
 
+/**
+ * Column properties resolved at runtime via the ORM's magic __get; declared
+ * here so static analysis can verify attribute access against the real schema
+ * (database/Migrations/Submissions.php).
+ *
+ * @property int $id
+ * @property int|null $form_id
+ * @property int|null $serial_number
+ * @property string|null $response
+ * @property string|null $source_url
+ * @property int|null $user_id
+ * @property string|null $status
+ * @property int $is_favourite
+ * @property string|null $browser
+ * @property string|null $device
+ * @property string|null $ip
+ * @property string|null $city
+ * @property string|null $country
+ * @property string|null $payment_status
+ * @property string|null $payment_method
+ * @property string|null $payment_type
+ * @property string|null $currency
+ * @property float|null $payment_total
+ * @property float|null $total_paid
+ * @property string|null $created_at
+ * @property string|null $updated_at
+ */
 class Submission extends Model
 {
     /**

@@ -126,12 +126,13 @@ class Contacts
             return false;
         }
 
-        if (!$forceUpdate) {
-            $exist = Subscriber::where('email', $data['email'])->first();
-            if ($exist && $exist->status != 'subscribed' && !empty($data['status'])) {
-                $forceUpdate = true;
-            }
-        }
+        // $forceUpdate must come from the caller only. This method used to silently turn
+        // it on whenever the existing contact was not 'subscribed' and the payload carried
+        // a status, which let every status-bearing call (webhooks, migrators, user-sync,
+        // form submissions) resurrect unsubscribed/bounced/complained contacts by
+        // bypassing the strict-status guard in Subscriber::updateOrCreate. Do not
+        // reintroduce that escalation; callers that intend to overwrite a suppressed
+        // status must pass $forceUpdate explicitly.
 
         if (!isset($data['custom_values'])) {
             $customFieldKeys = [];

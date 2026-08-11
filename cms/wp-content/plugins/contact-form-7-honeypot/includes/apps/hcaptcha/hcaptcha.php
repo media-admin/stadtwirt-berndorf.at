@@ -145,7 +145,7 @@ class CF7Apps_hCaptcha_App extends CF7Apps_App {
         $this->is_pro = false;
         $this->by_default_enabled = false;
         $this->documentation_url = 'https://cf7apps.com/docs/spam-protection/contact-form-7-hcaptcha/';
-        $this->parent_menu = __( 'Spam Protection', 'cf7apps' );
+        $this->parent_menu = 'spam-protection';
 
         add_action( 'wp_footer', array( $this, 'enqueue_script' ) );
         add_action( 'wpcf7_init', array( $this, 'register_shortcode' ), 10 );

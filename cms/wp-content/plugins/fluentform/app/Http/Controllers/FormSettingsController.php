@@ -3,6 +3,7 @@
 namespace FluentForm\App\Http\Controllers;
 
 use Exception;
+use FluentForm\App\Modules\Acl\Acl;
 use FluentForm\App\Services\Settings\Customizer;
 use FluentForm\App\Services\Settings\SettingsService;
 use FluentForm\Framework\Validator\ValidationException;
@@ -12,8 +13,21 @@ class FormSettingsController extends Controller
 {
     public function index(SettingsService $settingsService, $formId)
     {
+        $formId = (int) $formId;
+
+        // SECURITY (FINDING-09): this endpoint returns arbitrary form_meta by meta_key —
+        // including integration feeds that hold webhook Authorization headers/credentials.
+        // Because the method name collides with the forms-list controller, it resolved to
+        // FormPolicy@index (fluentform_dashboard_access, the lowest tier). Require the
+        // forms-manager capability, scoped to this form, to read its settings/meta.
+        if (!Acl::hasPermission('fluentform_forms_manager', $formId)) {
+            return $this->sendError([
+                'message' => __('You do not have permission to view these settings.', 'fluentform'),
+            ], 403);
+        }
+
         $attributes = $this->request->all();
-        $attributes['form_id'] = (int) $formId;
+        $attributes['form_id'] = $formId;
 
         $result = $settingsService->get($attributes);
 

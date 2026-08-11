@@ -39,7 +39,7 @@ if ( ! class_exists( 'CF7Apps_Redirection' ) && class_exists( 'CF7Apps_App' ) ) 
             $this->by_default_enabled    = false;
             $this->has_internal_settings = true;
             $this->documentation_url     = 'https://cf7apps.com/docs/general/redirection';
-            $this->parent_menu           = __( 'General', 'cf7apps' );
+            $this->parent_menu           = 'general';
 
             $this->run();
         }

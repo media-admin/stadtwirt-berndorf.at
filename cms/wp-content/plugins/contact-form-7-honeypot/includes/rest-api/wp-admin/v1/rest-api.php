@@ -98,6 +98,26 @@ class CF7Apps_Rest_API_WP_Admin_V1 extends CF7Apps_Base_Rest_API {
                 'permission_callback' => array( $this, 'authenticate' ),
             )
         );
+
+        register_rest_route(
+            'cf7apps/v1',
+            '/recommended-plugins',
+            array(
+                'methods'             => 'GET',
+                'callback'            => array( $this, 'get_recommended_plugins' ),
+                'permission_callback' => array( $this, 'authenticate' ),
+            )
+        );
+
+        register_rest_route(
+            'cf7apps/v1',
+            '/recommended-plugins/install-activate',
+            array(
+                'methods'             => 'POST',
+                'callback'            => array( $this, 'install_activate_recommended_plugin' ),
+                'permission_callback' => array( $this, 'authenticate' ),
+            )
+        );
     }
 
     /**
@@ -223,6 +243,18 @@ class CF7Apps_Rest_API_WP_Admin_V1 extends CF7Apps_Base_Rest_API {
             wp_send_json_error( 
                 'Invalid Request', 
                 500 
+            );
+        }
+
+        $teaser_app_ids = array( 'stripe', 'paypal', 'square' );
+        if (
+            ! cf7apps_has_pro()
+            && isset( $settings['id'] )
+            && in_array( $settings['id'], $teaser_app_ids, true )
+        ) {
+            wp_send_json_error(
+                __( 'Upgrade to CF7 Apps Pro to use payment gateways.', 'cf7apps' ),
+                403
             );
         }
 
@@ -472,6 +504,48 @@ class CF7Apps_Rest_API_WP_Admin_V1 extends CF7Apps_Base_Rest_API {
                 ),
             )
         );
+    }
+
+    /**
+     * Recommended plugins for dashboard sidebar.
+     *
+     * @since 3.8.0
+     * @return void
+     */
+    public function get_recommended_plugins() {
+        wp_send_json_success( CF7Apps_Recommended_Plugins::get_payload() );
+    }
+
+    /**
+     * Install and activate a recommended plugin.
+     *
+     * @since 3.8.0
+     * @param WP_REST_Request $request Request.
+     * @return void
+     */
+    public function install_activate_recommended_plugin( $request ) {
+        $json = $request->get_json_params();
+        $slug = is_array( $json ) && ! empty( $json['slug'] ) ? sanitize_key( $json['slug'] ) : '';
+
+        if ( '' === $slug ) {
+            $slug = sanitize_key( (string) $request->get_param( 'slug' ) );
+        }
+
+        $result = CF7Apps_Recommended_Plugins::install_and_activate( $slug );
+
+        if ( is_wp_error( $result ) ) {
+            $status = $result->get_error_data();
+            $code   = is_array( $status ) && isset( $status['status'] ) ? (int) $status['status'] : 500;
+
+            wp_send_json_error(
+                array(
+                    'message' => $result->get_error_message(),
+                ),
+                $code
+            );
+        }
+
+        wp_send_json_success( $result );
     }
 }
 

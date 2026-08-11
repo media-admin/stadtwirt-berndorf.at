@@ -71,6 +71,10 @@ class AbandonCartModel extends Model
             return $query;
         }
 
+        // Escape LIKE wildcards (%, _) so search terms match literally, not as wildcards.
+        global $wpdb;
+        $search = $wpdb->esc_like($search);
+
         return $query->where(function ($q) use ($search) {
             $q->where('full_name', 'LIKE', '%' . $search . '%')
                 ->orWhere('email', 'LIKE', '%' . $search . '%');
@@ -166,10 +170,10 @@ class AbandonCartModel extends Model
         }
 
         return add_query_arg([
-            'fluentcrm'  => 1,
-            'route'      => 'general',
-            'handler'    => 'fc_cart_' . $this->provider,
-            'fc_ab_hash' => $this->checkout_key
+            FLUENTCRM_EXTERNAL_URL_PARAM => 1,
+            'route'                      => 'general',
+            'handler'                    => 'fc_cart_' . $this->provider,
+            'fc_ab_hash'                 => $this->checkout_key
         ], home_url());
     }
 

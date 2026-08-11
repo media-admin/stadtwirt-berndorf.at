@@ -13,6 +13,87 @@ use FluentCrm\Framework\Support\Arr;
 
 class FunnelHelper
 {
+    /**
+     * Meta key holding an automation's sticky note.
+     *
+     * Deliberately stored as its own meta row rather than inside `Funnel::settings`,
+     * because saveFunnelSequence() overwrites `settings` wholesale from the client's
+     * posted copy — a note saved after page load would be erased by the next step save.
+     */
+    const STICKY_NOTE_META_KEY = 'sticky_note';
+
+    /**
+     * Normalize a sticky note payload for storage.
+     *
+     * The note is plain text by design: it renders through v-text, so no markup is
+     * allowed in or out. Returns null when the note is effectively empty, which the
+     * caller should treat as "delete the note".
+     *
+     * @param mixed $content Raw note body from the request.
+     * @return array|null {content: string, updated_by: int, updated_at: string}
+     */
+    public static function sanitizeStickyNote($content)
+    {
+        $content = sanitize_textarea_field((string)$content);
+        // Collapse whitespace-only submissions ("\n\n") into a real clear.
+        if ($content === '' || trim($content) === '') {
+            return null;
+        }
+
+        // Bound the length so a pasted document can't bloat every funnel list response.
+        if (mb_strlen($content) > 2000) {
+            $content = mb_substr($content, 0, 2000);
+        }
+
+        return [
+            'content'    => $content,
+            'updated_by' => get_current_user_id(),
+            // WP local time, matching Funnel::$updated_at (Model::freshTimestamp) so the
+            // note's "edited" time is comparable to the automation's own timestamps.
+            'updated_at' => current_time('mysql')
+        ];
+    }
+
+    /**
+     * Read a funnel's sticky note in the shape the editor expects.
+     *
+     * Tolerates the legacy/simple case of a bare string having been stored, and always
+     * returns a display-ready author name so the frontend needs no user lookup.
+     *
+     * @param Funnel $funnel
+     * @return array|null
+     */
+    public static function getStickyNote($funnel)
+    {
+        $note = $funnel->getMeta(static::STICKY_NOTE_META_KEY, null);
+
+        if (empty($note)) {
+            return null;
+        }
+
+        if (is_string($note)) {
+            $note = ['content' => $note];
+        }
+
+        if (!is_array($note) || empty($note['content'])) {
+            return null;
+        }
+
+        $userId = (int)Arr::get($note, 'updated_by');
+        $author = '';
+        if ($userId) {
+            $user = get_userdata($userId);
+            $author = $user ? $user->display_name : '';
+        }
+
+        return [
+            'content'      => (string)$note['content'],
+            'updated_by'   => $userId,
+            'author_name'  => $author,
+            'updated_at'   => (string)Arr::get($note, 'updated_at', '')
+        ];
+    }
+
     public static function changeFunnelSubSequenceStatus($funnelSubId, $sequenceId, $status = 'complete')
     {
         return FunnelSubscriber::where('id', $funnelSubId)
@@ -206,6 +287,46 @@ class FunnelHelper
 
     public static function saveFunnelSequence($funnelId, $data)
     {
+        /*
+         * Step deletion below is diff-driven: every existing sequence not present in the
+         * posted list is deleted — and for email steps that cascades into the funnel
+         * campaign and its full send/open/click history. A request whose `sequences`
+         * key is missing or malformed (stripped body, client bug, truncating proxy)
+         * must therefore ABORT before any write, never be coerced to "empty list".
+         * Only an explicit, valid `[]` is an intentional clear.
+         */
+        if (!array_key_exists('sequences', $data)) {
+            throw new \Exception(esc_html__('The sequences payload is missing. Funnel steps were not saved.', 'fluent-crm'));
+        }
+
+        $sequences = $data['sequences'];
+        if (!is_array($sequences)) {
+            $sequences = \json_decode((string)$sequences, true);
+        }
+
+        if (!is_array($sequences)) {
+            throw new \Exception(esc_html__('The sequences payload is malformed. Funnel steps were not saved.', 'fluent-crm'));
+        }
+
+        /*
+         * The engine's branch handling supports exactly ONE level of conditionals.
+         * The editor blocks nesting client-side, but imported/REST payloads can carry
+         * it — and a persisted nested conditional silently skips the remainder of the
+         * outer branch at run time. Reject it here instead.
+         */
+        foreach ($sequences as $sequenceItem) {
+            if (Arr::get($sequenceItem, 'type') != 'conditional') {
+                continue;
+            }
+            foreach ((array)Arr::get($sequenceItem, 'children', []) as $branchChildren) {
+                foreach ((array)$branchChildren as $childSequence) {
+                    if (is_array($childSequence) && Arr::get($childSequence, 'type') == 'conditional') {
+                        throw new \Exception(esc_html__('Nested conditional blocks are not supported. Funnel steps were not saved.', 'fluent-crm'));
+                    }
+                }
+            }
+        }
+
         $funnelSettings = \json_decode(Arr::get($data, 'funnel_settings'), true);
         $funnelConditions = \json_decode(Arr::get($data, 'conditions', '[]'), true);
 
@@ -222,7 +343,12 @@ class FunnelHelper
         if (is_array($funnelConditions)) {
             $funnel->conditions = $funnelConditions;
         }
-        $funnel->status = Arr::get($data, 'status');
+        // Only accept known statuses; a missing/arbitrary value must not silently
+        // unpublish the automation (a NULL status freezes every in-flight subscriber).
+        $requestedStatus = Arr::get($data, 'status');
+        if (in_array($requestedStatus, ['draft', 'published'], true)) {
+            $funnel->status = $requestedStatus;
+        }
         // Always write updated_at so it reflects when sequences were last saved
         $funnel->updated_at = current_time('mysql');
         $funnel->save();
@@ -231,12 +357,6 @@ class FunnelHelper
             $funnel->updateMeta('description', $funnelDescription);
         } else {
             $funnel->deleteMeta('description');
-        }
-
-        $sequences = \json_decode(Arr::get($data, 'sequences', '[]'), true) ?? [];
-
-        if (!is_array($sequences)) {
-            return $funnel;
         }
 
         $sequenceIds = [];
@@ -301,6 +421,31 @@ class FunnelHelper
                 ->whereNotIn('next_sequence_id', $sequenceIds)
                 ->update([
                     'status'              => 'active',
+                    'next_execution_time' => current_time('mysql')
+                ]);
+
+            // Clear dangling step pointers for in-flight subscribers (active rows
+            // included): after the delete, a next_sequence_id referencing a removed
+            // step would make the processor fall back to the stale next_sequence
+            // ordinal — which, after renumbering, points at a DIFFERENT step. With
+            // the pointer cleared, the engine recomputes the position from
+            // last_sequence_id instead.
+            FunnelSubscriber::where('funnel_id', $funnel->id)
+                ->whereIn('status', ['active', 'waiting'])
+                ->whereNotNull('next_sequence_id')
+                ->whereNotIn('next_sequence_id', $sequenceIds)
+                ->update([
+                    'next_sequence_id' => null
+                ]);
+
+            // Any active row left with neither a pointer nor an execution time is
+            // invisible to the cron query (whereNotNull next_execution_time) and
+            // would be stuck forever — schedule it for the next tick.
+            FunnelSubscriber::where('funnel_id', $funnel->id)
+                ->where('status', 'active')
+                ->whereNull('next_sequence_id')
+                ->whereNull('next_execution_time')
+                ->update([
                     'next_execution_time' => current_time('mysql')
                 ]);
         }
@@ -450,12 +595,17 @@ class FunnelHelper
                     $dateTime = null;
                 }
                 if ($dateTime) {
-                    // should be this current year's date
-                    $dateTime = gmdate('Y') . '-' . gmdate('m-d', strtotime($dateTime));
+                    // Anchor to the SITE-LOCAL year and only roll forward once the whole
+                    // birthday has passed: a contact entering this step ON their birthday
+                    // (the common case) must target today, not next year.
+                    $localNow = current_time('timestamp');
+                    $localYear = (int)gmdate('Y', $localNow);
+                    $monthDay = gmdate('m-d', strtotime($dateTime));
 
-                    // if the date is passed, then next year
-                    if (strtotime($dateTime) < current_time('timestamp')) {
-                        $dateTime = (gmdate('Y') + 1) . '-' . gmdate('m-d', strtotime($dateTime));
+                    $dateTime = $localYear . '-' . $monthDay;
+
+                    if (strtotime($dateTime . ' 23:59:59') < $localNow) {
+                        $dateTime = ($localYear + 1) . '-' . $monthDay;
                     }
                 }
             } else {

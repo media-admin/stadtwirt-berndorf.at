@@ -3,6 +3,10 @@ function cf7appsFetch( url, options ) {
     options.headers = options.headers || {};
     options.headers['X-WP-Nonce'] = CF7AppsInternalSettings.nonce;
 
+    if ( options.body && ! options.headers['Content-Type'] ) {
+        options.headers['Content-Type'] = 'application/json';
+    }
+
     let base = CF7AppsInternalSettings.restURL || '';
 
     const isPlain = base.indexOf( 'rest_route=' ) !== -1;
@@ -81,4 +85,41 @@ export async function saveSettings( app, formData, formId ) {
     const json = await response.json();
 
     return json.data;
+}
+
+export async function getRecommendedPlugins() {
+    const response = await cf7appsFetch( 'recommended-plugins', {
+        method: 'GET',
+    } );
+
+    if ( ! response.ok ) {
+        return false;
+    }
+
+    const json = await response.json();
+
+    return json.success ? json.data : false;
+}
+
+export async function installActivateRecommendedPlugin( slug ) {
+    try {
+        const response = await cf7appsFetch(
+            'recommended-plugins/install-activate',
+            {
+                method: 'POST',
+                body: JSON.stringify( { slug } ),
+            }
+        );
+        const json = await response.json();
+
+        if ( ! response.ok || ! json.success ) {
+            return {
+                error: json?.data?.message || 'Request failed.',
+            };
+        }
+
+        return { data: json.data };
+    } catch ( error ) {
+        return { error: 'Request failed.' };
+    }
 }

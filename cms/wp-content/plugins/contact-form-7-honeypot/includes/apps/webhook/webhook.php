@@ -34,7 +34,7 @@ if ( ! class_exists( 'CF7Apps_Webhook' ) && class_exists( 'CF7Apps_App' ) ) :
             $this->by_default_enabled    = false;
             $this->has_internal_settings = true;
             $this->documentation_url     = 'https://cf7apps.com/docs/integration/webhook';
-            $this->parent_menu           = __( 'Integration', 'cf7apps' );
+            $this->parent_menu           = 'integration';
 
             $this->run();
         }

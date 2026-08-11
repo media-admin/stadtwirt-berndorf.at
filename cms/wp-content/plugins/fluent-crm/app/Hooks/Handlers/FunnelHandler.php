@@ -211,9 +211,27 @@ class FunnelHandler
     {
         $triggerNameBase = $triggerName;
 
-        $funnels = Funnel::where('status', 'published')
-            ->where('trigger_name', $triggerNameBase)
-            ->get();
+        // Per-request memoization: bulk operations (tagging 50k contacts) route every
+        // contact's event through here — re-querying published funnels/benchmarks per
+        // event adds 100k+ identical queries even when no funnel matches the trigger.
+        static $triggerCache = [];
+
+        if (!isset($triggerCache[$triggerNameBase])) {
+            $triggerCache[$triggerNameBase] = [
+                'funnels'    => Funnel::where('status', 'published')
+                    ->where('trigger_name', $triggerNameBase)
+                    ->get(),
+                'benchmarks' => FunnelSequence::where('type', 'benchmark')
+                    ->where('action_name', $triggerNameBase)
+                    ->whereHas('funnel', function ($q) {
+                        return $q->where('status', 'published');
+                    })
+                    ->orderBy('id', 'ASC')
+                    ->get(),
+            ];
+        }
+
+        $funnels = $triggerCache[$triggerNameBase]['funnels'];
 
         foreach ($funnels as $funnel) {
             ob_start();
@@ -226,13 +244,7 @@ class FunnelHandler
             $maybeErrors = ob_get_clean();
         }
 
-        $benchMarks = FunnelSequence::where('type', 'benchmark')
-            ->where('action_name', $triggerNameBase)
-            ->whereHas('funnel', function ($q) {
-                return $q->where('status', 'published');
-            })
-            ->orderBy('id', 'ASC')
-            ->get();
+        $benchMarks = $triggerCache[$triggerNameBase]['benchmarks'];
 
         foreach ($benchMarks as $benchMark) {
             ob_start();
@@ -361,9 +373,17 @@ class FunnelHandler
         $request = FluentCrm('request');
         $data = $request->all();
 
-        $data['sequences'] = wp_unslash(Arr::get($data, 'sequences'));
+        if (array_key_exists('sequences', $data)) {
+            $data['sequences'] = wp_unslash($data['sequences']);
+        }
 
-        $funnel = FunnelHelper::saveFunnelSequence($data['funnel_id'], $data);
+        try {
+            $funnel = FunnelHelper::saveFunnelSequence($data['funnel_id'], $data);
+        } catch (\Exception $e) {
+            wp_send_json([
+                'message' => $e->getMessage()
+            ], 422);
+        }
 
         wp_send_json([
             'sequences' => FunnelHelper::getFunnelSequences($funnel, true),
@@ -394,6 +414,9 @@ class FunnelHandler
         $funnel = apply_filters('fluentcrm_funnel_editor_details_' . $funnel->trigger_name, $funnel);
 
         $funnel->labels = $funnel->getFormattedLabels();
+
+        // Ship the sticky note with the export so the note survives a hand-off.
+        $funnel->sticky_note = FunnelHelper::getStickyNote($funnel);
 
         $funnel->sequences = FunnelHelper::getFunnelSequences($funnel, true);
 

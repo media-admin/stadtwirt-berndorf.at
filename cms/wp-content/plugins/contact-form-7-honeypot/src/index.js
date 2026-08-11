@@ -3,7 +3,6 @@ import domReady from '@wordpress/dom-ready';
 import { HashRouter } from 'react-router';
 import '../src/index.css';
 import CF7AppsHeader from './components/CF7AppsHeader';
-import MenuBar from './layout/MenuBar';
 import Body from './layout/Body';
 import RightBar from './layout/RightBar';
 import { hasMigrated, migrate } from './api/api';
@@ -11,6 +10,23 @@ import { __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
 import { toast } from 'react-toastify';
 import CF7AppsToastNotification from './components/CF7AppsToastNotification';
+import { CF7AppsNavProvider } from './context/CF7AppsNavContext';
+
+const CF7AppsDashboardShell = () => {
+    return (
+        <div className="cf7apps-main-content">
+            <CF7AppsHeader showNavToggle={ false } />
+            <div className="cf7apps-layout cf7apps-layout--no-side-nav">
+                <div className="cf7apps-page-shell">
+                    <div className="cf7apps-page-main">
+                        <Body />
+                    </div>
+                    <RightBar />
+                </div>
+            </div>
+        </div>
+    );
+};
 
 const CF7AppsView = () => {
     const [migrated, setMigrated] = useState(true);
@@ -71,15 +87,9 @@ const CF7AppsView = () => {
                         </div>
                     </div>
                 ) : (
-                    <div className="cf7apps-main-content"> 
-                        <CF7AppsHeader />
-                        <div className="cf7apps-layout">
-                            <MenuBar />
-                            <Body />
-                            {/* <RightBar /> */}
-                            <div className="clearfix"></div>
-                        </div>
-                    </div>
+                    <CF7AppsNavProvider>
+                        <CF7AppsDashboardShell />
+                    </CF7AppsNavProvider>
                 )
             }
         </>

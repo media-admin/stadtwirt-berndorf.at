@@ -60,6 +60,16 @@ class BlockEditorHelper
                     'fontFamily' => "Arial, 'Helvetica Neue', Helvetica, sans-serif",
                 ],
                 [
+                    'name'       => 'Comic Sans',
+                    'slug'       => 'comic-sans',
+                    'fontFamily' => "'Comic Sans MS', 'Marker Felt-Thin', Arial, sans-serif",
+                ],
+                [
+                    'name'       => 'Courier New',
+                    'slug'       => 'courier-new',
+                    'fontFamily' => "'Courier New', Courier, 'Lucida Sans Typewriter', 'Lucida Typewriter', monospace",
+                ],
+                [
                     'name'       => 'Georgia',
                     'slug'       => 'georgia',
                     'fontFamily' => "Georgia, Times, 'Times New Roman', serif",
@@ -70,9 +80,14 @@ class BlockEditorHelper
                     'fontFamily' => "Helvetica, Arial, Verdana, sans-serif",
                 ],
                 [
-                    'name'       => 'Courier New',
-                    'slug'       => 'courier-new',
-                    'fontFamily' => "'Courier New', Courier, 'Lucida Sans Typewriter', monospace",
+                    'name'       => 'Lucida',
+                    'slug'       => 'lucida',
+                    'fontFamily' => "'Lucida Sans Unicode', 'Lucida Grande', sans-serif",
+                ],
+                [
+                    'name'       => 'Tahoma',
+                    'slug'       => 'tahoma',
+                    'fontFamily' => "Tahoma, Verdana, Segoe, sans-serif",
                 ],
                 [
                     'name'       => 'Times New Roman',
@@ -82,12 +97,52 @@ class BlockEditorHelper
                 [
                     'name'       => 'Trebuchet MS',
                     'slug'       => 'trebuchet-ms',
-                    'fontFamily' => "'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', Tahoma, sans-serif",
+                    'fontFamily' => "'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif",
                 ],
                 [
                     'name'       => 'Verdana',
                     'slug'       => 'verdana',
                     'fontFamily' => "Verdana, Geneva, sans-serif",
+                ],
+                [
+                    'name'       => 'Lato',
+                    'slug'       => 'lato',
+                    'fontFamily' => "'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+                ],
+                [
+                    'name'       => 'Lora',
+                    'slug'       => 'lora',
+                    'fontFamily' => "'Lora', Georgia, 'Times New Roman', serif",
+                ],
+                [
+                    'name'       => 'Merriweather',
+                    'slug'       => 'merriweather',
+                    'fontFamily' => "'Merriweather', Georgia, 'Times New Roman', serif",
+                ],
+                [
+                    'name'       => 'Merriweather Sans',
+                    'slug'       => 'merriweather-sans',
+                    'fontFamily' => "'Merriweather Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+                ],
+                [
+                    'name'       => 'Noticia Text',
+                    'slug'       => 'noticia-text',
+                    'fontFamily' => "'Noticia Text', Georgia, 'Times New Roman', serif",
+                ],
+                [
+                    'name'       => 'Open Sans',
+                    'slug'       => 'open-sans',
+                    'fontFamily' => "'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+                ],
+                [
+                    'name'       => 'Roboto',
+                    'slug'       => 'roboto',
+                    'fontFamily' => "'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+                ],
+                [
+                    'name'       => 'Source Sans Pro',
+                    'slug'       => 'source-sans-pro',
+                    'fontFamily' => "'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif",
                 ],
             ],
             'font-size'   => [

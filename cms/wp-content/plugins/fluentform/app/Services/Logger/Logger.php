@@ -43,16 +43,16 @@ class Logger
             })
             ->when($startDate && $endDate, function ($q) use ($startDate, $endDate, $dateColumn) {
                 // Concatenate time if not time included on start/end date string
-                if ($startDate != date("Y-m-d H:i:s", strtotime($startDate))) {
+                if (date('Y-m-d H:i:s', strtotime($startDate)) != $startDate) { // phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date -- comparing a local-time string to its own roundtrip; UTC would be wrong here
                     $startDate .= ' 00:00:01';
                 }
-                if ($endDate != date("Y-m-d H:i:s", strtotime($endDate))) {
+                if (date('Y-m-d H:i:s', strtotime($endDate)) != $endDate) { // phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date -- comparing a local-time string to its own roundtrip; UTC would be wrong here
                     $endDate .= ' 23:59:59';
                 }
                 return $q->where($dateColumn, '>=', $startDate)
                     ->where($dateColumn, '<=', $endDate);
             });
-    
+
         $logs = $logsQuery->paginate();
 
         $logItems = $logs->items();
@@ -91,7 +91,7 @@ class Logger
         $logItems = apply_filters_deprecated(
             'fluentform_all_logs',
             [
-                $logItems
+                $logItems,
             ],
             FLUENTFORM_FRAMEWORK_UPGRADE,
             'fluentform/get_logs',
@@ -100,7 +100,17 @@ class Logger
 
         $logs->setCollection(Collection::make($logItems));
 
-        return apply_filters('fluentform/get_logs', $logs);
+        $logs = apply_filters('fluentform/get_logs', $logs);
+
+        foreach ($logs->items() as $log) {
+            if ('api' === $type && isset($log->note)) {
+                $log->note = static::sanitizeLogHtml($log->note);
+            } elseif (isset($log->description)) {
+                $log->description = static::sanitizeLogHtml($log->description);
+            }
+        }
+
+        return $logs;
     }
 
     protected function normalizeFormScope($formIds)
@@ -168,16 +178,23 @@ class Logger
     public function getFilters($attributes = [])
     {
         $type = Arr::get($attributes, 'type', 'log');
+        $allowedForms = FormManagerService::getUserAllowedFormsScope();
 
         if ('log' === $type) {
-            $statusRows = Log::select('status')->distinct()->get();
-            $componentRows = Log::select('component')->distinct()->get();
-            $formIdRows = Log::select('parent_source_id as form_id')->distinct()->get();
+            $statusQuery = Log::select('status')->distinct();
+            $componentQuery = Log::select('component')->distinct();
+            $formIdQuery = Log::select('parent_source_id as form_id')->distinct();
+            $scopeColumn = 'parent_source_id';
         } else {
-            $statusRows = Scheduler::select('status')->distinct()->get();
-            $componentRows = Scheduler::select('action as component')->distinct()->get();
-            $formIdRows = Scheduler::select('form_id')->distinct()->get();
+            $statusQuery = Scheduler::select('status')->distinct();
+            $componentQuery = Scheduler::select('action as component')->distinct();
+            $formIdQuery = Scheduler::select('form_id')->distinct();
+            $scopeColumn = 'form_id';
         }
+
+        $statusRows = $this->scopeFilterQuery($statusQuery, $scopeColumn, $allowedForms)->get();
+        $componentRows = $this->scopeFilterQuery($componentQuery, $scopeColumn, $allowedForms)->get();
+        $formIdRows = $this->scopeFilterQuery($formIdQuery, $scopeColumn, $allowedForms)->get();
 
         $statuses = $statusRows->pluck('status')->filter()->map(function ($item) {
             return [
@@ -195,7 +212,7 @@ class Logger
 
         $formIds = $formIdRows->pluck('form_id')->filter()->toArray();
         if (false !== ($allowForms = FormManagerService::getUserAllowedFormsScope())) {
-            $formIds = array_filter($formIds, function($value) use ($allowForms) {
+            $formIds = array_filter($formIds, function ($value) use ($allowForms) {
                 return in_array($value, $allowForms);
             });
         }
@@ -207,6 +224,16 @@ class Logger
             'components' => $components,
             'forms'      => $forms,
         ]);
+    }
+
+    protected function scopeFilterQuery($query, $formColumn, $allowedForms)
+    {
+        if (false !== $allowedForms) {
+            // phpcs:ignore Universal.Operators.DisallowShortTernary.Found -- `?: [0]` is the delegated-scope regression contract (detect_resource_authorization)
+            $query->whereIn($formColumn, $allowedForms ?: [0]);
+        }
+
+        return $query;
     }
 
     public function getSubmissionLogs($submissionId, $attributes = [])
@@ -225,7 +252,7 @@ class Logger
                 'fluentform_entry_logs',
                 [
                     $logs,
-                    $submissionId
+                    $submissionId,
                 ],
                 FLUENTFORM_FRAMEWORK_UPGRADE,
                 'fluentform/submission_logs',
@@ -242,10 +269,10 @@ class Logger
                 }
                 $entryLogs[] = [
                     'id'          => $log->id,
-                    'status'      => $log->status,
-                    'title'       => $log->component . ' (' . $log->title . ')',
+                    'status'      => esc_attr($log->status),
+                    'title'       => esc_html($log->component . ' (' . $log->title . ')'),
                     'description' => $log->description,
-                    'created_at'  => (string)$log->created_at,
+                    'created_at'  => (string) $log->created_at,
                 ];
             }
         } else {
@@ -269,7 +296,7 @@ class Logger
                 'fluentform_entry_api_logs',
                 [
                     $logs,
-                    $submissionId
+                    $submissionId,
                 ],
                 FLUENTFORM_FRAMEWORK_UPGRADE,
                 'fluentform/submission_api_logs',
@@ -282,14 +309,14 @@ class Logger
             foreach ($logs as $log) {
                 $entryLog = [
                     'id'                  => $log->id,
-                    'status'              => $log->status,
+                    'status'              => esc_attr($log->status),
                     'title'               => 'n/a',
                     'description'         => $log->note,
-                    'created_at'          => (string)$log->created_at,
+                    'created_at'          => (string) $log->created_at,
                     'form_id'             => $log->form_id,
                     'feed_id'             => $log->feed_id,
                     'submission_id'       => $log->origin_id,
-                    'integration_enabled' => false
+                    'integration_enabled' => false,
                 ];
 
                 $notificationKeys = apply_filters('fluentform/global_notification_active_types', [], $log->form_id);
@@ -309,14 +336,45 @@ class Logger
                 }
 
                 if ($log->action) {
-                    $entryLog['title'] = Helper::getLogInitiator($log->action, $logType);
+                    $entryLog['title'] = esc_html(Helper::getLogInitiator($log->action, $logType));
                 }
 
                 $entryLogs[] = $entryLog;
             }
         }
 
-        return apply_filters('fluentform/submission_logs', $entryLogs, $submissionId);
+        $entryLogs = apply_filters('fluentform/submission_logs', $entryLogs, $submissionId);
+
+        foreach ($entryLogs as &$entryLog) {
+            if (isset($entryLog['description'])) {
+                $entryLog['description'] = static::sanitizeLogHtml($entryLog['description']);
+            }
+        }
+        unset($entryLog);
+
+        return $entryLogs;
+    }
+
+    public static function sanitizeLogHtml($value)
+    {
+        if (!is_scalar($value)) {
+            return '';
+        }
+
+        return wp_kses((string) $value, [
+            'br'     => [],
+            'b'      => [],
+            'strong' => [],
+            'i'      => [],
+            'em'     => [],
+            'code'   => [],
+            'p'      => [],
+            'a'      => [
+                'href'  => [],
+                'title' => [],
+                'rel'   => [],
+            ],
+        ]);
     }
 
     public function remove($attributes = [])

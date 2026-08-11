@@ -50,7 +50,7 @@ class ExternalPages
     {
         $this->request = FluentCrm('request');
 
-        if ($this->request->has('fluentcrm')) {
+        if ($this->request->has(FLUENTCRM_EXTERNAL_URL_PARAM)) {
             $route = $this->request->get('route');
             if ($route && isset($this->validRoutes[sanitize_text_field($route)])) {
                 return $this->validRoutes[sanitize_text_field($route)];
@@ -60,7 +60,7 @@ class ExternalPages
 
     public function route()
     {
-        if (!isset($_GET['fluentcrm'])) {
+        if (!isset($_GET[FLUENTCRM_EXTERNAL_URL_PARAM])) {
             return false;
         }
 
@@ -459,9 +459,9 @@ class ExternalPages
         $data = [
             'business'        => fluentcrmGetGlobalSettings('business_settings', []),
             'unsubscribe_url' => add_query_arg(array_filter([
-                'fluentcrm'   => 1,
-                'route'       => 'unsubscribe',
-                'secure_hash' => fluentCrmGetContactManagedHash($subscriber->id)
+                FLUENTCRM_EXTERNAL_URL_PARAM => 1,
+                'route'                      => 'unsubscribe',
+                'secure_hash'                => fluentCrmGetContactManagedHash($subscriber->id)
             ]), site_url('/')),
             'subscriber'      => $subscriber
         ];
@@ -509,10 +509,10 @@ class ExternalPages
         $data = [
             'business'                => fluentcrmGetGlobalSettings('business_settings', []),
             'manage_subscription_url' => add_query_arg(array_filter([
-                'fluentcrm'   => 1,
-                'route'       => 'manage_subscription',
-                'ce_id'       => $subscriber->id,
-                'secure_hash' => fluentCrmGetContactManagedHash($subscriber->id)
+                FLUENTCRM_EXTERNAL_URL_PARAM => 1,
+                'route'                      => 'manage_subscription',
+                'ce_id'                      => $subscriber->id,
+                'secure_hash'                => fluentCrmGetContactManagedHash($subscriber->id)
             ]), site_url('/')),
             'subscriber'              => $subscriber
         ];
@@ -586,7 +586,12 @@ class ExternalPages
 
         $emailId = intval($request->get('_e_id'));
         if ($emailId) {
-            $campaignEmail = CampaignEmail::find($emailId);
+            // Scope to the authenticated subscriber — _e_id is client-supplied, and an
+            // unscoped lookup lets a valid-hash holder attribute their unsubscribe to
+            // another subscriber's campaign email (the GET path scopes the same way).
+            $campaignEmail = CampaignEmail::where('id', $emailId)
+                ->where('subscriber_id', $subscriber->id)
+                ->first();
         } else {
             $campaignEmail = null;
         }
@@ -773,6 +778,17 @@ class ExternalPages
 
         if (!$subscriber) {
             $body = __('Sorry! Your confirmation url is not valid', 'fluent-crm');
+        } else if (!in_array($subscriber->status, ['subscribed', 'pending'])) {
+            /*
+             * Stale link guard: the confirmation click is the sole path from `pending`
+             * back to `subscribed`. A contact who is neither pending nor subscribed
+             * (unsubscribed/bounced/complained since this email was sent) has no active
+             * opt-in flow — a years-old link, often prefetched by a mail scanner on a
+             * bare GET, must not resurrect them. Re-subscribing requires starting a new
+             * opt-in (which moves them to `pending` first).
+             */
+            $body = __('This confirmation link is no longer valid. Please subscribe again to receive a fresh confirmation email.', 'fluent-crm');
+            $subscriber = false;
         } else {
             if (!is_user_logged_in()) {
                 $secureHash = fluentCrmGetContactSecureHash($subscriber->id);
@@ -1059,7 +1075,17 @@ class ExternalPages
          */
         $data = apply_filters('fluent_crm/webhook_contact_data', $data, $postData, $webhook);
 
-        $forceUpdate = (!empty($data['status']) && $data['status'] != Arr::get($webhook->value, 'status', '')) || $data['status'] == 'subscribed';
+        // Force only when the fluent_crm/webhook_contact_data filter deliberately overrode
+        // the webhook's configured status. The removed `|| status == 'subscribed'` clause
+        // made every hit of a default-status webhook a forced update, silently
+        // re-subscribing contacts who had opted out (GLOBAL-RESURRECT). Note $data went
+        // through array_filter(), so 'status' may be absent here — never read it directly.
+        $forceUpdate = !empty($data['status']) && $data['status'] != Arr::get($webhook->value, 'status', '');
+
+        // Never trust a client-supplied user_id from the webhook payload: it would link the
+        // contact to an arbitrary WP user (e.g. an administrator) — privilege escalation.
+        // The WP-user link is derived solely from the (already validated) contact email below.
+        unset($data['user_id']);
 
         $user = get_user_by('email', $data['email']);
 
@@ -1084,19 +1110,59 @@ class ExternalPages
     public function handleBenchmarkUrl()
     {
         $benchmarkActionId = intval(Arr::get($_REQUEST, 'aid'));
-        if ($benchmarkActionId) {
-            /**
-             * Fires when a benchmark linked is clicked
-             * @param int $benchmarkActionId
-             * @param Subscriber|false Current Contact Object or false if not available
-             */
-            do_action('fluencrm_benchmark_link_clicked', $benchmarkActionId, fluentcrm_get_current_contact());
+        if (!$benchmarkActionId) {
+            return;
         }
+
+        /*
+         * A benchmark goal link (?fluentcrm=1&route=bnu&aid=N) is shareable by
+         * design — pasted into any email campaign, page, or external newsletter —
+         * so firing it is gated on IDENTIFYING the contact, not on proving the
+         * link came from a specific email. Clicks from tracked emails carry the
+         * per-email mid+fch token (and tracked-rewritten links have already fired
+         * inside RedirectionHandler::trackUrlClick() with the aid from the stored
+         * URL — Pro's handler redirects and exits there, so this route never runs
+         * for those clicks). Everything else — page-shared links, tracking-off
+         * emails, logged-in users — resolves via the current-contact lookup. The
+         * aid is deliberately NOT bound to the sending email: entering a shared
+         * goal is the feature, firing is self-scoped (a contact can only trigger
+         * benchmarks as themselves), and entry is governed by the benchmark's own
+         * type/can_enter settings. Sites wanting a stricter posture can return
+         * true from the filter to require the email token.
+         */
+        $subscriber = false;
+
+        $mailId = intval(Arr::get($_REQUEST, 'mid'));
+        $urlToken = sanitize_text_field(Arr::get($_REQUEST, 'fch', ''));
+
+        if ($mailId && $urlToken) {
+            $campaignEmail = CampaignEmail::with(['subscriber'])->find($mailId);
+            if ($campaignEmail && $campaignEmail->subscriber && substr((string)$campaignEmail->email_hash, 0, 8) === $urlToken) {
+                $subscriber = $campaignEmail->subscriber;
+            }
+        }
+
+        $requireToken = apply_filters('fluent_crm/benchmark_url_require_token', false);
+
+        if (!$subscriber && !$requireToken) {
+            $subscriber = fluentcrm_get_current_contact();
+        }
+
+        if (!$subscriber) {
+            return;
+        }
+
+        /**
+         * Fires when a benchmark linked is clicked
+         * @param int $benchmarkActionId
+         * @param Subscriber|false Current Contact Object or false if not available
+         */
+        do_action('fluencrm_benchmark_link_clicked', $benchmarkActionId, $subscriber);
     }
 
     public function manageSubscription()
     {
-        $contactId = (int)$_GET['ce_id'];
+        $contactId = (int)Arr::get($_GET, 'ce_id', 0);
         $subscriber = false;
 
         $managedSecureHash = sanitize_text_field(Arr::get($_REQUEST, 'secure_hash'));
@@ -1220,11 +1286,18 @@ class ExternalPages
                 ], 422);
             }
 
+            $oldEmail = $subscriber->email;
+
             $subscriber->status = 'pending';
             $subscriber->email = $email;
             $subscriber->first_name = sanitize_text_field(Arr::get($_REQUEST, 'first_name', ''));
             $subscriber->last_name = sanitize_text_field(Arr::get($_REQUEST, 'last_name', ''));
             $subscriber->save();
+
+            // Re-snapshot queued fc_campaign_emails rows (they store email_address
+            // at schedule time) so scheduled sends go to the NEW address.
+            do_action('fluent_crm/contact_email_changed', $subscriber, $oldEmail);
+
             $subscriber->sendDoubleOptinEmail();
 
             if ($addedLists) {
@@ -1258,6 +1331,12 @@ class ExternalPages
         }
 
         if ($subscriber->status != 'subscribed') {
+            // The contact themselves clicked "resubscribe" on the hash-authenticated
+            // manage page — move them into the opt-in pipeline (the opt-in email is
+            // strictly gated on 'pending') and let the confirmation link finish it.
+            if ($subscriber->status != 'pending') {
+                $subscriber->updateStatus('pending');
+            }
             $subscriber->sendDoubleOptinEmail();
             wp_send_json_success([
                 'message' => sprintf(
@@ -1565,7 +1644,11 @@ class ExternalPages
             );
         }
 
-        $preViewUrl = site_url('?fluentcrm=1&route=email_preview&_e_hash=' . $email->email_hash);
+        $preViewUrl = add_query_arg([
+            FLUENTCRM_EXTERNAL_URL_PARAM => 1,
+            'route'                      => 'email_preview',
+            '_e_hash'                    => $email->email_hash
+        ], site_url('/'));
         $content = str_replace(['##web_preview_url##', '{{crm_global_email_footer}}', '{{crm_preheader_text}}'], [$preViewUrl, $footerText, $preHeader], $content);
 
         if (Str::contains($content, ['##crm.', '{{crm.'])) {

@@ -39,6 +39,11 @@ class GlobalIntegrationController extends Controller
             $settingsKey = sanitize_text_field($this->request->get('settings_key'));
             $integration = wp_unslash($this->request->get('integration'));
 
+            // SECURITY (FINDING-16): connected credentials are redacted on read; restore any field
+            // the browser posted back still masked so a re-save (e.g. "Verify Connection Again")
+            // cannot overwrite a live credential with the '********' mask.
+            $integration = (new GlobalIntegrationService())->unmaskCredentials($settingsKey, $integration);
+
             do_action_deprecated(
                 'fluentform_save_global_integration_settings_' . $settingsKey,
                 [

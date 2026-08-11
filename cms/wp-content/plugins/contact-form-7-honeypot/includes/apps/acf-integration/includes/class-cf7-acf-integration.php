@@ -454,16 +454,67 @@ if ( ! class_exists( 'CF7Apps_ACF_Integration' ) ) {
 			}
 
 			// Build input based on field type
+			if ( empty( $atts['id'] ) ) {
+				$atts['id'] = $tag->name;
+			}
+
 			$input = $this->build_field_input( $acf_field, $tag, $value, $atts );
+			$label = $this->get_acf_field_label_html( $acf_field, $tag, $atts );
 
 			$html = sprintf(
-				'<span class="wpcf7-form-control-wrap %1$s">%2$s%3$s</span>',
+				'<label for="%1$s">%2$s<br />
+				<span class="wpcf7-form-control-wrap %3$s" data-name="%3$s">%4$s%5$s</span>
+				</label>',
+				esc_attr( $atts['id'] ),
+				$label,
 				esc_attr( $tag->name ),
 				$input,
 				$validation_error
 			);
 
 			return $html;
+		}
+
+		/**
+		 * Whether an ACF field is marked required.
+		 *
+		 * @param array $acf_field ACF field array.
+		 * @return bool
+		 */
+		private function is_acf_field_required( $acf_field ) {
+			if ( ! isset( $acf_field['required'] ) ) {
+				return false;
+			}
+
+			$required_value = $acf_field['required'];
+
+			return ( $required_value === 1 || $required_value === '1' || $required_value === true || $required_value === 'true' );
+		}
+
+		/**
+		 * Build the visible field label from ACF field settings.
+		 *
+		 * @param array         $acf_field ACF field array.
+		 * @param WPCF7_FormTag $tag       CF7 form tag.
+		 * @param array         $atts      Input attributes.
+		 * @return string
+		 */
+		private function get_acf_field_label_html( $acf_field, $tag, $atts ) {
+			$label_text = '';
+
+			if ( ! empty( $acf_field['label'] ) ) {
+				$label_text = (string) $acf_field['label'];
+			} elseif ( ! empty( $acf_field['name'] ) ) {
+				$label_text = (string) $acf_field['name'];
+			} else {
+				$label_text = (string) $tag->name;
+			}
+
+			$required_mark = $this->is_acf_field_required( $acf_field )
+				? ' <span class="wpcf7-required" aria-hidden="true">*</span>'
+				: '';
+
+			return esc_html( $label_text ) . $required_mark;
 		}
 
 		/**
@@ -479,14 +530,7 @@ if ( ! class_exists( 'CF7Apps_ACF_Integration' ) ) {
 		private function build_field_input( $acf_field, $tag, $value, $atts ) {
 			$field_type = $acf_field['type'];
 			$name       = $tag->name;
-			
-			// Check ACF field required status, not CF7 tag asterisk
-			// ACF stores required as 1, '1', true, or 1 (int)
-			$is_acf_required = false;
-			if ( isset( $acf_field['required'] ) ) {
-				$required_value = $acf_field['required'];
-				$is_acf_required = ( $required_value === 1 || $required_value === '1' || $required_value === true || $required_value === 'true' );
-			}
+			$is_acf_required = $this->is_acf_field_required( $acf_field );
 			$required = $is_acf_required ? ' required' : '';
 
 			$atts['name']        = $name;
@@ -625,12 +669,7 @@ if ( ! class_exists( 'CF7Apps_ACF_Integration' ) ) {
 			}
 
 			// Required validation - check ACF field required status, not CF7 tag asterisk
-			// ACF stores required as 1, '1', true, or 1 (int)
-			$is_acf_required = false;
-			if ( isset( $acf_field['required'] ) ) {
-				$required_value = $acf_field['required'];
-				$is_acf_required = ( $required_value === 1 || $required_value === '1' || $required_value === true || $required_value === 'true' );
-			}
+			$is_acf_required = $this->is_acf_field_required( $acf_field );
 			
 			if ( $is_acf_required && empty( $value ) ) {
 				$result->invalidate( $tag, wpcf7_get_message( 'invalid_required' ) );

@@ -205,6 +205,7 @@ class Application extends Container
         $this->bindAppInstance();
         $this->bindPathsAndUrls();
         $this->loadConfigIfExists();
+        $this->registerMiddleware();
         $this->registerTextdomain();
         $this->bindCoreComponents();
         $this->requireCommonFiles($this);
@@ -275,11 +276,41 @@ class Application extends Container
 
         if (is_dir($this['path.config'])) {
             foreach (glob($this['path.config'] . '*.php') as $file) {
+                // middleware.php lives under app/Http/ now; it ships closures
+                // that don't belong in Config storage.
+                if (basename($file) === 'middleware.php') {
+                    continue;
+                }
                 $files[basename($file, '.php')] = $file;
             }
         }
 
         $this->instance('config', new Config([], $files));
+    }
+
+    /**
+     * Register the HTTP middleware stack as a lazy container binding.
+     *
+     * Resolves from `app/Http/middleware.php` (canonical). Falls back to
+     * `config/middleware.php` so un-migrated plugins keep working.
+     *
+     * @return void
+     */
+    protected function registerMiddleware()
+    {
+        $this->singleton('http.middleware', function ($app) {
+            $new = $app['path.http'] . 'middleware.php';
+            if (is_file($new)) {
+                return require $new;
+            }
+
+            $legacy = $app['path.config'] . 'middleware.php';
+            if (is_file($legacy)) {
+                return require $legacy;
+            }
+
+            return [];
+        });
     }
 
     /**

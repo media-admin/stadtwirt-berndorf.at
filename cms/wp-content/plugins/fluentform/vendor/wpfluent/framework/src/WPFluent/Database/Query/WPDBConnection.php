@@ -134,6 +134,67 @@ class WPDBConnection implements ConnectionInterface
         $this->wpdb->show_errors(
             $this->shouldShowErrors()
         );
+
+        $this->registerSqliteFunctions();
+    }
+
+    /**
+     * Register a PHP-backed SOUNDEX() function on the SQLite connection so
+     * phonetic ("sounds like") queries work, mirroring MySQL's native
+     * equivalent.
+     *
+     * SQLite doesn't ship the function; PHP provides it natively, so we bind
+     * it as a UDF. Using PHP's soundex() here matches the term that
+     * SQLiteGrammar encodes with the same soundex() on the binding side.
+     *
+     * No-ops on MySQL and silently skips if the underlying PDO is unreachable,
+     * so a missing SQLite layer never breaks booting.
+     *
+     * @return void
+     */
+    protected function registerSqliteFunctions()
+    {
+        if (! $this->isSqlite()) {
+            return;
+        }
+
+        if (! ($pdo = $this->resolveSqlitePdo())) {
+            return;
+        }
+
+        try {
+            $pdo->sqliteCreateFunction('soundex', 'soundex', 1);
+        } catch (\Throwable $e) {
+            // Leave the function unregistered rather than break booting;
+            // whereSoundsLike() will only surface a SQL error if it is
+            // actually used on this connection.
+        }
+    }
+
+    /**
+     * Resolve the real PDO handle behind the WordPress SQLite layer.
+     *
+     * Supports the official "SQLite Database Integration" plugin
+     * (WP_SQLite_Translator::get_pdo()), a dbh that is itself a PDO
+     * (WP-SQLite-DB's PDOEngine), and the shared $GLOBALS['@pdo'] cache.
+     *
+     * @return \PDO|null
+     */
+    protected function resolveSqlitePdo()
+    {
+        $dbh = $this->wpdb->dbh ?? null;
+
+        if ($dbh && method_exists($dbh, 'get_pdo')) {
+            $pdo = $dbh->get_pdo();
+        } elseif ($dbh instanceof \PDO) {
+            $pdo = $dbh;
+        } elseif (isset($GLOBALS['@pdo'])) {
+            $pdo = $GLOBALS['@pdo'];
+        } else {
+            $pdo = null;
+        }
+
+        return $pdo instanceof \PDO ? $pdo : null;
     }
 
     /**

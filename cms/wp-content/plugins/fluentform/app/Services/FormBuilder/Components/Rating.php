@@ -56,7 +56,7 @@ class Rating extends BaseComponent
         $hasSelectedValue = !empty($selectedValues);
         $optionIndex = 0;
 
-        foreach ($data['options'] as $value => $label) {
+        foreach ((array) ArrayHelper::get($data, 'options', []) as $value => $label) {
             $starred = '';
             $isSelected = in_array((string) $value, $selectedValues, true);
 

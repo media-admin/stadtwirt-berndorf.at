@@ -109,6 +109,7 @@ $app->addAction('fluentcrm_subscriber_status_to_complained', 'Cleanup@handleUnsu
 $app->addAction('fluentcrm_subscriber_status_to_spammed', 'Cleanup@handleUnsubscribe');
 
 $app->addAction('fluent_crm/contact_email_changed', 'Cleanup@handleContactEmailChanged');
+$app->addAction('fluent_crm/subscriber_confirmed_via_double_optin', 'Cleanup@resetSoftBounceCount');
 $app->addAction('delete_user', 'Cleanup@handleUserDelete', 10, 3);
 $app->addAction('fluent_crm/company_deleted', 'Cleanup@handleCompanyDelete', 10, 1);
 $app->addAction('after_password_reset', 'Cleanup@handleUserPasswordChanged', 10, 1);

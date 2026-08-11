@@ -67,7 +67,10 @@ class MultiThreadHandler extends BaseHandler
                 $this->logSentCount();
                 return true;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
+            // \Throwable, not \Exception: a TypeError from a third-party filter
+            // in the render pipeline must still fall through to releaseLock()
+            // below, or the sender lock sits orphaned for its ~80s TTL.
             Helper::debugLog('Exception at ' . $this->runnerTitle, $e->getMessage(), 'error');
         }
 
@@ -145,25 +148,23 @@ class MultiThreadHandler extends BaseHandler
         $table = $wpdb->prefix . 'fc_campaign_emails';
         $currentTime = current_time('mysql');
 
-        /**
-         * Filter the queue offset used by the multi-thread email handler.
-         *
-         * @param int $offset Queue offset. Default is 250.
-         * @return int
-         */
-        $offset = (int)apply_filters('fluent_crm/mailer_multi_thread_offset', 250);
-        if ($offset < 0) {
-            $offset = 0;
-        }
-
         $wpdb->query('START TRANSACTION');
 
-        $rows = $wpdb->get_results($wpdb->prepare(
-            "SELECT id FROM {$table} WHERE status IN ('pending', 'scheduled') AND scheduled_at <= %s ORDER BY scheduled_at DESC LIMIT %d, %d FOR UPDATE",
-            $currentTime, $offset, $this->sendingPerChunk
-        ));
-
-        $ids = wp_list_pluck($rows, 'id');
+        // Claim ODD ids only, newest first. (The cron Handler claims everything
+        // ASC; the CLI sender defaults to even ids DESC.) Modulo partitioning
+        // replaces the old OFFSET-250 skip: OFFSET inside SELECT ... FOR UPDATE
+        // locked every scanned row (~270 per claim), and two handlers scanning
+        // the index in opposite directions toward each other was a
+        // deadlock-shaped pattern near queue drain. Secondary partitions stay
+        // disjoint as long as CLI workers partition within the even id space
+        // (see the cli_send doc-block) — and the unpartitioned primary Handler
+        // can still drain the entire queue alone if this worker dies, so no
+        // rows can strand. One locking SELECT per status ('pending' first) —
+        // see BaseHandler::lockClaimableIds() for why.
+        $ids = $this->lockClaimableIds('pending', $currentTime, $this->sendingPerChunk, 'DESC', 2, 1);
+        if (count($ids) < $this->sendingPerChunk) {
+            $ids = array_merge($ids, $this->lockClaimableIds('scheduled', $currentTime, $this->sendingPerChunk - count($ids), 'DESC', 2, 1));
+        }
 
         if ($ids) {
             $idsPlaceholder = implode(',', array_fill(0, count($ids), '%d'));

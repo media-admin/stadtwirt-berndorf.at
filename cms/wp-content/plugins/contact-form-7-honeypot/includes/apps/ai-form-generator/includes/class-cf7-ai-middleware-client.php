@@ -415,7 +415,6 @@ class CF7Apps_Cf7Ai_Client {
 		$code = wp_remote_retrieve_response_code( $response );
 		$raw  = wp_remote_retrieve_body( $response );
 		$json = json_decode( $raw, true );
-
 		if ( ! is_array( $json ) ) {
 			return new WP_Error(
 				'cf7apps_ai_bad_response',
@@ -426,11 +425,22 @@ class CF7Apps_Cf7Ai_Client {
 		if ( $code >= 400 || ( isset( $json['status'] ) && 'failed' === $json['status'] ) ) {
 			$msg      = $json['message'] ?? $json['error'] ?? __( 'AI request failed.', 'cf7apps' );
 			$err_code = ( 402 === (int) $code ) ? 'no_middleware_credits' : 'cf7apps_ai_api';
+			$credits  = self::credits_from_json( $json );
+			$mw_msg   = is_string( $msg ) ? $msg : null;
 
 			return new WP_Error(
 				$err_code,
 				is_string( $msg ) ? $msg : __( 'AI request failed.', 'cf7apps' ),
-				array( 'status' => $code )
+				array(
+					'status'              => $code,
+					'credits_remaining'   => ( 402 === (int) $code )
+						? 0
+						: ( $credits['remaining'] ?? null ),
+					'credits_limit'       => $credits['limit'] ?? null,
+					'credits_reset_at'    => $credits['reset_at'] ?? null,
+					'credits_period_started' => $credits['period_started'] ?? null,
+					'credits_message'     => $credits['message'] ?: $mw_msg,
+				)
 			);
 		}
 
@@ -443,6 +453,276 @@ class CF7Apps_Cf7Ai_Client {
 			);
 		}
 
-		return $tags;
+		// Refresh remaining/limit from licenses/credits after a successful generate.
+		$credits = self::fetch_license_credits( $config );
+		if ( is_wp_error( $credits ) ) {
+			return $credits;
+		}
+
+		return array(
+			'form_tags'              => $tags,
+			'credits_remaining'      => $credits['remaining'],
+			'credits_limit'          => $credits['limit'],
+			'credits_reset_at'       => $credits['reset_at'],
+			'credits_period_started' => $credits['period_started'],
+			'credits_message'        => $credits['message'],
+		);
+	}
+
+	/**
+	 * GET licenses/credits — live remaining/limit/reset/message from middleware.
+	 *
+	 * @param array|null $config Optional mw_config(); loaded when null.
+	 * @return array{remaining:?int,limit:?int,reset_at:?int,period_started:?int,message:?string}|WP_Error
+	 */
+	public static function fetch_license_credits( $config = null ) {
+		if ( null === $config ) {
+			$config = self::mw_config();
+		}
+
+		if ( '' === ( $config['base_url'] ?? '' ) ) {
+			return new WP_Error(
+				'cf7apps_ai_no_base',
+				__( 'AI middleware base URL is not set. Define CF7APPS_AI_MIDDLEWARE_BASE_URL in wp-config.php.', 'cf7apps' )
+			);
+		}
+
+		if ( '' === trim( (string) ( $config['license_key'] ?? '' ) ) ) {
+			$ensured = self::ensure_license();
+			if ( is_wp_error( $ensured ) ) {
+				return $ensured;
+			}
+			$config = self::mw_config();
+		}
+
+		if ( '' === trim( (string) ( $config['license_key'] ?? '' ) ) ) {
+			return new WP_Error(
+				'cf7apps_ai_no_license',
+				__( 'AI middleware license key is missing.', 'cf7apps' )
+			);
+		}
+
+		$url  = self::mw_url( $config['base_url'], 'licenses/credits' );
+		$args = array(
+			'timeout' => 20,
+			'headers' => array(
+				'Content-Type'  => 'application/json; charset=utf-8',
+				'Accept'        => 'application/json',
+				'X-License-Key' => $config['license_key'],
+			),
+		);
+
+		$response = wp_remote_get( $url, $args );
+		if ( is_wp_error( $response ) ) {
+			return new WP_Error(
+				'cf7apps_ai_http',
+				sprintf(
+					/* translators: %s error message */
+					__( 'Could not reach AI server: %s', 'cf7apps' ),
+					$response->get_error_message()
+				)
+			);
+		}
+
+		$code = (int) wp_remote_retrieve_response_code( $response );
+		$json = json_decode( wp_remote_retrieve_body( $response ), true );
+		if ( ! is_array( $json ) ) {
+			return new WP_Error(
+				'cf7apps_ai_bad_response',
+				__( 'AI server returned an invalid response.', 'cf7apps' )
+			);
+		}
+
+		$credits = self::credits_from_json( $json );
+
+		$header_remaining = wp_remote_retrieve_header( $response, 'x-credits-remaining' );
+		$header_limit     = wp_remote_retrieve_header( $response, 'x-credits-limit' );
+		$header_reset     = wp_remote_retrieve_header( $response, 'x-credits-reset-at' );
+		if ( ( null === $credits['remaining'] || ! is_numeric( $credits['remaining'] ) ) && is_numeric( $header_remaining ) ) {
+			$credits['remaining'] = max( 0, (int) $header_remaining );
+		}
+		if ( ( null === $credits['limit'] || ! is_numeric( $credits['limit'] ) ) && is_numeric( $header_limit ) ) {
+			$credits['limit'] = max( 0, (int) $header_limit );
+		}
+		if ( empty( $credits['reset_at'] ) && $header_reset ) {
+			$credits['reset_at'] = CF7Apps_AI_Form_Generator::parse_reset_timestamp( $header_reset );
+		}
+
+		if ( $code >= 400 ) {
+			$msg = $json['message'] ?? $json['error'] ?? __( 'Could not load AI credits.', 'cf7apps' );
+			return new WP_Error(
+				( 402 === $code ) ? 'no_middleware_credits' : 'cf7apps_ai_api',
+				is_string( $msg ) ? $msg : __( 'Could not load AI credits.', 'cf7apps' ),
+				array(
+					'status'               => $code,
+					'credits_remaining'    => ( 402 === $code ) ? 0 : ( $credits['remaining'] ?? null ),
+					'credits_limit'        => $credits['limit'] ?? null,
+					'credits_reset_at'     => $credits['reset_at'] ?? null,
+					'credits_period_started' => $credits['period_started'] ?? null,
+					'credits_message'      => $credits['message'] ?: ( is_string( $msg ) ? $msg : null ),
+				)
+			);
+		}
+
+		return $credits;
+	}
+
+	/**
+	 * Extract remaining + total credit values from middleware JSON.
+	 *
+	 * @param array $json Decoded API body.
+	 * @return array{remaining:?int,limit:?int,reset_at:?int,period_started:?int,message:?string}
+	 */
+	private static function credits_from_json( $json ) {
+		$out = array(
+			'remaining'      => null,
+			'limit'          => null,
+			'reset_at'       => null,
+			'period_started' => null,
+			'message'        => null,
+		);
+
+		if ( ! is_array( $json ) ) {
+			return $out;
+		}
+
+		$data     = isset( $json['data'] ) && is_array( $json['data'] ) ? $json['data'] : $json;
+		$buckets  = array( $data, $json );
+		$nest_keys = array( 'credits', 'license', 'stats', 'usage', 'quota', 'period', 'billing' );
+
+		foreach ( $nest_keys as $nest_key ) {
+			if ( isset( $data[ $nest_key ] ) && is_array( $data[ $nest_key ] ) ) {
+				$buckets[] = $data[ $nest_key ];
+			}
+			if ( isset( $json[ $nest_key ] ) && is_array( $json[ $nest_key ] ) ) {
+				$buckets[] = $json[ $nest_key ];
+			}
+		}
+
+		$remaining_keys = array(
+			'credits_remaining',
+			'remaining_credits',
+			'remaining',
+			'credits_left',
+			'quota_remaining',
+			'free_credits_remaining',
+			'available_credits',
+			'balance',
+			'left',
+			'available',
+		);
+		$limit_keys     = array(
+			'credits_limit',
+			'total_credits',
+			'credits_total',
+			'limit',
+			'quota',
+			'quota_limit',
+			'free_credits',
+			'free_credits_limit',
+			'max_credits',
+			'total',
+			'max',
+		);
+		// Prefer explicit renewal fields that match middleware "Next Free Renewal".
+		$reset_keys     = array(
+			'renewal_date',
+			'next_free_renewal',
+			'next_free_renewal_at',
+			'free_renewal_at',
+			'next_renewal_at',
+			'next_renewal',
+			'renewal_at',
+			'credits_reset_at',
+			'reset_at',
+			'resets_at',
+			'next_reset_at',
+			'period_ends_at',
+			'period_end',
+			'quota_resets_at',
+			'renews_at',
+		);
+		$started_keys   = array(
+			'period_started_at',
+			'period_started',
+			'started_at',
+			'license_started_at',
+			'free_period_started_at',
+			'credits_period_started',
+			'period_start',
+		);
+		$message_keys   = array(
+			'credits_message',
+			'exhausted_message',
+			'quota_message',
+			'message',
+			'error',
+		);
+
+		foreach ( $buckets as $bucket ) {
+			if ( ! is_array( $bucket ) ) {
+				continue;
+			}
+
+			if ( null === $out['remaining'] ) {
+				foreach ( $remaining_keys as $key ) {
+					if ( isset( $bucket[ $key ] ) && is_numeric( $bucket[ $key ] ) ) {
+						$out['remaining'] = max( 0, (int) $bucket[ $key ] );
+						break;
+					}
+				}
+			}
+
+			if ( null === $out['limit'] ) {
+				foreach ( $limit_keys as $key ) {
+					if ( isset( $bucket[ $key ] ) && is_numeric( $bucket[ $key ] ) && (int) $bucket[ $key ] > 0 ) {
+						$out['limit'] = max( 0, (int) $bucket[ $key ] );
+						break;
+					}
+				}
+			}
+
+			if ( null === $out['reset_at'] ) {
+				foreach ( $reset_keys as $key ) {
+					if ( ! isset( $bucket[ $key ] ) ) {
+						continue;
+					}
+					$parsed = CF7Apps_AI_Form_Generator::parse_reset_timestamp( $bucket[ $key ] );
+					if ( null !== $parsed ) {
+						$out['reset_at'] = $parsed;
+						break;
+					}
+				}
+			}
+
+			if ( null === $out['period_started'] ) {
+				foreach ( $started_keys as $key ) {
+					if ( ! isset( $bucket[ $key ] ) ) {
+						continue;
+					}
+					$parsed = CF7Apps_AI_Form_Generator::parse_reset_timestamp( $bucket[ $key ] );
+					if ( null !== $parsed ) {
+						$out['period_started'] = $parsed;
+						break;
+					}
+				}
+			}
+
+			if ( null === $out['message'] ) {
+				foreach ( $message_keys as $key ) {
+					if ( isset( $bucket[ $key ] ) && is_string( $bucket[ $key ] ) && '' !== trim( $bucket[ $key ] ) ) {
+						$out['message'] = sanitize_text_field( $bucket[ $key ] );
+						break;
+					}
+				}
+			}
+		}
+
+		// If middleware only gave period start, derive next free renewal like the middleware UI (+1 month).
+		if ( empty( $out['reset_at'] ) && ! empty( $out['period_started'] ) ) {
+			$out['reset_at'] = CF7Apps_AI_Form_Generator::compute_reset_from_period_start( $out['period_started'] );
+		}
+
+		return $out;
 	}
 }

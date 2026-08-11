@@ -341,7 +341,11 @@ class CampaignEmail extends Model
             $email_body = apply_filters('fluent_crm/parse_extended_crm_text', $email_body, $subscriber);
         }
 
-        $preViewUrl = site_url('?fluentcrm=1&route=email_preview&_e_hash=' . $this->email_hash);
+        $preViewUrl = add_query_arg([
+            FLUENTCRM_EXTERNAL_URL_PARAM => 1,
+            'route'                      => 'email_preview',
+            '_e_hash'                    => $this->email_hash
+        ], site_url('/'));
         $email_body = str_replace(['##web_preview_url##', '{{crm_global_email_footer}}', '{{crm_preheader_text}}'], [$preViewUrl, $footerText, $preHeader], $email_body);
 
 
@@ -463,7 +467,11 @@ class CampaignEmail extends Model
                  */
                 $footerText = apply_filters('fluent_crm/parse_campaign_email_text', $footerText, $subscriber);
 
-                $preViewUrl = site_url('?fluentcrm=1&route=email_preview&_e_hash=' . $this->email_hash);
+                $preViewUrl = add_query_arg([
+                    FLUENTCRM_EXTERNAL_URL_PARAM => 1,
+                    'route'                      => 'email_preview',
+                    '_e_hash'                    => $this->email_hash
+                ], site_url('/'));
                 $footerText = str_replace('##web_preview_url##', $preViewUrl, $footerText);
                 $emailFooterConfig['footer_content'] = $footerText;
             }
@@ -537,7 +545,11 @@ class CampaignEmail extends Model
             $this->subscriber
         );
 
-        $preViewUrl = site_url('?fluentcrm=1&route=email_preview&_e_hash=' . $this->email_hash);
+        $preViewUrl = add_query_arg([
+            FLUENTCRM_EXTERNAL_URL_PARAM => 1,
+            'route'                      => 'email_preview',
+            '_e_hash'                    => $this->email_hash
+        ], site_url('/'));
         $content = str_replace(['##web_preview_url##', '{{crm_global_email_footer}}', '{{crm_preheader_text}}'], [$preViewUrl, $footerText, $preHeader], $content);
 
         if (Str::contains($content, ['##crm.', '{{crm'])) {

@@ -37,5 +37,6 @@ if ( defined( 'WPCF7_VERSION' ) ) {
 }
 
 require_once 'includes/honeypot4cf7-admin.php';
+require_once 'includes/class-honeypot4cf7-token.php';
 require_once 'includes/honeypot4cf7.php';
 require_once 'includes/honeypot-refill.php';

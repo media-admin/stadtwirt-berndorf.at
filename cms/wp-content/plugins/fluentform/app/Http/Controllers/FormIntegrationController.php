@@ -2,6 +2,7 @@
 
 namespace FluentForm\App\Http\Controllers;
 
+use FluentForm\App\Modules\Acl\Acl;
 use FluentForm\App\Services\Integrations\FormIntegrationService;
 
 class FormIntegrationController extends Controller
@@ -10,6 +11,14 @@ class FormIntegrationController extends Controller
     {
         try {
             $formId = (int) $formId;
+            // SECURITY (FINDING-09): returns full integration feed configurations (webhook
+            // URLs, headers, credential-like fields). The shared `index` method name resolved
+            // to FormPolicy@index (dashboard_access); require forms-manager on this form.
+            if (!Acl::hasPermission('fluentform_forms_manager', $formId)) {
+                return $this->sendError([
+                    'message' => __('You do not have permission to view these integrations.', 'fluentform'),
+                ], 403);
+            }
             return $this->sendSuccess(
                 $integrationService->get($formId)
             );

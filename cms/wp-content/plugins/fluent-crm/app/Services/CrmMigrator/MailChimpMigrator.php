@@ -216,7 +216,26 @@ class MailChimpMigrator extends BaseMigrator
 
         $fieldMaps = Arr::get($postedData, 'contact_fields', []);
 
+        // MailChimp statuses must be mapped to FluentCRM's vocabulary: 'cleaned' means
+        // hard-bounced, and unmapped values would otherwise be stored verbatim as
+        // statuses FluentCRM doesn't recognize — invisible to every status filter,
+        // segment, and count. (Same pattern as DripMigrator.)
+        $statusMaps = [
+            'subscribed'    => 'subscribed',
+            'unsubscribed'  => 'unsubscribed',
+            'cleaned'       => 'bounced',
+            'pending'       => 'pending',
+            'transactional' => 'transactional',
+        ];
+
         foreach ($subscribers as $subscriber) {
+            // 'archived' members were deliberately removed from the audience by the
+            // owner — skip them entirely rather than importing them as mailable
+            // 'pending' contacts.
+            if (Arr::get($subscriber, 'status') == 'archived') {
+                continue;
+            }
+
             $created_at = gmdate('Y-m-d H:i:s');
             if (!empty($subscriber['timestamp_signup'])) {
                 $created_at = gmdate('Y-m-d H:i:s', strtotime($subscriber['timestamp_signup']));
@@ -229,7 +248,7 @@ class MailChimpMigrator extends BaseMigrator
                 'source'     => $subscriber['source'],
                 'ip'         => $subscriber['ip_signup'],
                 'country'    => Arr::get($subscriber, 'location.country_code'),
-                'status'     => $subscriber['status']
+                'status'     => isset($statusMaps[$subscriber['status']]) ? $statusMaps[$subscriber['status']] : 'pending'
             ];
 
             $mergeData = $this->getMergedData($subscriber['merge_fields'], $fieldMaps);
@@ -268,7 +287,10 @@ class MailChimpMigrator extends BaseMigrator
 
             $contact = FluentCrmApi('contacts')->createOrUpdate($data);
 
-            if (isset($params['status']) && $params['status'] == 'subscribed' && $contact && $contact->status != 'subscribed') {
+            // An "active only" import may promote e.g. a local 'pending' contact, but must
+            // never resurrect a locally suppressed one — an opt-out or bounce recorded here
+            // outranks the remote system saying the address is active.
+            if (isset($params['status']) && $params['status'] == 'subscribed' && $contact && $contact->status != 'subscribed' && !in_array($contact->status, fluentcrm_strict_statues())) {
                 $contact->updateStatus('subscribed');
             }
 

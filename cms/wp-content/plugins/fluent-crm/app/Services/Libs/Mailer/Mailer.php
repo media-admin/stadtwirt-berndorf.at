@@ -86,9 +86,9 @@ class Mailer
             $isTransactional = $campaign && Arr::get($campaign->settings, 'is_transactional') == 'yes';
             if (!$isTransactional) {
                 $args = [
-                    'fluentcrm'   => 1,
-                    'route'       => 'unsubscribe',
-                    'secure_hash' => fluentCrmGetContactManagedHash($subscriber->id)
+                    FLUENTCRM_EXTERNAL_URL_PARAM => 1,
+                    'route'                      => 'unsubscribe',
+                    'secure_hash'                => fluentCrmGetContactManagedHash($subscriber->id)
                 ];
                 if ($emailModel) {
                     $args['ce_id'] = $emailModel->id;

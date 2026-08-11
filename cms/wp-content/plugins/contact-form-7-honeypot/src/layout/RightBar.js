@@ -1,31 +1,18 @@
-import { useEffect, useState } from "@wordpress/element";
-import CF7AppsSkeletonLoader from "../components/CF7AppsSkeletonLoader";
+import { __ } from '@wordpress/i18n';
+import CF7AppsRecommendedPlugins from '../components/CF7AppsRecommendedPlugins';
+import CF7AppsQuickAccess from '../components/CF7AppsQuickAccess';
 
 const RightBar = () => {
-    const [isLoading, setIsLoading] = useState(true);
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setIsLoading(false);
-        }, 500);
-        
-        return () => clearTimeout(timer);
-        }, []);
-
-    return (
-        <div className="cf7apps-right-bar">
-            {
-                isLoading
-                ?
-                <div>
-                    <CF7AppsSkeletonLoader count={1} height={221} width={180} />
-                </div>
-                :
-                <a href="https://postmansmtp.com/pricing/?utm_source=CF7_Perks&utm_medium=Banner&utm_id=CF7_Perks_Baner&utm_content=side_banner" target="_blank">
-                    <img src={`${CF7Apps.assetsURL}/images/ad-1.png`} alt="Right Bar" width="100%" />
-                </a>
-            }
-        </div>
-    );
-}
+	return (
+		<aside className="cf7apps-right-bar" aria-label={ __( 'Dashboard sidebar', 'cf7apps' ) }>
+			<div className="cf7apps-dashboard-sidebar">
+				<CF7AppsRecommendedPlugins />
+				<div className="cf7apps-sidebar-block">
+					<CF7AppsQuickAccess />
+				</div>
+			</div>
+		</aside>
+	);
+};
 
 export default RightBar;

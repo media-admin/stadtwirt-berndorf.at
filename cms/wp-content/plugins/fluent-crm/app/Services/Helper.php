@@ -2,11 +2,13 @@
 
 namespace FluentCrm\App\Services;
 
+use FluentCrm\App\Models\Campaign;
 use FluentCrm\App\Models\Lists;
 use FluentCrm\App\Models\Subscriber;
 use FluentCrm\App\Models\SubscriberPivot;
 use FluentCrm\App\Models\SystemLog;
 use FluentCrm\App\Models\Tag;
+use FluentCrm\App\Models\Template;
 use FluentCrm\App\Models\UrlStores;
 use FluentCrm\App\Models\Webhook;
 use FluentCrm\App\Services\BlockRender\BlockEditorHelper;
@@ -15,6 +17,8 @@ use FluentCrm\Framework\Support\Str;
 
 class Helper
 {
+    const DEFAULT_CAMPAIGN_TEMPLATE_OPTION = 'default_campaign_template_id';
+
     /**
      * Determine if the active Easy Digital Downloads version is supported.
      *
@@ -62,6 +66,27 @@ class Helper
         }
 
         return $default;
+    }
+
+    /**
+     * Safely unserialize a value without ever instantiating objects.
+     *
+     * Behaves like WordPress core maybe_unserialize() for scalars and arrays, but passes
+     * allowed_classes => false so a serialized-object payload can never trigger PHP Object
+     * Injection (__wakeup / __destruct gadget chains). Use this instead of maybe_unserialize()
+     * for any value that originates from, or can be influenced by, user input (e.g. stored
+     * contact/company custom-field values).
+     *
+     * @param mixed $value The (possibly serialized) value read from storage.
+     * @return mixed Unserialized array/scalar; serialized objects become inert incomplete classes.
+     */
+    public static function safeUnserialize($value)
+    {
+        if (is_serialized($value)) {
+            return @unserialize(trim($value), ['allowed_classes' => false]);
+        }
+
+        return $value;
     }
 
     public static function getLinksFromString($string)
@@ -142,8 +167,13 @@ class Helper
     /**
      * Generate an HMAC signature for smart URL verification.
      *
-     * Uses a dedicated persistent key (not wp_salt) so that WordPress
-     * salt rotation does not invalidate previously sent email links.
+     * Deliberately signed with wp_salt('auth') rather than a plugin-owned key
+     * stored in the database: secrets in wp-config are harder to exfiltrate
+     * than wp_options rows, and rotating the salts (the standard
+     * post-compromise action) is SUPPOSED to revoke outstanding signed
+     * artifacts — smart links in already-sent emails included. A signature
+     * that fails after rotation only loses the verified-click flag; the
+     * redirect and click tracking still work.
      *
      * @param string $hash The email hash to sign.
      * @return string
@@ -165,7 +195,7 @@ class Helper
      */
     public static function verifySmartUrlHash($emailHash, $signedHash)
     {
-        // New HMAC verification (fast, constant-time)
+        // HMAC verification (fast, constant-time)
         $expected = self::signSmartUrlHash($emailHash);
         if (hash_equals($expected, $signedHash)) {
             return true;
@@ -194,10 +224,10 @@ class Helper
         }
 
         $args = [
-            'fluentcrm' => 1,
-            'route'     => 'open',
-            '_e_hash'   => $hash,
-            '_e_id'     => $emailId
+            FLUENTCRM_EXTERNAL_URL_PARAM => 1,
+            'route'                      => 'open',
+            '_e_hash'                    => $hash,
+            '_e_id'                      => $emailId
         ];
 
         if ($trackingType === 'anonymous') {
@@ -308,6 +338,164 @@ class Helper
          *
          */
         return apply_filters('fluent_crm/default_email_design_template', 'simple');
+    }
+
+    public static function getDefaultCampaignTemplateId()
+    {
+        return absint(fluentcrm_get_option(self::DEFAULT_CAMPAIGN_TEMPLATE_OPTION, 0));
+    }
+
+    public static function getDefaultCampaignTemplate()
+    {
+        $templateId = self::getDefaultCampaignTemplateId();
+
+        if (!$templateId) {
+            return null;
+        }
+
+        $template = Template::emailTemplates(['publish', 'draft'])->find($templateId);
+
+        return $template ?: null;
+    }
+
+    public static function setDefaultCampaignTemplateId($templateId)
+    {
+        $templateId = absint($templateId);
+
+        if (!$templateId) {
+            return null;
+        }
+
+        $template = Template::emailTemplates(['publish', 'draft'])->find($templateId);
+
+        if (!$template) {
+            return null;
+        }
+
+        fluentcrm_update_option(self::DEFAULT_CAMPAIGN_TEMPLATE_OPTION, $templateId);
+
+        return $template;
+    }
+
+    public static function clearDefaultCampaignTemplateId()
+    {
+        return (bool) fluentcrm_delete_option(self::DEFAULT_CAMPAIGN_TEMPLATE_OPTION);
+    }
+
+    /**
+     * Copy an email template's content and design onto a campaign and persist it.
+     *
+     * Fills the campaign with the template's body, subject, pre-header and design
+     * template, then merges the template's config/footer settings over the
+     * campaign's existing settings. Falls back to the default email design template
+     * when the template has no `_design_template` meta. Saves the campaign and then
+     * syncs any visual builder design via `syncVisualBuilderDesign()`.
+     *
+     * @param Campaign $campaign The campaign to apply the template to (modified and saved).
+     * @param Template $template The source email template.
+     * @return Campaign The saved campaign.
+     */
+    public static function applyTemplateToCampaign(Campaign $campaign, Template $template)
+    {
+        $designTemplate = sanitize_text_field(get_post_meta($template->ID, '_design_template', true));
+
+        if (!$designTemplate) {
+            $designTemplate = self::getDefaultEmailTemplate();
+        }
+
+        $campaign->fill([
+            'template_id'      => absint($template->ID),
+            'email_body'       => $template->post_content ?: '',
+            'email_subject'    => sanitize_text_field(get_post_meta($template->ID, '_email_subject', true)),
+            'email_pre_header' => sanitize_textarea_field($template->post_excerpt ?: ''),
+            'design_template'  => $designTemplate,
+            'settings'         => self::mergeTemplateSettings($campaign->settings, [
+                'template_config' => get_post_meta($template->ID, '_template_config', true),
+                'footer_settings' => get_post_meta($template->ID, '_footer_settings', true)
+            ], $designTemplate)
+        ])->save();
+
+        self::syncVisualBuilderDesign($campaign, $template);
+
+        return $campaign;
+    }
+
+    /**
+     * Sync the visual builder design meta from a template onto a campaign.
+     *
+     * When the template's design template is `visual_builder`, copies its
+     * `_visual_builder_design` meta onto the campaign (only if a design exists).
+     * For any other design template, removes the campaign's stale
+     * `_visual_builder_design` meta so it does not leak from a previous template.
+     *
+     * @param Campaign $campaign The campaign whose visual builder meta is updated.
+     * @param Template $template The source email template.
+     * @return void
+     */
+    protected static function syncVisualBuilderDesign(Campaign $campaign, Template $template)
+    {
+        $designTemplate = get_post_meta($template->ID, '_design_template', true);
+
+        if ($designTemplate !== 'visual_builder') {
+            fluentcrm_delete_campaign_meta($campaign->id, '_visual_builder_design');
+            return;
+        }
+
+        $design = get_post_meta($template->ID, '_visual_builder_design', true);
+
+        if ($design) {
+            fluentcrm_update_campaign_meta($campaign->id, '_visual_builder_design', $design);
+        }
+    }
+
+    /**
+     * Merge a template's config and footer settings into a campaign's settings.
+     *
+     * Builds the resulting `template_config` by layering the template config over
+     * the campaign's existing config (or the design template defaults when absent),
+     * and normalizes `footer_settings` against a set of defaults. The `disable_footer`
+     * and `custom_footer` flags are coerced to strict `'yes'`/`'no'` values, the
+     * footer's `disable_footer` is mirrored into `template_config`, and the resolved
+     * `design_template` is stamped onto `template_config`.
+     *
+     * @param array|mixed $campaignSettings The campaign's current settings (non-arrays are treated as empty).
+     * @param array $templateSettings Template settings with `template_config` and `footer_settings` keys.
+     * @param string $designTemplate The resolved design template slug.
+     * @return array The merged settings array with `template_config` and `footer_settings`.
+     */
+    protected static function mergeTemplateSettings($campaignSettings, $templateSettings, $designTemplate)
+    {
+        $campaignSettings = is_array($campaignSettings) ? $campaignSettings : [];
+
+        $templateConfig = Arr::get($templateSettings, 'template_config', []);
+        $templateConfig = is_array($templateConfig) ? $templateConfig : [];
+        $templateConfig = wp_parse_args(
+            $templateConfig,
+            Arr::get($campaignSettings, 'template_config', self::getTemplateConfig($designTemplate))
+        );
+
+        $footerSettings = Arr::get($templateSettings, 'footer_settings', []);
+        $footerSettings = is_array($footerSettings) ? $footerSettings : [];
+        $footerSettings = wp_parse_args($footerSettings, [
+            'disable_footer'   => 'no',
+            'custom_footer'    => 'no',
+            'footer_content'   => '',
+            'font_size'        => 13,
+            'font_color'       => '#202020',
+            'background_color' => 'transparent',
+            'footer_padding'   => 20
+        ]);
+
+        $footerSettings['disable_footer'] = ($footerSettings['disable_footer'] === 'yes') ? 'yes' : 'no';
+        $footerSettings['custom_footer'] = ($footerSettings['custom_footer'] === 'yes') ? 'yes' : 'no';
+
+        $templateConfig['disable_footer'] = $footerSettings['disable_footer'];
+        $templateConfig['design_template'] = $designTemplate;
+
+        $campaignSettings['template_config'] = $templateConfig;
+        $campaignSettings['footer_settings'] = $footerSettings;
+
+        return $campaignSettings;
     }
 
     public static function getGlobalSmartCodes()
@@ -1363,6 +1551,31 @@ class Helper
         $disabled = true;
     }
 
+    /**
+     * Country code from Cloudflare's CF-IPCountry header, or '' when unavailable.
+     *
+     * The header is only meaningful when the request actually transited Cloudflare —
+     * a direct request can set it freely and pollute contact countries. By default we
+     * require the companion CF-Ray marker (set by Cloudflare on every proxied
+     * request); sites behind stricter or unusual proxies can override the decision
+     * via the fluent_crm/trust_cf_ipcountry filter. Note: CF-Ray is itself forgeable
+     * on direct-to-origin requests, so this is a best-effort heuristic, not proof of
+     * Cloudflare transit — real validation would check the connecting IP against
+     * Cloudflare's published ranges.
+     */
+    public static function getCfIpCountry()
+    {
+        $countryCode = strtoupper(sanitize_text_field($_SERVER['HTTP_CF_IPCOUNTRY'] ?? ''));
+
+        if (!$countryCode || !preg_match('/^[A-Z]{2}$/', $countryCode) || $countryCode === 'XX') {
+            return '';
+        }
+
+        $trusted = apply_filters('fluent_crm/trust_cf_ipcountry', !empty($_SERVER['HTTP_CF_RAY']));
+
+        return $trusted ? $countryCode : '';
+    }
+
     public static function getPublicLists()
     {
         $emailSettings = self::getGlobalEmailSettings();
@@ -1514,6 +1727,7 @@ class Helper
                         'component'   => 'options_selector',
                         'option_key'  => 'tags',
                         'is_multiple' => true,
+                        'is_nullable' => true,
                     ],
                     [
                         'label'       => __('Lists', 'fluent-crm'),
@@ -1522,6 +1736,7 @@ class Helper
                         'component'   => 'options_selector',
                         'option_key'  => 'lists',
                         'is_multiple' => true,
+                        'is_nullable' => true,
                     ],
                     [
                         'label'             => __('WP User Role', 'fluent-crm'),
@@ -1621,6 +1836,7 @@ class Helper
                 'option_key'         => 'companies',
                 'is_multiple'        => true,
                 'is_singular_value'  => true,
+                'is_nullable'        => true,
                 'experimental_cache' => true
             ];
             $groups['segment']['children'][] = [
@@ -2037,7 +2253,7 @@ class Helper
             'company_module'          => 'no',
             'company_auto_logo'       => 'no',
             'disable_visual_ai'       => 'no',
-            'multi_threading_emails'  => 'no',
+            'multi_threading_emails'  => 'yes',
             'system_logs'             => 'no',
             'event_tracking'          => 'no',
             'abandoned_cart'          => 'no',
@@ -2049,12 +2265,11 @@ class Helper
 
         if (!$settings || !is_array($settings)) {
             $settings = $defaults;
-            return $settings;
+        } else {
+            $settings = wp_parse_args($settings, $defaults);
         }
 
-        $settings = wp_parse_args($settings, $defaults);
-
-        return $settings;
+        return apply_filters('fluent_crm/experimental_settings', $settings);
     }
 
     public static function willMultiThreadEmail($minPendingLimit = 300)
@@ -2063,16 +2278,48 @@ class Helper
             return false;
         }
 
-        $rowcount = self::getUpcomingEmailCount();
+        // Cap the scan at the threshold — we only need "reached it or not".
+        $rowcount = self::getUpcomingEmailCount($minPendingLimit);
 
         return $rowcount >= $minPendingLimit;
     }
 
-    public static function getUpcomingEmailCount()
+    /**
+     * Count sendable (pending/scheduled, due) queue rows.
+     *
+     * Every internal caller compares the result against a small threshold, so
+     * they pass that threshold as $cap: the scan then stops after $cap index
+     * entries instead of walking the entire pending slice — on multi-million
+     * row queues the CLI sender used to pay a full index scan per batch just
+     * to learn "more than 400". A capped count is EXACT below the cap and
+     * saturates at the cap, which is precisely what threshold comparisons
+     * (and the CLI's "only N left" message) need. $cap = 0 keeps the exact
+     * full count for backward compatibility with external callers.
+     *
+     * @param int $cap Optional scan ceiling (0 = exact full count).
+     * @return int
+     */
+    public static function getUpcomingEmailCount($cap = 0)
     {
         global $wpdb;
-        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-        return $wpdb->get_var("SELECT count(*) as aggregate FROM `{$wpdb->prefix}fc_campaign_emails` WHERE `status` IN ('pending', 'scheduled') AND `scheduled_at` <= '" . current_time('mysql') . "'");
+
+        $table = $wpdb->prefix . 'fc_campaign_emails';
+        $cap = (int)$cap;
+
+        if ($cap > 0) {
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+            return (int)$wpdb->get_var($wpdb->prepare(
+                "SELECT COUNT(*) FROM (SELECT 1 FROM `{$table}` WHERE `status` IN ('pending', 'scheduled') AND `scheduled_at` <= %s LIMIT %d) capped_scan",
+                current_time('mysql'),
+                $cap
+            ));
+        }
+
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        return (int)$wpdb->get_var($wpdb->prepare(
+            "SELECT COUNT(*) FROM `{$table}` WHERE `status` IN ('pending', 'scheduled') AND `scheduled_at` <= %s",
+            current_time('mysql')
+        ));
     }
 
     public static function sanitizeHtml($html)
@@ -2164,6 +2411,42 @@ class Helper
         }
 
         return Arr::get(self::getGlobalEmailSettings(), 'email_footer', '');
+    }
+
+    /**
+     * Build the title for the `custom_email_campaign` row backing a one-off
+     * "send email to this contact".
+     *
+     * These rows are hidden from the campaign list by the Campaign model's
+     * type scope, so the title is only ever read in raw DB inspection, support
+     * debugging and the MCP `list-campaigns(include_one_offs=true)` view. A
+     * constant string there makes every send indistinguishable, so the
+     * recipient goes in the title.
+     *
+     * fc_campaigns.title is VARCHAR(192), so the recipient is truncated to fit
+     * rather than being silently cut off by MySQL.
+     *
+     * @param string $recipientEmail
+     * @param string $prefix Optional caller tag (e.g. 'MCP') for provenance.
+     * @return string
+     */
+    public static function oneOffEmailTitle($recipientEmail, $prefix = '')
+    {
+        $recipientEmail = sanitize_text_field((string)$recipientEmail);
+
+        $label = $prefix
+            /* translators: 1: caller tag such as "MCP", 2: recipient email address */
+            ? sprintf(__('%1$s one-off email to %2$s', 'fluent-crm'), $prefix, $recipientEmail)
+            /* translators: %s: recipient email address */
+            : sprintf(__('Custom email to %s', 'fluent-crm'), $recipientEmail);
+
+        // Leave headroom under the 192-char column so a long address can never
+        // truncate mid-way through a multibyte character.
+        if (mb_strlen($label) > 190) {
+            $label = mb_substr($label, 0, 189) . '…';
+        }
+
+        return $label;
     }
 
     public static function getFooterConfig($campaign = null)
@@ -2598,13 +2881,38 @@ class Helper
         return $listId;
     }
 
+    /**
+     * Per-request memo for Tag/Lists lookups by title. Bulk CSV imports call
+     * the tag/list helpers once per row, so without this the same title is
+     * re-queried for every row of every chunk (rows × titles round-trips).
+     * Keyed on the raw title so matching stays identical to the DB collation
+     * semantics of where('title', ...); a differently-cased duplicate only
+     * costs one extra query.
+     */
+    private static $termTitleCache = [];
+
+    private static function findTermByTitleCached($title, $type)
+    {
+        $key = $type . ':' . $title;
+
+        if (array_key_exists($key, self::$termTitleCache)) {
+            return self::$termTitleCache[$key];
+        }
+
+        $term = $type === 'tag'
+            ? Tag::where('title', $title)->first()
+            : Lists::where('title', $title)->first();
+
+        return self::$termTitleCache[$key] = $term;
+    }
+
     public static function createNewTags($tagsArray)
     {
         $tags = [];
         foreach ($tagsArray as $tag) {
             $tag = sanitize_text_field($tag);
             //if that tag already exists then I need only it's id
-            $sameTag = Tag::where('title', $tag)->first();
+            $sameTag = self::findTermByTitleCached($tag, 'tag');
             if ($sameTag) {
                 $tags[] = $sameTag->id;
                 continue;
@@ -2626,7 +2934,7 @@ class Helper
         foreach ($listsArray as $list) {
             $list = sanitize_text_field($list);
             //if that list already exists then I need only it's id
-            $sameList = Lists::where('title', $list)->first();
+            $sameList = self::findTermByTitleCached($list, 'list');
             if ($sameList) {
                 $lists[] = $sameList->id;
                 continue;
@@ -2649,7 +2957,7 @@ class Helper
         foreach ($listsArray as $listTitle) {
             $listTitle = sanitize_text_field($listTitle);
 
-            $existinglist = Lists::where('title', $listTitle)->first();
+            $existinglist = self::findTermByTitleCached($listTitle, 'list');
             if ($existinglist) {
                 if (!in_array($existinglist->id, $currentListIds) && !in_array($existinglist->id, $ListsForAllContacts)) {
                     //if that existing list is not already in user's list and not in those lists that will be applied to all subscribers
@@ -2671,7 +2979,7 @@ class Helper
         foreach ($tagsArray as $tagTitle) {
             $tagTitle = sanitize_text_field($tagTitle);
 
-            $existingTag = Tag::where('title', $tagTitle)->first();
+            $existingTag = self::findTermByTitleCached($tagTitle, 'tag');
             if ($existingTag) {
                 if (!in_array($existingTag->id, $currentTagIds) && !in_array($existingTag->id, $TagsForAllContacts)) {
                     //if that existing tag is not already in user's tag and not in those tags that will be applied to all subscribers
@@ -2698,12 +3006,14 @@ class Helper
             $counter++;
         }
 
-        return Lists::create(
+        $list = Lists::create(
             [
                 'title' => $listTitle,
                 'slug'  => $slug
             ]
         );
+
+        return self::$termTitleCache['list:' . $listTitle] = $list;
     }
 
     private static function createTag($tagTitle)
@@ -2718,12 +3028,14 @@ class Helper
             $counter++;
         }
 
-        return Tag::create(
+        $tag = Tag::create(
             [
                 'title' => $tagTitle,
                 'slug'  => $slug
             ]
         );
+
+        return self::$termTitleCache['tag:' . $tagTitle] = $tag;
     }
 
     /**
@@ -2846,11 +3158,19 @@ class Helper
      * (stored timestamp older than $ttl), so a crashed holder self-recovers after
      * the TTL.
      *
-     * @param string $key wp_options option_name holding the lock timestamp.
-     * @param int    $ttl Seconds before a held lock is treated as abandoned.
+     * With a $token the stored value becomes "<timestamp>|<token>", which makes
+     * refreshDbLock()/deleteDbLock() ownership-guarded: a holder that stalls past
+     * the TTL and loses the lock to a successor can no longer stomp or delete the
+     * successor's claim. The staleness compare still works on the combined value:
+     * MySQL numerically coerces the leading digits, and SQLite's TEXT-affinity
+     * comparison is lexicographic over the equal-length timestamp prefix.
+     *
+     * @param string $key   wp_options option_name holding the lock timestamp.
+     * @param int    $ttl   Seconds before a held lock is treated as abandoned.
+     * @param string $token Optional per-acquire owner token (LIKE-safe chars).
      * @return bool True if this process acquired the lock.
      */
-    public static function acquireDbLock($key, $ttl)
+    public static function acquireDbLock($key, $ttl, $token = '')
     {
         global $wpdb;
         $now = time();
@@ -2861,11 +3181,13 @@ class Helper
             $key, '', 'no'
         ));
 
+        $value = $token === '' ? (string)$now : $now . '|' . $token;
+
         // Atomic: claim only if free or expired. Empty string casts to 0, so the
         // explicit '' check is what frees a cleanly released lock.
         $affected = $wpdb->query($wpdb->prepare(
             "UPDATE {$wpdb->options} SET option_value = %s WHERE option_name = %s AND (option_value = '' OR option_value < %d)",
-            (string)$now, $key, $now - $ttl
+            $value, $key, $now - $ttl
         ));
 
         if ($affected > 0) {
@@ -2881,17 +3203,50 @@ class Helper
      * detection in acquireDbLock() cannot steal it mid-run. Caller must already
      * hold the lock.
      *
-     * @param string $key wp_options option_name holding the lock timestamp.
-     * @return void
+     * With a $token the refresh is ownership-guarded — it only touches a value
+     * carrying this holder's token, and the return value reports whether the
+     * lock is still owned, so a stalled worker whose lock was stolen can stop
+     * working instead of stomping the successor's claim.
+     *
+     * @param string $key   wp_options option_name holding the lock timestamp.
+     * @param string $token Owner token passed to acquireDbLock(), if any.
+     * @return bool True while this holder still owns the lock (always true
+     *              for tokenless locks — the legacy unconditional refresh).
      */
-    public static function refreshDbLock($key)
+    public static function refreshDbLock($key, $token = '')
     {
         global $wpdb;
-        $wpdb->query($wpdb->prepare(
-            "UPDATE {$wpdb->options} SET option_value = %s WHERE option_name = %s",
-            (string)time(), $key
+
+        if ($token === '') {
+            $wpdb->query($wpdb->prepare(
+                "UPDATE {$wpdb->options} SET option_value = %s WHERE option_name = %s",
+                (string)time(), $key
+            ));
+            wp_cache_delete($key, 'options');
+            return true;
+        }
+
+        $affected = $wpdb->query($wpdb->prepare(
+            "UPDATE {$wpdb->options} SET option_value = %s WHERE option_name = %s AND option_value LIKE %s",
+            time() . '|' . $token, $key, '%|' . $wpdb->esc_like($token)
         ));
         wp_cache_delete($key, 'options');
+
+        if ($affected > 0) {
+            return true;
+        }
+
+        // Zero affected rows is ambiguous: mysqli counts CHANGED rows, so a
+        // second refresh inside the same epoch second writes an identical
+        // value and reports 0 even though we still own the lock. Read the row
+        // to tell "unchanged" apart from "stolen".
+        $value = (string)$wpdb->get_var($wpdb->prepare(
+            "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s",
+            $key
+        ));
+
+        $suffix = '|' . $token;
+        return substr($value, -strlen($suffix)) === $suffix;
     }
 
     /**
@@ -2909,6 +3264,42 @@ class Helper
             "UPDATE {$wpdb->options} SET option_value = '' WHERE option_name = %s",
             $key
         ));
+        wp_cache_delete($key, 'options');
+    }
+
+    /**
+     * Release a lock by deleting its row. Prefer this over releaseDbLock()
+     * for per-object keys (one lock per campaign, funnel, etc.) so finished
+     * objects leave no dead wp_options rows behind; fixed keys that are
+     * reused forever should keep releaseDbLock() and avoid the
+     * delete/re-insert churn. Deleting is as safe as blanking: acquireDbLock()
+     * re-creates rows on demand via INSERT IGNORE, so a deleted row only
+     * costs the next acquire one insert.
+     *
+     * With a $token the delete is ownership-guarded: a worker that stalled
+     * past the TTL and lost the lock to a successor deletes nothing instead
+     * of destroying the successor's live claim.
+     *
+     * @param string $key   wp_options option_name holding the lock timestamp.
+     * @param string $token Owner token passed to acquireDbLock(), if any.
+     * @return void
+     */
+    public static function deleteDbLock($key, $token = '')
+    {
+        global $wpdb;
+
+        if ($token === '') {
+            $wpdb->query($wpdb->prepare(
+                "DELETE FROM {$wpdb->options} WHERE option_name = %s",
+                $key
+            ));
+        } else {
+            $wpdb->query($wpdb->prepare(
+                "DELETE FROM {$wpdb->options} WHERE option_name = %s AND option_value LIKE %s",
+                $key, '%|' . $wpdb->esc_like($token)
+            ));
+        }
+
         wp_cache_delete($key, 'options');
     }
 

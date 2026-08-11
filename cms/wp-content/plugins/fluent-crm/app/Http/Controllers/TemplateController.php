@@ -29,7 +29,9 @@ class TemplateController extends Controller
         );
 
         if ($search = $request->getSafe('search')) {
-            $templatesQuery->where('post_title', 'LIKE', '%' . $search . '%');
+            // Escape LIKE wildcards (%, _) so the term matches literally, not as wildcards.
+            global $wpdb;
+            $templatesQuery->where('post_title', 'LIKE', '%' . $wpdb->esc_like($search) . '%');
         }
 
         // Order the query results and paginate
@@ -311,9 +313,15 @@ class TemplateController extends Controller
             ];
         } else if ($actionName == 'delete_templates') {
             $templates = Template::whereIn('id', $templateIds)->get();
+            // $defaultCampaignTemplateId = Helper::getDefaultCampaignTemplateId();
 
             foreach ($templates as $template) {
-                wp_delete_post($template->ID, true);
+                $deletedTemplate = wp_delete_post($template->ID, true);
+
+                // if ($deletedTemplate && $defaultCampaignTemplateId && absint($template->ID) === $defaultCampaignTemplateId) {
+                //     Helper::clearDefaultCampaignTemplateId();
+                //     $defaultCampaignTemplateId = 0;
+                // }
             }
 
             return $this->sendSuccess([
@@ -330,7 +338,11 @@ class TemplateController extends Controller
     {
         $template = Template::findOrFail($id);
 
-        wp_delete_post($template->ID, true);
+        $deletedTemplate = wp_delete_post($template->ID, true);
+
+        // if ($deletedTemplate && Helper::getDefaultCampaignTemplateId() === absint($template->ID)) {
+        //     Helper::clearDefaultCampaignTemplateId();
+        // }
 
         return $this->sendSuccess([
             'message' => __('The template has been deleted successfully.', 'fluent-crm')
@@ -358,6 +370,48 @@ class TemplateController extends Controller
     {
         return $this->sendSuccess([
             'smartcodes' => $this->smartCodes()
+        ]);
+    }
+
+    public function getDefaultCampaignTemplate()
+    {
+        $template = Helper::getDefaultCampaignTemplate();
+
+        return $this->sendSuccess([
+            'template_id' => $template ? absint($template->ID) : 0,
+            'template'    => $template ? [
+                'ID'              => absint($template->ID),
+                'post_title'      => $template->post_title,
+                'post_status'     => $template->post_status,
+                'design_template' => get_post_meta($template->ID, '_design_template', true)
+            ] : null
+        ]);
+    }
+
+    public function setDefaultCampaignTemplate()
+    {
+        $templateId = absint($this->request->get('template_id'));
+        $template = Helper::setDefaultCampaignTemplateId($templateId);
+
+        if (!$template) {
+            return $this->sendError([
+                'message' => __('Template not found', 'fluent-crm')
+            ], 404);
+        }
+
+        return $this->sendSuccess([
+            'message'     => __('Default campaign template has been saved', 'fluent-crm'),
+            'template_id' => absint($template->ID)
+        ]);
+    }
+
+    public function deleteDefaultCampaignTemplate()
+    {
+        Helper::clearDefaultCampaignTemplateId();
+
+        return $this->sendSuccess([
+            'message'     => __('Default campaign template has been removed', 'fluent-crm'),
+            'template_id' => 0
         ]);
     }
 

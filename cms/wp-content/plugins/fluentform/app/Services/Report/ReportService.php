@@ -181,9 +181,10 @@ class ReportService
         $startDate = $data['start_date'];
         $endDate = $data['end_date'];
         $formId = $data['form_id'];
+        $breakdown = ReportHelper::getPaymentBreakdown($startDate, $endDate, $formId);
         $data['payment_types'] = [
-            'subscription' => ReportHelper::getPaymentsByType($startDate, $endDate, 'subscription', $formId),
-            'onetime'      => ReportHelper::getPaymentsByType($startDate, $endDate, 'onetime', $formId),
+            'subscription' => $breakdown['subscription'] ?? [],
+            'onetime'      => $breakdown['onetime'] ?? [],
         ];
         return $data;
     }

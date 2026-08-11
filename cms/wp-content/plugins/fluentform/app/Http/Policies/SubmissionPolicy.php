@@ -61,6 +61,11 @@ class SubmissionPolicy extends Policy
         return Acl::hasPermission('fluentform_manage_entries', $formId);
     }
 
+    public function submissionUsers(Request $request)
+    {
+        return $this->updateSubmissionUser($request);
+    }
+
     /**
      * Resolve the form_id for authorization.
      *

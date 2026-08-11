@@ -8,7 +8,7 @@ return array(
     'domain_path'    => '/language',
     'text_domain'    => 'fluent-crm',
     'hook_prefix'    => 'fluentcrm_',
-    'rest_namespace' => 'fluent-crm',
+    'rest_namespace' => defined('FLUENTCRM_REST_NAMESPACE') ? FLUENTCRM_REST_NAMESPACE : 'fluent-crm',
     'rest_version'   => 'v2',
     'env' => 'production',
 );

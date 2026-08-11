@@ -2,6 +2,8 @@
 
 namespace FluentCrm\App\Models;
 
+use FluentCrm\App\Services\Helper;
+
 /**
  *  SubscriberMeta Model - DB Model for Contact meta data
  *
@@ -45,6 +47,8 @@ class SubscriberMeta extends Model
 
     public function getValueAttribute($value)
     {
-        return maybe_unserialize($value);
+        // Guard against PHP Object Injection: contact custom-field values are user-influenced,
+        // so never instantiate objects on read. Arrays/scalars are preserved.
+        return Helper::safeUnserialize($value);
     }
 }

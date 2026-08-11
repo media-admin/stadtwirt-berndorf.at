@@ -171,6 +171,15 @@
 			'<div class="cf7apps-ai-fg-prompt-meta">' +
 			'<span class="cf7apps-ai-fg-prompt-count" id="cf7apps-ai-fg-prompt-count">0/350</span>' +
 			'</div>' +
+			'<div class="cf7apps-ai-fg-credits-bar" id="cf7apps-ai-fg-credits-bar" aria-live="polite">' +
+			'<p class="cf7apps-ai-fg-credits-bar__text" id="cf7apps-ai-fg-credits-text"></p>' +
+			'<p class="cf7apps-ai-fg-credits-bar__reset" id="cf7apps-ai-fg-credits-reset"></p>' +
+			'<a class="button button-secondary cf7apps-ai-fg-credits-bar__upgrade" id="cf7apps-ai-fg-credits-upgrade" href="' +
+			escAttr( cfg.upgradeUrl || 'https://cf7apps.com/pricing/' ) +
+			'" target="_blank" rel="noopener noreferrer">' +
+			escAttr( cfg.i18n.upgrade || 'Upgrade' ) +
+			'</a>' +
+			'</div>' +
 			'<div class="cf7apps-ai-fg-templates" id="cf7apps-ai-fg-templates">' +
 			templatesHtml +
 			'</div>' +
@@ -205,8 +214,118 @@
 
 	var selectedTemplate = '';
 	var lastOutput = '';
+	/** Prompt used for the last successful generation (blocks re-generate until Reset / prompt edit). */
+	var lastGeneratedPrompt = '';
+	var isGenerating = false;
 	var copyStatusTimer = null;
 	var PROMPT_MAX = 350;
+	var usageState = normalizeUsage( cfg.usage );
+
+	function normalizeUsage( usage ) {
+		var remaining =
+			usage && typeof usage.remaining !== 'undefined' && usage.remaining !== null
+				? parseInt( usage.remaining, 10 )
+				: null;
+		var limit =
+			usage && typeof usage.limit !== 'undefined' && usage.limit !== null
+				? parseInt( usage.limit, 10 )
+				: null;
+		var showLimit = !!( usage && usage.show_limit && remaining !== null && ! isNaN( remaining ) );
+		var exhausted = !!( usage && usage.exhausted ) || ( showLimit && remaining < 1 );
+		var showUpgrade = !!( usage && usage.show_upgrade );
+		var resetDate =
+			usage && typeof usage.reset_date === 'string' ? usage.reset_date : '';
+		var resetAt =
+			usage && typeof usage.reset_at !== 'undefined' && usage.reset_at !== null
+				? parseInt( usage.reset_at, 10 )
+				: null;
+
+		if ( remaining !== null && ( isNaN( remaining ) || remaining < 0 ) ) {
+			remaining = 0;
+		}
+		if ( limit !== null && ( isNaN( limit ) || limit < 1 ) ) {
+			limit = null;
+		}
+		if ( resetAt !== null && isNaN( resetAt ) ) {
+			resetAt = null;
+		}
+
+		return {
+			limit: limit,
+			remaining: remaining,
+			show_limit: showLimit,
+			exhausted: exhausted,
+			show_upgrade: showUpgrade,
+			reset_at: resetAt,
+			reset_date: resetDate,
+			message:
+				usage && typeof usage.message === 'string' ? usage.message : '',
+			source: ( usage && usage.source ) || 'middleware',
+		};
+	}
+
+	function formatCreditsMessage( usage ) {
+		if ( usage.exhausted || ( usage.remaining !== null && usage.remaining < 1 ) ) {
+			// Exhausted copy must come from middleware — never invent local copy.
+			return usage.message || '';
+		}
+		if ( usage.remaining === null || isNaN( usage.remaining ) ) {
+			return '';
+		}
+		if ( usage.limit !== null && ! isNaN( usage.limit ) && usage.limit > 0 ) {
+			var withLimit =
+				cfg.i18n.creditsRemaining ||
+				'You have %1$d of %2$d AI form generations remaining.';
+			return withLimit
+				.replace( '%1$d', String( usage.remaining ) )
+				.replace( '%2$d', String( usage.limit ) );
+		}
+		var onlyRemaining =
+			cfg.i18n.creditsRemainingOnly ||
+			'You have %d AI form generations remaining.';
+		return onlyRemaining.replace( '%d', String( usage.remaining ) );
+	}
+
+	function formatResetMessage( usage ) {
+		if ( ! usage.exhausted || ! usage.reset_date ) {
+			return '';
+		}
+		var template =
+			cfg.i18n.creditsResetOn || 'Your limit will reset on %s.';
+		return template.replace( '%s', usage.reset_date );
+	}
+
+	function updateCreditsBar( $backdrop, usage ) {
+		usageState = normalizeUsage( usage || usageState );
+		cfg.usage = usageState;
+
+		var $bar = $backdrop.find( '#cf7apps-ai-fg-credits-bar' );
+		var $text = $backdrop.find( '#cf7apps-ai-fg-credits-text' );
+		var $reset = $backdrop.find( '#cf7apps-ai-fg-credits-reset' );
+		var $upgrade = $backdrop.find( '#cf7apps-ai-fg-credits-upgrade' );
+
+		if ( ! usageState.show_limit ) {
+			$bar.removeClass( 'is-visible cf7apps-ai-fg-credits-bar--exhausted' );
+			$reset.removeClass( 'is-visible' ).text( '' );
+			$upgrade.hide();
+			updatePromptUi( $backdrop );
+			return;
+		}
+
+		var resetMessage = formatResetMessage( usageState );
+		$text.text( formatCreditsMessage( usageState ) );
+		$reset
+			.text( resetMessage )
+			.toggleClass( 'is-visible', !! resetMessage );
+		$bar
+			.addClass( 'is-visible' )
+			.toggleClass( 'cf7apps-ai-fg-credits-bar--exhausted', !! usageState.exhausted );
+		// Free: show reset date instead of Upgrade (HFCF7-546). Pro can flip show_upgrade later.
+		$upgrade
+			.toggleClass( 'is-visible', !! usageState.exhausted && !! usageState.show_upgrade )
+			.toggle( !! usageState.exhausted && !! usageState.show_upgrade );
+		updatePromptUi( $backdrop );
+	}
 
 	function enforcePromptLimit( $backdrop ) {
 		var $ta = $backdrop.find( '#cf7apps-ai-fg-prompt' );
@@ -220,9 +339,22 @@
 
 	function updatePromptUi( $backdrop ) {
 		var promptVal = enforcePromptLimit( $backdrop );
+		var trimmed = $.trim( promptVal );
 		var len = promptVal.length;
 		$backdrop.find( '#cf7apps-ai-fg-prompt-count' ).text( len + '/' + PROMPT_MAX );
-		var canGenerate = $.trim( promptVal ) !== '';
+
+		// After a successful generation, keep Generate disabled until Reset or the prompt changes.
+		var promptUnchangedAfterSuccess =
+			!! lastOutput &&
+			!! lastGeneratedPrompt &&
+			trimmed === lastGeneratedPrompt;
+
+		var canGenerate =
+			trimmed !== '' &&
+			! usageState.exhausted &&
+			! isGenerating &&
+			! promptUnchangedAfterSuccess;
+
 		$backdrop.find( '#cf7apps-ai-fg-generate' ).prop( 'disabled', ! canGenerate );
 		if ( canGenerate ) {
 			$backdrop.find( '#cf7apps-ai-fg-error' ).removeClass( 'is-visible' ).text( '' );
@@ -231,8 +363,24 @@
 
 	function openModal( $backdrop ) {
 		$backdrop.addClass( 'is-open' );
+		updateCreditsBar( $backdrop, usageState );
 		updatePromptUi( $backdrop );
 		$backdrop.find( '#cf7apps-ai-fg-prompt' ).trigger( 'focus' );
+
+		// Always re-check middleware so raised limits clear a stale exhausted bar.
+		$.ajax( {
+			url: cfg.ajaxUrl,
+			type: 'POST',
+			dataType: 'json',
+			data: {
+				action: 'cf7_ai_refresh_usage',
+				nonce: cfg.nonce,
+			},
+		} ).done( function ( res ) {
+			if ( res && res.success && res.data && res.data.usage ) {
+				updateCreditsBar( $backdrop, res.data.usage );
+			}
+		} );
 	}
 
 	function closeModal( $backdrop ) {
@@ -248,6 +396,7 @@
 		$backdrop.find( '#cf7apps-ai-fg-code' ).text( '' );
 		$backdrop.find( '#cf7apps-ai-fg-error' ).removeClass( 'is-visible' ).text( '' );
 		lastOutput = '';
+		lastGeneratedPrompt = '';
 		setGeneratingState( $modal, false );
 		updatePromptUi( $backdrop );
 	}
@@ -257,6 +406,7 @@
 	}
 
 	function setGeneratingState( $modal, isBusy ) {
+		isGenerating = !! isBusy;
 		var $generateBtn = $modal.find( '#cf7apps-ai-fg-generate' );
 		var generatingLabel = cfg.i18n.generating || 'Generating...';
 		$generateBtn
@@ -264,6 +414,7 @@
 			.text( isBusy ? generatingLabel : cfg.i18n.generate );
 		$generateBtn.attr( 'aria-busy', isBusy ? 'true' : 'false' );
 		$modal.toggleClass( 'cf7apps-ai-fg-busy', !! isBusy );
+		updatePromptUi( $modal.closest( '#cf7apps-ai-fg-backdrop' ) );
 	}
 
 	function showCopyStatus( $button, message, timeoutMs ) {
@@ -309,6 +460,7 @@
 
 		var $backdrop = $( '#cf7apps-ai-fg-backdrop' );
 		var $modal = $backdrop.find( '.cf7apps-ai-fg-modal' );
+		updateCreditsBar( $backdrop, usageState );
 		updatePromptUi( $backdrop );
 
 		$wrap.on( 'click', '#cf7apps-ai-fg-open', function () {
@@ -344,12 +496,24 @@
 		} );
 
 		$backdrop.on( 'click', '#cf7apps-ai-fg-generate', function () {
+			if ( isGenerating || $( this ).prop( 'disabled' ) ) {
+				return;
+			}
+
 			var promptVal = $.trim( $backdrop.find( '#cf7apps-ai-fg-prompt' ).val() || '' );
 			$backdrop.find( '#cf7apps-ai-fg-error' ).removeClass( 'is-visible' ).text( '' );
 
 			if ( ! promptVal ) {
 				showError( $backdrop, cfg.i18n.validationError );
 				updatePromptUi( $backdrop );
+				return;
+			}
+
+			if (
+				lastOutput &&
+				lastGeneratedPrompt &&
+				promptVal === lastGeneratedPrompt
+			) {
 				return;
 			}
 
@@ -373,19 +537,64 @@
 								? res.data.message
 								: 'Request failed.';
 						showError( $backdrop, err );
+						if ( res && res.data && res.data.usage ) {
+							updateCreditsBar( $backdrop, res.data.usage );
+						} else if ( res && res.data && res.data.code === 'no_middleware_credits' ) {
+							updateCreditsBar( $backdrop, {
+								limit: usageState.limit,
+								remaining: 0,
+								show_limit: true,
+								exhausted: true,
+								show_upgrade: usageState.show_upgrade,
+								reset_at: usageState.reset_at,
+								reset_date: usageState.reset_date,
+								message:
+									( res.data.usage && res.data.usage.message ) ||
+									res.data.message ||
+									usageState.message ||
+									'',
+								source: 'middleware',
+							} );
+						}
 						return;
 					}
 					var data = res.data || {};
 					lastOutput = data.form_tags || '';
+					lastGeneratedPrompt = promptVal;
 					$backdrop.find( '#cf7apps-ai-fg-code' ).text( lastOutput );
 					$backdrop.find( '#cf7apps-ai-fg-output' ).addClass( 'is-visible' );
+					if ( data.usage ) {
+						updateCreditsBar( $backdrop, data.usage );
+					} else {
+						updatePromptUi( $backdrop );
+					}
 				} )
 				.fail( function ( xhr ) {
 					var msg = 'Request failed.';
-					if ( xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message ) {
-						msg = xhr.responseJSON.data.message;
+					var data = xhr.responseJSON && xhr.responseJSON.data ? xhr.responseJSON.data : null;
+					if ( data && data.message ) {
+						msg = data.message;
 					}
 					showError( $backdrop, msg );
+					if ( data && data.usage ) {
+						updateCreditsBar( $backdrop, data.usage );
+					} else if ( data && data.code === 'no_middleware_credits' ) {
+						updateCreditsBar( $backdrop, {
+							limit: usageState.limit,
+							remaining: 0,
+							show_limit: true,
+							exhausted: true,
+							show_upgrade: usageState.show_upgrade,
+							reset_at: usageState.reset_at,
+							reset_date: usageState.reset_date,
+							message:
+								( data.usage && data.usage.message ) ||
+								data.message ||
+								usageState.message ||
+								'',
+							source: 'middleware',
+						} );
+					}
 				} )
 				.always( function () {
 					setGeneratingState( $modal, false );

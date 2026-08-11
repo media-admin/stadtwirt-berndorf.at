@@ -258,6 +258,26 @@ use FluentForm\Framework\Helpers\ArrayHelper;
                             </a>
                         </li>
                         <?php
+                        // Every control on this card (the enable toggle, the
+                        // adapter install) requires manage_options, so showing it
+                        // to a settings manager would only offer them a switch
+                        // that always errors.
+                        if (current_user_can('manage_options')) { ?>
+                        <li class="<?php echo esc_attr(Helper::getHtmlElementClass('mcp_settings', $currentComponent)); ?> ff_list_button_item">
+                            <a
+                                    class="ff_list_button_link"
+                                    data-hash="mcp_settings"
+                                    title="<?php echo esc_attr(__('MCP for AI Agents', 'fluentform')); ?>"
+                                    aria-label="<?php echo esc_attr(__('MCP for AI Agents', 'fluentform')); ?>"
+                                    href="<?php echo esc_url(Helper::makeMenuUrl('fluent_forms_settings', [
+                                        'hash' => 'mcp_settings'
+                                    ])); ?>">
+                                <i class="ff_settings_menu_icon ff-icon ff-icon-code" aria-hidden="true"></i>
+                                <span class="ff_settings_menu_label"><?php esc_html_e('MCP for AI Agents', 'fluentform'); ?></span>
+                            </a>
+                        </li>
+                        <?php } ?>
+                        <?php
                         if (ArrayHelper::exists($components, 'InventoryManager')) { ?>
                             <li class="<?php echo esc_attr(Helper::getHtmlElementClass('inventory', $currentComponent)); ?> ff_list_button_item">
                                 <a

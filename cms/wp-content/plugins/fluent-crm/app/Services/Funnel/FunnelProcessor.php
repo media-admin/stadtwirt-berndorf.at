@@ -76,17 +76,26 @@ class FunnelProcessor
             if (!$subscriber) {
                 return false;
             }
-        } elseif (Arr::get($subscriberData, 'status') === 'pending' && $subscriber->status !== 'subscribed') {
-            // update status only if it's not subscribed already
-            $subscriber->status = 'pending';
-            $subscriber->save();
+        } elseif (Arr::get($subscriberData, 'status') === 'pending' && !in_array($subscriber->status, ['subscribed', 'pending'])) {
+            // This trigger runs the double opt-in flow and the contact just took the
+            // triggering action, so whatever their current status (unsubscribed,
+            // bounced, …) they re-enter the opt-in pipeline as 'pending' — that status
+            // decision belongs to this flow, and ONLY the confirmation click makes them
+            // 'subscribed'. updateStatus() (not a raw save) so transition hooks fire.
+            $subscriber->updateStatus('pending');
         }
 
         if ($subscriber->status == 'pending') {
+            // The opt-in email itself is strictly gated on 'pending' (and throttled).
             $subscriber->sendDoubleOptinEmail();
         }
 
         $args = [
+            // 'pending' parks the funnel row until the contact confirms (resumed via the
+            // fluentcrm_subscriber_status_to_subscribed hook); 'draft' enters it for
+            // processing. Suppressed contacts on normal (non-opt-in) triggers enter as
+            // 'draft' so non-email actions (tagging, notifications) still run — the
+            // send-time sendable-status guard blocks any actual email to them.
             'status' => ($subscriber->status == 'pending' || $subscriber->status == 'unsubscribed') ? 'pending' : 'draft'
         ];
 
@@ -163,6 +172,27 @@ class FunnelProcessor
         // If a conditional was processed, initChildSequences() already
         // handled the subscriber's next state — skip status update
         if ($hasConditional) {
+            /*
+             * The conditional's handler is Pro-only and may be absent (Pro deactivated,
+             * step imported into a free install) or may have thrown (swallowed in
+             * processSequence). In that case the row is left status=active with a NULL
+             * next_execution_time — invisible to the cron query forever. Verify a real
+             * transition happened; if not, schedule the row so the engine advances past
+             * the conditional block (last_sequence_id already points at it) on the next
+             * tick instead of stranding the subscriber.
+             */
+            $freshSubscriber = FunnelSubscriber::where('id', $funnelSubscriber->id)->first();
+            if ($freshSubscriber && $freshSubscriber->status == 'active' && !$freshSubscriber->next_execution_time) {
+                Helper::debugLog(
+                    'Conditional step did not transition funnel subscriber ' . $funnelSubscriber->id . ' (funnel ' . $funnelSubscriber->funnel_id . ')',
+                    'Handler missing or failed — subscriber scheduled to advance past the conditional block'
+                );
+
+                FunnelSubscriber::where('id', $freshSubscriber->id)
+                    ->update([
+                        'next_execution_time' => current_time('mysql')
+                    ]);
+            }
             return;
         }
 
@@ -217,8 +247,21 @@ class FunnelProcessor
         }
 
         if ($funnelMetric->wasRecentlyCreated) {
+            $handlerHook = 'fluentcrm_funnel_sequence_handle_' . $sequence->action_name;
+
+            if (!has_action($handlerHook)) {
+                // No runtime handler registered (Pro deactivated mid-flight, or a Pro-only
+                // step imported into a free install). Treat as an explicit "skip step and
+                // advance" with a log — a silent no-op here strands the subscriber.
+                Helper::debugLog(
+                    'Missing funnel sequence handler "' . $sequence->action_name . '" for funnel ' . $sequence->funnel_id,
+                    'Funnel Sub ID: ' . $funnelSubscriberId . ' — step skipped'
+                );
+                return;
+            }
+
             try {
-                do_action('fluentcrm_funnel_sequence_handle_' . $sequence->action_name, $subscriber, $sequence, $funnelSubscriberId, $funnelMetric, $this);
+                do_action($handlerHook, $subscriber, $sequence, $funnelSubscriberId, $funnelMetric, $this);
             } catch (\Throwable $e) {
                 Helper::debugLog('Funnel sequence error for ' . $sequence->funnel_id . ' => Funnel Sub ID: ' . $funnelSubscriberId, $e->getMessage());
             }

@@ -326,8 +326,11 @@ class AdminMenu
             $urlBase = fluentcrm_menu_url_base();
         }
 
-
         $permissions = PermissionManager::currentUserPermissions();
+
+        if(!$permissions) {
+            return [];
+        }
 
         $menuItems = [
             [
@@ -839,6 +842,14 @@ class AdminMenu
             'available_contact_statuses'          => fluentcrm_subscriber_statuses(true),
             'available_contact_editable_statuses' => fluentcrm_subscriber_editable_statuses(true),
             'available_sms_statuses'              => fluentcrm_subscriber_sms_statuses(true),
+            // 'whatsapp_enabled'                    => in_array(
+            //     apply_filters(
+            //         'fluent_crm/whatsapp_enabled',
+            //         Arr::get(fluentcrm_get_option('whatsapp_settings', []), 'enabled', 'no')
+            //     ),
+            //     ['yes', true, 1, '1'],
+            //     true
+            // ) ? 'yes' : 'no',
             'available_contact_types'             => fluentcrm_contact_types(true),
             'available_custom_fields'             => fluentcrm_get_option('contact_custom_fields', []),
             'contact_sample_csv'                  => fluentCrmMix('sample.csv'),

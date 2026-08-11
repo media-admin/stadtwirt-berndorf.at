@@ -851,14 +851,19 @@ class AiController extends Controller
             }
 
             $data = apply_filters('fluent_crm/purchase_history_' . $providerKey, [
-                'orders' => [],
-                'total'  => 0,
+                'data'  => [],
+                'total' => 0,
             ], $subscriber);
+
+            // Every core producer (FluentCart, Woo, EDD, Paymattic, PMPro)
+            // returns rows under 'data'; only the legacy REST seed used
+            // 'orders'. Reading 'orders' alone left this context empty.
+            $orders = Arr::get($data, 'data', []) ?: Arr::get($data, 'orders', []);
 
             $providers[$providerKey] = [
                 'title'  => sanitize_text_field(Arr::get($provider, 'title', $providerKey)),
                 'total'  => intval(Arr::get($data, 'total', 0)),
-                'orders' => $this->normalizeSummaryRows(Arr::get($data, 'orders', []), 10),
+                'orders' => $this->normalizeSummaryRows($orders, 10),
             ];
         }
 

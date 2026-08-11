@@ -45,15 +45,44 @@ class Helper
             }
         } elseif (is_array($input)) {
             foreach ($input as $key => &$value) {
-                $attribute = $attribute ? $attribute . '[' . $key . ']' : $key;
+                // Local var: mutating $attribute here would collapse every sibling
+                // after the first onto a bare key, resolving nested inputs to the wrong element.
+                $childAttribute = $attribute ? $attribute . '[' . $key . ']' : $key;
 
-                $value = static::sanitizer($value, $attribute, $fields);
-
-                $attribute = null;
+                $value = static::sanitizer($value, $childAttribute, $fields);
             }
+            unset($value);
         }
 
         return $input;
+    }
+
+    /**
+     * Flatten a request value into a plain, printable string.
+     *
+     * Request values are string or array. Walks nested arrays so a crafted
+     * param[][] cannot raise an "Array to string conversion" notice, and the
+     * caller can escape the result in one pass instead of branching on shape.
+     *
+     * @param mixed $value
+     *
+     * @return string
+     */
+    public static function flattenRequestValue($value)
+    {
+        if (!is_array($value)) {
+            return is_scalar($value) ? (string) $value : '';
+        }
+
+        $flat = [];
+
+        array_walk_recursive($value, function ($item) use (&$flat) {
+            if (is_scalar($item)) {
+                $flat[] = (string) $item;
+            }
+        });
+
+        return implode(', ', $flat);
     }
 
     public static function isOptionGroup($option)
@@ -215,7 +244,9 @@ class Helper
 
         $statuses = apply_filters('fluentform/entry_statuses_core', $statuses, $form_id);
 
-        $statuses['trashed'] = 'Trashed';
+        $statuses['spam'] = __('Spam', 'fluentform');
+
+        $statuses['trashed'] = __('Trashed', 'fluentform');
 
         return $statuses;
     }
@@ -958,7 +989,7 @@ class Helper
 
     public static function sanitizeForCSV($content)
     {
-        $formulas = ['=', '-', '+', '@', "\t", "\r"];
+        $formulas = ['=', '-', '+', '@', "\t", "\r", "\n"];
 
         $formulas = apply_filters('fluentform/csv_sanitize_formulas', $formulas);
 
@@ -1320,7 +1351,7 @@ class Helper
                     $fieldData = ArrayHelper::get($field, 'raw');
                     $data = (new SelectCountry())->loadCountries($fieldData);
                     $validCountries = ArrayHelper::get($fieldData, 'settings.country_list.priority_based', []);
-                    $validCountries = array_merge($validCountries, array_keys(ArrayHelper::get($data, 'options')));
+                    $validCountries = array_merge($validCountries, array_keys((array) ArrayHelper::get($data, 'options', [])));
                     $isValid = in_array($inputValue, $validCountries);
                     break;
                 case 'repeater_field':
@@ -1533,6 +1564,23 @@ class Helper
         return defined('FLUENTFORMPRO');
     }
 
+    public static function utmUrl($baseUrl, $utmContent = '', $utmCampaign = 'upgrade_pro')
+    {
+        $params = [
+            'utm_source'   => 'fluent-forms',
+            'utm_medium'   => self::hasPro() ? 'pro_plugin' : 'free_plugin',
+            'utm_campaign' => $utmCampaign,
+            'utm_term'     => FLUENTFORM_VERSION,
+            'theme_style'  => fluentform_get_active_theme_slug(),
+        ];
+
+        if ($utmContent) {
+            $params['utm_content'] = $utmContent;
+        }
+
+        return add_query_arg($params, $baseUrl);
+    }
+
     public static function getLandingPageEnabledForms()
     {
         if (class_exists(\FluentFormPro\classes\SharePage\SharePage::class)) {
@@ -1562,8 +1610,15 @@ class Helper
         return home_url($args);
     }
 
-    public static function getCountryCodeFromHeaders()
+    public static function getCountryCodeFromHeaders($forRestriction = false)
     {
+        // SECURITY (FINDING-26): CDN country headers are client-spoofable. Trust them for analytics
+        // storage (spoof is cosmetic) but not for restriction enforcement (spoof = bypass). Filterable.
+        $trustHeaders = apply_filters('fluentform/trust_geo_headers', !$forRestriction);
+        if (!$trustHeaders) {
+            return null;
+        }
+
         $headers = [
             // Cloudflare (most common)
             'HTTP_CF_IPCOUNTRY',

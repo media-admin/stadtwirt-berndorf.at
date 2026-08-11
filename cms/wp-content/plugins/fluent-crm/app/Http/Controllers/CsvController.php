@@ -172,45 +172,23 @@ class CsvController extends Controller
 
         $status = $inputs['new_status'];
 
+        $page = $this->request->get('importing_page', 1);
+
+        $processPerRequest = apply_filters('fluent_crm/csv_import_contact_limit_per_request', 100);
+
+        $offset = ($page - 1) * $processPerRequest;
+
         try {
             $reader = $this->getCsvReader(FileSystem::get($inputs['file']));
             $reader->setDelimiter($delimeter);
-
-            if (method_exists($reader, 'getRecords')) {
-                $aHeaders = $reader->fetchOne(0);
-
-                $allRecords = $reader->getRecords($aHeaders);
-
-                if (!is_array($allRecords)) {
-                    $allRecords = iterator_to_array($allRecords, true);
-                }
-
-                unset($allRecords[0]);
-                $allRecords = array_values($allRecords);
-            } else {
-                $aHeaders = $reader->fetchOne(0);
-                $allRecords = $reader->fetchAssoc($aHeaders);
-                if (!is_array($allRecords)) {
-                    $allRecords = iterator_to_array($allRecords, true);
-                }
-
-                unset($allRecords[0]);
-
-                $allRecords = array_values($allRecords);
-            }
+            $aHeaders = $reader->fetchOne(0);
+            $totalCount = $this->getCsvTotalRowCount($reader, $inputs['file'], $page == 1);
+            $records = $this->getCsvRecordsChunk($reader, $aHeaders, $offset, $processPerRequest);
         } catch (\Exception $exception) {
             return $this->sendError([
                 'message' => $exception->getMessage()
             ]);
         }
-
-
-        $page = $this->request->get('importing_page', 1);
-
-        $processPerRequest = apply_filters('fluent_crm/csv_import_contact_limit_per_request', 100);
-        
-        $offset = ($page - 1) * $processPerRequest;
-        $records = array_slice($allRecords, $offset, $processPerRequest);
 
 
         $customFieldKeys = $this->customFieldKeys();
@@ -233,11 +211,13 @@ class CsvController extends Controller
                 }
                 if (isset($map['csv'], $map['table'])) {
                     if (in_array($map['table'], ['tags', 'lists'])) {
-                        //if tags or lists are mapped to be imported
+                        // str_getcsv respects inner quoting, so a cell like
+                        // "Sales, EMEA","Newsletter" keeps quoted names intact
+                        // where a raw explode(',') would split them.
                         if ($map['table'] == 'tags') {
-                            $subscriber['tags'] = !empty($record[$map['csv']]) ? explode(',', $record[$map['csv']]) : [];
+                            $subscriber['tags'] = !empty($record[$map['csv']]) ? array_map('trim', str_getcsv($record[$map['csv']])) : [];
                         } else {
-                            $subscriber['lists'] = !empty($record[$map['csv']]) ? explode(',', $record[$map['csv']]) : [];
+                            $subscriber['lists'] = !empty($record[$map['csv']]) ? array_map('trim', str_getcsv($record[$map['csv']])) : [];
                         }
                     }
                     else if (in_array($map['table'], $customFieldKeys)) {
@@ -247,6 +227,10 @@ class CsvController extends Controller
                     }
                 }
             }
+
+            // Never trust a CSV-mapped user_id: a column mapped to user_id would link every
+            // imported contact to an arbitrary WP user (e.g. an admin) — privilege escalation.
+            unset($subscriber['user_id']);
 
             if (!array_key_exists('email', $subscriber)) {
                 return $this->sendError(['email' => __('The email field is required.', 'fluent-crm')], 422);
@@ -301,10 +285,10 @@ class CsvController extends Controller
         $totalSkipped = count($result['skips']) + count($skipped);
 
         $completed = $offset + count($records);
-        $totalCount = count($allRecords);
         $hasMore = $completed < $totalCount;
         if (!$hasMore) {
             FileSystem::delete($inputs['file']);
+            $this->clearCsvTotalRowCount($inputs['file']);
         }
 
         return $this->sendSuccess([
@@ -340,42 +324,21 @@ class CsvController extends Controller
             $delimeter = ';';
         }
 
+        $page = $this->request->get('importing_page', 1);
+        $processPerRequest = 100;
+        $offset = ($page - 1) * $processPerRequest;
+
         try {
             $reader = $this->getCsvReader(FileSystem::get($inputs['file']));
             $reader->setDelimiter($delimeter);
-
-            if (method_exists($reader, 'getRecords')) {
-                $aHeaders = $reader->fetchOne(0);
-
-                $allRecords = $reader->getRecords($aHeaders);
-
-                if (!is_array($allRecords)) {
-                    $allRecords = iterator_to_array($allRecords, true);
-                }
-
-                unset($allRecords[0]);
-                $allRecords = array_values($allRecords);
-            } else {
-                $aHeaders = $reader->fetchOne(0);
-                $allRecords = $reader->fetchAssoc($aHeaders);
-                if (!is_array($allRecords)) {
-                    $allRecords = iterator_to_array($allRecords, true);
-                }
-
-                unset($allRecords[0]);
-
-                $allRecords = array_values($allRecords);
-            }
+            $aHeaders = $reader->fetchOne(0);
+            $totalCount = $this->getCsvTotalRowCount($reader, $inputs['file'], $page == 1);
+            $records = $this->getCsvRecordsChunk($reader, $aHeaders, $offset, $processPerRequest);
         } catch (\Exception $exception) {
             return $this->sendError([
                 'message' => $exception->getMessage()
             ]);
         }
-
-        $page = $this->request->get('importing_page', 1);
-        $processPerRequest = 100;
-        $offset = ($page - 1) * $processPerRequest;
-        $records = array_slice($allRecords, $offset, $processPerRequest);
 
         $willCreateOwner = $this->request->get('create_owner') == 'yes';
         $willUpdate = $this->request->get('update') == 'yes';
@@ -455,16 +418,19 @@ class CsvController extends Controller
             $companies[] = $createdCompany;
         }
 
-        $completed = $offset + count($companies);
-        $totalCount = count($allRecords);
+        // Progress must advance by the rows CONSUMED (skipped ones included), and
+        // report the cumulative position — otherwise skipped rows understate the
+        // totals and produce a ghost extra request at the end.
+        $completed = $offset + count($records);
         $hasMore = $completed < $totalCount;
         if (!$hasMore) {
             FileSystem::delete($inputs['file']);
+            $this->clearCsvTotalRowCount($inputs['file']);
         }
 
         return $this->sendSuccess([
             'total'      => $totalCount,
-            'completed'  => count($companies),
+            'completed'  => $completed,
             'total_page' => ceil($totalCount / $processPerRequest),
             'skipped'    => count($skipped),
             'has_more'   => $hasMore,
@@ -490,5 +456,65 @@ class CsvController extends Controller
         }
 
         return \League\Csv\Reader::createFromString($file);
+    }
+
+    /**
+     * Total number of data rows (header excluded) for an import file.
+     *
+     * Counted by streaming the reader once — no array materialization — and cached
+     * in the options table so the ~N/100 follow-up chunk requests skip the recount.
+     */
+    private function getCsvTotalRowCount($reader, $file, $isFirstPage)
+    {
+        $cacheKey = '_fc_csv_import_total_' . md5($file);
+
+        if (!$isFirstPage) {
+            $cached = (int)fluentcrm_get_option($cacheKey, 0);
+            if ($cached > 0) {
+                return $cached;
+            }
+        }
+
+        $total = max(0, iterator_count($reader->getIterator()) - 1);
+        fluentcrm_update_option($cacheKey, $total);
+
+        return $total;
+    }
+
+    private function clearCsvTotalRowCount($file)
+    {
+        fluentcrm_delete_option('_fc_csv_import_total_' . md5($file));
+    }
+
+    /**
+     * Fetch one chunk of CSV data rows mapped to $headers WITHOUT parsing the whole
+     * file into an in-memory array (the old iterator_to_array + array_slice pattern
+     * was O(N) memory and O(N²) aggregate parse work across an import's requests).
+     *
+     * $dataOffset is 0-based over data rows; the header line is skipped internally.
+     */
+    private function getCsvRecordsChunk($reader, $headers, $dataOffset, $limit)
+    {
+        // +1 skips the header line, which both fetch paths would otherwise
+        // return as the first mapped record.
+        $chunkOffset = $dataOffset + 1;
+
+        if (method_exists($reader, 'setOffset')) {
+            // Bundled league/csv 8.x — offset/limit stream via LimitIterator.
+            $reader->setOffset($chunkOffset);
+            $reader->setLimit($limit);
+            $records = $reader->fetchAssoc($headers);
+            if (!is_array($records)) {
+                $records = iterator_to_array($records, false);
+            }
+
+            return array_values($records);
+        }
+
+        // league/csv 9.x (loaded by another plugin's autoloader).
+        $statement = new \League\Csv\Statement();
+        $statement = $statement->offset($chunkOffset)->limit($limit);
+
+        return array_values(iterator_to_array($statement->process($reader, $headers), false));
     }
 }

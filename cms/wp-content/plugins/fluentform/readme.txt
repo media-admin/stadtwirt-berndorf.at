@@ -4,7 +4,7 @@ Tags: contact form, wp forms, forms, form builder, custom form
 Requires at least: 6.4
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 6.2.6
+Stable tag: 6.2.12
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -439,6 +439,39 @@ You can get support from our official support thread at <a href="https://wpmanag
 12. Asset Loading Comparison with Other Plugins
 
 == Changelog ==
+
+= 6.2.12 (Date: August 10, 2026) =
+- Adds an optional MCP server that lets AI assistants work with your forms, entries, and reports, turned off by default
+- Adds a Spam option to the entry status filter on the entries list
+- Adds a notice when global captcha auto load is enabled but the keys are missing
+- Improves the Steps progress indicator so you can click it to move between steps, like Tabs
+- Improves how cookie smartcode values are handled and displayed
+- Fixes a fatal error during Stripe checkout when pushing metadata
+- Fixes Keyword-Based Restriction not blocking keywords in other alphabets, such as Cyrillic
+- Fixes http:// being added to smartcode URLs in the email editor
+- Fixes captcha fields not being added back to the form
+- Fixes the bulk action bar showing when no entries are selected
+- Fixes pagination alignment on the forms, entries, and payments lists
+- Hardens output escaping and authorization across entries, reports, integrations, and payments
+- Restricts payment bulk actions to the Manage Payments permission and revenue and payment type reports to the View Payments permission
+- Restricts Slack integration requests to Slack hosts
+
+= 6.2.11 (Date: August 03, 2026) =
+- Added safeguards for outdated Fluent Forms Pro installations.
+
+= 6.2.9 (Date: July 28, 2026) =
+- Hardens output escaping in the ff_get shortcode
+- Strengthens payment transaction reference generation for improved privacy
+- On block themes, loads public form styles only on pages that contain a form
+
+= 6.2.8 (Date: July 23, 2026) =
+- Fixes a stored XSS vulnerability in form submission handling
+
+= 6.2.7 (Date: July 16, 2026) =
+- Fixes date field restrictions configurations
+- Improves Advanced Date Configuration to support more restriction patterns: comparison operators, combined conditions, month/day/year rules, and fixed calendar dates
+- Improve Stripe API keys encryption to prevent being unusable after the site WordPress security salts change
+- Hardens the date field's inline script output against script-context injection
 
 = 6.2.6 (Date: July 10, 2026) =
 - Improves the Other option in conversational forms to be keyboard-activatable

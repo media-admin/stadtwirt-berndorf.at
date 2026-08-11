@@ -268,7 +268,10 @@ class DripMigrator extends BaseMigrator
 
             $contact = FluentCrmApi('contacts')->createOrUpdate($data);
 
-            if ($status == 'subscribed' && $contact && $contact->status != 'subscribed') {
+            // Never resurrect a locally suppressed contact (unsubscribed/bounced/complained/
+            // spammed) just because the remote system lists the address as active — a re-run
+            // of the migration must not undo an opt-out or bounce recorded here.
+            if ($status == 'subscribed' && $contact && $contact->status != 'subscribed' && !in_array($contact->status, fluentcrm_strict_statues())) {
                 $contact->updateStatus('subscribed');
             }
         }

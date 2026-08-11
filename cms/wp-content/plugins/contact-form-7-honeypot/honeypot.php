@@ -5,7 +5,7 @@
  * Description: Contact Form 7 Apps is a collection of useful modules and extensions for Contact Form 7.
  * Author: CF7 Apps
  * Author URI: https://cf7apps.com/
- * Version: 3.6.1
+ * Version: 3.7.2
  * Text Domain: contact-form-7-honeypot
  * Domain Path: /languages/
  * Requires Plugins: contact-form-7
@@ -56,7 +56,7 @@ if ( ! function_exists( 'cf7h_fs' ) ) {
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'CF7APPS_VERSION', '3.6.1' );
+define( 'CF7APPS_VERSION', '3.7.1' );
 define( 'CF7APPS_PLUGIN', __FILE__ );
 define( 'CF7APPS_PLUGIN_BASENAME', plugin_basename( CF7APPS_PLUGIN ) );
 define( 'CF7APPS_PLUGIN_NAME', trim( dirname( CF7APPS_PLUGIN_BASENAME ), '/' ) );
@@ -97,3 +97,64 @@ function CF7Apps() {
 endif;
 
 CF7Apps();
+
+/**
+ * Load plugin translations.
+ *
+ * The plugin header uses `contact-form-7-honeypot`, while the React admin UI
+ * uses the `cf7apps` text domain. Load the same MO file for both domains.
+ *
+ * Prefer bundled plugin translations over stale copies in
+ * wp-content/languages/plugins/ so newly added strings ship with the plugin.
+ *
+ * @since 3.6.2
+ */
+function cf7apps_load_textdomain() {
+	$locale   = determine_locale();
+	$rel_path = dirname( CF7APPS_PLUGIN_BASENAME ) . '/languages';
+	$mofile   = CF7APPS_PLUGIN_DIR . '/languages/contact-form-7-honeypot-' . $locale . '.mo';
+
+	load_plugin_textdomain( 'contact-form-7-honeypot', false, $rel_path );
+
+	if ( ! is_readable( $mofile ) ) {
+		return;
+	}
+
+	// Reload bundled translations last so newer strings win over WP_LANG_DIR.
+	unload_textdomain( 'contact-form-7-honeypot' );
+	load_textdomain( 'contact-form-7-honeypot', $mofile );
+
+	unload_textdomain( 'cf7apps' );
+	load_textdomain( 'cf7apps', $mofile );
+}
+add_action( 'init', 'cf7apps_load_textdomain' );
+
+/**
+ * Prefer plugin-bundled translation files over outdated WP_LANG_DIR copies.
+ *
+ * @since 3.6.2
+ *
+ * @param string $file   Path to the translation file WordPress wants to load.
+ * @param string $domain Text domain.
+ * @param string $locale Locale code.
+ * @return string
+ */
+function cf7apps_prefer_bundled_translation_file( $file, $domain, $locale ) {
+	if ( 'contact-form-7-honeypot' !== $domain && 'cf7apps' !== $domain ) {
+		return $file;
+	}
+
+	$bundled_php = CF7APPS_PLUGIN_DIR . '/languages/contact-form-7-honeypot-' . $locale . '.l10n.php';
+	$bundled_mo  = CF7APPS_PLUGIN_DIR . '/languages/contact-form-7-honeypot-' . $locale . '.mo';
+
+	if ( is_string( $file ) && substr( $file, -9 ) === '.l10n.php' && is_readable( $bundled_php ) ) {
+		return $bundled_php;
+	}
+
+	if ( is_string( $file ) && substr( $file, -3 ) === '.mo' && is_readable( $bundled_mo ) ) {
+		return $bundled_mo;
+	}
+
+	return $file;
+}
+add_filter( 'load_translation_file', 'cf7apps_prefer_bundled_translation_file', 10, 3 );

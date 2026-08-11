@@ -35,17 +35,17 @@ $app->addAction('wp_ajax_fluentform-form-update', function () use ($app) {
         $data['form_id'] = $formId;
         $isValidJson = (!empty($data['formFields'])) && json_decode($data['formFields'], true);
 
-        if(!$isValidJson) {
+        if (!$isValidJson) {
             wp_send_json([
                 'message' => 'Looks like the provided JSON is invalid. Please try again or contact support',
-                'reason' => 'formFields JSON validation failed'
+                'reason' => 'formFields JSON validation failed',
             ], 422);
         }
 
         $formService = new \FluentForm\App\Services\Form\FormService();
         $form = $formService->update($data);
         wp_send_json([
-            'message' => __('The form is successfully updated.', 'fluentform')
+            'message' => __('The form is successfully updated.', 'fluentform'),
         ], 200);
     } catch (\Exception $exception) {
         wp_send_json([
@@ -144,8 +144,14 @@ $app->addAction('wp_ajax_fluentform-update-entry-user', function () use ($app, $
     }
 });
 
-$app->addAction('wp_ajax_fluentform-get-users', function () use ($app) {
-    Acl::verify('fluentform_entries_viewer');
+$app->addAction('wp_ajax_fluentform-get-users', function () use ($app, $resolveSubmissionFormId) {
+    $submissionId = absint($app->request->get('submission_id'));
+    $formId = Acl::verifyFormId(
+        $resolveSubmissionFormId($submissionId),
+        'Invalid submission id.'
+    );
+
+    Acl::verify('fluentform_manage_entries', $formId);
     $search = sanitize_text_field($app->request->get('search'));
     $users = get_users([
         'search' => "*{$search}*",
@@ -241,7 +247,7 @@ $app->addAction('wp_ajax_fluentform_renew_rest_nonce', function () {
             'error' => 'You do not have permission to do this',
         ], 403);
     }
-    
+
     wp_send_json([
         'nonce' => wp_create_nonce('wp_rest'),
     ], 200);

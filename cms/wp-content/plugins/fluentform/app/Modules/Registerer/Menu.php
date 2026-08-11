@@ -934,7 +934,13 @@ class Menu
                         $form
                     );
 
-                    if (!$formFields['fields'][$index]) {
+                    // Shape check, not truthiness: a listener that returns false
+                    // to remove an element can be handed to a LATER listener on
+                    // the same hook, whose `$item['settings'][...] = ...` makes
+                    // PHP auto-vivify false into a truthy, element-less array.
+                    // A plain falsy test would then keep that malformed stub and
+                    // read $formField['element'] off it a few lines below.
+                    if (!is_array($formField) || !isset($formField['element'])) {
                         unset($formFields['fields'][$index]);
                         continue;
                     }
@@ -960,10 +966,17 @@ class Menu
                                     $form
                                 );
 
-                                if (!$columns[$columnIndex]['fields'][$fieldIndex]) {
+                                $columnField = $columns[$columnIndex]['fields'][$fieldIndex];
+
+                                if (!is_array($columnField) || !isset($columnField['element'])) {
                                     unset($columns[$columnIndex]['fields'][$fieldIndex]);
                                 }
                             }
+
+                            // Reindex after any removal: array_values() below only
+                            // reindexes the COLUMNS, so a gap left here would encode
+                            // as a JSON object and the editor iterates a list.
+                            $columns[$columnIndex]['fields'] = array_values($columns[$columnIndex]['fields']);
                         }
 
                         $formFields['fields'][$index]['columns'] = array_values($columns);

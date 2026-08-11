@@ -52,6 +52,7 @@ function cf7apps_migrate_legacy_settings() {
         $cf7apps_settings['time_check'] = ! empty( $honeypot4cf7_config['timecheck_value'] ) ? $honeypot4cf7_config['timecheck_value'] : '';
         $cf7apps_settings['standard_auto_complete'] = ( ! empty( $honeypot4cf7_config['w3c_valid_autocomplete'][0] ) && $honeypot4cf7_config['w3c_valid_autocomplete'][0] == 'true' ) ? 1 : 0;
         $cf7apps_settings['accessibility_label'] = ( ! empty( $honeypot4cf7_config['nomessage'][0] && $honeypot4cf7_config['nomessage'][0] == 'true' ) ) ? 1 : 0;
+        $cf7apps_settings['silent_spam_response'] = ! empty( $honeypot4cf7_config['silent_spam_response'] ) ? 1 : 0;
         $cf7apps_settings['honeypot_count'] = ! empty( $honeypot4cf7_config['honeypot_count'] ) ? $honeypot4cf7_config['honeypot_count'] : 0;
         $cf7apps_settings['honeypot_install_date'] = ! empty( $honeypot4cf7_config['honeypot_install_date'] ) ? $honeypot4cf7_config['honeypot_install_date'] : time();
         $cf7apps_settings['honeypot_cf7_req_msg_dismissed'] = ! empty( $honeypot4cf7_config['honeypot_cf7_req_msg_dismissed'] ) ? $honeypot4cf7_config['honeypot_cf7_req_msg_dismissed'] : 0;
@@ -81,6 +82,7 @@ function cf7apps_get_default_settings() {
         'time_check'                        => 4,
         'standard_auto_complete'            => 0,
         'accessibility_label'               => 0,
+        'silent_spam_response'            => 0,
         'honeypot_count'                    => 0,
         'honeypot_install_date'             => time(),
         'honeypot_cf7_req_msg_dismissed'    => 0,
@@ -157,4 +159,20 @@ if ( ! function_exists( 'cf7apps_save_internal_app_settings' ) ) :
 
         return update_post_meta( $form_id, 'cf7apps_settings', $settings );
     }
+endif;
+
+/**
+ * Whether CF7 Apps Pro is active.
+ *
+ * @since 3.6.0
+ *
+ * @return bool
+ */
+if ( ! function_exists( 'cf7apps_has_pro' ) ) :
+function cf7apps_has_pro() {
+    return (bool) apply_filters(
+        'cf7apps_has_pro',
+        defined( 'CF7APPS_PRO_VERSION' )
+    );
+}
 endif;

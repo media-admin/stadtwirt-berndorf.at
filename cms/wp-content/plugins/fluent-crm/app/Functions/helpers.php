@@ -95,6 +95,14 @@ function fluentCrmTimestamp($timestamp = null)
  */
 function fluentCrmGetTimezoneString()
 {
+    // wp_timezone_string() (WP 5.3+) returns either a named zone or a ±HH:MM
+    // offset — both valid DateTimeZone inputs. The legacy guess below used
+    // gmdate('I'), which is always '0' (UTC has no DST), so offset-only sites
+    // could match a wrong non-DST zone.
+    if (function_exists('wp_timezone_string')) {
+        return wp_timezone_string();
+    }
+
     // if site timezone string exists, return it
     $timezone = get_option('timezone_string');
     if ($timezone) {
@@ -444,8 +452,17 @@ function fluentcrm_delete_list_meta($listId, $key)
  */
 function fluentcrm_get_subscriber_meta($subscriberId, $key, $deafult = '')
 {
+    // fc_subscriber_meta is shared with contact custom fields (object_type =
+    // 'custom_field'). These internal-meta helpers must exclude them, or a custom
+    // field slugged like an internal key (e.g. "unsubscribe_reason") collides
+    // with — and corrupts — the internal row (Behavioral Rule 11).
     $item = SubscriberMeta::where('key', $key)
         ->where('subscriber_id', $subscriberId)
+        ->where(function ($q) {
+            // NULL-safe exclusion: legacy rows may carry a NULL object_type and
+            // `!= 'custom_field'` alone would drop them (NULL never compares true).
+            $q->whereNull('object_type')->orWhere('object_type', '!=', 'custom_field');
+        })
         ->first();
 
     if ($item && $item->value) {
@@ -465,9 +482,14 @@ function fluentcrm_get_subscriber_meta($subscriberId, $key, $deafult = '')
 function fluentcrm_update_subscriber_meta($subscriberId, $key, $value)
 {
     $value = maybe_serialize($value);
-    // check if exists
+    // check if exists — internal meta only, never a custom_field row (Rule 11)
     $model = SubscriberMeta::where('key', $key)
         ->where('subscriber_id', $subscriberId)
+        ->where(function ($q) {
+            // NULL-safe exclusion: legacy rows may carry a NULL object_type and
+            // `!= 'custom_field'` alone would drop them (NULL never compares true).
+            $q->whereNull('object_type')->orWhere('object_type', '!=', 'custom_field');
+        })
         ->first();
 
     if ($model) {
@@ -479,6 +501,7 @@ function fluentcrm_update_subscriber_meta($subscriberId, $key, $value)
     return SubscriberMeta::create([
         'key'           => $key,
         'created_by'    => get_current_user_id(),
+        'object_type'   => 'option',
         'value'         => $value,
         'subscriber_id' => $subscriberId,
         'created_at'    => fluentCrmTimestamp()
@@ -495,6 +518,11 @@ function fluentcrm_delete_subscriber_meta($subscriberId, $key)
 {
     return SubscriberMeta::where('key', $key)
         ->where('subscriber_id', $subscriberId)
+        ->where(function ($q) {
+            // NULL-safe exclusion: legacy rows may carry a NULL object_type and
+            // `!= 'custom_field'` alone would drop them (NULL never compares true).
+            $q->whereNull('object_type')->orWhere('object_type', '!=', 'custom_field');
+        })
         ->delete();
 }
 

@@ -56,6 +56,29 @@ class ReportPolicy extends Policy
         return !$userId || !FormManagerService::hasSpecificFormsPermission($userId);
     }
 
+    private function canAccessPaymentReport(Request $request)
+    {
+        // Payment/revenue/subscription data requires the dedicated, form-scoped
+        // payment-view capability — the entry-view capability must not authorize
+        // financial aggregates.
+        $formId = $this->resolveFormId($request);
+
+        if ($formId) {
+            return Acl::hasPermission('fluentform_view_payments', $formId);
+        }
+
+        if (!Acl::hasPermission('fluentform_view_payments')) {
+            return false;
+        }
+
+        // A specific-forms manager must NOT read the all-forms (form_id 0)
+        // payment view — otherwise the per-form scope is bypassed by loading the
+        // aggregate revenue/subscription report. Mirrors canAccessOptionalFormScopedReport.
+        $userId = get_current_user_id();
+
+        return !$userId || !FormManagerService::hasSpecificFormsPermission($userId);
+    }
+
     /**
      * Check permission for any method
      *
@@ -84,7 +107,7 @@ class ReportPolicy extends Policy
 
     public function getRevenueChart(Request $request)
     {
-        return $this->canAccessRequestedForm($request);
+        return $this->canAccessPaymentReport($request);
     }
 
     public function getFormStats(Request $request)
@@ -99,7 +122,7 @@ class ReportPolicy extends Policy
 
     public function getPaymentTypes(Request $request)
     {
-        return $this->canAccessRequestedForm($request);
+        return $this->canAccessPaymentReport($request);
     }
 
     public function getCompletionRate(Request $request)
@@ -124,7 +147,7 @@ class ReportPolicy extends Policy
 
     public function getSubscriptions(Request $request)
     {
-        return $this->canAccessOptionalFormScopedReport($request);
+        return $this->canAccessPaymentReport($request);
     }
 
     public function getFormsDropdown(Request $request)
@@ -134,7 +157,7 @@ class ReportPolicy extends Policy
 
     public function netRevenue(Request $request)
     {
-        return $this->canAccessOptionalFormScopedReport($request);
+        return $this->canAccessPaymentReport($request);
     }
 
     public function submissionsAnalysis(Request $request)

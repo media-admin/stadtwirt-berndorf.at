@@ -32,7 +32,7 @@ if ( ! class_exists( 'CF7Apps_ACF_Integration_App' ) && class_exists( 'CF7Apps_A
 			$this->documentation_url  = 'https://cf7apps.com/docs/integrations/advanced-custom-field/';
 			// Use singular "Integration" so both Webhook and ACF apps
 			// share the same parent menu and appear under one accordion.
-			$this->parent_menu        = __( 'Integration', 'cf7apps' );
+			$this->parent_menu        = 'integration';
 
 			// Load CF7 integration class (doesn't require ACF to be loaded)
 			$plugin_path = plugin_dir_path( __FILE__ );

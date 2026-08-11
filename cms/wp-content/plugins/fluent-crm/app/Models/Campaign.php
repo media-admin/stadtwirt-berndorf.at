@@ -319,7 +319,7 @@ class Campaign extends Model
                 }
 
                 if ($formattedExcludedItems) {
-                    $excludedModel = $this->getSubscribeIdsByListModel($excludeItems, 'subscribed');
+                    $excludedModel = $this->getSubscribeIdsByListModel($formattedExcludedItems, 'subscribed');
                     $excludedModel->select('id');
                     $subscriberModel->whereNotIn('id', $excludedModel->getQuery());
                 }
@@ -486,10 +486,20 @@ class Campaign extends Model
         $hasListFilter = false;
         $tagIds = [];
         foreach ($items as $item) {
-            $listId = $item['list'];
-            $tagId = $item['tag'];
-            if (!$listId || !$tagId) {
+            $listId = Arr::get($item, 'list');
+            $tagId = Arr::get($item, 'tag');
+
+            // The UI submits 'all' for the unused side, but REST/MCP/partial payloads can
+            // send ''/null. Interpret a single empty side as 'all' (the evident intent);
+            // a row with BOTH sides empty carries no information and is skipped.
+            if (!$listId && !$tagId) {
                 continue;
+            }
+            if (!$listId) {
+                $listId = 'all';
+            }
+            if (!$tagId) {
+                $tagId = 'all';
             }
 
             if ($listId == 'all' && $tagId == 'all') {
@@ -510,7 +520,12 @@ class Campaign extends Model
             }
         }
 
-        if (!$willSkip && !$hasListFilter && $tagIds) {
+        if (!$willSkip && !$hasListFilter && !$queryGroups && !$tagIds) {
+            // Fail closed: no valid targeting row at all (empty or fully-invalid payload).
+            // Degrading to the unconstrained base query would target every subscriber on
+            // the include path — or exclude every subscriber on the exclude path.
+            $query->whereRaw('1 = 0');
+        } else if (!$willSkip && !$hasListFilter && $tagIds) {
             $query->filterByTags($tagIds);
         } else if (!$willSkip && $queryGroups) {
             $query->where(function ($innerQuery) use ($queryGroups) {
@@ -552,8 +567,6 @@ class Campaign extends Model
      */
     public function subscribe($subscriberIds, $emailArgs = [], $isModel = false)
     {
-        $updateIds = [];
-
         $mailHeaders = Helper::getMailHeadersFromSettings(Arr::get($this->settings, 'mailer_settings', []));
 
         if ($isModel) {
@@ -564,6 +577,13 @@ class Campaign extends Model
 
         $validStatuses = ['subscribed', 'transactional'];
 
+        // Rows are collected and written with ONE multi-row INSERT per chunk
+        // instead of a model create() per row — materialization of large
+        // campaigns was insert-bound. The hash map lets us recover the new ids
+        // afterward (email_hash is generated here and indexed).
+        $rows = [];
+        $subscribersByHash = [];
+
         foreach ($subscribers as $subscriber) {
             if (!in_array($subscriber->status, $validStatuses)) {
                 continue; // We don't want to send emails to non-subscribed members
@@ -572,11 +592,20 @@ class Campaign extends Model
             $time = fluentCrmTimestamp();
             $email = [
                 'campaign_id'   => $this->id,
-                'status'        => $this->status,
+                // Default new queue rows to 'pending' (claimable by the senders), NOT
+                // the campaign's own status: a caller adding recipients while the
+                // campaign is 'working' would otherwise create rows in a status the
+                // senders never pick up — a silent never-send. Callers that need a
+                // different row status (e.g. the materializer's 'scheduling') pass it
+                // explicitly via $emailArgs.
+                'status'        => 'pending',
                 'subscriber_id' => $subscriber->id,
                 'email_address' => $subscriber->email,
                 'email_headers' => $mailHeaders,
                 'email_hash'    => Helper::generateEmailHash(),
+                // Multi-row INSERT needs uniform columns across rows, so the
+                // A/B subject id is always present (null when no subject wins).
+                'email_subject_id' => null,
                 'created_at'    => $time,
                 'updated_at'    => $time
             ];
@@ -601,24 +630,72 @@ class Campaign extends Model
              */
             $email['email_subject'] = apply_filters('fluent_crm/parse_campaign_email_text', $emailSubject, $subscriber);
 
-            $email['email_body'] = $this->email_body;
+            // When a campaign row exists, the queue row carries NO body copy:
+            // send-time rendering (CampaignEmail::getEmailBody) and the admin
+            // preview both read from $campaign->email_body, so the per-row
+            // LONGTEXT copy was write-then-erase churn (~10GB for a 100KB email
+            // to 100k contacts) that nothing ever read. Callers that need a
+            // per-row body either have no campaign row (falsy id, keeps the
+            // copy) or pass email_body via $emailArgs, which overrides below
+            // (funnel/sequence/SMS models override subscribe() entirely).
+            $email['email_body'] = $this->id ? '' : $this->email_body;
 
             if ($emailArgs) {
                 $email = wp_parse_args($emailArgs, $email);
             }
 
-            $inserted = CampaignEmail::create($email);
+            // The raw multi-row INSERT bypasses model mutators, so apply the
+            // email_headers serialization (setEmailHeadersAttribute) here.
+            if (isset($email['email_headers']) && !is_string($email['email_headers'])) {
+                $email['email_headers'] = maybe_serialize($email['email_headers']);
+            }
 
             $subscriber->campaign_id = $this->id;
-            $subscriber->email_id = $inserted->id;
+            $subscribersByHash[$email['email_hash']] = $subscriber;
 
-            $updateIds[] = $inserted->id;
+            $rows[] = $email;
         }
 
-        $emailCount = $this->getEmailCount();
-        if ($emailCount != $this->recipients_count) {
-            $this->recipients_count = $emailCount;
-            $this->save();
+        if (!$rows) {
+            return [];
+        }
+
+        // One bulk INSERT per chunk. Safe to bypass the ORM here: CampaignEmail
+        // registers no creating/created hooks, timestamps are set explicitly in
+        // each row, and email_type falls back to the column default exactly as
+        // create() did.
+        CampaignEmail::insert($rows);
+
+        // Recover the new ids with one indexed lookup on the hashes generated
+        // above — preserves this method's contract of returning the inserted
+        // ids and the in-memory $subscriber->email_id side effect.
+        $updateIds = [];
+        $insertedRows = CampaignEmail::whereIn('email_hash', array_keys($subscribersByHash))
+            ->get(['id', 'email_hash']);
+
+        foreach ($insertedRows as $insertedRow) {
+            $updateIds[] = $insertedRow->id;
+            if (isset($subscribersByHash[$insertedRow->email_hash])) {
+                $subscribersByHash[$insertedRow->email_hash]->email_id = $insertedRow->id;
+            }
+        }
+
+        // Increment by the rows actually inserted in this chunk instead of running a
+        // growing-range COUNT(*) over fc_campaign_emails after every chunk (~5,000
+        // full counts across a 100k materialization). The increment is DB-side
+        // atomic: concurrent subscribe() callers on separate model instances
+        // (funnel enrollments into a reference campaign, overlapping chunk
+        // workers) would lose updates with a read-modify-write attribute save.
+        // maybeDeleteDuplicates() additionally reconciles the total against the
+        // queue when a materialization completes.
+        if ($updateIds) {
+            fluentCrmDb()->table('fc_campaigns')->where('id', $this->id)
+                ->increment('recipients_count', count($updateIds));
+
+            // Keep the in-memory model consistent without marking the column
+            // dirty, so a later unrelated save() can't write a stale total back.
+            $this->recipients_count = absint($this->recipients_count) + count($updateIds);
+            $this->syncOriginalAttribute('recipients_count');
         }
 
         return $updateIds;
@@ -663,7 +740,17 @@ class Campaign extends Model
 
         $priorities = $subjects->pluck('key')->toArray();
         $count = count($priorities);
-        $num = wp_rand(0, array_sum($priorities));
+        $total = array_sum($priorities);
+
+        // All weights zero: fall back to a uniform pick.
+        if ($total <= 0) {
+            return $subjects[wp_rand(0, $count - 1)];
+        }
+
+        // wp_rand(1, total) with cumulative comparison: a 0-weight subject can never
+        // be selected and each weight unit maps to exactly one outcome — the old
+        // wp_rand(0, total) both allowed 0-weight picks and skewed by ±1.
+        $num = wp_rand(1, $total);
 
         $i = $n = 0;
         while ($i < $count) {
@@ -784,7 +871,13 @@ class Campaign extends Model
             ->count();
     }
 
-    public function maybeDeleteDuplicates()
+    /**
+     * Delete duplicate queue rows for this campaign — same subscriber, keep the
+     * lowest id — regardless of row status. Safe to call at any point of
+     * materialization; the pre-check short-circuits on one indexed probe when
+     * there are no duplicates (the common case).
+     */
+    public function deleteDuplicateEmails()
     {
         global $wpdb;
         $table = $wpdb->prefix . 'fc_campaign_emails';
@@ -796,28 +889,39 @@ class Campaign extends Model
             $this->id
         ));
 
-        if (!$hasDuplicates) {
-            return $this;
+        if ($hasDuplicates) {
+            // Delete duplicates, keeping the row with the lowest id per subscriber.
+            $wpdb->query($wpdb->prepare(
+                "DELETE e1 FROM {$table} e1
+                 INNER JOIN {$table} e2
+                 ON e1.campaign_id = e2.campaign_id
+                    AND e1.subscriber_id = e2.subscriber_id
+                    AND e1.id > e2.id
+                 WHERE e1.campaign_id = %d
+                    AND e1.subscriber_id IS NOT NULL",
+                $this->id
+            ));
         }
 
-        // Delete duplicates, keeping the row with the lowest id per subscriber.
-        $deleted = $wpdb->query($wpdb->prepare(
-            "DELETE e1 FROM {$table} e1
-             INNER JOIN {$table} e2
-             ON e1.campaign_id = e2.campaign_id
-                AND e1.subscriber_id = e2.subscriber_id
-                AND e1.id > e2.id
-             WHERE e1.campaign_id = %d
-                AND e1.subscriber_id IS NOT NULL",
-            $this->id
-        ));
+        return $this;
+    }
 
-        if ($deleted) {
-            $emailCount = $this->getEmailCount();
-            if ($emailCount != $this->recipients_count) {
-                $this->recipients_count = $emailCount;
-                $this->save();
-            }
+    public function maybeDeleteDuplicates()
+    {
+        $this->deleteDuplicateEmails();
+
+        // Authoritative recount, deliberately NOT gated on duplicates: this is the
+        // completion-time reconciliation that guarantees the persisted total
+        // matches the queue even if incremental accounting drifted for any reason.
+        $emailCount = $this->getEmailCount();
+        if ($emailCount != $this->recipients_count) {
+            // Targeted write: a whole-model save() would also persist any other
+            // dirty attribute the caller happens to hold (e.g. status), racing
+            // concurrent status writes like an admin un-schedule.
+            $this->recipients_count = $emailCount;
+            fluentCrmDb()->table('fc_campaigns')->where('id', $this->id)
+                ->update(['recipients_count' => $emailCount]);
+            $this->syncOriginalAttribute('recipients_count');
         }
 
         return $this;
@@ -900,9 +1004,9 @@ class Campaign extends Model
         }
 
         return add_query_arg([
-            'fluentcrm'     => 1,
-            'route'         => 'email_preview',
-            'fc_newsletter' => $shareId
+            FLUENTCRM_EXTERNAL_URL_PARAM => 1,
+            'route'                      => 'email_preview',
+            'fc_newsletter'              => $shareId
         ], site_url());
     }
 

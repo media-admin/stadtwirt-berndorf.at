@@ -12,14 +12,16 @@ trait ReportingHelperTrait
     {
         $from = $from ?: '-30 days';
 
-        return new \DateTime($from);
+        // Site timezone: the compared columns are written with current_time(),
+        // so UTC-based bounds shift every day boundary by the site offset.
+        return new \DateTime($from, wp_timezone());
     }
 
     protected function makeToDate($to)
     {
         $to = $to ?: '+1 days';
 
-        return new \DateTime($to);
+        return new \DateTime($to, wp_timezone());
     }
 
     protected function makeDatePeriod($from, $to, $interval = null)

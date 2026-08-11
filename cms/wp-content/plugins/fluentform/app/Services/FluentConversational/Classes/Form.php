@@ -99,6 +99,7 @@ class Form
             'fonts'              => Fonts::getFonts(),
             'has_pro'            => defined('FLUENTFORMPRO'),
             'has_pro_share_page' => defined('FLUENTFORMPRO') && class_exists('\FluentFormPro\classes\SharePage\SharePage'),
+            'upgrade_url'        => fluentform_upgrade_url(),
         ]);
 
         wp_enqueue_style(
@@ -569,7 +570,10 @@ class Form
         $varName = 'fluent_forms_global_var_' . $instanceId;
 
         $localizedVars = [
-            'fluent_forms_admin_nonce' => wp_create_nonce('fluent_forms_admin_nonce'),
+            // SECURITY (H-01): do not emit the admin AJAX nonce on the public conversational form
+            // page — the public form JS never uses it, and on a page an admin happens to view it
+            // would embed that admin's own valid nonce. Emit it only for a viewer who could use it.
+            'fluent_forms_admin_nonce' => current_user_can('fluentform_dashboard_access') ? wp_create_nonce('fluent_forms_admin_nonce') : '',
             'ajaxurl'                  => admin_url('admin-ajax.php'),
             'nonce'                    => wp_create_nonce(),
             'form'                     => $this->getLocalizedForm($form),
@@ -682,6 +686,25 @@ class Form
             '_wp_http_referer'                            => esc_attr(wp_unslash(wpFluentForm('request')->server('REQUEST_URI'))),
         ];
 
+        // SECURITY (FINDING-25): carry the anti-spam honeypot field (empty) and a freshly minted
+        // token in the conversational submission. The conversational JS forwards every extra_input
+        // into the submission payload, so these reach the server-side checks — which no longer skip
+        // conversational forms — WITHOUT any client/JS change. This closes the bypass where adding
+        // isFFConversational=1 disabled honeypot + token protection entirely.
+        //
+        // The token itself is disabled for conversational forms server-side (see the
+        // fluentform/token_based_spam_protection_status filter in actions.php): its ~1h TTL cannot be
+        // refreshed by the conversational JS, so behind a full-page cache the baked-in token would
+        // expire and reject every submission. getConversationalTokenInput() therefore returns [] for
+        // conversational forms; the honeypot (static empty field) still applies.
+        $honeyPot = new \FluentForm\App\Modules\Form\HoneyPot(wpFluentForm());
+        $inputs = array_merge($inputs, $honeyPot->getConversationalHoneypotInput($formId));
+
+        $inputs = array_merge(
+            $inputs,
+            \FluentForm\App\Modules\Form\TokenBasedSpamProtection::getConversationalTokenInput($formId)
+        );
+
         return apply_filters('fluentform/conversational_extra_inputs', $inputs, $formId);
     }
 
@@ -774,7 +797,10 @@ class Form
         $designSettings = $this->getDesignSettings($formId);
 
         $localizedVars = [
-            'fluent_forms_admin_nonce' => wp_create_nonce('fluent_forms_admin_nonce'),
+            // SECURITY (H-01): do not emit the admin AJAX nonce on the public conversational form
+            // page — the public form JS never uses it, and on a page an admin happens to view it
+            // would embed that admin's own valid nonce. Emit it only for a viewer who could use it.
+            'fluent_forms_admin_nonce' => current_user_can('fluentform_dashboard_access') ? wp_create_nonce('fluent_forms_admin_nonce') : '',
             'ajaxurl'                  => admin_url('admin-ajax.php'),
             'nonce'                    => wp_create_nonce(),
             'form'                     => $this->getLocalizedForm($form),

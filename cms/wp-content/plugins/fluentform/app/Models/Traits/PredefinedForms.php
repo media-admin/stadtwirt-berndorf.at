@@ -9,6 +9,21 @@ trait PredefinedForms
 {
     public static function resolvePredefinedForm($attributes = [])
     {
+        // A create request must name a template. Without this, Arr::get($map, null)
+        // inside findPredefinedForm() returns the WHOLE template map — a non-empty
+        // array that sails past both guards below and yields a form persisted with
+        // NULL form_fields. findPredefinedForm() itself keeps that whole-map
+        // behaviour on purpose: FormService::templates() depends on it.
+        $hasTemplateId = Arr::get($attributes, 'predefined')
+            || 'blank_conversational' === Arr::get($attributes, 'type');
+
+        if (!$hasTemplateId) {
+            throw new Exception(
+                // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception message, not output
+                __("The selected template couldn't be found.", 'fluentform')
+            );
+        }
+
         $predefinedForm = static::findPredefinedForm($attributes);
 
         if (!$predefinedForm) {

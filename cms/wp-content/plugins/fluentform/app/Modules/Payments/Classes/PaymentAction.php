@@ -467,12 +467,18 @@ class PaymentAction
         if (!$quantity) {
             return 0;
         }
-        return intval($quantity);
+        // SECURITY (FINDING-22): clamp a user-supplied quantity to a non-negative integer so a
+        // negative quantity cannot flip a line total and subtract from the order.
+        return max(0, intval($quantity));
     }
 
     private function pushItem($data)
     {
-        if (!$data['item_price']) {
+        // SECURITY (FINDING-22): reject non-positive prices. A user-controlled "name your price"
+        // / donation amount (or a dynamic-default numeric field) is otherwise taken verbatim, and
+        // a negative value subtracts from the order total — forcing it to exactly 0 makes
+        // maybeHandlePayment() skip the gateway entirely, yielding a free fulfilled order.
+        if (!is_numeric($data['item_price']) || floatval($data['item_price']) <= 0) {
             return;
         }
         $data['item_price'] = floatval($data['item_price'] * 100);
@@ -772,7 +778,12 @@ class PaymentAction
         }
 
         if ($verifiedIds) {
-            OrderItem::whereNotIn('id', $verifiedIds)->delete();
+            // SECURITY (PRO-06): scope this stale-item cleanup to the current submission; the
+            // unscoped whereNotIn deleted every other submission's order_items site-wide (and
+            // fired on ordinary payment retries — a live data-loss bug).
+            OrderItem::where('submission_id', $existing->id)
+                ->whereNotIn('id', $verifiedIds)
+                ->delete();
         }
 
         return true;

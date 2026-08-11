@@ -54,9 +54,22 @@ class CompanyPolicy extends BasePolicy
         return $this->verifyRequest($request);
     }
 
+    /**
+     * Deleting a company note permanently removes data, so it requires the stronger delete
+     * permission — matching how deleting a company itself is gated via delete() — instead of
+     * the manage permission used for creating/updating notes. See repo Rule 6.
+     *
+     * @param  \FluentCrm\Framework\Http\Request\Request $request
+     * @return Boolean
+     */
+    public function deleteNote(Request $request)
+    {
+        return $this->isEnabled() && $this->currentUserCan('fcrm_manage_contact_cats_delete');
+    }
+
     public function bulkDeleteNotes(Request $request)
     {
-        return $this->verifyRequest($request);
+        return $this->isEnabled() && $this->currentUserCan('fcrm_manage_contact_cats_delete');
     }
 
     public function deleteSubscribes(Request $request)

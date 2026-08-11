@@ -87,6 +87,7 @@ class CF7Apps {
     public function includes() {
         require_once 'cf7apps-functions.php';
         require_once 'abstract/abstract-cf7apps-app.php';
+        require_once 'class-cf7apps-recommended-plugins.php';
         require_once 'apps/cf7apps-init-apps.php';
         require_once 'rest-api/class-cf7apps-base-rest-api.php';
         require_once 'rest-api/wp-admin/v1/rest-api.php';
@@ -186,11 +187,17 @@ class CF7Apps {
             )
         );
 
+        wp_set_script_translations(
+            'cf7apps-script',
+            'cf7apps',
+            CF7APPS_PLUGIN_DIR . '/languages'
+        );
+
         wp_localize_script(
             'cf7apps-script',
             'CF7Apps',
             array(
-                'hasPro'        => true,
+                'hasPro'        => cf7apps_has_pro(),
                 'restURL'       => rest_url(),
                 'nonce'         => wp_create_nonce( 'wp_rest' ),
                 'assetsURL'     => CF7APPS_PLUGIN_DIR_URL . '/assets',

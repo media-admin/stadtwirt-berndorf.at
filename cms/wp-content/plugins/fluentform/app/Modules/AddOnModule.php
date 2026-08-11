@@ -102,7 +102,7 @@ class AddOnModule
     public function getPremiumAddOns()
     {
         $purchaseUrl = fluentform_upgrade_url();
-        return [
+        $addOns = [
             'paypal' => [
                 'title'        => __('PayPal', 'fluentform'),
                 'description'  => __('Accept Payments via paypal as a part of your form submission', 'fluentform'),
@@ -440,6 +440,13 @@ class AddOnModule
                 'category'     => 'crm',
             ],
         ];
+
+        foreach ($addOns as $key => &$addOn) {
+            $feature = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $key));
+            $addOn['purchase_url'] = fluentform_upgrade_url('feature_lock_' . $feature);
+        }
+
+        return $addOns;
     }
 
     /**

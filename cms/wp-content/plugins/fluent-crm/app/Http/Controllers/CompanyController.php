@@ -517,7 +517,19 @@ class CompanyController extends Controller
 
         $data = Sanitize::company($allData);
 
-        return Arr::only($data, array_keys($allData));
+        // Only allow real, user-editable company fields to be mass-assigned. System-managed
+        // columns (hash, meta, created_at, updated_at) are deliberately excluded so a client
+        // payload cannot overwrite them via createOrUpdate()->fill(). `id` is kept because
+        // createOrUpdate() uses it to locate the record on update (it is guarded, never filled),
+        // and `custom_values` is handled separately (merged into meta) by createOrUpdate().
+        $allowedFields = [
+            'id', 'name', 'owner_id', 'industry', 'type', 'email', 'phone',
+            'address_line_1', 'address_line_2', 'postal_code', 'city', 'state', 'country',
+            'timezone', 'employees_number', 'description', 'logo', 'website',
+            'linkedin_url', 'facebook_url', 'twitter_url', 'date_of_start', 'custom_values',
+        ];
+
+        return Arr::only($data, $allowedFields);
     }
 
     private function makeHttpUrl($url)
@@ -745,6 +757,12 @@ class CompanyController extends Controller
 
         $note = Sanitize::contactNote($note);
 
+        // Only persist server-trusted fields on this endpoint (mirrors updateNote): authorship
+        // is always the current user, and note metadata like parent_id/status is not
+        // client-settable here. Prevents forging note authorship / re-threading via the payload.
+        $note = Arr::only($note, ['subscriber_id', 'title', 'description', 'type', 'created_at']);
+        $note['created_by'] = get_current_user_id();
+
         $subscriberNote = CompanyNote::create(wp_unslash($note));
 
         /**
@@ -782,7 +800,11 @@ class CompanyController extends Controller
 
         $note = Sanitize::contactNote($note);
 
-        $companyNote = CompanyNote::findOrFail($noteId);
+        // Scope the note to this company so a note belonging to another company cannot be
+        // edited by pairing its id with a different (accessible) company route id.
+        $companyNote = CompanyNote::where('id', $noteId)
+            ->where('subscriber_id', $company->id)
+            ->firstOrFail();
         $companyNote->fill($note);
         $companyNote->save();
 
@@ -805,16 +827,22 @@ class CompanyController extends Controller
     public function deleteNote($id, $noteId)
     {
         $company = Company::findOrFail($id);
-        CompanyNote::where('id', $noteId)->delete();
+        // Scope the delete to this company so a note belonging to another company cannot be
+        // deleted by pairing its id with a different (accessible) company route id.
+        $deleted = CompanyNote::where('id', $noteId)
+            ->where('subscriber_id', $company->id)
+            ->delete();
 
-        /**
-         * Subscriber's Note Delete
-         *
-         * @param int $noteId Note ID.
-         * @param Company $company Company Model.
-         * @since 1.0
-         */
-        do_action('fluent_crm/company_note_deleted', $noteId, $company);
+        if ($deleted) {
+            /**
+             * Subscriber's Note Delete
+             *
+             * @param int $noteId Note ID.
+             * @param Company $company Company Model.
+             * @since 1.0
+             */
+            do_action('fluent_crm/company_note_deleted', $noteId, $company);
+        }
 
         return $this->sendSuccess([
             'message' => __('Note successfully deleted', 'fluent-crm')
@@ -900,6 +928,20 @@ class CompanyController extends Controller
         $company = Company::findOrFail($companyId);
         $sectionId = $request->get('section_provider');
 
+        /**
+         * Filter the company profile section content for a specific section ID.
+         *
+         * The dynamic portion of the hook name, `$sectionId`, refers to the section provider.
+         *
+         * Security: `content_html` is rendered as raw HTML in the admin UI (Vue v-html)
+         * without client-side sanitization. Producers hooking this filter MUST escape any
+         * user-authored data (e.g. via esc_html() / wp_kses_post()) before returning it, to
+         * prevent stored XSS in the admin. Structural markup and intentional rich content
+         * (styles, iframes, scripts) are allowed by design.
+         *
+         * @param array  An array with `heading` and `content_html` keys.
+         * @param object $company The company object.
+         */
         return apply_filters('fluent_crm/company_profile_section_' . $sectionId, [
             'heading'      => '',
             'content_html' => ''

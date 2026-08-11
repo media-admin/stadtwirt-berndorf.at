@@ -87,7 +87,9 @@ class FormsController extends Controller
                 ->whereIn('id', $formIds);
 
             if ($search) {
-                $allFormsQuery->where('title', 'LIKE', '%' . $search . '%');
+                // Escape LIKE wildcards (%, _) so the term matches literally, not as wildcards.
+                global $wpdb;
+                $allFormsQuery->where('title', 'LIKE', '%' . $wpdb->esc_like($search) . '%');
             }
             $allForms = $allFormsQuery->orderBy('id', 'DESC')
                 ->limit($limit)
@@ -385,6 +387,11 @@ class FormsController extends Controller
         $limit = $request->get('per_page', 10);
         $offset = ($page - 1) * $limit;
         $search = sanitize_text_field($request->get('search', ''));
+        if ($search) {
+            // Escape LIKE wildcards (%, _) so the term matches literally, not as wildcards.
+            global $wpdb;
+            $search = $wpdb->esc_like($search);
+        }
 
         // Get total count
         $totalQuery = fluentCrmDb()->table('fluentform_submissions')
@@ -451,6 +458,25 @@ class FormsController extends Controller
 
     public function getEntry(Request $request, $formId, $id)
     {
+        // Guard the Acl call: the Acl class ships with Fluent Forms, so it must not be
+        // referenced when Fluent Forms is inactive (would otherwise be a fatal error).
+        if (!defined('FLUENTFORM')) {
+            return $this->sendError([
+                'message' => __('Fluent Forms is not installed', 'fluent-crm'),
+                'entry'   => []
+            ]);
+        }
+
+        // Mirror the entry-viewer ACL enforced on the list view (getEntries): a manager
+        // without Fluent Forms' entry-viewer permission for this form must not be able to
+        // read an individual submission by id (contains PII).
+        if (!Acl::hasPermission('fluentform_entries_viewer', $formId)) {
+            return $this->sendError([
+                'message' => __('You do not have permission to view this entry', 'fluent-crm'),
+                'entry'   => []
+            ]);
+        }
+
         $dataView = apply_filters('fluent_crm/dynamic_contact_item_view_fluentform', [
             'content_html' => 'No data found'
         ], [

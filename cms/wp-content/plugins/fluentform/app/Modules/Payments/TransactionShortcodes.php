@@ -232,7 +232,7 @@ class TransactionShortcodes
             $transaction->formatted_date = date_i18n($viewConfig['date_time_format'], strtotime($transaction->created_at));
 
             if (!$transaction->transaction_hash) {
-                $hash = md5(wp_generate_uuid4() . wp_rand(0, 1000));
+                $hash = wp_generate_password(32, false);
                 Transaction::where('id', $transaction->id)
                     ->update(['transaction_hash' => $hash]);
                 $transaction->transaction_hash = $hash;
@@ -293,7 +293,7 @@ class TransactionShortcodes
 
         foreach ($transactions as $transaction) {
             if (!$transaction->transaction_hash) {
-                $hash = md5(wp_generate_uuid4() . wp_rand(0, 1000));
+                $hash = wp_generate_password(32, false);
                 Transaction::where('id', $transaction->id)
                     ->update(['transaction_hash' => $hash]);
                 $transaction->transaction_hash = $hash;

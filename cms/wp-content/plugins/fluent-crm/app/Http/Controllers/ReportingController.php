@@ -7,7 +7,6 @@ use FluentCrm\App\Models\CampaignEmail;
 use FluentCrm\App\Models\Funnel;
 use FluentCrm\App\Models\FunnelSubscriber;
 use FluentCrm\App\Models\Lists;
-use FluentCrm\App\Models\Subscriber;
 use FluentCrm\App\Models\Tag;
 use FluentCrm\App\Hooks\Handlers\Scheduler;
 use FluentCrm\App\Services\Reporting;
@@ -36,8 +35,10 @@ class ReportingController extends Controller
 
         $currentStats = $reporting->getSubscribersGrowth($from, $to, $tagId, $listId);
 
-        $currentFrom = $from ?: gmdate('Y-m-d', strtotime('-30 days'));
-        $currentTo = $to ?: gmdate('Y-m-d', strtotime('+1 day'));
+        // Derive defaults from the SITE-LOCAL clock — created_at is written in site
+        // time, so UTC-based day boundaries shift the window near the date line.
+        $currentFrom = $from ?: gmdate('Y-m-d', current_time('timestamp') - 30 * DAY_IN_SECONDS);
+        $currentTo = $to ?: gmdate('Y-m-d', current_time('timestamp') + DAY_IN_SECONDS);
 
         $dataSets = [
             [
@@ -183,13 +184,21 @@ class ReportingController extends Controller
         $selectedTypes = array_values(array_filter(array_map('sanitize_text_field', (array)$request->get('types', []))));
         $types = CampaignEmail::expandEmailTypes($selectedTypes);
 
-        $emails = CampaignEmail::orderBy('scheduled_at', 'DESC')
-            ->with('subscriber', 'campaign')
+        // With no WHERE clause an ORDER BY scheduled_at cannot use the
+        // (status, scheduled_at) composite index and filesorts the whole table.
+        // id DESC gives the same recency ordering served by the primary key;
+        // with a status filter the composite index serves scheduled_at directly.
+        $emailsQuery = CampaignEmail::with('subscriber', 'campaign');
+
+        if ($status) {
+            $emailsQuery->where('status', $status)->orderBy('scheduled_at', 'DESC');
+        } else {
+            $emailsQuery->orderBy('id', 'DESC');
+        }
+
+        $emails = $emailsQuery
             ->when($search, function ($q) use ($search) {
                 return $this->applyEmailSearchFilter($q, $search);
-            })
-            ->when($status, function ($q) use ($status) {
-                return $q->where('status', $status);
             })
             ->when($types, function ($q) use ($types) {
                 return $q->whereIn('email_type', $types);
@@ -272,14 +281,20 @@ class ReportingController extends Controller
         $containsLike = '%' . $escapedSearch . '%';
         $emailLike = strpos($search, '@') !== false ? $escapedSearch . '%' : $containsLike;
 
+        // Match source campaign titles and recipient emails via non-correlated
+        // IN subqueries: MySQL materializes each once per statement — keeping
+        // the perf win over the old per-row correlated whereHas at 1M+ rows —
+        // without loading an unbounded ID list into PHP. fc_campaigns is
+        // queried directly (not through the Campaign model) so funnel/sequence
+        // email types match too; the model's global 'type' scope would drop them.
         return $query->where(function ($subQuery) use ($containsLike, $emailLike) {
             $subQuery->where('email_subject', 'LIKE', $containsLike)
                 ->orWhere('email_address', 'LIKE', $emailLike)
-                ->orWhereHas('campaign', function ($campaignQuery) use ($containsLike) {
-                    $campaignQuery->where('title', 'LIKE', $containsLike);
+                ->orWhereIn('campaign_id', function ($q) use ($containsLike) {
+                    $q->select('id')->from('fc_campaigns')->where('title', 'LIKE', $containsLike);
                 })
-                ->orWhereHas('subscriber', function ($subscriberQuery) use ($emailLike) {
-                    $subscriberQuery->where('email', 'LIKE', $emailLike);
+                ->orWhereIn('subscriber_id', function ($q) use ($emailLike) {
+                    $q->select('id')->from('fc_subscribers')->where('email', 'LIKE', $emailLike);
                 });
         });
     }
@@ -424,29 +439,35 @@ class ReportingController extends Controller
             ->orderBy('created_at', 'DESC')
             ->paginate($limit);
 
-        $totalSubscribers = 0;
-        $totalCompleted = 0;
-        $totalInProgress = 0;
+        // One grouped aggregate for the whole page instead of 4 queries per funnel.
+        $funnelIds = [];
+        foreach ($funnels as $funnel) {
+            $funnelIds[] = $funnel->id;
+        }
+
+        $pageAggregates = [];
+        if ($funnelIds) {
+            $aggregateRows = FunnelSubscriber::whereIn('funnel_id', $funnelIds)
+                ->groupBy('funnel_id')
+                ->select('funnel_id')
+                ->selectRaw('COUNT(DISTINCT subscriber_id) as total_subscribers')
+                ->selectRaw("SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed_count")
+                ->selectRaw("SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as in_progress_count")
+                ->selectRaw('MAX(last_executed_time) as last_run_at')
+                ->get();
+
+            foreach ($aggregateRows as $aggregateRow) {
+                $pageAggregates[$aggregateRow->funnel_id] = $aggregateRow;
+            }
+        }
 
         foreach ($funnels as $funnel) {
-            $funnel->total_subscribers = FunnelSubscriber::where('funnel_id', $funnel->id)
-                ->distinct()
-                ->count('subscriber_id');
+            $aggregate = isset($pageAggregates[$funnel->id]) ? $pageAggregates[$funnel->id] : null;
 
-            $funnel->completed_count = FunnelSubscriber::where('funnel_id', $funnel->id)
-                ->where('status', 'completed')
-                ->count();
-
-            $funnel->in_progress_count = FunnelSubscriber::where('funnel_id', $funnel->id)
-                ->where('status', 'active')
-                ->count();
-
-            // Last run time
-            $lastRun = FunnelSubscriber::where('funnel_id', $funnel->id)
-                ->whereNotNull('last_executed_time')
-                ->orderByDesc('last_executed_time')
-                ->first();
-            $funnel->last_run_at = $lastRun ? $lastRun->last_executed_time : null;
+            $funnel->total_subscribers = $aggregate ? (int)$aggregate->total_subscribers : 0;
+            $funnel->completed_count = $aggregate ? (int)$aggregate->completed_count : 0;
+            $funnel->in_progress_count = $aggregate ? (int)$aggregate->in_progress_count : 0;
+            $funnel->last_run_at = $aggregate ? $aggregate->last_run_at : null;
 
             // Recent 3 subscribers who entered
             $recentEntries = FunnelSubscriber::where('funnel_id', $funnel->id)
@@ -469,37 +490,81 @@ class ReportingController extends Controller
                     'entered_at' => $entry->created_at,
                 ];
             })->filter()->values();
-
-            $totalSubscribers += $funnel->total_subscribers;
-            $totalCompleted += $funnel->completed_count;
-            $totalInProgress += $funnel->in_progress_count;
         }
 
-        // Top 5 automations by total subscribers (most triggered)
-        $topAutomations = Funnel::where('status', 'published')
-            ->get()
-            ->map(function ($funnel) {
-                $funnel->trigger_count = FunnelSubscriber::where('funnel_id', $funnel->id)
-                    ->count();
-                return $funnel;
-            })
-            ->sortByDesc('trigger_count')
-            ->take(5)
-            ->values()
-            ->map(function ($funnel) {
-                return [
-                    'id'            => $funnel->id,
-                    'title'         => $funnel->title,
-                    'trigger_name'  => $funnel->trigger_name,
-                    'trigger_count' => $funnel->trigger_count,
-                ];
-            });
+        // The Top-5 ranking and the global overview totals each aggregate over
+        // every funnel-subscriber row of published funnels, so they scale with
+        // lifetime automation history rather than page size. Cache them for 5
+        // minutes (transient — survives across requests without an object cache)
+        // instead of rescanning on every interactive report load. TTL-only
+        // invalidation by design: hooking invalidation into enrollment writes
+        // would touch the hottest write path for a dashboard stat. The per-page
+        // funnel stats above stay live.
+        $overviewStats = get_transient('fluent_crm_automation_overview_stats');
+
+        if (!is_array($overviewStats) || !isset($overviewStats['top_automations'], $overviewStats['totals'])) {
+            // Top 5 automations by total subscribers (most triggered) — one grouped
+            // query instead of a COUNT per published funnel.
+            $topAutomations = FunnelSubscriber::join('fc_funnels', function ($join) {
+                    $join->on('fc_funnel_subscribers.funnel_id', '=', 'fc_funnels.id')
+                        ->where('fc_funnels.status', '=', 'published')
+                        ->where('fc_funnels.type', '=', 'funnels');
+                })
+                ->groupBy('fc_funnel_subscribers.funnel_id', 'fc_funnels.title', 'fc_funnels.trigger_name')
+                ->select('fc_funnel_subscribers.funnel_id', 'fc_funnels.title', 'fc_funnels.trigger_name')
+                ->selectRaw('COUNT(*) as trigger_count')
+                ->orderByDesc('trigger_count')
+                ->limit(5)
+                ->get()
+                ->map(function ($row) {
+                    return [
+                        'id'            => $row->funnel_id,
+                        'title'         => $row->title,
+                        'trigger_name'  => $row->trigger_name,
+                        'trigger_count' => (int)$row->trigger_count,
+                    ];
+                })
+                ->values()
+                ->toArray();
+
+            // Overview totals are GLOBAL (they're presented as such), not sums of the
+            // current page. COUNT(DISTINCT funnel_id, subscriber_id) preserves the
+            // per-funnel-unique enrollment semantics of the old per-funnel counts.
+            // These aggregates have to name the pivot table explicitly (`status`
+            // is ambiguous across the join), and raw fragments bypass the query
+            // grammar — so the prefix is resolved by hand.
+            global $wpdb;
+            $funnelSubscribersTable = $wpdb->prefix . 'fc_funnel_subscribers';
+
+            $globalAggregate = FunnelSubscriber::join('fc_funnels', function ($join) {
+                    $join->on('fc_funnel_subscribers.funnel_id', '=', 'fc_funnels.id')
+                        ->where('fc_funnels.status', '=', 'published')
+                        ->where('fc_funnels.type', '=', 'funnels');
+                })
+                ->selectRaw("COUNT(DISTINCT `{$funnelSubscribersTable}`.`funnel_id`, `{$funnelSubscribersTable}`.`subscriber_id`) as subscribers")
+                ->selectRaw("SUM(CASE WHEN `{$funnelSubscribersTable}`.`status` = 'completed' THEN 1 ELSE 0 END) as completed")
+                ->selectRaw("SUM(CASE WHEN `{$funnelSubscribersTable}`.`status` = 'active' THEN 1 ELSE 0 END) as in_progress")
+                ->first();
+
+            $overviewStats = [
+                'top_automations' => $topAutomations,
+                'totals'          => [
+                    'subscribers' => $globalAggregate ? (int)$globalAggregate->subscribers : 0,
+                    'completed'   => $globalAggregate ? (int)$globalAggregate->completed : 0,
+                    'in_progress' => $globalAggregate ? (int)$globalAggregate->in_progress : 0,
+                ],
+            ];
+
+            set_transient('fluent_crm_automation_overview_stats', $overviewStats, 5 * MINUTE_IN_SECONDS);
+        }
+
+        $topAutomations = $overviewStats['top_automations'];
 
         $overview = [
             'total'        => Funnel::where('status', 'published')->count(),
-            'subscribers'  => $totalSubscribers,
-            'completed'    => $totalCompleted,
-            'in_progress'  => $totalInProgress,
+            'subscribers'  => $overviewStats['totals']['subscribers'],
+            'completed'    => $overviewStats['totals']['completed'],
+            'in_progress'  => $overviewStats['totals']['in_progress'],
         ];
 
         return $this->sendSuccess([

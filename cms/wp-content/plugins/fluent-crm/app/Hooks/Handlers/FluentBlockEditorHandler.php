@@ -112,7 +112,10 @@ class FluentBlockEditorHandler
 
         // REST route for autosave
         add_action('rest_api_init', function () {
-            register_rest_route('fluent-crm/v1', '/editor-autosave', [
+            $ns = FluentCrm()->config->get('app.rest_namespace');
+            $restNamespace = $ns . '/v2';
+
+            register_rest_route($ns . '/v1', '/editor-autosave', [
                 'methods'             => 'POST',
                 'callback'            => [$this, 'handleEditorAutosave'],
                 'permission_callback' => function () {
@@ -121,7 +124,7 @@ class FluentBlockEditorHandler
                 }
             ]);
 
-            register_rest_route('fluent-crm/v2', '/editor/cart-products', [
+            register_rest_route($restNamespace, '/editor/cart-products', [
                 'methods'             => 'GET',
                 'callback'            => [$this, 'handleCartProductsListing'],
                 'permission_callback' => function () {
@@ -134,31 +137,31 @@ class FluentBlockEditorHandler
                 return is_user_logged_in() && PermissionManager::currentUserCan('fcrm_manage_email_templates');
             };
 
-            register_rest_route('fluent-crm/v2', '/editor-patterns', [
+            register_rest_route($restNamespace, '/editor-patterns', [
                 'methods'             => \WP_REST_Server::READABLE,
                 'callback'            => [$this, 'handleEditorPatternsList'],
                 'permission_callback' => $patternPermission
             ]);
 
-            register_rest_route('fluent-crm/v2', '/editor-patterns', [
+            register_rest_route($restNamespace, '/editor-patterns', [
                 'methods'             => \WP_REST_Server::CREATABLE,
                 'callback'            => [$this, 'handleEditorPatternCreate'],
                 'permission_callback' => $patternPermission
             ]);
 
-            register_rest_route('fluent-crm/v2', '/editor-patterns/(?P<id>\d+)', [
+            register_rest_route($restNamespace, '/editor-patterns/(?P<id>\d+)', [
                 'methods'             => \WP_REST_Server::READABLE,
                 'callback'            => [$this, 'handleEditorPatternGet'],
                 'permission_callback' => $patternPermission
             ]);
 
-            register_rest_route('fluent-crm/v2', '/editor-patterns/(?P<id>\d+)', [
+            register_rest_route($restNamespace, '/editor-patterns/(?P<id>\d+)', [
                 'methods'             => \WP_REST_Server::EDITABLE,
                 'callback'            => [$this, 'handleEditorPatternUpdate'],
                 'permission_callback' => $patternPermission
             ]);
 
-            register_rest_route('fluent-crm/v2', '/editor-patterns/(?P<id>\d+)', [
+            register_rest_route($restNamespace, '/editor-patterns/(?P<id>\d+)', [
                 'methods'             => \WP_REST_Server::DELETABLE,
                 'callback'            => [$this, 'handleEditorPatternDelete'],
                 'permission_callback' => function () {
@@ -166,13 +169,13 @@ class FluentBlockEditorHandler
                 }
             ]);
 
-            register_rest_route('fluent-crm/v2', '/editor-pattern-categories', [
+            register_rest_route($restNamespace, '/editor-pattern-categories', [
                 'methods'             => \WP_REST_Server::READABLE,
                 'callback'            => [$this, 'handleEditorPatternCategories'],
                 'permission_callback' => $patternPermission
             ]);
 
-            register_rest_route('fluent-crm/v2', '/editor-pattern-categories', [
+            register_rest_route($restNamespace, '/editor-pattern-categories', [
                 'methods'             => \WP_REST_Server::CREATABLE,
                 'callback'            => [$this, 'handleEditorPatternCategoryCreate'],
                 'permission_callback' => $patternPermission
@@ -1033,7 +1036,7 @@ class FluentBlockEditorHandler
             ],
             'can_save'                => $canSave,
             'autosave'                => [
-                'endpoint' => rest_url('fluent-crm/v1/editor-autosave'),
+                'endpoint' => rest_url(FluentCrm()->config->get('app.rest_namespace') . '/v1/editor-autosave'),
                 'nonce'    => wp_create_nonce('wp_rest')
             ],
             'fcrm_ui'                 => isset($data['fcrm_ui']) ? sanitize_text_field($data['fcrm_ui']) : '',
@@ -1368,6 +1371,9 @@ class FluentBlockEditorHandler
             ];
         }
 
+        // Namespaced REST routes for the editor bundle; namespace follows FLUENTCRM_REST_NAMESPACE
+        $ns = FluentCrm()->config->get('app.rest_namespace') . '/v2';
+
         $blockEditorConfig = [
             'modules'                 => [
                 'hasWooCommerce'    => defined('WC_PLUGIN_FILE'),
@@ -1375,9 +1381,16 @@ class FluentBlockEditorHandler
                 'hasFluentCart'     => defined('FLUENTCART_VERSION')
             ],
             'endpoints'               => [
-                'products'     => apply_filters('fluent_crm/block_editor_products_endpoint', 'fluent-crm/v2/campaigns-pro/products'),
-                'cartProducts' => apply_filters('fluent_crm/block_editor_cart_products_endpoint', 'fluent-crm/v2/editor/cart-products'),
-                'tags'         => apply_filters('fluent_crm/block_editor_tags_endpoint', 'fluent-crm/v2/reports/options?fields=tags')
+                'aiGenerate'          => $ns . '/ai/generate',
+                'aiGenerateEmailBody' => $ns . '/ai/generate-email-body',
+                'posts'               => $ns . '/campaigns-pro/posts',
+                'postTaxonomies'      => $ns . '/campaigns-pro/posts/taxonomies',
+                'products'            => apply_filters('fluent_crm/block_editor_products_endpoint', $ns . '/campaigns-pro/products'),
+                'cartProducts'        => apply_filters('fluent_crm/block_editor_cart_products_endpoint', $ns . '/editor/cart-products'),
+                'patterns'            => $ns . '/editor-patterns',
+                'patternCategories'   => $ns . '/editor-pattern-categories',
+                'smartLinks'          => $ns . '/smart-links',
+                'tags'                => apply_filters('fluent_crm/block_editor_tags_endpoint', $ns . '/reports/options?fields=tags')
             ],
             'fontSizes'               => BlockEditorHelper::getDefaultPreset('font-size'),
             'spacingPresets'          => BlockEditorHelper::getDefaultPreset('spacing'),

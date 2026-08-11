@@ -38,6 +38,9 @@ class Tag extends Model
     public function scopeSearchBy($query, $search)
     {
         if ($search) {
+            // Escape LIKE wildcards (%, _) so search terms match literally, not as wildcards.
+            global $wpdb;
+            $search = $wpdb->esc_like($search);
             $fields = $this->searchable;
             $query->where(function ($query) use ($fields, $search) {
                 $query->where(array_shift($fields), 'LIKE', "%$search%");

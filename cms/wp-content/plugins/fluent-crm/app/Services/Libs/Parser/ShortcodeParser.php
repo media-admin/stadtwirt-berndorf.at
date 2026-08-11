@@ -210,17 +210,17 @@ class ShortcodeParser
         switch ($valueKey) {
             case "unsubscribe_url":
                 return add_query_arg(array_filter([
-                    'fluentcrm'   => 1,
-                    'route'       => 'unsubscribe',
-                    'ce_id'       => $subscriber->email_id,
-                    'secure_hash' => fluentCrmGetContactManagedHash($subscriber->id)
+                    FLUENTCRM_EXTERNAL_URL_PARAM => 1,
+                    'route'                      => 'unsubscribe',
+                    'ce_id'                      => $subscriber->email_id,
+                    'secure_hash'                => fluentCrmGetContactManagedHash($subscriber->id)
                 ]), site_url('/'));
             case "manage_subscription_url":
                 return add_query_arg(array_filter([
-                    'fluentcrm'   => 1,
-                    'route'       => 'manage_subscription',
-                    'ce_id'       => $subscriber->id,
-                    'secure_hash' => fluentCrmGetContactManagedHash($subscriber->id)
+                    FLUENTCRM_EXTERNAL_URL_PARAM => 1,
+                    'route'                      => 'manage_subscription',
+                    'ce_id'                      => $subscriber->id,
+                    'secure_hash'                => fluentCrmGetContactManagedHash($subscriber->id)
                 ]), site_url('/'));
             case "unsubscribe_html":
                 if (!$defaultValue) {
@@ -228,10 +228,10 @@ class ShortcodeParser
                 }
 
                 $url = add_query_arg(array_filter([
-                    'fluentcrm'   => 1,
-                    'route'       => 'unsubscribe',
-                    'ce_id'       => $subscriber->email_id,
-                    'secure_hash' => fluentCrmGetContactManagedHash($subscriber->id)
+                    FLUENTCRM_EXTERNAL_URL_PARAM => 1,
+                    'route'                      => 'unsubscribe',
+                    'ce_id'                      => $subscriber->email_id,
+                    'secure_hash'                => fluentCrmGetContactManagedHash($subscriber->id)
                 ]), site_url('/'));
 
                 return '<a class="fc_unsub_url" href="' . $url . '">' . $defaultValue . '</a>';
@@ -241,10 +241,10 @@ class ShortcodeParser
                 }
 
                 $url = add_query_arg(array_filter([
-                    'fluentcrm'   => 1,
-                    'route'       => 'manage_subscription',
-                    'ce_id'       => $subscriber->id,
-                    'secure_hash' => fluentCrmGetContactManagedHash($subscriber->id)
+                    FLUENTCRM_EXTERNAL_URL_PARAM => 1,
+                    'route'                      => 'manage_subscription',
+                    'ce_id'                      => $subscriber->id,
+                    'secure_hash'                => fluentCrmGetContactManagedHash($subscriber->id)
                 ]), site_url('/'));
 
                 return '<a class="fc_msub_url" href="' . $url . '">' . $defaultValue . '</a>';
@@ -253,10 +253,10 @@ class ShortcodeParser
                     $defaultValue = __('Confirm Subscription', 'fluent-crm');
                 }
                 $url = add_query_arg(array_filter([
-                    'fluentcrm'   => 1,
-                    'route'       => 'confirmation',
-                    'hash'        => $subscriber->hash,
-                    'secure_hash' => $subscriber->getSecureHash()
+                    FLUENTCRM_EXTERNAL_URL_PARAM => 1,
+                    'route'                      => 'confirmation',
+                    'hash'                       => $subscriber->hash,
+                    'secure_hash'                => $subscriber->getSecureHash()
                 ]), site_url('/'));
 
                 return '<a style="color: #ffffff; background-color: #454545; font-size: 16px; border-radius: 5px; text-decoration: none; font-weight: normal; font-style: normal; padding: 0.8rem 1rem; border-color: #0072ff;" href="' . $url . '">' . $defaultValue . '</a>';
@@ -441,10 +441,43 @@ class ShortcodeParser
             return $defaultValue;
         }
 
+        /*
+         * Sensitive WordPress user fields must never be exposed through smartcodes,
+         * regardless of how the contact became linked to the WP user. A contact's
+         * user_id can originate from data-import paths, so the WP user link is treated
+         * as untrusted for secret material: these keys are hard-blocked whether they are
+         * requested directly ({{user.user_pass}}) or via meta ({{user.meta.session_tokens}}).
+         */
+        $blockedKeys = ['user_pass', 'user_activation_key', 'session_tokens'];
+
         if ($valueKey == 'password_reset_direct_link') {
 
             if (defined('FLUENTCRM_PREVIEWING_EMAIL')) {
                 return '#pasword_reset_link_will_be_inserted_on_real_email';
+            }
+
+            /*
+             * Only emit a live reset link when the contact's own email matches the linked
+             * WP user's email. This keeps the legitimate "set your password" welcome-email
+             * use case working while preventing a spoofed user_id link from turning an
+             * attacker-owned contact address into an arbitrary user's reset link.
+             */
+            if (!$subscriber->email || strtolower($subscriber->email) !== strtolower($wpUser->user_email)) {
+                return $defaultValue;
+            }
+
+            /*
+             * Never mint a reset link for a privileged (administrator) account through a
+             * CRM smartcode. The legitimate use is onboarding non-admin users to set their
+             * own password; a resolved reset link for an admin is an escalation vector,
+             * because the rendered value can surface in records readable by lower-privileged
+             * contact managers (e.g. the parsed email_subject stored on the sent-email row,
+             * or the FluentSMTP log) even when the contact email genuinely matches the admin.
+             * The email-match check above is necessary but not sufficient on its own.
+             * Filterable for sites that intentionally onboard admins this way.
+             */
+            if (user_can($wpUser, 'manage_options') && !apply_filters('fluent_crm/allow_privileged_reset_link_smartcode', false, $wpUser, $subscriber)) {
+                return $defaultValue;
             }
 
             $key = get_password_reset_key($wpUser);
@@ -456,12 +489,17 @@ class ShortcodeParser
 
         $valueKeys = explode('.', $valueKey);
         if (count($valueKeys) == 1) {
+            if (in_array(strtolower($valueKey), $blockedKeys, true)) {
+                return $defaultValue;
+            }
+
             $value = $wpUser->get($valueKey);
             if (!$value) {
                 return $defaultValue;
             }
 
-            if (!is_array($value) || !is_object($value)) {
+            // Only scalar values are safe to inline; never expose arrays/objects.
+            if (!is_array($value) && !is_object($value)) {
                 return $value;
             }
 
@@ -472,12 +510,17 @@ class ShortcodeParser
         $customProperty = $valueKeys[1];
 
         if ($customKey == 'meta') {
+            if (in_array(strtolower($customProperty), $blockedKeys, true)) {
+                return $defaultValue;
+            }
+
             $metaValue = get_user_meta($wpUser->id, $customProperty, true);
             if (!$metaValue) {
                 return $defaultValue;
             }
 
-            if (!is_array($metaValue) || !is_object($metaValue)) {
+            // Only scalar values are safe to inline; never expose arrays/objects.
+            if (!is_array($metaValue) && !is_object($metaValue)) {
                 return $metaValue;
             }
 

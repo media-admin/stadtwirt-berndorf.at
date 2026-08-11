@@ -36,7 +36,7 @@ class CampaignUrlMetrics
                 KEY `url_id` (`url_id`),
                 KEY `campaign_id` (`campaign_id`),
                 KEY `subscriber_id` (`subscriber_id`),
-                KEY `type` (`type`)
+                KEY `url_metrics_type_created_idx` (`type`, `created_at`)
             ) $charsetCollate;";
 
             dbDelta($sql);
@@ -50,15 +50,21 @@ class CampaignUrlMetrics
             }
 
             if(!in_array('subscriber_id', $indexedColumns)) {
+                // No plain `type` index here: the (type, created_at) composite's
+                // leading column covers type-only filtering, and type alone is
+                // near-unselective anyway (a handful of values, 'click' dominant).
                 // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
                 $indexSql = "ALTER TABLE {$table} ADD INDEX `url_id` (`url_id`),
                         ADD INDEX `campaign_id` (`campaign_id`),
-                        ADD INDEX `subscriber_id` (`subscriber_id`),
-                        ADD INDEX `type` (`type`);";
+                        ADD INDEX `subscriber_id` (`subscriber_id`);";
 
                 // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
                 $wpdb->query($indexSql);
             }
+
+            // (type, created_at) reporting index — owned by DbPerformanceService so the
+            // migration and the runtime health-check/repair path share one definition.
+            \FluentCrm\App\Services\DbPerformanceService::ensureCriticalIndex('url_metrics_type_created_idx');
         }
     }
 }

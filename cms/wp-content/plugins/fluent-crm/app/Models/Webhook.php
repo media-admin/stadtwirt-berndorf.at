@@ -74,7 +74,11 @@ class Webhook extends Meta
     public function store($data)
     {
         $key = wp_generate_uuid4();
-        $webhookUrl = site_url("?fluentcrm=1&route=contact&hash={$key}");
+        $webhookUrl = add_query_arg([
+            FLUENTCRM_EXTERNAL_URL_PARAM => 1,
+            'route'                      => 'contact',
+            'hash'                       => $key
+        ], site_url('/'));
 
         return static::create([
             'object_type' => 'webhook',

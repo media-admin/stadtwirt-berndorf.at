@@ -572,7 +572,7 @@ $fluentformElementCustomizationSettings = [
     ],
     'calculation_settings' => [
         'template'      => (defined('FLUENTFORMPRO')) ? 'inputCalculationSettings' : 'infoBlock',
-        'text'          => '<strong>Calculation Field Settings</strong><br/>Calculate the value based on other numeric field is available on pro version of Fluent Forms. Please install Fluent Forms Pro to use this feature <br /> <a target="_blank" rel="noopener" href="https://fluentforms.com/pricing/?utm_source=plugin&amp;utm_medium=wp_install&amp;utm_campaign=ff_upgrade&amp;theme_style=twentytwentythree">
+        'text'          => '<strong>Calculation Field Settings</strong><br/>Calculate the value based on other numeric field is available on pro version of Fluent Forms. Please install Fluent Forms Pro to use this feature <br /> <a target="_blank" rel="noopener" href="' . esc_url(fluentform_upgrade_url('feature_lock_calculation')) . '">
         Upgrade to Pro                </a>',
         'label'         => 'Calculation Field Settings',
         'status_label'  => 'Enable Calculation',

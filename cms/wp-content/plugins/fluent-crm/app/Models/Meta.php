@@ -2,6 +2,8 @@
 
 namespace FluentCrm\App\Models;
 
+use FluentCrm\App\Services\Helper;
+
 /**
  *  Meta Model - DB Model for Meta table
  *
@@ -36,6 +38,8 @@ class Meta extends Model
 
     public function getValueAttribute($value)
     {
-        return maybe_unserialize($value);
+        // Guard against PHP Object Injection: meta values can be user-influenced, so never
+        // instantiate objects on read. Arrays/scalars are preserved.
+        return Helper::safeUnserialize($value);
     }
 }

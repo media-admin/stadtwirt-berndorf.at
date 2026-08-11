@@ -872,7 +872,7 @@ class Converter
     public static function convertExistingForm($form)
     {
         $formFields = json_decode($form->form_fields, true);
-        $fields = $formFields['fields'];
+        $fields = static::flattenLayoutContainers(ArrayHelper::get($formFields, 'fields', []));
         $formattedFields = [];
         
         if (is_array($fields) && ! empty($fields)) {
@@ -900,6 +900,56 @@ class Converter
         $formFields['fields'] = $formattedFields;
         
         return json_encode($formFields);
+    }
+
+    /**
+     * Lift fields out of layout containers so they survive conversion.
+     *
+     * A conversational form is a flat sequence of questions, so `container` has
+     * no equivalent and is not in fieldTypes(). Dropping it wholesale used to
+     * take every input nested inside it as well — silent, irreversible data loss
+     * on a one-click action, and column layouts are common.
+     *
+     * Only `columns` is unwrapped. Composite fields (input_name, address) keep
+     * their sub-inputs under `fields` and have their own conversational type, so
+     * they must stay whole. Nested containers are handled recursively.
+     *
+     * @param  array $fields
+     * @return array
+     */
+    protected static function flattenLayoutContainers($fields)
+    {
+        if (! is_array($fields)) {
+            return [];
+        }
+
+        $flattened = [];
+
+        foreach ($fields as $field) {
+            if (! is_array($field)) {
+                continue;
+            }
+
+            $columns = ArrayHelper::get($field, 'columns');
+
+            if ('container' !== ArrayHelper::get($field, 'element') || ! is_array($columns)) {
+                $flattened[] = $field;
+
+                continue;
+            }
+
+            foreach ($columns as $column) {
+                $columnFields = static::flattenLayoutContainers(
+                    ArrayHelper::get($column, 'fields', [])
+                );
+
+                foreach ($columnFields as $columnField) {
+                    $flattened[] = $columnField;
+                }
+            }
+        }
+
+        return $flattened;
     }
     
     private static function buildBaseQuestion($field, $validationsRules, $form)
