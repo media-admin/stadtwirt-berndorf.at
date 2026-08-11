@@ -633,15 +633,57 @@ class MediaLab_Post_Order {
 		$current_orderby = $args['orderby'] ?? 'name';
 		if ( $current_orderby !== 'name' ) return $args;
 
-		// Terms MIT menu_order zuerst (sortiert), Terms OHNE danach (alphabetisch)
-		$args['orderby']    = 'meta_value_num';
-		$args['meta_key']   = 'menu_order';
-		$args['order']      = 'ASC';
-		$args['meta_query'] = array(
-			'relation' => 'OR',
-			array( 'key' => 'menu_order', 'compare' => 'EXISTS' ),
+		// Terms MIT menu_order zuerst (sortiert), Terms OHNE danach (alphabetisch).
+		//
+		// WICHTIG #1: Kein Top-Level 'meta_key' verwenden! WP_Meta_Query::parse_query_vars()
+		// wandelt einen Top-Level meta_key/meta_value(_num)/meta_compare IMMER in eine
+		// zusätzliche, implizite Meta-Query-Klausel um (mit implizitem compare '=').
+		// Diese wird per AND mit dem hier definierten 'meta_query'-Array verknüpft –
+		// unabhängig von dessen eigener 'relation'. Ergebnis: (EXISTS OR NOT EXISTS)
+		// AND (menu_order vorhanden) → NUR Terms mit gesetztem menu_order matchen,
+		// alle anderen fallen komplett aus dem Ergebnis (INNER JOIN statt LEFT JOIN).
+		// Das führt dazu, dass get_terms() leer zurückgibt, solange noch NIE ein
+		// Term dieser Taxonomie per Drag & Drop sortiert wurde – ein stiller,
+		// kompletter Ausfall ohne Fehlermeldung.
+		//
+		// WICHTIG #2: Andere Callbacks am 'get_terms_args'-Hook (z.B. eigene
+		// meta_query-Filter aus Theme/Plugin-Code, etwa "nur aktive Marken
+		// anzeigen") können VOR diesem Filter bereits ein $args['meta_query']
+		// gesetzt haben. Dieses NICHT überschreiben, sondern per AND mit der
+		// eigenen menu_order-Logik verknüpfen – sonst gehen fremde Filter-
+		// bedingungen kommentarlos verloren (genau dieser Bug ließ z.B. eine
+		// bewusst deaktivierte Marke trotz "brand-is-active"-Filter im
+		// Frontend wieder erscheinen, weil hier die komplette meta_query
+		// durch eine reine menu_order-Klausel ersetzt wurde).
+		$menu_order_clause = array(
+			'relation'          => 'OR',
+			'menu_order_clause' => array(
+				'key'     => 'menu_order',
+				'compare' => 'EXISTS',
+				'type'    => 'NUMERIC',
+			),
 			array( 'key' => 'menu_order', 'compare' => 'NOT EXISTS' ),
 		);
+
+		if ( ! empty( $args['meta_query'] ) ) {
+			// Fremde meta_query vorhanden → per AND kombinieren, nichts verwerfen.
+			$args['meta_query'] = array(
+				'relation' => 'AND',
+				$args['meta_query'],
+				$menu_order_clause,
+			);
+		} else {
+			$args['meta_query'] = $menu_order_clause;
+		}
+
+		// WP_Term_Query::parse_orderby() akzeptiert nur einen String (kein
+		// orderby-Array wie bei WP_Query) – daher hier bewusst auf die
+		// benannte meta_query-Klausel referenzieren statt ein Array zu
+		// übergeben. Terms ohne menu_order-Meta erhalten dadurch NULL als
+		// Sortierwert und landen bei ASC-Sortierung vor den einsortierten
+		// Terms (nicht danach) – kosmetische Einschränkung, kein Blocker.
+		$args['orderby'] = 'menu_order_clause';
+		$args['order']   = 'ASC';
 
 		return $args;
 	}

@@ -2,18 +2,32 @@
    Drag & Drop Post Order – Admin Styles
    ============================================================================= */
 
-/* Title-Spalte: Flex damit Handle und Titel sauber nebeneinander sitzen */
-#the-list td.column-title {
-	display: flex;
-	align-items: center;
+/*
+ * Dedizierte Handle-Spalte (erste <td> jeder Zeile, per JS eingefügt).
+ * Bewusst NICHT in eine bestehende Spalte (Titel, Thumbnail, …) hinein
+ * gerendert: Spalten wie "column-thumb" haben eine feste, schmale Breite
+ * und bereits eigenen Inhalt – ein zusätzliches Flex-Item dort führt zu
+ * Überlappung bzw. Umbruch. Die eigene Spalte funktioniert unabhängig vom
+ * Inhalt der übrigen Spalten und ist entsprechend robuster.
+ */
+#the-list td.medialab-drag-handle-cell,
+.wp-list-table thead th.medialab-drag-handle-th,
+.wp-list-table tfoot th.medialab-drag-handle-th {
+	width: 26px;
+	padding: 8px 4px !important;
+	text-align: center;
+	vertical-align: middle;
+}
+
+#the-list td.medialab-drag-handle-cell {
+	text-align: center;
 }
 
 /* Handle-Icon */
 .medialab-drag-handle {
-	display: flex;
+	display: inline-flex;
 	align-items: center;
-	flex-shrink: 0;
-	margin-right: 6px;
+	justify-content: center;
 	color: #999;
 	cursor: grab;
 	font-size: 18px;

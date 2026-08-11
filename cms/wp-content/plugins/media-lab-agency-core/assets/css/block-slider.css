@@ -19,6 +19,55 @@
     overflow: hidden;   /* Pfeile bleiben INNERHALB des Containers */
 }
 
+/* ── Skeleton bis Swiper initialisiert ist ──────────────────────────
+ * Swiper fügt seinem Root-Element automatisch die Klasse
+ * "swiper-initialized" hinzu, sobald new Swiper() durchgelaufen ist
+ * (siehe assets/js/block-slider.js). Solange sie fehlt, blenden wir
+ * die (bereits im HTML vorhandenen, aber noch unstyled gestapelten)
+ * Folien aus und zeigen stattdessen einen Shimmer-Platzhalter – rein
+ * per CSS, kein zusätzliches JS zum Ein-/Ausblenden nötig.
+ *
+ * Sicherheitsnetz: falls Swiper aus irgendeinem Grund nie startet
+ * (Bundle fehlt, ungültige Config, 0 Folien), setzt block-slider.js
+ * stattdessen die Klasse "ml-slider__swiper--skeleton-done", die den
+ * Skeleton ebenfalls beendet und die rohen Folien zeigt statt für
+ * immer zu shimmern (@see :not(.ml-slider__swiper--skeleton-done)).
+ *
+ * Shimmer-Animation (@keyframes medialab-skeleton-shimmer) kommt aus
+ * media-lab-agency-core/assets/css/skeleton.css, das site-weit auf
+ * jeder Frontend-Seite geladen wird (inc/skeleton.php) – hier nur
+ * referenziert, nicht neu definiert.
+ */
+.ml-slider__swiper:not(.swiper-initialized):not(.ml-slider__swiper--skeleton-done) {
+    min-height: 200px;
+}
+
+.ml-slider__swiper:not(.swiper-initialized):not(.ml-slider__swiper--skeleton-done) .ml-slider__wrapper {
+    visibility: hidden;
+}
+
+.ml-slider__swiper:not(.swiper-initialized):not(.ml-slider__swiper--skeleton-done)::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: var(--medialab-skeleton-base, #e2e2e2);
+}
+
+.ml-slider__swiper:not(.swiper-initialized):not(.ml-slider__swiper--skeleton-done)::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0,
+        var(--medialab-skeleton-shine, #f0f0f0) 20%,
+        rgba(255, 255, 255, 0.6) 60%,
+        rgba(255, 255, 255, 0)
+    );
+    animation: medialab-skeleton-shimmer 1.6s infinite;
+}
+
 /* ── Slides ──────────────────────────────────────────────────────── */
 
 .ml-slider__wrapper > .swiper-slide {
@@ -63,5 +112,8 @@
 @media (prefers-reduced-motion: reduce) {
     .ml-slider__swiper {
         --swiper-transition-duration: 0ms !important;
+    }
+    .ml-slider__swiper:not(.swiper-initialized)::after {
+        animation: none;
     }
 }

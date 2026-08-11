@@ -34,13 +34,26 @@
 		}
 
 		// ── Drag Handles einfügen ────────────────────────────────────────────
+		//
+		// Der Handle bekommt eine eigene, schmale <td> als erste Zelle jeder
+		// Zeile – NICHT in eine bestehende Spalte hinein (z. B. column-thumb),
+		// da dort bereits Inhalt (Thumbnail) sitzt und die Spaltenbreite fix
+		// und schmal ist, was zu Überlappung/Umbruch führen würde. Kopf- und
+		// Fußzeile bekommen passend eine leere Spalte vorangestellt, damit die
+		// Spaltenanzahl übereinstimmt.
 
 		$tbody.find('tr').each(function () {
-			var $firstTd = $(this).find('td:first');
-			$firstTd.prepend(
+			$(this).prepend(
+				'<td class="medialab-drag-handle-cell">' +
 				'<span class="medialab-drag-handle dashicons dashicons-menu" ' +
-				'title="Ziehen zum Sortieren"></span>'
+				'title="Ziehen zum Sortieren"></span>' +
+				'</td>'
 			);
+		});
+
+		$tbody.closest('table').find('> thead > tr, > tfoot > tr').each(function () {
+			if ($(this).find('.medialab-drag-handle-th').length) return;
+			$(this).prepend('<th class="manage-column medialab-drag-handle-th" scope="col"></th>');
 		});
 
 		// ── Sortable initialisieren ───────────────────────────────────────────
@@ -71,6 +84,7 @@
 				saveOrder();
 			}
 		});
+
 
 		// ── ID-Extraktion (Post oder Term) ────────────────────────────────────
 

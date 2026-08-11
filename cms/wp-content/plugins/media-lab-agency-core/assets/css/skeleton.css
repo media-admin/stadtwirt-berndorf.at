@@ -1,0 +1,115 @@
+/**
+ * Skeleton Loading States – structural CSS
+ *
+ * Nur Struktur (Größen, Radius, Shimmer-Animation) – Farben laufen über
+ * CSS Custom Properties und sind im Theme (SCSS) überschreibbar, ohne
+ * diese Datei anzufassen:
+ *
+ *   :root {
+ *     --medialab-skeleton-base:  #e2e2e2;
+ *     --medialab-skeleton-shine: #f0f0f0;
+ *   }
+ *
+ * @package Agency_Core
+ * @since   1.18.0
+ */
+
+.medialab-skeleton-item {
+	pointer-events: none;
+	user-select: none;
+}
+
+.medialab-skeleton {
+	--medialab-skeleton-base: #e2e2e2;
+	--medialab-skeleton-shine: #f0f0f0;
+
+	position: relative;
+	overflow: hidden;
+	background-color: var(--medialab-skeleton-base);
+	border-radius: 4px;
+}
+
+.medialab-skeleton::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	transform: translateX(-100%);
+	background-image: linear-gradient(
+		90deg,
+		rgba(255, 255, 255, 0) 0,
+		var(--medialab-skeleton-shine) 20%,
+		rgba(255, 255, 255, 0.6) 60%,
+		rgba(255, 255, 255, 0)
+	);
+	animation: medialab-skeleton-shimmer 1.6s infinite;
+}
+
+@keyframes medialab-skeleton-shimmer {
+	100% {
+		transform: translateX(100%);
+	}
+}
+
+/* ── Medien-Platzhalter (Bild/Thumbnail/Slide) ─────────────────────── */
+
+.medialab-skeleton--media {
+	width: 100%;
+	aspect-ratio: 16 / 10;
+	margin-bottom: 0.75em;
+	border-radius: 6px;
+}
+
+.medialab-skeleton--thumb {
+	width: 72px;
+	height: 72px;
+	aspect-ratio: 1 / 1;
+	flex: 0 0 auto;
+	margin-bottom: 0;
+	border-radius: 6px;
+}
+
+.medialab-skeleton--slide {
+	aspect-ratio: 21 / 9;
+	margin-bottom: 0;
+	border-radius: 0;
+}
+
+/* ── Text-Zeilen-Platzhalter ────────────────────────────────────────── */
+
+.medialab-skeleton-lines {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5em;
+	width: 100%;
+}
+
+.medialab-skeleton--text {
+	height: 0.85em;
+	width: 100%;
+	border-radius: 3px;
+}
+
+.medialab-skeleton--text-title {
+	height: 1.1em;
+	width: 70%;
+}
+
+.medialab-skeleton--text-short {
+	width: 40%;
+}
+
+/* ── List-Variante: Thumbnail + Zeilen nebeneinander ───────────────── */
+
+.medialab-skeleton-item:has(.medialab-skeleton--thumb) {
+	display: flex;
+	align-items: center;
+	gap: 1em;
+}
+
+/* ── Reduced Motion: kein Shimmer, statischer Platzhalter reicht ──── */
+
+@media (prefers-reduced-motion: reduce) {
+	.medialab-skeleton::after {
+		animation: none;
+	}
+}

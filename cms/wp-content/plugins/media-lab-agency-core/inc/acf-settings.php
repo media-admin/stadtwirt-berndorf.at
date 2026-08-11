@@ -196,6 +196,15 @@ add_action('acf/init', function () {
         'position'    => 11,
     ));
 
+    acf_add_options_sub_page(array(
+        'page_title'  => 'Heartbeat Monitoring',
+        'menu_title'  => 'Heartbeat Monitoring',
+        'parent_slug' => $parent,
+        'capability'  => 'manage_options',
+        'slug'        => 'agency-core-heartbeat',
+        'position'    => 12,
+    ));
+
 }, 5);
 
 
@@ -1283,6 +1292,100 @@ add_action('acf/init', function () {
             'param' => 'options_page', 'operator' => '==', 'value' => 'agency-core-multilang',
         ))),
         'menu_order'            => 30,
+        'position'              => 'normal',
+        'style'                 => 'default',
+        'label_placement'       => 'top',
+        'instruction_placement' => 'label',
+    ));
+
+    // ── Field Group: Heartbeat Monitoring ─────────────────────────
+    acf_add_local_field_group(array(
+        'key'    => 'group_heartbeat',
+        'title'  => 'Heartbeat Monitoring',
+        'fields' => array(
+
+            array(
+                'key'     => 'field_heartbeat_intro',
+                'label'   => ' ',
+                'name'    => 'heartbeat_intro',
+                'type'    => 'message',
+                'message' => '<p>Push-basiertes Monitoring: Die Seite meldet sich selbst bei Better Stack / Healthchecks.io. '
+                           . 'Verhindert Fehlalarme durch externe Pull-Checks (langsame Antwortzeiten, Ping-Blockaden etc.).</p>',
+            ),
+
+            array(
+                'key'           => 'field_heartbeat_enabled',
+                'label'         => 'Heartbeat Monitoring aktivieren',
+                'name'          => 'medialab_heartbeat_enabled',
+                'type'          => 'true_false',
+                'ui'            => 1,
+                'default_value' => 0,
+            ),
+
+            array(
+                'key'           => 'field_heartbeat_provider',
+                'label'         => 'Provider',
+                'name'          => 'medialab_heartbeat_provider',
+                'type'          => 'select',
+                'choices'       => array(
+                    'better_stack'  => 'Better Stack',
+                    'healthchecks'  => 'Healthchecks.io',
+                    'custom'        => 'Sonstiger',
+                ),
+                'default_value' => 'better_stack',
+                'ui'            => 1,
+                'instructions'  => 'Nur zur internen Übersicht – die Ping-URL entscheidet, wohin tatsächlich gemeldet wird.',
+                'conditional_logic' => array(array(array(
+                    'field' => 'field_heartbeat_enabled', 'operator' => '==', 'value' => '1',
+                ))),
+            ),
+
+            array(
+                'key'          => 'field_heartbeat_url',
+                'label'        => 'Heartbeat-URL',
+                'name'         => 'medialab_heartbeat_url',
+                'type'         => 'url',
+                'placeholder'  => 'https://uptime.betterstack.com/api/v1/heartbeat/xxxxx',
+                'instructions' => 'Aus Better Stack (Heartbeats → Create) oder Healthchecks.io (Check → Ping URL).',
+                'conditional_logic' => array(array(array(
+                    'field' => 'field_heartbeat_enabled', 'operator' => '==', 'value' => '1',
+                ))),
+            ),
+
+            array(
+                'key'     => 'field_heartbeat_endpoint_display',
+                'label'   => 'REST-Endpoint für den Server-Cronjob',
+                'name'    => 'heartbeat_endpoint_display',
+                'type'    => 'message',
+                'message' => '<code style="user-select:all;">' . esc_url( rest_url('medialab/v1/heartbeat') )
+                           . '?token=' . esc_html( get_option('medialab_heartbeat_token') ) . '</code>'
+                           . '<p style="margin-top:.4rem;color:#666;">Diese URL im Cronjob-Bereich des Hostings (IONOS/Hetzner/World4You) '
+                           . 'alle 10 Minuten per curl/wget aufrufen lassen.</p>',
+                'conditional_logic' => array(array(array(
+                    'field' => 'field_heartbeat_enabled', 'operator' => '==', 'value' => '1',
+                ))),
+            ),
+
+            array(
+                'key'     => 'field_heartbeat_last_ping_display',
+                'label'   => 'Letzter erfolgreicher Ping',
+                'name'    => 'heartbeat_last_ping_display',
+                'type'    => 'message',
+                'message' => (function() {
+                    $ts = get_option('medialab_heartbeat_last_ping');
+                    if (!$ts) return '<em>Noch kein Ping empfangen.</em>';
+                    return sprintf('vor %s (%s)', human_time_diff($ts, time()), date_i18n('d.m.Y H:i:s', $ts));
+                })(),
+                'conditional_logic' => array(array(array(
+                    'field' => 'field_heartbeat_enabled', 'operator' => '==', 'value' => '1',
+                ))),
+            ),
+
+        ),
+        'location' => array(array(array(
+            'param' => 'options_page', 'operator' => '==', 'value' => 'agency-core-heartbeat',
+        ))),
+        'menu_order'            => 35,
         'position'              => 'normal',
         'style'                 => 'default',
         'label_placement'       => 'top',

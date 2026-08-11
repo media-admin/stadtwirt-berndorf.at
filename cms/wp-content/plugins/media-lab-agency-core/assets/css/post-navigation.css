@@ -1,0 +1,79 @@
+/* =============================================================================
+   Post Navigation – Backend Prev/Next
+   ============================================================================= */
+
+.medialab-post-nav {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	margin: 0 0 16px;
+	padding: 8px 12px;
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+}
+
+.medialab-post-nav__link {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	text-decoration: none;
+	color: #2271b1;
+	font-size: 13px;
+	max-width: 40%;
+}
+
+.medialab-post-nav__link:hover,
+.medialab-post-nav__link:focus {
+	color: #135e96;
+}
+
+.medialab-post-nav__link--disabled {
+	color: #a7aaad;
+	cursor: default;
+}
+
+.medialab-post-nav__label {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.medialab-post-nav__link .dashicons {
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+	flex-shrink: 0;
+}
+
+.medialab-post-nav__position {
+	flex-shrink: 0;
+	color: #646970;
+	font-size: 12px;
+	white-space: nowrap;
+}
+
+/* =============================================================================
+   Gutenberg Sidebar-Panel
+   ============================================================================= */
+
+.medialab-post-nav-panel__buttons {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.medialab-post-nav-panel__buttons .components-button {
+	justify-content: flex-start;
+	text-align: left;
+	white-space: normal;
+	height: auto;
+	min-height: 30px;
+}
+
+.medialab-post-nav-panel__position {
+	margin: 8px 0 0;
+	color: #757575;
+	font-size: 12px;
+}
