@@ -3,8 +3,6 @@ if (!defined('ABSPATH')) exit;
 
 /**
  * Heartbeat Monitoring
- * Ersetzt Pull-basierte Uptime-Checks durch Push-basierte Heartbeats
- * (Better Stack / Healthchecks.io), um Fehlalarme durch externe Prober zu vermeiden.
  */
 
 add_action('init', 'medialab_heartbeat_maybe_generate_token');
@@ -29,17 +27,31 @@ function medialab_heartbeat_check_token($request) {
     return $stored && $given && hash_equals($stored, (string) $given);
 }
 
+/**
+ * Liest Config-Werte primär über ACF (options_-Präfix), fällt auf
+ * direkte wp_options zurück (z.B. media-lab.at, per WP-CLI gesetzt, kein ACF).
+ */
+function medialab_heartbeat_get_setting($name) {
+    if (function_exists('get_field')) {
+        $value = get_field($name, 'option');
+        if ($value !== null && $value !== false && $value !== '') {
+            return $value;
+        }
+    }
+    return get_option($name);
+}
+
 function medialab_heartbeat_handle($request) {
-    if (!get_option('medialab_heartbeat_enabled')) {
+    $enabled = medialab_heartbeat_get_setting('medialab_heartbeat_enabled');
+    if (!$enabled) {
         return new WP_REST_Response(['status' => 'disabled'], 200);
     }
 
-    $ping_url = get_option('medialab_heartbeat_url');
+    $ping_url = medialab_heartbeat_get_setting('medialab_heartbeat_url');
     if (!$ping_url) {
         return new WP_REST_Response(['status' => 'not_configured'], 200);
     }
 
-    // Mini Health-Check: DB-Verbindung testen
     global $wpdb;
     $db_ok = ($wpdb->get_var("SELECT 1") === '1');
 
@@ -49,7 +61,6 @@ function medialab_heartbeat_handle($request) {
         return new WP_REST_Response(['status' => 'ok'], 200);
     }
 
-    // Explizit als fehlgeschlagen melden statt zu schweigen
     wp_remote_get($ping_url . '/fail', ['timeout' => 5, 'blocking' => false]);
     return new WP_REST_Response(['status' => 'db_unhealthy'], 200);
 }

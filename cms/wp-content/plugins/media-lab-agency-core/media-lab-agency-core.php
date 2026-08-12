@@ -26,7 +26,6 @@ function medialab_core_init() {
     // ── Core ─────────────────────────────────────────────
     require_once MEDIALAB_CORE_PATH . 'inc/shortcodes.php';
     require_once MEDIALAB_CORE_PATH . 'inc/social-share.php';
-    require_once MEDIALAB_CORE_PATH . 'inc/security.php';
     require_once MEDIALAB_CORE_PATH . 'inc/admin.php';
     require_once MEDIALAB_CORE_PATH . 'inc/helpers.php';
     require_once MEDIALAB_CORE_PATH . 'inc/ajax-search.php';
